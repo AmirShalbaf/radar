@@ -788,28 +788,42 @@ def fetch_fred(http_text) -> dict:
     y2, y10, y30 = g("DGS2"), g("DGS10"), g("DGS30")
     ffr, be10 = g("DFEDTARU"), g("T10YIE")
 
+    def sane(v, lo, hi):
+        return v if (v is not None and lo <= v <= hi) else None
+
     if y2 is not None and ffr is not None:
         d["derived"]["neutral_gap"] = {
-            "value": y2 - ffr,
+            "value": sane(y2 - ffr, -5, 5),
             "label": "فاصله سیاست از خنثی (بازده ۲ ساله منهای سقف نرخ بهره)",
             "read": "مثبت یعنی سیاست دیگر انقباضی نیست" if y2 > ffr else "منفی یعنی واقعاً انقباضی"}
     if y30 is not None and y2 is not None:
         d["derived"]["curve_30_2"] = {
-            "value": y30 - y2, "label": "شیب منحنی ۳۰ منهای ۲",
+            "value": sane(y30 - y2, -5, 5), "label": "شیب منحنی ۳۰ منهای ۲",
             "read": "شیب مثبت" if y30 > y2 else "منحنی معکوس"}
     if y10 is not None and be10 is not None:
         d["derived"]["real_10y"] = {
-            "value": y10 - be10,
+            "value": sane(y10 - be10, -5, 8),
             "label": "بازده واقعی ۱۰ ساله (از نرخ سربه‌سر تورم، نه CPI)",
             "read": "مثبت — رقیب جدی دارایی بدون بازده" if y10 > be10 else "منفی"}
 
     # نقدینگی خالص — تله واحد: WALCL میلیون است، دو تای دیگر میلیارد
     w, rr, tga = g("WALCL"), g("RRPONTSYD"), g("WTREGEN")
     if None not in (w, rr, tga):
+        # واحدها: WALCL و WTREGEN به میلیون دلار، RRPONTSYD به میلیارد دلار
+        nl = w/1000.0 - rr - tga/1000.0
+        plausible = 2000 < nl < 12000     # بازه تاریخی نقدینگی خالص، میلیارد دلار
         d["derived"]["net_liquidity"] = {
-            "value": w/1000.0 - rr - tga,
+            "value": nl if plausible else None,
             "label": "نقدینگی خالص فدرال‌رزرو (میلیارد دلار)",
-            "read": "دارایی کل ÷ ۱۰۰۰ منهای ریپوی معکوس منهای حساب خزانه‌داری"}
+            "read": ("دارایی ÷۱۰۰۰ منهای ریپوی معکوس منهای خزانه‌داری ÷۱۰۰۰"
+                     if plausible else
+                     f"⚠️ عدد خام {nl:,.0f} خارج از بازه منطقی — احتمال تغییر واحد در منبع. رد شد")}
+        if plausible and raw.get("WALCL", {}).get("prev30"):
+            prev_nl = raw["WALCL"]["prev30"]/1000.0 - rr - tga/1000.0
+            d["derived"]["net_liq_trend"] = {
+                "value": nl - prev_nl,
+                "label": "تغییر ۳۰ روزه نقدینگی خالص (میلیارد دلار)",
+                "read": "تزریق" if nl > prev_nl else "انقباض"}
 
     # ترکیب اشتغال — قانون ۶ وصله ۵.۳
     u, cp = raw.get("UNRATE"), raw.get("CIVPART")
