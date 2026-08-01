@@ -765,7 +765,14 @@ def fred_series(sid: str, http_text) -> tuple[float, datetime, float | None] | N
         return None
     d, val = rows[-1]
     ts = datetime.strptime(d, "%Y-%m-%d").replace(tzinfo=UTC)
-    prev = rows[-31][1] if len(rows) >= 31 else None
+    # ۳۰ روز تقویمی، نه ۳۰ ردیف. سری‌ها بسامد متفاوت دارند
+    # (روزانه، هفتگی، ماهانه) و ۳۰ ردیف برای سری ماهانه یعنی ۳۰ ماه.
+    target = ts - timedelta(days=30)
+    prev = None
+    for dd, vv in reversed(rows[:-1]):
+        if datetime.strptime(dd, "%Y-%m-%d").replace(tzinfo=UTC) <= target:
+            prev = vv
+            break
     return val, ts, prev
 
 
@@ -818,12 +825,16 @@ def fetch_fred(http_text) -> dict:
             "read": ("دارایی ÷۱۰۰۰ منهای ریپوی معکوس منهای خزانه‌داری ÷۱۰۰۰"
                      if plausible else
                      f"⚠️ عدد خام {nl:,.0f} خارج از بازه منطقی — احتمال تغییر واحد در منبع. رد شد")}
-        if plausible and raw.get("WALCL", {}).get("prev30"):
-            prev_nl = raw["WALCL"]["prev30"]/1000.0 - rr - tga/1000.0
+        pw  = raw.get("WALCL", {}).get("prev30")
+        prr = raw.get("RRPONTSYD", {}).get("prev30")
+        ptg = raw.get("WTREGEN", {}).get("prev30")
+        if plausible and None not in (pw, prr, ptg):
+            # هر سه جزء باید از ۳۰ روز قبل باشند، وگرنه فقط تغییر یک جزء را می‌سنجیم
+            prev_nl = pw/1000.0 - prr - ptg/1000.0
             d["derived"]["net_liq_trend"] = {
                 "value": nl - prev_nl,
                 "label": "تغییر ۳۰ روزه نقدینگی خالص (میلیارد دلار)",
-                "read": "تزریق" if nl > prev_nl else "انقباض"}
+                "read": "تزریق — باد موافق" if nl > prev_nl else "انقباض — باد مخالف"}
 
     # ترکیب اشتغال — قانون ۶ وصله ۵.۳
     u, cp = raw.get("UNRATE"), raw.get("CIVPART")
@@ -1100,6 +1111,9 @@ def check_candle_order(df: pd.DataFrame, name: str, tests: list) -> None:
 #  ارکستراسیون چند-صرافی
 # ═══════════════════════════════════════════════════════════════════
 
+SYMBOL_ALIAS = {"RNDR": "RENDER"}   # نمادهای تغییرنام‌داده
+
+
 def gather_venues(base: str, order: list[str], price_hint: float | None
                   ) -> tuple[dict, dict, dict, dict]:
     """
@@ -1178,7 +1192,7 @@ def agg_funding(funding: dict) -> dict:
 
 
 def run3(symbol, balance, profile, macro_event, deep, order):
-    base = symbol.upper()
+    base = SYMBOL_ALIAS.get(symbol.upper(), symbol.upper())
     b = Bundle(symbol=base, balance=balance, profile=profile)
     b.venue_order = order
 
