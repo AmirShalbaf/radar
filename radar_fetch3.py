@@ -164,6 +164,7 @@ class Bundle:
     v_pos: dict = field(default_factory=dict)
     f_agg: dict = field(default_factory=dict)
     fred: dict = field(default_factory=dict)
+    venue_dead: list = field(default_factory=list)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -535,7 +536,10 @@ class OKX(Venue):
 
 class Binance(Venue):
     name = "binance"
+    # api.binance.com از آمریکا مسدود است (کد ۴۵۱). دامنه data-api فقط
+    # داده عمومی بازار می‌دهد و معمولاً مسدود نیست. برای کندل امتحان می‌شود.
     S, F = "https://api.binance.com", "https://fapi.binance.com"
+    S_ALT = "https://data-api.binance.vision"
     def spot(self, b): return f"{b}USDT"
     perp = spot
 
@@ -546,6 +550,9 @@ class Binance(Venue):
                  "limit": min(1000, want)}
             if end: p["endTime"] = end
             d = http(f"{self.S}/api/v3/klines", p, label="[binance] کندل")
+            if not d:
+                d = http(f"{self.S_ALT}/api/v3/klines", p,
+                         label="[binance] کندل (دامنه جایگزین)")
             if not d: break
             rows = d + rows
             end = int(d[0][0]) - 1
@@ -831,10 +838,18 @@ def fetch_fred(http_text) -> dict:
         if plausible and None not in (pw, prr, ptg):
             # هر سه جزء باید از ۳۰ روز قبل باشند، وگرنه فقط تغییر یک جزء را می‌سنجیم
             prev_nl = pw/1000.0 - prr - ptg/1000.0
+            delta = nl - prev_nl
+            pct = 100 * delta / prev_nl if prev_nl else 0.0
+            if abs(pct) < 1.0:
+                rd = f"{pct:+.2f}٪ — تقریباً ثابت، نه باد موافق نه مخالف"
+            elif pct > 0:
+                rd = f"{pct:+.2f}٪ — تزریق، باد موافق"
+            else:
+                rd = f"{pct:+.2f}٪ — انقباض، باد مخالف"
             d["derived"]["net_liq_trend"] = {
-                "value": nl - prev_nl,
+                "value": delta,
                 "label": "تغییر ۳۰ روزه نقدینگی خالص (میلیارد دلار)",
-                "read": "تزریق — باد موافق" if nl > prev_nl else "انقباض — باد مخالف"}
+                "read": rd}
 
     # ترکیب اشتغال — قانون ۶ وصله ۵.۳
     u, cp = raw.get("UNRATE"), raw.get("CIVPART")
@@ -1114,6 +1129,36 @@ def check_candle_order(df: pd.DataFrame, name: str, tests: list) -> None:
 SYMBOL_ALIAS = {"RNDR": "RENDER"}   # نمادهای تغییرنام‌داده
 
 
+def probe_venues(order: list[str]) -> tuple[list[str], list[tuple[str, str]]]:
+    """
+    قبل از شروع، هر صرافی را با یک درخواست سبک آزمایش می‌کند.
+    صرافی مسدود از فهرست خارج می‌شود تا وقت و سقف نرخ هدر نرود.
+    """
+    live, dead = [], []
+    for vn in order:
+        v = VENUES.get(vn)
+        if v is None:
+            continue
+        before = len(FAILURES)
+        try:
+            df = v.candles("BTC", "1D", 5, http_get)
+        except Exception:
+            df = None
+        if df is not None and len(df) >= 3:
+            live.append(vn)
+        else:
+            why = "پاسخ نداد"
+            for f in FAILURES[before:]:
+                if "۴۵۱" in f or "451" in f:
+                    why = "مسدودیت جغرافیایی (کد ۴۵۱)"
+                    break
+                if "429" in f:
+                    why = "سقف نرخ (کد ۴۲۹)"
+                    break
+            dead.append((vn, why))
+    return live, dead
+
+
 def gather_venues(base: str, order: list[str], price_hint: float | None
                   ) -> tuple[dict, dict, dict, dict]:
     """
@@ -1196,6 +1241,19 @@ def run3(symbol, balance, profile, macro_event, deep, order):
     b = Bundle(symbol=base, balance=balance, profile=profile)
     b.venue_order = order
 
+    print(f"[۰/۵] آزمایش دسترسی صرافی‌ها ...", file=sys.stderr)
+    live, dead = probe_venues(order)
+    b.venue_dead = dead
+    for vn, why in dead:
+        print(f"      ✗ {vn}: {why}", file=sys.stderr)
+    if live:
+        print(f"      ✓ در دسترس: {', '.join(live)}", file=sys.stderr)
+        order = live
+        b.venue_order = live
+    else:
+        print("      ⚠️ هیچ صرافی در دسترس نیست — با ترتیب اصلی ادامه می‌دهم",
+              file=sys.stderr)
+
     print(f"[۱/۵] کندل — تلاش به ترتیب {', '.join(order)} ...", file=sys.stderr)
     got, vn, pair = candles_first_ok(base, order, 1000 if deep else 400, b.tests)
     b.candles, b.candle_venue, b.pair_btc = got, vn, pair
@@ -1252,6 +1310,10 @@ def report3(b: Bundle) -> str:
       "فدرال‌رزرو سنت‌لوئیس، کوین‌گکو و دیفای‌لاما.")
     A("")
 
+    if b.venue_dead:
+        A("**صرافی‌های در دسترس نبودند:** " +
+          "، ".join(f"{v} ({w})" for v, w in b.venue_dead))
+        A("")
     A("## ۰ — تست‌های سلامت")
     A(""); A("| تست | نتیجه | جزئیات |"); A("|---|---|---|")
     for n, ok, d in b.tests:
