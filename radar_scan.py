@@ -174,13 +174,16 @@ def flags(row: dict) -> str:
 # ═══════════════════ گزارش ═══════════════════
 
 def build_scan_report(rows: list[dict], macro: dict, fred: dict,
-                      order: list[str], top: int) -> str:
+                      order: list[str], top: int, dead: list = None) -> str:
     L: list[str] = []; A = L.append
     now = datetime.now(UTC)
     A(f"# اسکن رادار ۵.۲ — {len(rows)} کوین")
     A("")
-    A(f"تولید: **{now.strftime('%Y-%m-%d %H:%M UTC')}** | صرافی‌ها: {', '.join(order)}")
+    A(f"تولید: **{now.strftime('%Y-%m-%d %H:%M UTC')}** | صرافی‌های فعال: {', '.join(order)}")
     A("")
+    if dead:
+        A("**در دسترس نبودند:** " + "، ".join(f"{v} ({w})" for v, w in dead))
+        A("")
     A("> این یک **غربال** است، نه تحلیل. هیچ ورودی از روی این جدول باز نمی‌شود. "
       "خروجی‌اش فقط فهرست نامزدهای تحلیل عمیق است.")
     A("")
@@ -306,6 +309,17 @@ def main() -> int:
     R.fetch_macro(macro)
     fred = R.fetch_fred(R.http_text)
 
+    print("[۰] آزمایش دسترسی صرافی‌ها ...", file=sys.stderr)
+    live, dead = R.probe_venues(order)
+    for vn, why in dead:
+        print(f"     ✗ {vn}: {why}", file=sys.stderr)
+    if live:
+        print(f"     ✓ در دسترس: {', '.join(live)}", file=sys.stderr)
+        order = live
+    else:
+        print("     ⚠️ هیچ صرافی پاسخ نداد", file=sys.stderr)
+    dead_note = dead
+
     # مرجع بیت‌کوین برای قدرت نسبی
     print("[۲] مرجع بیت‌کوین ...", file=sys.stderr)
     btc_got, _, _ = R.candles_first_ok("BTC", order, 300, [])
@@ -326,7 +340,7 @@ def main() -> int:
         rows.append(r or {"symbol": s, "score": None, "covered": 0, "price": None})
         time.sleep(0.4)   # احترام به سقف نرخ صرافی‌ها
 
-    rep = build_scan_report(rows, macro, fred, order, a.top)
+    rep = build_scan_report(rows, macro, fred, order, a.top, dead_note)
 
     if a.stdout:
         print(rep)
