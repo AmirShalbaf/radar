@@ -37,6 +37,7 @@ PRESETS = {
 
 def score_symbol(base: str, order: list[str], btc_close: pd.Series | None
                  ) -> dict | None:
+    base = R.SYMBOL_ALIAS.get(base.upper(), base.upper())
     """
     شش سنجه غربال. هر کدام که داده نداشته باشد None می‌ماند — هرگز صفر فرضی.
     امتیاز نهایی فقط روی سنجه‌های موجود نرمال می‌شود (قانون سوگیری صفر).
@@ -100,6 +101,7 @@ def score_symbol(base: str, order: list[str], btc_close: pd.Series | None
     if ga and tp and np.mean(tp) > 0:
         row["crowd_vs_whale"] = float(np.mean(ga) / np.mean(tp))
 
+    row["deriv_venues"] = ",".join(sorted(set(fund) | set(oi) | set(pos))) or "—"
     row["score"], row["covered"] = composite(row)
     return row
 
@@ -199,11 +201,16 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
 
     if R.FAILURES:
         from collections import Counter
-        cnt = Counter(f.split(":")[0].strip() for f in R.FAILURES)
+        def key(f):
+            src = f.split(":")[0].strip()
+            rest = f.split(":", 1)[1] if ":" in f else ""
+            why = rest.strip()[:60]
+            return (src, why)
+        cnt = Counter(key(f) for f in R.FAILURES)
         A("### منابعی که پاسخ ندادند"); A("")
-        A("| منبع | تعداد |"); A("|---|---|")
-        for k, v in cnt.most_common(12):
-            A(f"| {k} | {v} |")
+        A("| منبع | علت | تعداد |"); A("|---|---|---|")
+        for (src, why), v in cnt.most_common(15):
+            A(f"| {src} | {why or '—'} | {v} |")
         A(""); A("> اینها «داده ندارم» هستند و از پوشش کم می‌شوند."); A("")
 
     ok = [r for r in rows if r.get("score") is not None]
