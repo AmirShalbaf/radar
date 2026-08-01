@@ -197,6 +197,15 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
         A(f"| {d['label']} | {val} — {d['read']} |")
     A("")
 
+    if R.FAILURES:
+        from collections import Counter
+        cnt = Counter(f.split(":")[0].strip() for f in R.FAILURES)
+        A("### منابعی که پاسخ ندادند"); A("")
+        A("| منبع | تعداد |"); A("|---|---|")
+        for k, v in cnt.most_common(12):
+            A(f"| {k} | {v} |")
+        A(""); A("> اینها «داده ندارم» هستند و از پوشش کم می‌شوند."); A("")
+
     ok = [r for r in rows if r.get("score") is not None]
     ok.sort(key=lambda r: r["score"], reverse=True)
 
@@ -235,8 +244,11 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
         A(f"- ساختار: قیمت {R.fmt_num(r.get('vs_ema200'),1)}٪ نسبت به EMA200، "
           f"{R.fmt_num(r.get('vs_ema50'),1)}٪ نسبت به EMA50")
         if r.get("rs_btc_30d") is not None:
-            A(f"- قدرت نسبی ۳۰ روزه در برابر بیت‌کوین: {r['rs_btc_30d']:+.1f}٪ "
-              f"({'بهتر از بیت‌کوین' if r['rs_btc_30d']>0 else 'ضعیف‌تر از بیت‌کوین'})")
+            if r["symbol"] == "BTC":
+                A("- قدرت نسبی: بیت‌کوین خودش معیار است")
+            else:
+                A(f"- قدرت نسبی ۳۰ روزه در برابر بیت‌کوین: {r['rs_btc_30d']:+.1f}٪ "
+                  f"({'بهتر از بیت‌کوین' if r['rs_btc_30d']>0 else 'ضعیف‌تر از بیت‌کوین'})")
         if r.get("atr_pct"):
             A(f"- نوسان روزانه {r['atr_pct']:.2f}٪ ← استاپ ۱.۵ برابری یعنی "
               f"{r['atr_pct']*1.5:.2f}٪، سقف اهرم حدود {math.floor(100/(r['atr_pct']*1.5*1.5))}x")
