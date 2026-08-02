@@ -169,11 +169,16 @@ def short_composite(row: dict) -> tuple[float | None, int]:
     اهرمی داخلش نشسته‌اند. بدترین شورت کوینی است که از قبل له شده —
     آنجا سوختی برای ریزش نمانده و جهش‌های شدید کمین کرده‌اند.
 
-    خروجی ۰ تا ۲. هرچه بالاتر، شورت جذاب‌تر.
+    شش سنجه. خروجی ۰ تا ۲. هرچه بالاتر، شورت جذاب‌تر.
+
+    درباره وزن ساختار: با افزودن پروفایل حجم، وزن فاصله از میانگین متحرک
+    کم شد. دلیل: هر دو «قیمت پایین‌تر از قبل» را می‌سنجند و تا حدی هم‌خطی‌اند.
+    ولی مستقل هم هستند — کوینی می‌تواند زیر میانگین باشد ولی هنوز داخل
+    ناحیه ارزش، یعنی بازار هنوز آن قیمت را قبول دارد.
     """
     parts: list[tuple[float, float]] = []
 
-    # ۱ — ضعف تازه، نه ضعف کهنه (وزن ۳۰٪)
+    # ۱ — ضعف تازه نسبت به میانگین، نه ضعف کهنه (وزن ۲۰٪)
     v200, v50 = row.get("vs_ema200"), row.get("vs_ema50")
     if v50 is not None:
         if v50 >= 0:
@@ -184,9 +189,30 @@ def short_composite(row: dict) -> tuple[float | None, int]:
             s = max(0.3, 2.0 - (abs(v50) - 12) / 10)   # خیلی دور، کشیده شده
         if v200 is not None and v200 < -30:
             s *= 0.5                      # از قبل له شده، سوخت کم
-        parts.append((max(0.0, min(2.0, s)), 0.30))
+        parts.append((max(0.0, min(2.0, s)), 0.20))
 
-    # ۲ — RSI در ناحیه شکار، نه در اشباع فروش (وزن ۲۰٪)
+    # ۲ — پذیرش بازار: موقعیت نسبت به ناحیه ارزش (وزن ۲۲٪)
+    #    این تنها سنجه‌ای است که می‌گوید بازار قیمت را **رد کرده** یا نه.
+    #    میانگین متحرک یک عدد محاسباتی است؛ ناحیه ارزش رأی واقعی حجم است.
+    zone, to_val = row.get("vp_zone"), row.get("to_val")
+    if zone:
+        if zone == "بالای ناحیه ارزش":
+            s = 0.0                       # خریدار کنترل دارد — شورت خلاف جریان
+        elif zone == "داخل ناحیه ارزش":
+            s = 0.4                       # بازار هنوز این قیمت را قبول دارد
+        else:                             # زیر ناحیه ارزش — رد شده
+            d = abs(to_val) if to_val is not None else 5.0
+            if d < 1.5:
+                s = 1.2                   # تازه رد شده، هنوز کم‌عمق
+            elif d <= 8:
+                s = 2.0                   # ناحیه ایده‌آل: رد قطعی، ریزش تازه
+            elif d <= 15:
+                s = 1.5
+            else:
+                s = 0.8                   # خیلی دور افتاده، بازگشت به میانگین محتمل
+        parts.append((s, 0.22))
+
+    # ۳ — RSI در ناحیه شکار، نه در اشباع فروش (وزن ۱۸٪)
     rsi = row.get("rsi")
     if rsi is not None:
         if rsi < 30:
@@ -199,9 +225,9 @@ def short_composite(row: dict) -> tuple[float | None, int]:
             s = 1.4
         else:
             s = 0.8                       # هنوز داغ، شکستی تأیید نشده
-        parts.append((s, 0.20))
+        parts.append((s, 0.18))
 
-    # ۳ — لانگ‌های اهرمی به‌عنوان سوخت (وزن ۲۵٪)
+    # ۴ — لانگ‌های اهرمی به‌عنوان سوخت (وزن ۲۲٪)
     fnd, oic = row.get("funding_8h"), row.get("oi_chg24")
     if fnd is not None:
         s = 0.0
@@ -211,9 +237,9 @@ def short_composite(row: dict) -> tuple[float | None, int]:
         else:            s = 0.2          # فاندینگ منفی، شورت‌ها از قبل ازدحام دارند
         if oic is not None and oic > 5 and fnd > 0:
             s = min(2.0, s + 0.5)         # بهره باز در حال رشد با فاندینگ مثبت
-        parts.append((s, 0.25))
+        parts.append((s, 0.22))
 
-    # ۴ — ضعف نسبی، ولی نه فروپاشی کامل (وزن ۱۵٪)
+    # ۵ — ضعف نسبی، ولی نه فروپاشی کامل (وزن ۱۲٪)
     r30, r7 = row.get("rs_btc_30d"), row.get("rs_btc_7d")
     if r30 is not None:
         if r30 > 5:      s = 0.2          # قوی‌تر از بیت‌کوین، شورت خلاف جریان
@@ -222,12 +248,12 @@ def short_composite(row: dict) -> tuple[float | None, int]:
         else:            s = 0.9          # از قبل خیلی عقب افتاده
         if r7 is not None and r7 < 0 and r30 > 0:
             s = 1.6                       # فرسایش تازه — بهترین لحظه شورت
-        parts.append((s, 0.15))
+        parts.append((s, 0.12))
 
-    # ۵ — جمعیت لانگ در برابر نهنگ شورت (وزن ۱۰٪)
+    # ۶ — جمعیت لانگ در برابر نهنگ شورت (وزن ۶٪)
     cw = row.get("crowd_vs_whale")
     if cw is not None:
-        parts.append((max(0.0, min(2.0, (cw - 1.0) / 1.2)), 0.10))
+        parts.append((max(0.0, min(2.0, (cw - 1.0) / 1.2)), 0.06))
 
     if not parts:
         return None, 0
@@ -423,12 +449,17 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
           "سوخت ریزش تمام شده و مستعد جهش است. بهترین شورت، ضعف **تازه** با "
           "لانگ اهرمی هنوز نشسته است.")
         A("")
-        A("| # | نماد | امتیاز شورت | ضعف تازه | RSI | فاندینگ | جمعیت/نهنگ | وضعیت |")
-        A("|---|---|---|---|---|---|---|---|")
+        A("| # | نماد | امتیاز شورت | vs EMA50 | **ناحیه ارزش** | RSI | فاندینگ | جمعیت/نهنگ | وضعیت |")
+        A("|---|---|---|---|---|---|---|---|---|")
         for i, r in enumerate(sh[:8], 1):
             v50 = r.get("vs_ema50"); rsi = r.get("rsi")
+            z = r.get("vp_zone")
             if rsi is not None and rsi < 30:
                 st = "اشباع فروش — پرهیز"
+            elif z == "بالای ناحیه ارزش":
+                st = "**بالای ناحیه ارزش — شورت خلاف جریان**"
+            elif z == "داخل ناحیه ارزش":
+                st = "⚠️ بازار هنوز قیمت را قبول دارد"
             elif v50 is not None and v50 >= 0:
                 st = "هنوز نشکسته"
             elif r.get("vs_ema200") is not None and r["vs_ema200"] < -30:
@@ -436,9 +467,13 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
             elif r.get("rs_decay"):
                 st = "**فرسایش تازه — بهترین لحظه**"
             else:
-                st = "ضعف در جریان"
+                st = "زیر ناحیه ارزش — رد شده"
+            tv = r.get("to_val")
+            va_txt = ("—" if not z else
+                      f"{tv:+.1f}%" if (z == "زیر ناحیه ارزش" and tv is not None)
+                      else ("داخل" if z == "داخل ناحیه ارزش" else "بالای"))
             A(f"| {i} | **{r['symbol']}** | **{r['short_score']:.2f}** "
-              f"| {f'{v50:+.1f}%' if v50 is not None else '—'} "
+              f"| {f'{v50:+.1f}%' if v50 is not None else '—'} | {va_txt} "
               f"| {f'{rsi:.1f}' if rsi is not None else '—'} "
               f"| {f'{r[chr(34)]}' if False else (f'{r["funding_8h"]:+.4f}%' if r.get('funding_8h') is not None else '—')} "
               f"| {f'{r["crowd_vs_whale"]:.2f}x' if r.get('crowd_vs_whale') else '—'} | {st} |")
@@ -492,6 +527,7 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
     A("| ناحیه ارزش | بازه‌ای که ۷۰٪ حجم در آن رخ داده. زیرش = کنترل فروشنده |")
     A("| روز | طول پنجره پروفایل حجم به روز. زیر ۱۵ = کم‌اعتبار |")
     A("| قدرت‌متوقف | ۳۰ روزه مثبت ولی ۷ روزه در باند ±۱٪ — نه رشد نه افت |")
+    A("| ناحیه ارزش در جدول شورت | درصد زیر مرز پایین. ۱.۵ تا ۸ درصد = ناحیه ایده‌آل شورت |")
     A("")
     A("> **امتیاز بالا مجوز ورود نیست.** فقط می‌گوید کدام کوین ارزش تحلیل کامل رادار را دارد.")
     A("")
