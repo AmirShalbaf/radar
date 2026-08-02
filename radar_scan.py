@@ -101,8 +101,13 @@ def score_symbol(base: str, order: list[str], btc_ref: pd.DataFrame | None
     # پرچم فرسایش: قدرت بلندمدت مثبت ولی کوتاه‌مدت منفی
     r30, r7 = row.get("rs_btc_30d"), row.get("rs_btc_7d")
     if r30 is not None and r7 is not None:
-        row["rs_decay"] = (r30 > 0 and r7 < 0)
-        row["rs_accel"] = (r30 < 0 and r7 > 0)
+        # باند مرده: ۰.۱٪ اختلاف در پنجره ۷ روزه نویز است، نه چرخش.
+        # بدون این باند، هر کوینی که تصادفاً کسری از درصد عقب بیفتد
+        # پرچم می‌گیرد و پرچم بی‌ارزش می‌شود.
+        DEAD = 1.0
+        row["rs_decay"] = (r30 > DEAD and r7 < -DEAD)
+        row["rs_accel"] = (r30 < -DEAD and r7 > DEAD)
+        row["rs_flat"] = (abs(r7) <= DEAD and r30 > DEAD)
 
     # ── مشتقات
     fund, oi, pos, _ = R.gather_venues(base, order, price)
@@ -135,6 +140,7 @@ def score_symbol(base: str, order: list[str], btc_ref: pd.DataFrame | None
             row["poc"] = a["poc"]
             row["val"], row["vah"] = a["val"], a["vah"]
             row["vp_from"], row["vp_to"] = a["from"], a["to"]
+            row["vp_bars"] = a.get("candles")
             row["vs_poc"] = 100 * (price - a["poc"]) / a["poc"] if a["poc"] else None
             if price > a["vah"]:
                 row["vp_zone"] = "بالای ناحیه ارزش"
@@ -291,6 +297,8 @@ def flags(row: dict) -> str:
         f.append("⚠️فرسایش‌قدرت")
     if row.get("rs_accel"):
         f.append("شتاب‌گیری")
+    if row.get("rs_flat"):
+        f.append("قدرت‌متوقف")
     if row.get("oi_chg24") is not None and row.get("funding_8h") is not None \
        and row["oi_chg24"] > 8 and row["funding_8h"] <= 0:
         f.append("فشارشورت")
@@ -380,15 +388,23 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
         A("---"); A(""); A("## ۲ — پروفایل حجم بازه ثابت (لنگر موج جاری)"); A("")
         A("> نسخه سبک: فقط لنگر الف. سه‌لنگر کامل و آزمون هم‌گرایی در تحلیل عمیق.")
         A("")
-        A("| نماد | بازه | نقطه کنترل | مرز پایین | مرز بالا | موقعیت | نسبت به POC | تا مرز پایین |")
+        A("| نماد | بازه | کندل | نقطه کنترل | مرز پایین | مرز بالا | موقعیت | نسبت به POC |")
         A("|---|---|---|---|---|---|---|---|")
         for r in vp:
+            nb = r.get("vp_bars")
+            nb_txt = f"{nb}" if nb else "—"
+            if nb and nb < 15:
+                nb_txt += " ⚠️"
             A(f"| **{r['symbol']}** | {r.get('vp_from','—')} تا {r.get('vp_to','—')} "
-              f"| **{R.fmt_num(r['poc'])}** | {R.fmt_num(r.get('val'))} "
+              f"| {nb_txt} | **{R.fmt_num(r['poc'])}** | {R.fmt_num(r.get('val'))} "
               f"| {R.fmt_num(r.get('vah'))} | {r.get('vp_zone','—')} "
-              f"| {f"{r['vs_poc']:+.1f}%" if r.get('vs_poc') is not None else '—'} "
-              f"| {f"{r['to_val']:+.1f}%" if r.get('to_val') is not None else '—'} |")
+              f"| {f"{r['vs_poc']:+.1f}%" if r.get('vs_poc') is not None else '—'} |")
         A("")
+        thin = [r["symbol"] for r in vp if r.get("vp_bars") and r["vp_bars"] < 15]
+        if thin:
+            A(f"⚠️ **پنجره کوتاه ({len(thin)}):** {'، '.join(thin)} — "
+              "کمتر از ۱۵ کندل. نقطه کنترل کم‌اعتبار است.")
+            A("")
         below = [r["symbol"] for r in vp if r.get("vp_zone") == "زیر ناحیه ارزش"]
         above = [r["symbol"] for r in vp if r.get("vp_zone") == "بالای ناحیه ارزش"]
         if below:
@@ -472,6 +488,8 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
     A("| اشباع فروش — پرهیز | RSI زیر ۳۰. سوخت ریزش تمام شده، ریسک جهش |")
     A("| نقطه کنترل (POC) | قیمتی که بیشترین حجم آنجا معامله شده — قوی‌ترین سطح |")
     A("| ناحیه ارزش | بازه‌ای که ۷۰٪ حجم در آن رخ داده. زیرش = کنترل فروشنده |")
+    A("| کندل | تعداد کندل پنجره پروفایل حجم. زیر ۱۵ = کم‌اعتبار |")
+    A("| قدرت‌متوقف | ۳۰ روزه مثبت ولی ۷ روزه در باند ±۱٪ — نه رشد نه افت |")
     A("")
     A("> **امتیاز بالا مجوز ورود نیست.** فقط می‌گوید کدام کوین ارزش تحلیل کامل رادار را دارد.")
     A("")
