@@ -165,6 +165,7 @@ class Bundle:
     f_agg: dict = field(default_factory=dict)
     fred: dict = field(default_factory=dict)
     venue_dead: list = field(default_factory=list)
+    fib: dict | None = None
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -413,6 +414,66 @@ def three_anchors(df: pd.DataFrame, macro_event: str | None,
         except Exception as exc:
             FAILURES.append(f"لنگر ج: تاریخ نامعتبر {macro_event} — {exc}")
     return out
+
+
+FIB_LEVELS = [0.236, 0.382, 0.5, 0.618, 0.786]
+
+
+def fibonacci(df: pd.DataFrame, lookback: int = 180) -> dict | None:
+    """
+    اصلاح فیبوناچی روی آخرین نوسان ساختاری معتبر.
+
+    ⚠️ طبق فهرست رد‌شده‌های رادار، فیبوناچی **هرگز منبع اصلی سطح نیست**.
+    مبنای نظری ندارد و کارکردش فقط هماهنگی جمعی معامله‌گران است.
+    خروجی این تابع تنها به‌عنوان **لایه دوم تأیید** مصرف می‌شود:
+    اگر سطح فیبوناچی با نقطه کنترل پروفایل حجم یکی شد، اعتبار سطح بالا می‌رود.
+    در تضاد، **پروفایل حجم برنده است** چون از داده معامله واقعی می‌آید.
+    """
+    if df is None or len(df) < 40:
+        return None
+    seg = df.iloc[-min(lookback, len(df)):].reset_index(drop=True)
+    hi_i = int(seg["high"].idxmax())
+    lo_i = int(seg["low"].idxmin())
+    hi, lo = float(seg["high"].iloc[hi_i]), float(seg["low"].iloc[lo_i])
+    if hi <= lo:
+        return None
+    rng = hi - lo
+    down = hi_i < lo_i          # سقف قبل از کف ← نوسان نزولی
+    lvls = {}
+    for f in FIB_LEVELS:
+        # در نوسان نزولی، اصلاح از کف به بالا؛ در صعودی، از سقف به پایین
+        lvls[f] = round(lo + rng * f if down else hi - rng * f, 8)
+    price = float(df["close"].iloc[-1])
+    nearest = min(lvls.items(), key=lambda kv: abs(kv[1] - price))
+    return {
+        "direction": "نزولی" if down else "صعودی",
+        "swing_high": round(hi, 8), "swing_low": round(lo, 8),
+        "high_date": str(seg["ts"].iloc[hi_i].date()),
+        "low_date": str(seg["ts"].iloc[lo_i].date()),
+        "levels": lvls,
+        "nearest": {"ratio": nearest[0], "price": nearest[1],
+                    "distance_pct": round(100 * (price - nearest[1]) / nearest[1], 2)},
+    }
+
+
+def fib_vp_confluence(fib: dict | None, anchors: dict, atr: float | None) -> str:
+    """
+    آزمون هم‌نشینی: آیا سطح فیبوناچی با نقطه کنترل پروفایل حجم یکی می‌شود؟
+    آستانه: نصف ATR روزانه — همان معیار آزمون هم‌گرایی لنگرها.
+    """
+    if not fib or not anchors or not atr:
+        return "قابل ارزیابی نیست"
+    pocs = [(k, a["poc"]) for k, a in anchors.items() if a.get("poc")]
+    if not pocs:
+        return "نقطه کنترلی برای مقایسه نیست"
+    hits = []
+    for ratio, lvl in fib["levels"].items():
+        for k, poc in pocs:
+            if abs(lvl - poc) < atr / 2:
+                hits.append(f"فیبو {ratio} ({lvl:.6f}) با نقطه کنترل لنگر {k} ({poc:.6f})")
+    if hits:
+        return "**هم‌نشینی دارد** — " + "؛ ".join(hits[:3])
+    return "هم‌نشینی ندارد — پروفایل حجم مرجع می‌ماند، فیبوناچی امتیاز نمی‌گیرد"
 
 
 def convergence(anchors: dict[str, dict], atr_daily: float | None) -> tuple[str, str]:
@@ -919,6 +980,45 @@ def fetch_macro(out: dict[str, Field]) -> None:
         except (KeyError, TypeError, ZeroDivisionError) as exc:
             FAILURES.append(f"عرضه استیبل‌کوین: {exc}")
 
+    # ── تسلط تتر به‌تنهایی. با «تسلط کل استیبل‌کوین‌ها» فرق دارد:
+    #    دلار غیرمتمرکز و توکن‌های بازده‌دار رفتار متفاوتی از پول داغ تتر دارند.
+    t = http_get("https://api.coingecko.com/api/v3/coins/markets",
+                 {"vs_currency": "usd", "ids": "tether,usd-coin", "per_page": "5"},
+                 label="ارزش بازار استیبل‌کوین‌ها")
+    tether_mc = usdc_mc = None
+    if isinstance(t, list):
+        for row in t:
+            if row.get("id") == "tether":
+                tether_mc = row.get("market_cap")
+            elif row.get("id") == "usd-coin":
+                usdc_mc = row.get("market_cap")
+    tm = out.get("total_mcap")
+    if tether_mc and tm and tm.ok and tm.value:
+        out["usdt_mcap"] = Field(tether_mc, "CoinGecko", datetime.now(UTC))
+        out["usdt_dominance"] = Field(
+            100.0 * tether_mc / tm.value, "محاسبه‌شده", datetime.now(UTC),
+            "تسلط تتر — بالا رفتنش یعنی پول به حاشیه امن رفته")
+    if usdc_mc and tm and tm.ok and tm.value:
+        out["usdc_dominance"] = Field(100.0 * usdc_mc / tm.value,
+                                      "محاسبه‌شده", datetime.now(UTC))
+
+    # ── TOTAL2 و TOTAL3: ارزش بازار بدون بیت‌کوین، و بدون بیت‌کوین و اتریوم
+    bd_, ed_ = out.get("btc_dominance"), out.get("eth_dominance")
+    if tm and tm.ok and bd_ and bd_.ok:
+        btc_mc_ = tm.value * bd_.value / 100.0
+        out["total2"] = Field(tm.value - btc_mc_, "محاسبه‌شده", datetime.now(UTC),
+                              "ارزش بازار آلت‌کوین‌ها، بدون بیت‌کوین")
+        if ed_ and ed_.ok:
+            eth_mc_ = tm.value * ed_.value / 100.0
+            out["total3"] = Field(tm.value - btc_mc_ - eth_mc_, "محاسبه‌شده",
+                                  datetime.now(UTC), "بدون بیت‌کوین و اتریوم")
+            if out.get("stable_supply") and out["stable_supply"].ok:
+                # TOTAL3 منهای استیبل‌کوین = پول ریسک‌پذیر واقعی در آلت‌ها
+                out["total3_ex_stable"] = Field(
+                    tm.value - btc_mc_ - eth_mc_ - out["stable_supply"].value,
+                    "محاسبه‌شده", datetime.now(UTC),
+                    "پول واقعاً ریسک‌پذیر در آلت‌کوین‌ها")
+
     # تسلط بدون استیبل‌کوین — از ترکیب دو منبع بالا محاسبه می‌شود
     bd, tm, ss = out.get("btc_dominance"), out.get("total_mcap"), out.get("stable_supply")
     if bd and tm and ss and bd.ok and tm.ok and ss.ok:
@@ -1288,9 +1388,10 @@ def run3(symbol, balance, profile, macro_event, deep, order):
     fetch_fundamental(base, b.fundamental)
     fetch_unlocks(base, b.fundamental)
 
-    print("[۵/۵] پروفایل حجم ...", file=sys.stderr)
+    print("[۵/۵] پروفایل حجم و فیبوناچی ...", file=sys.stderr)
     if "1D" in b.candles:
         b.vprofile = three_anchors(b.candles["1D"], macro_event, b.candles.get("4H"))
+        b.fib = fibonacci(b.candles["1D"])
     return b
 
 
@@ -1348,6 +1449,32 @@ def report3(b: Bundle) -> str:
             if len(c): atr_d = float(c.iloc[-1]["atr14"])
         vd, why = convergence(b.vprofile, atr_d)
         A(f"**آزمون هم‌گرایی: {vd}** — {why}"); A("")
+    else:
+        A("**داده ندارم**"); A("")
+
+    # ── فیبوناچی: فقط لایه تأیید
+    A("### فیبوناچی — لایه دوم تأیید، نه منبع سطح")
+    A("")
+    if b.fib:
+        f = b.fib
+        A(f"نوسان مرجع: **{f['direction']}** | سقف {fmt_num(f['swing_high'])} "
+          f"({f['high_date']}) تا کف {fmt_num(f['swing_low'])} ({f['low_date']})")
+        A("")
+        A("| نسبت | سطح |"); A("|---|---|")
+        for r_, v_ in f["levels"].items():
+            mark = " ← نزدیک‌ترین" if r_ == f["nearest"]["ratio"] else ""
+            A(f"| {r_} | {fmt_num(v_)}{mark} |")
+        A("")
+        atr_d2 = None
+        if "1D" in b.candles:
+            c2 = b.candles["1D"]; c2 = c2[c2["confirm"] == 1]
+            if len(c2): atr_d2 = float(c2.iloc[-1]["atr14"])
+        A(f"**آزمون هم‌نشینی با پروفایل حجم:** {fib_vp_confluence(b.fib, b.vprofile, atr_d2)}")
+        A("")
+        A("> فیبوناچی مبنای نظری ندارد و در فهرست رد‌شده‌های رادار است. "
+          "فقط وقتی امتیاز می‌گیرد که با نقطه کنترل پروفایل حجم یکی شود. "
+          "در تضاد، **پروفایل حجم برنده است**.")
+        A("")
     else:
         A("**داده ندارم**"); A("")
 
@@ -1442,11 +1569,16 @@ def report3(b: Bundle) -> str:
     A("---"); A(""); A("## ۶ — رژیم بازار رمزارز"); A("")
     A("| سنجه | مقدار |"); A("|---|---|")
     m = b.macro
-    for lab, key, f in [("تسلط بیت‌کوین","btc_dominance","{:.2f}%"),
+    for lab, key, f in [("ارزش کل بازار (TOTAL)","total_mcap","{:,.0f}"),
+                        ("**TOTAL2** — بدون بیت‌کوین","total2","{:,.0f}"),
+                        ("**TOTAL3** — بدون بیت‌کوین و اتریوم","total3","{:,.0f}"),
+                        ("TOTAL3 منهای استیبل","total3_ex_stable","{:,.0f}"),
+                        ("**تسلط تتر (USDT.D)**","usdt_dominance","{:.2f}%"),
+                        ("تسلط یواس‌دی‌سی","usdc_dominance","{:.2f}%"),
+                        ("تسلط بیت‌کوین","btc_dominance","{:.2f}%"),
                         ("**تسلط بدون استیبل‌کوین**","btc_dom_ex_stable","{:.2f}%"),
                         ("تسلط اتریوم","eth_dominance","{:.2f}%"),
                         ("سهم استیبل‌کوین","stable_dominance","{:.2f}%"),
-                        ("ارزش کل بازار","total_mcap","{:,.0f}"),
                         ("ترس و طمع","fear_greed","{}"),
                         ("ترس و طمع ۷ روز قبل","fear_greed_7d_ago","{}"),
                         ("عرضه استیبل‌کوین","stable_supply","{:,.0f}"),
