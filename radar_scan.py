@@ -35,7 +35,17 @@ PRESETS = {
 
 # ═══════════════════ امتیازدهی غربال ═══════════════════
 
-def score_symbol(base: str, order: list[str], btc_close: pd.Series | None
+def _close_at(df: pd.DataFrame, ts) -> float | None:
+    """آخرین قیمت بسته‌شدن در تاریخ ts یا قبل از آن. هم‌ترازی تاریخی، نه موقعیتی."""
+    if df is None or len(df) == 0:
+        return None
+    m = df["ts"] <= ts
+    if not m.any():
+        return None
+    return float(df.loc[m, "close"].iloc[-1])
+
+
+def score_symbol(base: str, order: list[str], btc_ref: pd.DataFrame | None
                  ) -> dict | None:
     base = R.SYMBOL_ALIAS.get(base.upper(), base.upper())
     """
@@ -72,17 +82,22 @@ def score_symbol(base: str, order: list[str], btc_close: pd.Series | None
         row["vol_x"] = float(r["vol"]) / float(r["vol_ma20"])
     # ۶ — قدرت نسبی به بیت‌کوین: دو پنجره، ۳۰ روزه و ۷ روزه
     #     پنجره بلند جهت را می‌گوید، پنجره کوتاه می‌گوید جهت هنوز زنده است یا نه.
-    if btc_close is not None:
-        for win, tag in [(31, "30d"), (8, "7d")]:
-            if len(d) > win and len(btc_close) > win:
-                try:
-                    cw = 100 * (price / float(d["close"].iloc[-win]) - 1)
-                    bw = 100 * (float(btc_close.iloc[-1]) /
-                                float(btc_close.iloc[-win]) - 1)
-                    row[f"rs_btc_{tag}"] = cw - bw
-                    row[f"chg_{tag}"] = cw
-                except Exception:
-                    pass
+    if btc_ref is not None and len(btc_ref):
+        # هم‌ترازی بر اساس **تاریخ**، نه شماره ردیف. اگر تعداد کندل کوین و
+        # بیت‌کوین فرق کند، مقایسه موقعیتی دو تاریخ متفاوت را کنار هم می‌گذارد.
+        now_ts = r["ts"]
+        b_now = _close_at(btc_ref, now_ts)
+        for days, tag in [(30, "30d"), (7, "7d")]:
+            back = now_ts - pd.Timedelta(days=days)
+            c_then = _close_at(d, back)
+            b_then = _close_at(btc_ref, back)
+            if None in (c_then, b_then, b_now) or c_then <= 0 or b_then <= 0:
+                continue
+            cw = 100 * (price / c_then - 1)
+            bw = 100 * (b_now / b_then - 1)
+            row[f"rs_btc_{tag}"] = cw - bw
+            row[f"chg_{tag}"] = cw
+            row[f"rs_{tag}_from"] = str(pd.Timestamp(back).date())
     # پرچم فرسایش: قدرت بلندمدت مثبت ولی کوتاه‌مدت منفی
     r30, r7 = row.get("rs_btc_30d"), row.get("rs_btc_7d")
     if r30 is not None and r7 is not None:
@@ -109,6 +124,29 @@ def score_symbol(base: str, order: list[str], btc_close: pd.Series | None
         row["ls_whale"] = float(np.mean(tp))
     if ga and tp and np.mean(tp) > 0:
         row["crowd_vs_whale"] = float(np.mean(ga) / np.mean(tp))
+
+    # ── پروفایل حجم بازه ثابت، نسخه سبک برای غربال.
+    #    فقط لنگر الف (کف تا سقف موج جاری) + موقعیت قیمت نسبت به ناحیه ارزش.
+    #    نسخه کامل سه‌لنگری در radar_fetch3.py می‌ماند.
+    try:
+        anch = R.three_anchors(got["1D"], None, got.get("4H"))
+        a = anch.get("A") or anch.get("B")
+        if a:
+            row["poc"] = a["poc"]
+            row["val"], row["vah"] = a["val"], a["vah"]
+            row["vp_from"], row["vp_to"] = a["from"], a["to"]
+            row["vs_poc"] = 100 * (price - a["poc"]) / a["poc"] if a["poc"] else None
+            if price > a["vah"]:
+                row["vp_zone"] = "بالای ناحیه ارزش"
+            elif price < a["val"]:
+                row["vp_zone"] = "زیر ناحیه ارزش"
+            else:
+                row["vp_zone"] = "داخل ناحیه ارزش"
+            # فاصله تا مرزها — همان اعدادی که استاپ و هدف از آن ساخته می‌شود
+            row["to_val"] = 100 * (price - a["val"]) / price if price else None
+            row["to_vah"] = 100 * (a["vah"] - price) / price if price else None
+    except Exception as exc:
+        R.FAILURES.append(f"{base} پروفایل حجم: {type(exc).__name__}")
 
     row["deriv_venues"] = ",".join(sorted(set(fund) | set(oi) | set(pos))) or "—"
     row["score"], row["covered"] = composite(row)
@@ -337,10 +375,32 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
         A(f"| {r['symbol']} | {flags(r)} | {cw} |")
     A("")
 
+    vp = [r for r in ok if r.get("poc")]
+    if vp:
+        A("---"); A(""); A("## ۲ — پروفایل حجم بازه ثابت (لنگر موج جاری)"); A("")
+        A("> نسخه سبک: فقط لنگر الف. سه‌لنگر کامل و آزمون هم‌گرایی در تحلیل عمیق.")
+        A("")
+        A("| نماد | بازه | نقطه کنترل | مرز پایین | مرز بالا | موقعیت | نسبت به POC | تا مرز پایین |")
+        A("|---|---|---|---|---|---|---|---|")
+        for r in vp:
+            A(f"| **{r['symbol']}** | {r.get('vp_from','—')} تا {r.get('vp_to','—')} "
+              f"| **{R.fmt_num(r['poc'])}** | {R.fmt_num(r.get('val'))} "
+              f"| {R.fmt_num(r.get('vah'))} | {r.get('vp_zone','—')} "
+              f"| {f"{r['vs_poc']:+.1f}%" if r.get('vs_poc') is not None else '—'} "
+              f"| {f"{r['to_val']:+.1f}%" if r.get('to_val') is not None else '—'} |")
+        A("")
+        below = [r["symbol"] for r in vp if r.get("vp_zone") == "زیر ناحیه ارزش"]
+        above = [r["symbol"] for r in vp if r.get("vp_zone") == "بالای ناحیه ارزش"]
+        if below:
+            A(f"**زیر ناحیه ارزش ({len(below)}):** {'، '.join(below)} — فروشنده کنترل دارد")
+        if above:
+            A(f"**بالای ناحیه ارزش ({len(above)}):** {'، '.join(above)} — خریدار کنترل دارد")
+        A("")
+
     sh = [r for r in ok if r.get("short_score") is not None]
     sh.sort(key=lambda r: r["short_score"], reverse=True)
     if sh:
-        A("---"); A(""); A("## ۲ — رتبه‌بندی سمت شورت"); A("")
+        A("---"); A(""); A("## ۳ — رتبه‌بندی سمت شورت"); A("")
         A("> این جدول **معکوس جدول بالا نیست.** کوینی که از قبل له شده، شورت بدی است — "
           "سوخت ریزش تمام شده و مستعد جهش است. بهترین شورت، ضعف **تازه** با "
           "لانگ اهرمی هنوز نشسته است.")
@@ -366,7 +426,7 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
               f"| {f'{r["crowd_vs_whale"]:.2f}x' if r.get('crowd_vs_whale') else '—'} | {st} |")
         A("")
 
-    A("---"); A(""); A(f"## ۳ — نامزدهای تحلیل عمیق سمت لانگ (بالاترین {top})"); A("")
+    A("---"); A(""); A(f"## ۴ — نامزدهای تحلیل عمیق سمت لانگ (بالاترین {top})"); A("")
     for r in ok[:top]:
         A(f"### {r['symbol']}  —  امتیاز {r['score']:+.2f}")
         A("")
@@ -388,6 +448,10 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
         if r.get("atr_pct"):
             A(f"- نوسان روزانه {r['atr_pct']:.2f}٪ ← استاپ ۱.۵ برابری یعنی "
               f"{r['atr_pct']*1.5:.2f}٪، سقف اهرم حدود {math.floor(100/(r['atr_pct']*1.5*1.5))}x")
+        if r.get("poc"):
+            A(f"- پروفایل حجم: نقطه کنترل {R.fmt_num(r['poc'])}، "
+              f"ناحیه ارزش {R.fmt_num(r.get('val'))} تا {R.fmt_num(r.get('vah'))} "
+              f"← قیمت **{r.get('vp_zone','—')}**")
         A(f"- هشدار: {flags(r)}")
         A("")
         A(f"```\npython radar_fetch3.py {r['symbol']} --balance 800 --venues {','.join(order)}\n```")
@@ -406,6 +470,8 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
     A("| **ق.ن ۷ر** | قدرت نسبی ۷ روزه. اگر ۳۰ روزه مثبت و ۷ روزه منفی بود = فرسایش |")
     A("| **امتیاز شورت** | ۰ تا ۲، مستقل از امتیاز لانگ. ضعف تازه + لانگ اهرمی نشسته |")
     A("| اشباع فروش — پرهیز | RSI زیر ۳۰. سوخت ریزش تمام شده، ریسک جهش |")
+    A("| نقطه کنترل (POC) | قیمتی که بیشترین حجم آنجا معامله شده — قوی‌ترین سطح |")
+    A("| ناحیه ارزش | بازه‌ای که ۷۰٪ حجم در آن رخ داده. زیرش = کنترل فروشنده |")
     A("")
     A("> **امتیاز بالا مجوز ورود نیست.** فقط می‌گوید کدام کوین ارزش تحلیل کامل رادار را دارد.")
     A("")
@@ -451,17 +517,17 @@ def main() -> int:
     # مرجع بیت‌کوین برای قدرت نسبی
     print("[۲] مرجع بیت‌کوین ...", file=sys.stderr)
     btc_got, _, _ = R.candles_first_ok("BTC", order, 300, [])
-    btc_close = None
+    btc_ref = None
     if "1D" in btc_got:
         bd = btc_got["1D"]
-        bd = bd[bd["confirm"] == 1] if "confirm" in bd.columns else bd
-        btc_close = bd["close"].reset_index(drop=True)
+        btc_ref = (bd[bd["confirm"] == 1] if "confirm" in bd.columns else bd
+                   ).reset_index(drop=True)
 
     rows = []
     for i, s in enumerate(syms, 1):
         print(f"[۳] {i}/{len(syms)} — {s} ...", file=sys.stderr)
         try:
-            r = score_symbol(s, order, btc_close)
+            r = score_symbol(s, order, btc_ref)
         except Exception as exc:
             R.FAILURES.append(f"{s}: {type(exc).__name__} {str(exc)[:70]}")
             r = None
