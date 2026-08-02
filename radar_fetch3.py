@@ -44,7 +44,7 @@ import pandas as pd
 import requests
 
 UTC = timezone.utc
-VERSION = "3.0"
+VERSION = "3.1"
 
 # ═══════════════════════════════════════════════════════════════════
 #  لایه ۰ — زیرساخت شبکه
@@ -362,42 +362,59 @@ def three_anchors(df: pd.DataFrame, macro_event: str | None,
     ph, pl = pivots(df, 5, 5)
     n = len(df)
 
-    # ── لنگر الف
-    # حداقل طول پنجره اجباری است. پروفایل حجم روی ۲ یا ۳ کندل، عدد می‌دهد
-    # ولی معنا ندارد — نمونه آماری کافی برای «قیمتی که بیشترین حجم آنجا
-    # معامله شده» وجود ندارد. اگر موج جاری کوتاه بود، به سقف‌های قبلی
-    # عقب می‌رویم تا پنجره به حداقل برسد.
-    MIN_BARS = 20
-    if ph and pl:
-        last_high = None
-        prior_lows = []
-        for hi in reversed(ph):                 # از جدیدترین سقف به عقب
-            lows_before = [i for i in pl if i < hi]
-            if lows_before and (hi - lows_before[-1] + 1) >= MIN_BARS:
-                last_high, prior_lows = hi, lows_before
+    # ── لنگر الف — موج جاری
+    # سه قید هم‌زمان:
+    #   ۱) سقف مرجع باید **جدیدترین** سقف ساختاری باشد؛ لنگر «موج جاری» است.
+    #   ۲) پنجره باید دست‌کم MIN_BARS کندل باشد؛ پروفایل حجم روی ۳ کندل
+    #      عدد می‌دهد ولی نمونه آماری ندارد.
+    #   ۳) پنجره نباید از MAX_BARS کهنه‌تر شود؛ لنگری که شش ماه پیش شروع
+    #      می‌شود دیگر «موج جاری» نیست.
+    # روش: سقف جدید را نگه دار، از میان **کف‌ها** عقب برو تا طول کافی شود.
+    MIN_BARS, MAX_BARS = 20, 120
+    if ph or pl:
+        # اگر هیچ سقف ساختاری نباشد (روند بی‌وقفه یا داده کم)، آخرین کندل
+        # مرجع می‌شود. بدون این، لنگر اصلاً ساخته نمی‌شد و پروفایل حجم
+        # بی‌صدا غایب می‌ماند — بدترین حالت، چون کاربر متوجه نمی‌شود.
+        last_high = ph[-1] if ph else n - 1
+        lows_before = [i for i in pl if i < last_high]
+        start = None
+        for lo in reversed(lows_before):        # از نزدیک‌ترین کف به عقب
+            span = last_high - lo + 1
+            if span >= MIN_BARS:
+                start = lo if span <= MAX_BARS else max(0, last_high - MAX_BARS + 1)
                 break
-        if last_high is None:                   # هیچ موجی به حد نصاب نرسید
-            last_high = ph[-1]
-            prior_lows = [i for i in pl if i < last_high]
-            # پنجره را عقب‌تر بکش تا دست‌کم MIN_BARS کندل شود
-            if prior_lows and (last_high - prior_lows[-1] + 1) < MIN_BARS:
-                start = max(0, last_high - MIN_BARS + 1)
-                prior_lows = [start]
-        if prior_lows:
-            t0, t1 = df["ts"].iloc[prior_lows[-1]], df["ts"].iloc[last_high]
-            vp = (vp_by_time(df_fine, t0, t1) if df_fine is not None else None) \
-                 or volume_profile(df, prior_lows[-1], last_high)
+        if start is None:                       # هیچ کفی به حد نصاب نرسید
+            start = max(0, last_high - MIN_BARS + 1)
+        if last_high - start + 1 >= 5:
+            t0, t1 = df["ts"].iloc[start], df["ts"].iloc[last_high]
+            span_d = int(last_high - start + 1)
+            # اگر بازه از دامنه داده ریزدانه بیرون بزند، ریزدانه بی‌صدا
+            # پنجره را می‌بُرد. در آن حالت روزانه مرجع می‌شود.
+            vp = None
+            if df_fine is not None and len(df_fine) and df_fine["ts"].iloc[0] <= t0:
+                vp = vp_by_time(df_fine, t0, t1)
+                if vp:
+                    vp["grain"] = "چهارساعته"
+            if vp is None:
+                vp = volume_profile(df, start, last_high)
+                if vp:
+                    vp["grain"] = "روزانه"
             if vp:
                 vp["label"] = "الف — کف ساختاری تا سقف ساختاری موج جاری"
-                vp["grain"] = "چهارساعته" if df_fine is not None else "روزانه"
-                vp["span_days"] = int(last_high - prior_lows[-1] + 1)
+                vp["span_days"] = span_d
                 out["A"] = vp
 
     # ── لنگر ب: محدوده تراکم قبلی. کم‌نوسان‌ترین پنجره ۶۰ کندلی پیش از موج جاری.
     win = 60
     start_search = max(0, n - 400)
     end_search = out.get("A", {}).get("_i0", None)
-    hard_end = (prior_lows[-1] if ph and pl and prior_lows else n - win - 1)
+    # لنگر ب باید **قبل از** موج جاری باشد؛ نقطه شروع لنگر الف مرز آن است.
+    a_start_ts = out.get("A", {}).get("from")
+    if a_start_ts:
+        idx_ = df.index[df["ts"] <= pd.Timestamp(a_start_ts, tz="UTC")]
+        hard_end = int(idx_[-1]) if len(idx_) else n - win - 1
+    else:
+        hard_end = n - win - 1
     best_i, best_score = None, None
     for i in range(start_search, max(start_search + 1, hard_end - win)):
         seg = df.iloc[i:i + win]
