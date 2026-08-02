@@ -51,7 +51,17 @@ VERSION = "3.2"
 # ═══════════════════════════════════════════════════════════════════
 
 SESSION = requests.Session()
-SESSION.headers.update({"User-Agent": "radar-fetch/2.0", "Accept": "application/json"})
+SESSION.headers.update({"User-Agent": "radar-fetch/3.2", "Accept": "application/json"})
+
+# ── کلید کوین‌گکو (اختیاری). بدون کلید حدود ۵ تا ۱۵ درخواست در دقیقه،
+#    با کلید رایگان Demo حدود ۳۰. برای اسکن ۱۳ کوین تفاوت محسوس است.
+CG_KEY = os.environ.get("COINGECKO_API_KEY", "").strip()
+CG_PRO = os.environ.get("COINGECKO_PRO", "").strip().lower() in ("1", "true", "yes")
+CG_BASE = ("https://pro-api.coingecko.com/api/v3" if (CG_KEY and CG_PRO)
+           else "https://api.coingecko.com/api/v3")
+if CG_KEY:
+    SESSION.headers.update(
+        {"x-cg-pro-api-key" if CG_PRO else "x-cg-demo-api-key": CG_KEY})
 
 # هر منبعی که شکست بخورد اینجا ثبت می‌شود و در گزارش نهایی می‌آید.
 FAILURES: list[str] = []
@@ -966,7 +976,7 @@ def fetch_fred(http_text) -> dict:
 
 def fetch_macro(out: dict[str, Field]) -> None:
     """ستون‌های رژیم: تسلط بیت‌کوین، ارزش کل بازار، ترس و طمع، عرضه استیبل‌کوین."""
-    g = http_get("https://api.coingecko.com/api/v3/global", label="کوین‌گکو سراسری")
+    g = http_get(f"{CG_BASE}/global", label="کوین‌گکو سراسری")
     if g and "data" in g:
         d = g["data"]
         ts = datetime.fromtimestamp(d.get("updated_at", time.time()), UTC)
@@ -1017,7 +1027,7 @@ def fetch_macro(out: dict[str, Field]) -> None:
 
     # ── تسلط تتر به‌تنهایی. با «تسلط کل استیبل‌کوین‌ها» فرق دارد:
     #    دلار غیرمتمرکز و توکن‌های بازده‌دار رفتار متفاوتی از پول داغ تتر دارند.
-    t = http_get("https://api.coingecko.com/api/v3/coins/markets",
+    t = http_get(f"{CG_BASE}/coins/markets",
                  {"vs_currency": "usd", "ids": "tether,usd-coin", "per_page": "5"},
                  label="ارزش بازار استیبل‌کوین‌ها")
     tether_mc = usdc_mc = None
@@ -1081,7 +1091,7 @@ def fetch_fundamental(base: str, out: dict[str, Field]) -> None:
     """عرضه در گردش، ارزش رقیق‌شده، فاصله از سقف تاریخی، ارزش کل قفل‌شده."""
     cid = CG_IDS.get(base.upper())
     if not cid:
-        lst = http_get("https://api.coingecko.com/api/v3/coins/list", label="فهرست کوین‌گکو")
+        lst = http_get(f"{CG_BASE}/coins/list", label="فهرست کوین‌گکو")
         if isinstance(lst, list):
             for c in lst:
                 if c.get("symbol", "").upper() == base.upper():
@@ -1091,7 +1101,7 @@ def fetch_fundamental(base: str, out: dict[str, Field]) -> None:
         FAILURES.append(f"شناسه کوین‌گکو برای {base} پیدا نشد")
         return
 
-    c = http_get(f"https://api.coingecko.com/api/v3/coins/{cid}",
+    c = http_get(f"{CG_BASE}/coins/{cid}",
                  {"localization": "false", "tickers": "false", "market_data": "true",
                   "community_data": "false", "developer_data": "false"},
                  label="کوین‌گکو جزئیات")
@@ -1468,6 +1478,9 @@ def report3(b: Bundle) -> str:
     A(f"تولید: **{b.generated.strftime('%Y-%m-%d %H:%M UTC')}** | نسخه {VERSION} | "
       f"پروفایل: **{'معامله' if b.profile=='trade' else 'موقعیت'}** | "
       f"منبع کندل: **{b.candle_venue or 'هیچ‌کدام'}**")
+    A("")
+    A(f"وضعیت کلیدها: کوین‌گکو {'✅ فعال' if CG_KEY else '⬜ بدون کلید'} | "
+      f"کوین‌گلس {'✅ فعال' if os.environ.get('COINGLASS_API_KEY') else '⬜ بدون کلید'}")
     A("")
     A("> برچسب معرفتی همه اعداد: **مشاهده‌شده (Observed)** از نقاط عمومی صرافی، "
       "فدرال‌رزرو سنت‌لوئیس، کوین‌گکو و دیفای‌لاما.")
