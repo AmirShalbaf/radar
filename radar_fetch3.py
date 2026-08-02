@@ -44,7 +44,7 @@ import pandas as pd
 import requests
 
 UTC = timezone.utc
-VERSION = "3.1"
+VERSION = "3.2"
 
 # ═══════════════════════════════════════════════════════════════════
 #  لایه ۰ — زیرساخت شبکه
