@@ -363,9 +363,26 @@ def three_anchors(df: pd.DataFrame, macro_event: str | None,
     n = len(df)
 
     # ── لنگر الف
+    # حداقل طول پنجره اجباری است. پروفایل حجم روی ۲ یا ۳ کندل، عدد می‌دهد
+    # ولی معنا ندارد — نمونه آماری کافی برای «قیمتی که بیشترین حجم آنجا
+    # معامله شده» وجود ندارد. اگر موج جاری کوتاه بود، به سقف‌های قبلی
+    # عقب می‌رویم تا پنجره به حداقل برسد.
+    MIN_BARS = 20
     if ph and pl:
-        last_high = ph[-1]
-        prior_lows = [i for i in pl if i < last_high]
+        last_high = None
+        prior_lows = []
+        for hi in reversed(ph):                 # از جدیدترین سقف به عقب
+            lows_before = [i for i in pl if i < hi]
+            if lows_before and (hi - lows_before[-1] + 1) >= MIN_BARS:
+                last_high, prior_lows = hi, lows_before
+                break
+        if last_high is None:                   # هیچ موجی به حد نصاب نرسید
+            last_high = ph[-1]
+            prior_lows = [i for i in pl if i < last_high]
+            # پنجره را عقب‌تر بکش تا دست‌کم MIN_BARS کندل شود
+            if prior_lows and (last_high - prior_lows[-1] + 1) < MIN_BARS:
+                start = max(0, last_high - MIN_BARS + 1)
+                prior_lows = [start]
         if prior_lows:
             t0, t1 = df["ts"].iloc[prior_lows[-1]], df["ts"].iloc[last_high]
             vp = (vp_by_time(df_fine, t0, t1) if df_fine is not None else None) \
@@ -373,6 +390,7 @@ def three_anchors(df: pd.DataFrame, macro_event: str | None,
             if vp:
                 vp["label"] = "الف — کف ساختاری تا سقف ساختاری موج جاری"
                 vp["grain"] = "چهارساعته" if df_fine is not None else "روزانه"
+                vp["span_days"] = int(last_high - prior_lows[-1] + 1)
                 out["A"] = vp
 
     # ── لنگر ب: محدوده تراکم قبلی. کم‌نوسان‌ترین پنجره ۶۰ کندلی پیش از موج جاری.
@@ -1239,24 +1257,51 @@ def probe_venues(order: list[str]) -> tuple[list[str], list[tuple[str, str]]]:
         v = VENUES.get(vn)
         if v is None:
             continue
-        before = len(FAILURES)
+
+        def _why(from_idx: int, default: str = "پاسخ نداد") -> str:
+            for f in FAILURES[from_idx:]:
+                if "۴۵۱" in f or "451" in f:
+                    return "مسدودیت جغرافیایی (کد ۴۵۱)"
+                if "403" in f:
+                    return "دسترسی ممنوع (کد ۴۰۳)"
+                if "429" in f:
+                    return "سقف نرخ (کد ۴۲۹)"
+            return default
+
+        # آزمون ۱ — بازار نقدی (کندل)
+        i0 = len(FAILURES)
         try:
             df = v.candles("BTC", "1D", 5, http_get)
         except Exception:
             df = None
-        if df is not None and len(df) >= 3:
+        spot_ok = df is not None and len(df) >= 3
+        spot_why = "" if spot_ok else _why(i0)
+
+        # آزمون ۲ — بازار مشتقات (فاندینگ). دامنه‌اش با نقدی فرق دارد
+        # و ممکن است یکی باز و دیگری بسته باشد.
+        i1 = len(FAILURES)
+        try:
+            fd = v.funding("BTC", http_get)
+        except Exception:
+            fd = None
+        deriv_ok = bool(fd)
+        deriv_why = "" if deriv_ok else _why(i1)
+
+        if spot_ok and deriv_ok:
             live.append(vn)
+        elif spot_ok:
+            live.append(vn)
+            VENUE_NO_DERIV.add(vn)
+            dead.append((vn, f"فقط کندل — مشتقات: {deriv_why}"))
+        elif deriv_ok:
+            live.append(vn)
+            dead.append((vn, f"فقط مشتقات — کندل: {spot_why}"))
         else:
-            why = "پاسخ نداد"
-            for f in FAILURES[before:]:
-                if "۴۵۱" in f or "451" in f:
-                    why = "مسدودیت جغرافیایی (کد ۴۵۱)"
-                    break
-                if "429" in f:
-                    why = "سقف نرخ (کد ۴۲۹)"
-                    break
-            dead.append((vn, why))
+            dead.append((vn, spot_why))
     return live, dead
+
+
+VENUE_NO_DERIV: set = set()   # صرافی‌هایی که مشتقاتشان در آزمون رد شد
 
 
 def gather_venues(base: str, order: list[str], price_hint: float | None
@@ -1268,7 +1313,7 @@ def gather_venues(base: str, order: list[str], price_hint: float | None
     funding, oi, pos, cndl = {}, {}, {}, {}
     for vn in order:
         v = VENUES.get(vn)
-        if v is None:
+        if v is None or vn in VENUE_NO_DERIV:
             continue
         try:
             f = v.funding(base, http_get)
