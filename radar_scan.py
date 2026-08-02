@@ -70,15 +70,24 @@ def score_symbol(base: str, order: list[str], btc_close: pd.Series | None
     # ۵ — تورم حجم اخیر
     if math.isfinite(r["vol_ma20"]) and r["vol_ma20"] > 0:
         row["vol_x"] = float(r["vol"]) / float(r["vol_ma20"])
-    # ۶ — قدرت نسبی به بیت‌کوین، ۳۰ روزه
-    if btc_close is not None and len(d) > 31 and len(btc_close) > 31:
-        try:
-            c30 = 100 * (price / float(d["close"].iloc[-31]) - 1)
-            b30 = 100 * (float(btc_close.iloc[-1]) / float(btc_close.iloc[-31]) - 1)
-            row["rs_btc_30d"] = c30 - b30
-            row["chg_30d"] = c30
-        except Exception:
-            pass
+    # ۶ — قدرت نسبی به بیت‌کوین: دو پنجره، ۳۰ روزه و ۷ روزه
+    #     پنجره بلند جهت را می‌گوید، پنجره کوتاه می‌گوید جهت هنوز زنده است یا نه.
+    if btc_close is not None:
+        for win, tag in [(31, "30d"), (8, "7d")]:
+            if len(d) > win and len(btc_close) > win:
+                try:
+                    cw = 100 * (price / float(d["close"].iloc[-win]) - 1)
+                    bw = 100 * (float(btc_close.iloc[-1]) /
+                                float(btc_close.iloc[-win]) - 1)
+                    row[f"rs_btc_{tag}"] = cw - bw
+                    row[f"chg_{tag}"] = cw
+                except Exception:
+                    pass
+    # پرچم فرسایش: قدرت بلندمدت مثبت ولی کوتاه‌مدت منفی
+    r30, r7 = row.get("rs_btc_30d"), row.get("rs_btc_7d")
+    if r30 is not None and r7 is not None:
+        row["rs_decay"] = (r30 > 0 and r7 < 0)
+        row["rs_accel"] = (r30 < 0 and r7 > 0)
 
     # ── مشتقات
     fund, oi, pos, _ = R.gather_venues(base, order, price)
@@ -103,7 +112,82 @@ def score_symbol(base: str, order: list[str], btc_close: pd.Series | None
 
     row["deriv_venues"] = ",".join(sorted(set(fund) | set(oi) | set(pos))) or "—"
     row["score"], row["covered"] = composite(row)
+    row["short_score"], row["short_covered"] = short_composite(row)
     return row
+
+
+def short_composite(row: dict) -> tuple[float | None, int]:
+    """
+    امتیاز شورت — **معکوس امتیاز لانگ نیست.**
+
+    منطق: بهترین شورت کوینی است که تازه دارد می‌شکند و هنوز لانگ‌های
+    اهرمی داخلش نشسته‌اند. بدترین شورت کوینی است که از قبل له شده —
+    آنجا سوختی برای ریزش نمانده و جهش‌های شدید کمین کرده‌اند.
+
+    خروجی ۰ تا ۲. هرچه بالاتر، شورت جذاب‌تر.
+    """
+    parts: list[tuple[float, float]] = []
+
+    # ۱ — ضعف تازه، نه ضعف کهنه (وزن ۳۰٪)
+    v200, v50 = row.get("vs_ema200"), row.get("vs_ema50")
+    if v50 is not None:
+        if v50 >= 0:
+            s = 0.0                       # هنوز بالای میانگین، شکستی رخ نداده
+        elif v50 > -12:
+            s = min(2.0, abs(v50) / 6.0)  # ناحیه شکست تازه
+        else:
+            s = max(0.3, 2.0 - (abs(v50) - 12) / 10)   # خیلی دور، کشیده شده
+        if v200 is not None and v200 < -30:
+            s *= 0.5                      # از قبل له شده، سوخت کم
+        parts.append((max(0.0, min(2.0, s)), 0.30))
+
+    # ۲ — RSI در ناحیه شکار، نه در اشباع فروش (وزن ۲۰٪)
+    rsi = row.get("rsi")
+    if rsi is not None:
+        if rsi < 30:
+            s = 0.0                       # اشباع فروش، ریسک جهش
+        elif rsi < 38:
+            s = 0.6
+        elif rsi <= 58:
+            s = 2.0                       # ناحیه ایده‌آل ورود شورت
+        elif rsi <= 70:
+            s = 1.4
+        else:
+            s = 0.8                       # هنوز داغ، شکستی تأیید نشده
+        parts.append((s, 0.20))
+
+    # ۳ — لانگ‌های اهرمی به‌عنوان سوخت (وزن ۲۵٪)
+    fnd, oic = row.get("funding_8h"), row.get("oi_chg24")
+    if fnd is not None:
+        s = 0.0
+        if fnd > 0.03:   s = 2.0          # ازدحام شدید لانگ
+        elif fnd > 0.01: s = 1.4
+        elif fnd > 0:    s = 0.8
+        else:            s = 0.2          # فاندینگ منفی، شورت‌ها از قبل ازدحام دارند
+        if oic is not None and oic > 5 and fnd > 0:
+            s = min(2.0, s + 0.5)         # بهره باز در حال رشد با فاندینگ مثبت
+        parts.append((s, 0.25))
+
+    # ۴ — ضعف نسبی، ولی نه فروپاشی کامل (وزن ۱۵٪)
+    r30, r7 = row.get("rs_btc_30d"), row.get("rs_btc_7d")
+    if r30 is not None:
+        if r30 > 5:      s = 0.2          # قوی‌تر از بیت‌کوین، شورت خلاف جریان
+        elif r30 > -5:   s = 1.0
+        elif r30 > -20:  s = 1.8          # ضعف روشن
+        else:            s = 0.9          # از قبل خیلی عقب افتاده
+        if r7 is not None and r7 < 0 and r30 > 0:
+            s = 1.6                       # فرسایش تازه — بهترین لحظه شورت
+        parts.append((s, 0.15))
+
+    # ۵ — جمعیت لانگ در برابر نهنگ شورت (وزن ۱۰٪)
+    cw = row.get("crowd_vs_whale")
+    if cw is not None:
+        parts.append((max(0.0, min(2.0, (cw - 1.0) / 1.2)), 0.10))
+
+    if not parts:
+        return None, 0
+    wsum = sum(w for _, w in parts)
+    return round(sum(v * w for v, w in parts) / wsum, 3), len(parts)
 
 
 def composite(row: dict) -> tuple[float | None, int]:
@@ -165,6 +249,10 @@ def flags(row: dict) -> str:
         f.append("جمعیت‌مقابل‌نهنگ")
     if row.get("vol_x") is not None and row["vol_x"] > 2:
         f.append("حجم‌انفجاری")
+    if row.get("rs_decay"):
+        f.append("⚠️فرسایش‌قدرت")
+    if row.get("rs_accel"):
+        f.append("شتاب‌گیری")
     if row.get("oi_chg24") is not None and row.get("funding_8h") is not None \
        and row["oi_chg24"] > 8 and row["funding_8h"] <= 0:
         f.append("فشارشورت")
@@ -221,8 +309,8 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
 
     A("---"); A(""); A("## ۱ — رتبه‌بندی")
     A("")
-    A("| # | نماد | قیمت | امتیاز | vs EMA200 | vs EMA50 | RSI | قدرت نسبی ۳۰ روزه | ATR٪ | فاندینگ ۸ ساعته | بهره باز ۲۴ ساعته | پوشش |")
-    A("|---|---|---|---|---|---|---|---|---|---|---|---|")
+    A("| # | نماد | قیمت | لانگ | **شورت** | vs EMA200 | vs EMA50 | RSI | ق.ن ۳۰ر | **ق.ن ۷ر** | ATR٪ | فاندینگ | ب.باز ۲۴س |")
+    A("|---|---|---|---|---|---|---|---|---|---|---|---|---|")
     for i, r in enumerate(ok, 1):
         def pc(k, d=1):
             v = r.get(k)
@@ -230,9 +318,11 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
         def nm(k, d=1):
             v = r.get(k)
             return f"{v:.{d}f}" if v is not None else "—"
-        A(f"| {i} | **{r['symbol']}** | {R.fmt_num(r['price'])} | **{r['score']:+.2f}** "
+        ss = r.get("short_score")
+        ss_txt = f"**{ss:.2f}**" if ss is not None else "—"
+        A(f"| {i} | **{r['symbol']}** | {R.fmt_num(r['price'])} | {r['score']:+.2f} | {ss_txt} "
           f"| {pc('vs_ema200')} | {pc('vs_ema50')} | {nm('rsi')} | {pc('rs_btc_30d')} "
-          f"| {nm('atr_pct',2)} | {pc('funding_8h',4)} | {pc('oi_chg24')} | {r['covered']}/۵ |")
+          f"| {pc('rs_btc_7d')} | {nm('atr_pct',2)} | {pc('funding_8h',4)} | {pc('oi_chg24')} |")
     A("")
 
     bad = [r for r in rows if r.get("score") is None]
@@ -247,7 +337,36 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
         A(f"| {r['symbol']} | {flags(r)} | {cw} |")
     A("")
 
-    A("---"); A(""); A(f"## ۲ — نامزدهای تحلیل عمیق (بالاترین {top})"); A("")
+    sh = [r for r in ok if r.get("short_score") is not None]
+    sh.sort(key=lambda r: r["short_score"], reverse=True)
+    if sh:
+        A("---"); A(""); A("## ۲ — رتبه‌بندی سمت شورت"); A("")
+        A("> این جدول **معکوس جدول بالا نیست.** کوینی که از قبل له شده، شورت بدی است — "
+          "سوخت ریزش تمام شده و مستعد جهش است. بهترین شورت، ضعف **تازه** با "
+          "لانگ اهرمی هنوز نشسته است.")
+        A("")
+        A("| # | نماد | امتیاز شورت | ضعف تازه | RSI | فاندینگ | جمعیت/نهنگ | وضعیت |")
+        A("|---|---|---|---|---|---|---|---|")
+        for i, r in enumerate(sh[:8], 1):
+            v50 = r.get("vs_ema50"); rsi = r.get("rsi")
+            if rsi is not None and rsi < 30:
+                st = "اشباع فروش — پرهیز"
+            elif v50 is not None and v50 >= 0:
+                st = "هنوز نشکسته"
+            elif r.get("vs_ema200") is not None and r["vs_ema200"] < -30:
+                st = "از قبل له شده"
+            elif r.get("rs_decay"):
+                st = "**فرسایش تازه — بهترین لحظه**"
+            else:
+                st = "ضعف در جریان"
+            A(f"| {i} | **{r['symbol']}** | **{r['short_score']:.2f}** "
+              f"| {f'{v50:+.1f}%' if v50 is not None else '—'} "
+              f"| {f'{rsi:.1f}' if rsi is not None else '—'} "
+              f"| {f'{r[chr(34)]}' if False else (f'{r["funding_8h"]:+.4f}%' if r.get('funding_8h') is not None else '—')} "
+              f"| {f'{r["crowd_vs_whale"]:.2f}x' if r.get('crowd_vs_whale') else '—'} | {st} |")
+        A("")
+
+    A("---"); A(""); A(f"## ۳ — نامزدهای تحلیل عمیق سمت لانگ (بالاترین {top})"); A("")
     for r in ok[:top]:
         A(f"### {r['symbol']}  —  امتیاز {r['score']:+.2f}")
         A("")
@@ -259,6 +378,13 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
             else:
                 A(f"- قدرت نسبی ۳۰ روزه در برابر بیت‌کوین: {r['rs_btc_30d']:+.1f}٪ "
                   f"({'بهتر از بیت‌کوین' if r['rs_btc_30d']>0 else 'ضعیف‌تر از بیت‌کوین'})")
+                if r.get("rs_btc_7d") is not None:
+                    A(f"- قدرت نسبی **۷ روزه**: {r['rs_btc_7d']:+.1f}٪")
+                    if r.get("rs_decay"):
+                        A("- ⚠️ **فرسایش قدرت**: پنجره ۳۰ روزه مثبت ولی ۷ روزه منفی. "
+                          "امتیاز بالا از گذشته می‌آید، نه از حالا.")
+                    elif r.get("rs_accel"):
+                        A("- 🔼 **شتاب‌گیری**: پنجره ۳۰ روزه منفی ولی ۷ روزه مثبت — چرخش تازه.")
         if r.get("atr_pct"):
             A(f"- نوسان روزانه {r['atr_pct']:.2f}٪ ← استاپ ۱.۵ برابری یعنی "
               f"{r['atr_pct']*1.5:.2f}٪، سقف اهرم حدود {math.floor(100/(r['atr_pct']*1.5*1.5))}x")
@@ -277,7 +403,9 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
     A("| فاندینگ داغ | بالای ۰.۰۳٪ یعنی ازدحام لانگ ← ریسک شست‌وشو |")
     A("| فشار شورت | بهره باز بالا + فاندینگ منفی ← سوخت صعود |")
     A("| جمعیت مقابل نهنگ | بالای ۱.۵ یعنی خرده‌فروش لانگ‌تر از پول هوشمند است |")
-    A("| پوشش | چند سنجه از ۵ داده داشت. زیر ۴ یعنی امتیاز کم‌اعتبار |")
+    A("| **ق.ن ۷ر** | قدرت نسبی ۷ روزه. اگر ۳۰ روزه مثبت و ۷ روزه منفی بود = فرسایش |")
+    A("| **امتیاز شورت** | ۰ تا ۲، مستقل از امتیاز لانگ. ضعف تازه + لانگ اهرمی نشسته |")
+    A("| اشباع فروش — پرهیز | RSI زیر ۳۰. سوخت ریزش تمام شده، ریسک جهش |")
     A("")
     A("> **امتیاز بالا مجوز ورود نیست.** فقط می‌گوید کدام کوین ارزش تحلیل کامل رادار را دارد.")
     A("")
