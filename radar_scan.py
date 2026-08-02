@@ -140,7 +140,8 @@ def score_symbol(base: str, order: list[str], btc_ref: pd.DataFrame | None
             row["poc"] = a["poc"]
             row["val"], row["vah"] = a["val"], a["vah"]
             row["vp_from"], row["vp_to"] = a["from"], a["to"]
-            row["vp_bars"] = a.get("candles")
+            row["vp_bars"] = a.get("span_days") or a.get("candles")
+            row["vp_grain"] = a.get("grain", "—")
             row["vs_poc"] = 100 * (price - a["poc"]) / a["poc"] if a["poc"] else None
             if price > a["vah"]:
                 row["vp_zone"] = "بالای ناحیه ارزش"
@@ -313,7 +314,8 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
     now = datetime.now(UTC)
     A(f"# اسکن رادار ۵.۲ — {len(rows)} کوین")
     A("")
-    A(f"تولید: **{now.strftime('%Y-%m-%d %H:%M UTC')}** | صرافی‌های فعال: {', '.join(order)}")
+    A(f"تولید: **{now.strftime('%Y-%m-%d %H:%M UTC')}** | "
+      f"نسخه اسکریپت: **{R.VERSION}** | صرافی‌های فعال: {', '.join(order)}")
     A("")
     if dead:
         A("**در دسترس نبودند:** " + "، ".join(f"{v} ({w})" for v, w in dead))
@@ -388,7 +390,7 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
         A("---"); A(""); A("## ۲ — پروفایل حجم بازه ثابت (لنگر موج جاری)"); A("")
         A("> نسخه سبک: فقط لنگر الف. سه‌لنگر کامل و آزمون هم‌گرایی در تحلیل عمیق.")
         A("")
-        A("| نماد | بازه | کندل | نقطه کنترل | مرز پایین | مرز بالا | موقعیت | نسبت به POC |")
+        A("| نماد | بازه | روز | نقطه کنترل | مرز پایین | مرز بالا | موقعیت | نسبت به POC |")
         A("|---|---|---|---|---|---|---|---|")
         for r in vp:
             nb = r.get("vp_bars")
@@ -488,7 +490,7 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
     A("| اشباع فروش — پرهیز | RSI زیر ۳۰. سوخت ریزش تمام شده، ریسک جهش |")
     A("| نقطه کنترل (POC) | قیمتی که بیشترین حجم آنجا معامله شده — قوی‌ترین سطح |")
     A("| ناحیه ارزش | بازه‌ای که ۷۰٪ حجم در آن رخ داده. زیرش = کنترل فروشنده |")
-    A("| کندل | تعداد کندل پنجره پروفایل حجم. زیر ۱۵ = کم‌اعتبار |")
+    A("| روز | طول پنجره پروفایل حجم به روز. زیر ۱۵ = کم‌اعتبار |")
     A("| قدرت‌متوقف | ۳۰ روزه مثبت ولی ۷ روزه در باند ±۱٪ — نه رشد نه افت |")
     A("")
     A("> **امتیاز بالا مجوز ورود نیست.** فقط می‌گوید کدام کوین ارزش تحلیل کامل رادار را دارد.")
