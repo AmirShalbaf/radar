@@ -44,7 +44,7 @@ import pandas as pd
 import requests
 
 UTC = timezone.utc
-VERSION = "3.3"
+VERSION = "3.4"
 FRAMEWORK = "۵.۳"   # نسخه چارچوب رادار — تیترها از اینجا می‌خوانند
 
 # ═══════════════════════════════════════════════════════════════════

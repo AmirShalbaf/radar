@@ -32,6 +32,9 @@ import re
 # وگرنه نمادهای واقعی مثل JUP قربانی می‌شوند.
 LEV_RE = re.compile(r"(\d[LS]$)|((?<=[A-Z]{3})UP$)|((?<=[A-Z]{2})DOWN$)"
                     r"|(BULL$)|(BEAR$)|(HEDGE$)|(HALF$)")
+BENCHMARK = "BTC"          # معیار قدرت نسبی — با خودش مقایسه نمی‌شود
+GOLD = {"XAUT", "PAXG", "TGOLD", "XAU"}   # توکن طلا — دارایی پناهگاه، نه آلت
+
 STABLES = {"USDT","USDC","DAI","TUSD","FDUSD","USDE","PYUSD","BUSD","USDD",
            "EURT","EURS","USDP","GUSD","LUSD","FRAX","SUSD","USDS"}
 
@@ -50,7 +53,7 @@ def universe_okx(min_vol: float) -> list[dict]:
         if not inst.endswith("-USDT"):
             continue
         base = inst[:-5]
-        if base in STABLES or LEV_RE.search(base):
+        if base in STABLES or base == BENCHMARK or LEV_RE.search(base):
             continue
         try:
             last = float(t["last"]); o24 = float(t["open24h"])
@@ -62,6 +65,19 @@ def universe_okx(min_vol: float) -> list[dict]:
         out.append({"symbol": base, "price": last,
                     "chg24": 100 * (last / o24 - 1), "vol24": vol})
     return out
+
+
+def px_fmt(v: float) -> str:
+    """قیمت‌های میکرو (مثل پپه) با ۴ رقم اعشار صفر می‌شوند."""
+    if v is None:
+        return "—"
+    if v >= 1:
+        return f"{v:,.4f}".rstrip("0").rstrip(".")
+    for d in (4, 6, 8, 10, 12):
+        t = f"{v:.{d}f}"
+        if float(t) != 0:
+            return t.rstrip("0")
+    return f"{v:.2e}"
 
 
 def rs_pair(df: pd.DataFrame, btc: pd.DataFrame, days: int) -> float | None:
@@ -168,6 +184,8 @@ def score(row: dict) -> tuple[float | None, int, list[str]]:
         else:          s = 0.4
         parts.append((s, 0.15))
 
+    if row["symbol"] in GOLD:
+        flags.append("🟡طلا — پناهگاه، نه چرخش")
     vx = row.get("vol_x")
     if vx is not None and vx > 2.5:
         flags.append("حجم‌انفجاری")
@@ -224,13 +242,15 @@ def build_report(rows: list[dict], uni_n: int, pool_n: int,
     A("## ۱ — قدرت نسبی پایدار (هر دو پنجره مثبت)")
     A("")
     if dual:
-        A("| # | نماد | قیمت | امتیاز | ق.ن ۳۰ر | ق.ن ۷ر | ق.ن ۳ر | vs EMA200 | vs EMA50 | RSI | ناحیه | vs POC | نشانه‌ها |")
-        A("|---|---|---|---|---|---|---|---|---|---|---|---|---|")
+        A("| # | نماد | قیمت | امتیاز | ق.ن ۳۰ر | ق.ن ۷ر | ق.ن ۳ر | vs EMA200 | vs EMA50 | RSI | ناحیه | vs POC | **ATR٪** | **استاپ ۱.۵×** | نشانه‌ها |")
+        A("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|")
         for i, r in enumerate(dual[:20], 1):
             g = lambda k, f="{:+.1f}%": (f.format(r[k]) if r.get(k) is not None else "—")
-            A(f"| {i} | **{r['symbol']}** | {R.fmt_num(r['price'])} | **{r['score']:.2f}** "
+            A(f"| {i} | **{r['symbol']}** | {px_fmt(r['price'])} | **{r['score']:.2f}** "
               f"| {g('rs30')} | {g('rs7')} | {g('rs3')} | {g('e200')} | {g('e50')} "
               f"| {g('rsi','{:.0f}')} | {r.get('zone','—')} | {g('vs_poc')} "
+              f"| {g('atr_pct','{:.2f}%')} "
+              f"| {f'{r[chr(97)] if False else r["atr_pct"]*1.5:.2f}%' if r.get('atr_pct') else '—'} "
               f"| {'، '.join(r.get('flags', [])) or '—'} |")
         A("")
     else:
@@ -251,7 +271,7 @@ def build_report(rows: list[dict], uni_n: int, pool_n: int,
         A("|---|---|---|---|---|---|---|---|---|---|---|")
         for i, r in enumerate(accel[:15], 1):
             g = lambda k, f="{:+.1f}%": (f.format(r[k]) if r.get(k) is not None else "—")
-            A(f"| {i} | **{r['symbol']}** | {R.fmt_num(r['price'])} | {r['score']:.2f} "
+            A(f"| {i} | **{r['symbol']}** | {px_fmt(r['price'])} | {r['score']:.2f} "
               f"| {g('rs30')} | {g('rs7')} | {g('rs3')} | {g('e200')} "
               f"| {g('rsi','{:.0f}')} | {r.get('zone','—')} | {'، '.join(r.get('flags', [])) or '—'} |")
         A("")
