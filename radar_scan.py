@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-radar_scan.py — اسکنر چندکوینی رادار ۵.۲
+radar_scan.py — اسکنر چندکوینی رادار ۵.۳
 =========================================
 
 فلسفه: اول **غربال**، بعد **عمق**.
@@ -338,7 +338,7 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
                       order: list[str], top: int, dead: list = None) -> str:
     L: list[str] = []; A = L.append
     now = datetime.now(UTC)
-    A(f"# اسکن رادار ۵.۲ — {len(rows)} کوین")
+    A(f"# اسکن رادار {R.FRAMEWORK} — {len(rows)} کوین")
     A("")
     A(f"تولید: **{now.strftime('%Y-%m-%d %H:%M UTC')}** | "
       f"نسخه اسکریپت: **{R.VERSION}** | صرافی‌های فعال: {', '.join(order)}")
@@ -537,7 +537,7 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="اسکنر چندکوینی رادار ۵.۲")
+    ap = argparse.ArgumentParser(description="اسکنر چندکوینی رادار ۵.۳")
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--watchlist", help="فهرست جدا شده با کاما، مثل BTC,ETH,SOL")
     g.add_argument("--preset", choices=list(PRESETS), help="فهرست آماده")

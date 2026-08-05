@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-radar_fetch3.py — واکشی چند-صرافی + ماکرو رسمی، برای رادار ۵.۲
+radar_fetch3.py — واکشی چند-صرافی + ماکرو رسمی، برای رادار ۵.۳
 =========================================================
 
 هدف: تولید یک گزارش مارک‌داون که مستقیم در گفت‌وگو با کلاود چسبانده می‌شود.
@@ -44,7 +44,8 @@ import pandas as pd
 import requests
 
 UTC = timezone.utc
-VERSION = "3.2"
+VERSION = "3.3"
+FRAMEWORK = "۵.۳"   # نسخه چارچوب رادار — تیترها از اینجا می‌خوانند
 
 # ═══════════════════════════════════════════════════════════════════
 #  لایه ۰ — زیرساخت شبکه
@@ -363,7 +364,7 @@ def vp_by_time(df_fine: pd.DataFrame, t0, t1, bins: int = 60) -> dict | None:
 def three_anchors(df: pd.DataFrame, macro_event: str | None,
                   df_fine: pd.DataFrame | None = None) -> dict[str, dict]:
     """
-    سه لنگر اجباری رادار ۵.۲:
+    سه لنگر اجباری رادار ۵.۳:
       الف — از آخرین کف ساختاری تا آخرین سقف ساختاری موج جاری
       ب  — کل محدوده تراکم قبلی، از شکست تا شکست
       ج  — از آخرین رویداد ماکرو تاریخ‌دار تا اکنون
@@ -1473,7 +1474,7 @@ def run3(symbol, balance, profile, macro_event, deep, order):
 
 def report3(b: Bundle) -> str:
     L: list[str] = []; A = L.append
-    A(f"# بسته داده رادار ۵.۲ — {b.symbol}")
+    A(f"# بسته داده رادار {FRAMEWORK} — {b.symbol}")
     A("")
     A(f"تولید: **{b.generated.strftime('%Y-%m-%d %H:%M UTC')}** | نسخه {VERSION} | "
       f"پروفایل: **{'معامله' if b.profile=='trade' else 'موقعیت'}** | "
@@ -1701,14 +1702,14 @@ def report3(b: Bundle) -> str:
     A("| جریان خالص صرافی | کریپتوکوانت (پولی) یا اتراسکن با کلید |")
     A("| اخبار و کاتالیزور | جست‌وجوی وب کلاود |")
     A(""); A("---"); A("")
-    A(f"**دستور بعدی:** این فایل را کپی کن و بنویس «با رادار ۵.۲ تحلیل کن، "
+    A(f"**دستور بعدی:** این فایل را کپی کن و بنویس «با رادار {FRAMEWORK} تحلیل کن، "
       f"پروفایل {'معامله' if b.profile=='trade' else 'موقعیت'}».")
     A("")
     return "\n".join(L)
 
 
 def main3() -> int:
-    ap = argparse.ArgumentParser(description="رادار ۵.۲ — واکشی چند-صرافی")
+    ap = argparse.ArgumentParser(description="رادار ۵.۳ — واکشی چند-صرافی")
     ap.add_argument("symbol")
     ap.add_argument("--balance", type=float, default=0.0)
     ap.add_argument("--profile", choices=["trade","position"], default="trade")
