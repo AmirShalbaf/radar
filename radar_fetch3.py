@@ -44,7 +44,7 @@ import pandas as pd
 import requests
 
 UTC = timezone.utc
-VERSION = "3.4"
+VERSION = "3.5"
 FRAMEWORK = "۵.۳"   # نسخه چارچوب رادار — تیترها از اینجا می‌خوانند
 
 # ═══════════════════════════════════════════════════════════════════
@@ -524,14 +524,32 @@ def fib_vp_confluence(fib: dict | None, anchors: dict, atr: float | None) -> str
 
 def convergence(anchors: dict[str, dict], atr_daily: float | None) -> tuple[str, str]:
     """آزمون هم‌گرایی: نقاط کنترل هر سه لنگر باید در فاصله کمتر از نصف ATR روزانه باشند."""
-    pocs = [a["poc"] for a in anchors.values() if a.get("poc")]
-    if len(pocs) < 2 or not atr_daily:
-        return ("نامشخص", "لنگر کافی یا ATR در دسترس نیست")
-    spread = max(pocs) - min(pocs)
+    if not atr_daily:
+        return ("نامشخص", "ATR در دسترس نیست")
     limit = atr_daily / 2
-    if spread < limit:
-        return ("هم‌گرا", f"پراکندگی {spread:.6f} < نصف ATR {limit:.6f} ← سطح معتبر")
-    return ("پراکنده", f"پراکندگی {spread:.6f} ≥ نصف ATR {limit:.6f} ← حکم صبر یا بدون ورود")
+    live = [(k, anchors[k]["poc"]) for k in ("A", "C") if anchors.get(k, {}).get("poc")]
+    allp = [a["poc"] for a in anchors.values() if a.get("poc")]
+    if len(allp) < 2:
+        return ("نامشخص", "لنگر کافی نیست")
+
+    spread_all = max(allp) - min(allp)
+    txt = []
+    if len(live) == 2:
+        sp = abs(live[0][1] - live[1][1])
+        if sp < limit:
+            txt.append(f"**الف و ج هم‌گرا** — فاصله {sp:.6f} < نصف ATR {limit:.6f}")
+            verdict = "هم‌گرا"
+        else:
+            txt.append(f"الف و ج پراکنده — فاصله {sp:.6f} ≥ نصف ATR {limit:.6f}")
+            verdict = "پراکنده"
+    else:
+        verdict = "هم‌گرا" if spread_all < limit else "پراکنده"
+        txt.append(f"پراکندگی کل {spread_all:.6f} در برابر نصف ATR {limit:.6f}")
+
+    if anchors.get("B", {}).get("poc") is not None:
+        txt.append("لنگر ب (تراکم قبلی) عمداً دور از قیمت جاری است و در آزمون "
+                   "هم‌گرایی شمرده نشد — نقشش سطح مرجع تاریخی است، نه تأیید ورود")
+    return (verdict, " | ".join(txt))
 
 
 
@@ -1085,6 +1103,13 @@ CG_IDS = {
     "TAO": "bittensor", "HYPE": "hyperliquid", "HBAR": "hedera-hashgraph",
     "XLM": "stellar", "AAVE": "aave", "DOGE": "dogecoin", "LINK": "chainlink",
     "SUI": "sui", "RNDR": "render-token", "RENDER": "render-token",
+    "ZEC": "zcash", "UNI": "uniswap", "ADA": "cardano", "BNB": "binancecoin",
+    "XRP": "ripple", "PEPE": "pepe", "TRX": "tron", "BCH": "bitcoin-cash",
+    "NEAR": "near", "WLD": "worldcoin-wld", "OKB": "okb", "XMR": "monero",
+    "AVAX": "avalanche-2", "LTC": "litecoin", "ATOM": "cosmos", "ARB": "arbitrum",
+    "OP": "optimism", "INJ": "injective-protocol", "SEI": "sei-network",
+    "TIA": "celestia", "JUP": "jupiter-exchange-solana", "PYTH": "pyth-network",
+    "XAUT": "tether-gold", "PAXG": "pax-gold", "ZRO": "layerzero",
 }
 
 
@@ -1092,12 +1117,31 @@ def fetch_fundamental(base: str, out: dict[str, Field]) -> None:
     """عرضه در گردش، ارزش رقیق‌شده، فاصله از سقف تاریخی، ارزش کل قفل‌شده."""
     cid = CG_IDS.get(base.upper())
     if not cid:
-        lst = http_get(f"{CG_BASE}/coins/list", label="فهرست کوین‌گکو")
-        if isinstance(lst, list):
-            for c in lst:
-                if c.get("symbol", "").upper() == base.upper():
-                    cid = c["id"]
-                    break
+        # نمادها در کوین‌گکو یکتا نیستند. اولین تطابق معمولاً یک توکن
+        # ناشناس با همان نماد است. باید بر اساس **ارزش بازار** انتخاب شود.
+        mk = http_get(f"{CG_BASE}/coins/markets",
+                      {"vs_currency": "usd", "order": "market_cap_desc",
+                       "per_page": "250", "page": "1"},
+                      label="بازار کوین‌گکو برای تطابق نماد")
+        cands = []
+        if isinstance(mk, list):
+            cands = [c for c in mk if str(c.get("symbol", "")).upper() == base.upper()]
+        if cands:
+            cid = max(cands, key=lambda c: c.get("market_cap") or 0)["id"]
+            out["cg_match"] = Field(cid, "CoinGecko", datetime.now(UTC),
+                                    "انتخاب‌شده بر اساس بیشترین ارزش بازار")
+        else:
+            lst = http_get(f"{CG_BASE}/coins/list", label="فهرست کوین‌گکو")
+            hits = [c["id"] for c in lst
+                    if isinstance(lst, list)
+                    and c.get("symbol", "").upper() == base.upper()] if lst else []
+            if len(hits) == 1:
+                cid = hits[0]
+            elif len(hits) > 1:
+                FAILURES.append(
+                    f"نماد {base} در کوین‌گکو {len(hits)} تطابق دارد و قابل تفکیک "
+                    f"نیست — بخش بنیادی رد شد. نمونه: {', '.join(hits[:4])}")
+                return
     if not cid:
         FAILURES.append(f"شناسه کوین‌گکو برای {base} پیدا نشد")
         return
@@ -1527,6 +1571,20 @@ def report3(b: Bundle) -> str:
         A(f"**آزمون هم‌گرایی: {vd}** — {why}"); A("")
     else:
         A("**داده ندارم**"); A("")
+
+    # آزمون نسبت بهره باز به ارزش بازار
+    mc = b.fundamental.get("mcap")
+    if mc and mc.ok and mc.value:
+        tot_oi = sum(o["usd"] for o in b.v_oi.values() if o.get("usd"))
+        if tot_oi:
+            ratio = tot_oi / mc.value
+            A(f"**نسبت بهره باز به ارزش بازار:** {100*ratio:.1f}٪")
+            if ratio > 0.35:
+                A("")
+                A("> ⚠️ **بهره باز نسبت به ارزش بازار غیرعادی بزرگ است.** "
+                  "یا واحد یکی از صرافی‌ها اشتباه است، یا اهرم در این بازار "
+                  "به‌شدت متمرکز شده. عدد را مستقل راستی‌آزمایی کن.")
+            A("")
 
     # ── فیبوناچی: فقط لایه تأیید
     A("### فیبوناچی — لایه دوم تأیید، نه منبع سطح")
