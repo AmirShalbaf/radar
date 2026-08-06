@@ -10,10 +10,10 @@
 # =====================================================================
 
 meta:
-  version: "1.4"
+  version: "1.5"
   framework: "Radar 5.3"
   updated: "2026-08-06"
-  changelog: "۱.۴ — چهار لنز قدیمی اضافه شد، پشتیبانی پلی‌لیست آموزشی"
+  changelog: "۱.۵ — پلی‌لیست دوره ارشیا ثبت و روشن شد"
 
 sources:
 
@@ -279,10 +279,10 @@ sources:
     role: "کتابخانه روش"
     school: "پرایس اکشن و ساختار"
     kind: "playlist"
-    playlist_id: ""      # ← نشانی کامل پلی‌لیست را اینجا بچسبان
+    playlist_id: "PLRZx7LpGZLGliYfs_ooZEhmcR5ZJ9Oyzc"
     lang: ["fa"]
     scores: false
-    enabled: false       # ← تا وقتی نشانی نداری خاموش
+    enabled: true
     notes: >
       ترتیب قسمت‌ها حفظ می‌شود و شماره در عنوان می‌آید — «پارت ۳» بدون
       «پارت ۱» معنا ندارد.
