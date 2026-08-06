@@ -76,7 +76,7 @@ except ImportError:
     NoTranscriptFound = TranscriptsDisabled = VideoUnavailable = Exception
 
 
-VERSION = "1.0"
+VERSION = "1.2"
 UTC = timezone.utc
 USER_AGENT = "radar-intake/1.0 (research; contact via github.com/AmirShalbaf/radar)"
 
@@ -367,6 +367,9 @@ class Source:
     scores: bool = False              # آیا حق ورود به امتیازدهی دارد
     notes: str = ""
     conflict: str = ""                # تعارض منافع ثبت‌شده
+    link_pattern: str = ""            # فقط برای kind=index
+    playlist_id: str = ""             # فقط برای kind=playlist
+    collinear_with: str = ""          # هم‌خانواده با کدام منبع (یک رأی، نه دو)
 
     @classmethod
     def from_dict(cls, key: str, d: dict) -> "Source":
@@ -629,6 +632,127 @@ def whisper_fallback(video_url: str, model_size: str = "small") -> tuple[list[di
 # ۵ — واکشی: خوراک خبری و مقاله
 # ===========================================================================
 
+def extract_playlist_id(raw: str) -> str:
+    """شناسه پلی‌لیست را از نشانی کامل یا خود شناسه بیرون می‌کشد."""
+    m = re.search(r"[?&]list=([\w-]+)", raw or "")
+    return m.group(1) if m else (raw or "").strip()
+
+
+def fetch_playlist_items(src: Source, session) -> list[dict]:
+    """
+    ویدئوهای یک پلی‌لیست.
+
+    چرا جدا از کانال: خوراک کانال فقط ۱۵ ویدئوی **آخر** را می‌دهد.
+    یک دوره آموزشی بیست‌قسمتی از دو سال پیش، هرگز در آن ظاهر نمی‌شود.
+
+    دو مسیر:
+      ۱ — yt-dlp: کل پلی‌لیست، با حفظ **ترتیب**. برای دوره آموزشی ترتیب
+          خودش اطلاعات است — پارت ۳ بدون پارت ۱ معنا ندارد.
+      ۲ — خوراک پلی‌لیست: بدون وابستگی، ولی سقف ۱۵ مورد و ترتیب تضمینی نیست.
+    """
+    pid = extract_playlist_id(src.playlist_id or src.url)
+    if not pid:
+        log("    ! شناسه پلی‌لیست خالی است")
+        return []
+
+    # مسیر ۱ — شمارش کامل
+    try:
+        import yt_dlp
+
+        opts = {"quiet": True, "no_warnings": True,
+                "extract_flat": "in_playlist", "skip_download": True}
+        with yt_dlp.YoutubeDL(opts) as ydl:
+            info = ydl.extract_info(
+                f"https://www.youtube.com/playlist?list={pid}", download=False
+            )
+        entries = [e for e in (info.get("entries") or []) if e and e.get("id")]
+        if entries:
+            log(f"    پلی‌لیست «{info.get('title', '؟')}» — {len(entries)} ویدئو (ترتیب حفظ شد)")
+            return [
+                {
+                    "id": e["id"],
+                    "title": f"[{i:02d}] {e.get('title', '')}",   # شماره ترتیب در عنوان
+                    "url": f"https://www.youtube.com/watch?v={e['id']}",
+                    "published": "",
+                    "author": src.name_en or src.name_fa,
+                }
+                for i, e in enumerate(entries, 1)
+            ]
+    except ImportError:
+        log("    yt-dlp نصب نیست → پشتیبان خوراک (سقف ۱۵ مورد)")
+    except Exception as e:
+        log(f"    شمارش کامل ناموفق ({e.__class__.__name__}) → پشتیبان خوراک")
+
+    # مسیر ۲ — خوراک
+    if feedparser is None:
+        return []
+    feed = feedparser.parse(f"https://www.youtube.com/feeds/videos.xml?playlist_id={pid}")
+    out = []
+    for e in feed.entries:
+        vid = getattr(e, "yt_videoid", "")
+        if vid:
+            out.append({
+                "id": vid,
+                "title": getattr(e, "title", ""),
+                "url": f"https://www.youtube.com/watch?v={vid}",
+                "published": getattr(e, "published", ""),
+                "author": src.name_en or src.name_fa,
+            })
+    if out:
+        log(f"    {len(out)} ویدئو از خوراک پلی‌لیست")
+    return out
+
+
+def fetch_index_items(src: Source, session) -> list[dict]:
+    """
+    برای سایت‌هایی که خوراک خبری ندارند.
+
+    دلیل وجود: کایکو مدل ایمیلی دارد و هیچ خوراکی منتشر نمی‌کند.
+    بدون این تابع، یکی از سه لنز امتیازدهنده کلاً از دست می‌رفت.
+
+    روش: صفحه فهرست مقالات را بگیر، پیوندهای مقاله را با الگو دربیاور،
+    سپس هر مقاله را جداگانه بخوان.
+    """
+    try:
+        r = session.get(src.url, timeout=30)
+        r.raise_for_status()
+    except Exception as e:
+        log(f"    ! دریافت صفحه فهرست ناموفق: {e.__class__.__name__}")
+        return []
+
+    base_m = re.match(r"(https?://[^/]+)", src.url)
+    base = base_m.group(1) if base_m else ""
+    pat = re.compile(src.link_pattern or r'href="(/insights/[\w\-]+)"')
+
+    items, seen = [], set()
+    for m in pat.finditer(r.text):
+        href = m.group(1)
+        if href in seen:
+            continue
+        seen.add(href)
+        full = href if href.startswith("http") else base + href
+
+        # عنوان از متن پیوند، اگر بود؛ وگرنه از نامک نشانی
+        tail = r.text[m.end() : m.end() + 400]
+        t = re.search(r">\s*([^<>]{12,140}?)\s*<", tail)
+        title = (t.group(1).strip() if t
+                 else href.rstrip("/").split("/")[-1].replace("-", " "))
+
+        items.append({
+            "id": hashlib.sha1(full.encode()).hexdigest()[:12],
+            "title": collapse_ws(title),
+            "url": full,
+            "published": "",          # صفحه فهرست معمولاً تاریخ ندارد
+            "author": src.name_en or src.name_fa,
+        })
+        if len(items) >= 25:
+            break
+
+    if not items:
+        log("    ! هیچ پیوند مقاله‌ای با الگوی فعلی پیدا نشد")
+    return items
+
+
 def fetch_rss_items(src: Source, session) -> list[dict]:
     if feedparser is None:
         log("    ! feedparser نصب نیست")
@@ -740,6 +864,7 @@ def build_document(
         f"تعداد کلمه: {words}",
         f"نامزد ادعا: {len(candidates)}",
         f"تعارض منافع: {src.conflict or 'ثبت‌نشده'}",
+        f"هم‌خطی با: {src.collinear_with or '—'}",
         f"ساخته‌شده با: radar_intake {VERSION}",
         "---",
         "",
@@ -852,6 +977,10 @@ def process_source(
     log(f"\n▶ {src.name_fa}  [{src.role}]")
     if src.kind == "youtube":
         items = fetch_youtube_items(src, session)
+    elif src.kind == "playlist":
+        items = fetch_playlist_items(src, session)
+    elif src.kind == "index":
+        items = fetch_index_items(src, session)
     else:
         items = fetch_rss_items(src, session)
 
@@ -875,12 +1004,12 @@ def process_source(
             made += 1
             continue
 
-        if src.kind == "youtube":
+        if src.kind in ("youtube", "playlist"):
             segs, method = fetch_transcript(item["id"], src.lang)
             if not segs and args.whisper:
                 log("      زیرنویس نبود → ویسپر")
                 segs, method = whisper_fallback(item["url"], args.whisper_model)
-        else:
+        else:   # rss یا index — هر دو مقاله‌اند
             txt, method = fetch_article_text(item["url"], session)
             segs = [{"text": p, "start": None} for p in txt.split("\n") if p.strip()]
 
