@@ -76,7 +76,7 @@ except ImportError:
     NoTranscriptFound = TranscriptsDisabled = VideoUnavailable = Exception
 
 
-VERSION = "1.2"
+VERSION = "1.3"
 UTC = timezone.utc
 USER_AGENT = "radar-intake/1.0 (research; contact via github.com/AmirShalbaf/radar)"
 
@@ -540,39 +540,83 @@ def fetch_youtube_items(src: Source, session) -> list[dict]:
     return items
 
 
+def _snippets_to_dicts(fetched) -> list[dict]:
+    """
+    خروجی هر دو نسل کتابخانه را به یک شکل درمی‌آورد.
+
+    نسخه قدیم: فهرستی از dict با کلیدهای text و start
+    نسخه ۱.x : شیء FetchedTranscript از قطعه‌هایی با ویژگی .text و .start
+    """
+    out = []
+    try:
+        raw = fetched.to_raw_data()          # نسخه ۱.x راه رسمی دارد
+    except AttributeError:
+        raw = fetched
+    for s in raw:
+        if isinstance(s, dict):
+            out.append({"text": s.get("text", ""), "start": s.get("start")})
+        else:
+            out.append({"text": getattr(s, "text", ""), "start": getattr(s, "start", None)})
+    return out
+
+
+def _get_transcript_list(video_id: str):
+    """
+    فهرست زیرنویس‌ها، مستقل از نسخه کتابخانه.
+
+    درس اجرای ۶ اوت ۲۰۲۶ (خطای AttributeError):
+        متد ایستای list_transcripts در نسخه ۱.۰ حذف شد و جایش
+        متد نمونه‌ای list آمد. کد بی‌صدا نمی‌شکند — با خطا می‌شکند،
+        که بهتر است. ولی باید هر دو را پوشش داد چون نسخه کولب
+        بدون اطلاع به‌روز می‌شود.
+    """
+    if hasattr(YouTubeTranscriptApi, "list_transcripts"):
+        return YouTubeTranscriptApi.list_transcripts(video_id)   # ≤ ۰.۶
+    return YouTubeTranscriptApi().list(video_id)                  # ≥ ۱.۰
+
+
 def fetch_transcript(video_id: str, langs: list[str]) -> tuple[list[dict], str]:
     """
     برمی‌گرداند (قطعات، روش).
     ترتیب اولویت: زیرنویس دستی → زیرنویس خودکار → ترجمه‌شده.
-    زیرنویس دستی کیفیت به‌مراتب بالاتری دارد و باید در شناسنامه ثبت شود.
+    زیرنویس دستی کیفیت به‌مراتب بالاتری دارد و در شناسنامه ثبت می‌شود.
     """
     if YouTubeTranscriptApi is None:
         return [], "کتابخانه نصب نیست"
     try:
-        listing = YouTubeTranscriptApi.list_transcripts(video_id)
+        listing = _get_transcript_list(video_id)
     except (TranscriptsDisabled, VideoUnavailable) as e:
         return [], f"در دسترس نیست ({type(e).__name__})"
     except Exception as e:
-        return [], f"خطا ({e.__class__.__name__})"
+        return [], f"خطا ({e.__class__.__name__}: {e})"
 
     # ۱ — دستی
     try:
         t = listing.find_manually_created_transcript(langs)
-        return list(t.fetch()), f"زیرنویس دستی [{t.language_code}]"
+        return _snippets_to_dicts(t.fetch()), f"زیرنویس دستی [{t.language_code}]"
     except Exception:
         pass
     # ۲ — خودکار
     try:
         t = listing.find_generated_transcript(langs)
-        return list(t.fetch()), f"زیرنویس خودکار [{t.language_code}]"
+        return _snippets_to_dicts(t.fetch()), f"زیرنویس خودکار [{t.language_code}]"
     except Exception:
         pass
-    # ۳ — هر چه هست، ترجمه‌شده
+    # ۳ — هر زبانی که هست، ترجمه‌شده
     try:
         for t in listing:
             try:
                 tr = t.translate(langs[0])
-                return list(tr.fetch()), f"ترجمه ماشینی از [{t.language_code}]"
+                return _snippets_to_dicts(tr.fetch()), f"ترجمه ماشینی از [{t.language_code}]"
+            except Exception:
+                continue
+    except Exception:
+        pass
+    # ۴ — هر زبانی، بدون ترجمه (بهتر از هیچ)
+    try:
+        for t in listing:
+            try:
+                return _snippets_to_dicts(t.fetch()), f"زیرنویس [{t.language_code}] — زبان درخواستی نبود"
             except Exception:
                 continue
     except Exception:
@@ -603,10 +647,19 @@ def whisper_fallback(video_url: str, model_size: str = "small") -> tuple[list[di
             {"key": "FFmpegExtractAudio", "preferredcodec": "mp3", "preferredquality": "64"}
         ],
     }
+    # کوکی اختیاری — یوتیوب دانلود از سرورهای مرکز داده را مسدود می‌کند
+    cookies = os.environ.get("RADAR_COOKIES", "")
+    if cookies and Path(cookies).exists():
+        opts["cookiefile"] = cookies
+
     try:
         with yt_dlp.YoutubeDL(opts) as ydl:
             ydl.download([video_url])
     except Exception as e:
+        msg = str(e)
+        if "not a bot" in msg or "Sign in to confirm" in msg:
+            return [], ("یوتیوب دانلود را مسدود کرد (نشانی مرکز داده). "
+                        "ویسپر روی کولب بدون کوکی کار نمی‌کند — از زیرنویس استفاده کن")
         return [], f"دانلود صدا ناموفق ({e.__class__.__name__})"
 
     mp3 = tmp / "audio.mp3"
