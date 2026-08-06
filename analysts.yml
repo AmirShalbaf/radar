@@ -10,10 +10,10 @@
 # =====================================================================
 
 meta:
-  version: "1.1"
+  version: "1.2"
   framework: "Radar 5.3"
   updated: "2026-08-06"
-  changelog: "۱.۱ — تکرارگر از لایه کشف به دفتر ادعاها منتقل شد"
+  changelog: "۱.۲ — شناسه‌های تأییدشده، اصلاح هندل نو‌بی‌اس، خوراک کایکو"
 
 sources:
 
@@ -43,7 +43,7 @@ sources:
     role: "لنز تحلیل‌گر"
     school: "ریزساختار بازار"
     kind: "rss"
-    url: "https://research.kaiko.com/rss.xml"
+    url: "https://research.kaiko.com/"   # ۱.۲ — خوراک خودکشف می‌شود
     lang: ["en"]
     scores: true
     enabled: true
@@ -80,7 +80,7 @@ sources:
     school: "چرخه بدهی بلندمدت"
     kind: "youtube"
     handle: "@principlesbyraydalio"
-    channel_id: ""   # اسکریپت خودش پیدا می‌کند و در خروجی چاپ می‌کند
+    channel_id: "UCqvaXJ1K3HheTPNjH-KpwXQ"   # تأییدشده ۶ اوت   # اسکریپت خودش پیدا می‌کند و در خروجی چاپ می‌کند
     lang: ["en"]
     scores: false
     enabled: true
@@ -101,7 +101,7 @@ sources:
     school: "پرایس اکشن و ساختار"
     kind: "youtube"
     handle: "@Tradecitypro"
-    channel_id: ""
+    channel_id: ""   # ۱.۲ — در اجرای اول غلط برگشت. نام کانال را تأیید کن
     lang: ["fa"]
     scores: false
     enabled: true
@@ -118,7 +118,7 @@ sources:
     role: "کتابخانه روش"
     school: "غربال مقرراتی و توکنومیک"
     kind: "youtube"
-    handle: "@NoBsCrypto"
+    handle: "@NoBsCryptoOfficial"   # ۱.۲ — قبلی ۴۰۴ می‌داد
     channel_id: ""
     lang: ["en"]
     scores: false
@@ -141,7 +141,7 @@ sources:
     school: "تکنیکال فارسی"
     kind: "youtube"
     handle: "@CryptoCity_Pro"
-    channel_id: ""
+    channel_id: ""   # ۱.۲ — در اجرای اول غلط برگشت. نام کانال را تأیید کن
     lang: ["fa"]
     scores: false
     enabled: true
@@ -158,7 +158,7 @@ sources:
     school: "تجمیع و ترجمه"
     kind: "youtube"
     handle: "@tekrargar"
-    channel_id: ""
+    channel_id: "UCg7VGpxh_RQrYL5nLyF-V0g"   # تأییدشده ۶ اوت
     lang: ["fa"]
     scores: false              # حق رأی از کالیبراسیون می‌آید، نه از حس ما
     enabled: true              # ۱.۱ — روشن شد برای آزمون

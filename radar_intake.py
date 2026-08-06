@@ -395,8 +395,17 @@ YT_FEED = "https://www.youtube.com/feeds/videos.xml?channel_id={cid}"
 def resolve_channel_id(handle_or_url: str, session) -> str | None:
     """
     خوراک رسمی یوتیوب فقط با channel_id کار می‌کند، نه با @handle.
-    این تابع صفحه کانال را می‌گیرد و شناسه را از داخل HTML بیرون می‌کشد.
-    نیازی به کلید API ندارد.
+
+    درس نسخه ۱.۰ (اجرای ۶ اوت ۲۰۲۶):
+        نسخه اول اولین «channelId» داخل صفحه را برمی‌داشت. صفحه یوتیوب ده‌ها
+        بار این کلمه را دارد — برای ویدئوهای پیشنهادی، کانال‌های مرتبط، تبلیغ.
+        نتیجه: دو کانال متفاوت یک شناسه گرفتند و هر دو غلط بود.
+
+        درس عمومی‌تر: وقتی یک الگو در سند چند بار تکرار می‌شود، «اولین تطبیق»
+        یک انتخاب دلبخواه است، نه یک استخراج. باید سراغ فراداده‌ای رفت که
+        *تعریفاً* یکتاست.
+
+    اکنون فقط از فراداده‌های صاحب صفحه استفاده می‌شود، به ترتیب اعتبار.
     """
     url = handle_or_url
     if not url.startswith("http"):
@@ -407,15 +416,84 @@ def resolve_channel_id(handle_or_url: str, session) -> str | None:
     except Exception as e:
         log(f"    ! دریافت صفحه کانال ناموفق: {e}")
         return None
-    for pat in (
-        r'"channelId"\s*:\s*"(UC[\w-]{20,})"',
-        r'"externalId"\s*:\s*"(UC[\w-]{20,})"',
-        r'channel_id=(UC[\w-]{20,})',
-        r'/channel/(UC[\w-]{20,})',
-    ):
-        m = re.search(pat, r.text)
+
+    html = r.text
+
+    # ۱ — پیوند متعارف: یکتا و متعلق به صاحب صفحه
+    m = re.search(
+        r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']'
+        r'https://www\.youtube\.com/channel/(UC[\w-]{22})',
+        html,
+    )
+    if m:
+        return m.group(1)
+
+    # ۲ — og:url — همان نقش
+    m = re.search(
+        r'<meta[^>]+property=["\']og:url["\'][^>]+content=["\']'
+        r'https://www\.youtube\.com/channel/(UC[\w-]{22})',
+        html,
+    )
+    if m:
+        return m.group(1)
+
+    # ۳ — externalId داخل بلوک فراداده کانال (نه هر externalId در صفحه)
+    anchor = html.find("channelMetadataRenderer")
+    if anchor != -1:
+        m = re.search(r'"externalId"\s*:\s*"(UC[\w-]{22})"', html[anchor : anchor + 4000])
         if m:
             return m.group(1)
+
+    # ۴ — آخرین تلاش: تگ فراداده استاندارد
+    m = re.search(r'<meta[^>]+itemprop=["\']identifier["\'][^>]+content=["\'](UC[\w-]{22})', html)
+    if m:
+        return m.group(1)
+
+    return None
+
+
+def verify_channel(cid: str) -> str | None:
+    """
+    نام واقعی کانال را از خوراک برمی‌گرداند.
+
+    بدون این گام، شناسه غلط بی‌صدا رد می‌شود و تو ویدئوهای یک نفر دیگر را
+    به حساب منبع خودت می‌گذاری. این بدترین نوع خطاست: خطایی که خطا به نظر نمی‌رسد.
+    """
+    if feedparser is None:
+        return None
+    try:
+        feed = feedparser.parse(YT_FEED.format(cid=cid))
+        return getattr(feed.feed, "title", None)
+    except Exception:
+        return None
+
+
+def discover_feed(site_url: str, session) -> str | None:
+    """
+    نشانی خوراک را از خود صفحه پیدا می‌کند.
+
+    دلیل وجود: حدس‌زدن نشانی خوراک (/rss.xml, /feed, /rss) کار نمی‌کند —
+    کایکو در اجرای اول دقیقاً به همین دلیل خالی برگشت.
+    استاندارد وب می‌گوید سایت باید خوراکش را در تگ link اعلام کند. از همان بخوان.
+    """
+    try:
+        r = session.get(site_url, timeout=25)
+        r.raise_for_status()
+    except Exception:
+        return None
+    for m in re.finditer(
+        r'<link[^>]+type=["\']application/(?:rss|atom)\+xml["\'][^>]*>', r.text, re.I
+    ):
+        h = re.search(r'href=["\']([^"\']+)["\']', m.group(0))
+        if not h:
+            continue
+        href = h.group(1)
+        if href.startswith("//"):
+            href = "https:" + href
+        elif href.startswith("/"):
+            base = re.match(r"(https?://[^/]+)", site_url)
+            href = (base.group(1) if base else "") + href
+        return href
     return None
 
 
@@ -429,7 +507,11 @@ def fetch_youtube_items(src: Source, session) -> list[dict]:
     if not cid:
         cid = resolve_channel_id(src.handle or src.url, session)
         if cid:
-            log(f"    شناسه کانال یافت شد: {cid}  (در analysts.yml ذخیره کن)")
+            title = verify_channel(cid)
+            log(f"    شناسه یافت شد: {cid}")
+            if title:
+                log(f"    نام واقعی کانال: «{title}»  ← با «{src.name_fa}» تطبیق بده")
+            log("    (پس از تأیید، در analysts.yml ذخیره کن تا دفعه بعد سریع‌تر شود)")
     if not cid:
         log("    ! شناسه کانال پیدا نشد")
         return []
@@ -552,6 +634,16 @@ def fetch_rss_items(src: Source, session) -> list[dict]:
         log("    ! feedparser نصب نیست")
         return []
     feed = feedparser.parse(src.url)
+
+    # اگر خوراک خالی بود، شاید نشانی غلط است. از خود سایت بپرس.
+    if not feed.entries:
+        base = re.match(r"(https?://[^/]+)", src.url or "")
+        if base:
+            found = discover_feed(base.group(1), session)
+            if found and found != src.url:
+                log(f"    خوراک تازه کشف شد: {found}")
+                log("    (در analysts.yml جایگزین کن)")
+                feed = feedparser.parse(found)
     items = []
     for e in feed.entries:
         link = getattr(e, "link", "")
@@ -866,8 +958,12 @@ def main() -> int:
         rebuild_index(outdir)
 
     log("\n" + "=" * 62)
-    log(f"  {total} سند تازه ساخته شد → {outdir}/")
-    log(f"  فهرست: {outdir}/INDEX.md")
+    if args.dry_run:
+        log(f"  اجرای خشک — {total} مورد *ساخته می‌شد*. هیچ فایلی نوشته نشد.")
+        log("  برای اجرای واقعی، --dry-run را بردار.")
+    else:
+        log(f"  {total} سند تازه ساخته شد → {outdir}/")
+        log(f"  فهرست: {outdir}/INDEX.md")
     log("=" * 62)
     return 0
 
