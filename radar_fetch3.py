@@ -44,7 +44,7 @@ import pandas as pd
 import requests
 
 UTC = timezone.utc
-VERSION = "3.5"
+VERSION = "3.6"
 FRAMEWORK = "۵.۳"   # نسخه چارچوب رادار — تیترها از اینجا می‌خوانند
 
 # ═══════════════════════════════════════════════════════════════════
@@ -232,6 +232,90 @@ def okx_candles(inst_id: str, bar: str, want: int = 1000) -> pd.DataFrame | None
 # ═══════════════════════════════════════════════════════════════════
 #  لایه ۳ — اندیکاتورها (محاسبه محلی، نه خواندن از چارت)
 # ═══════════════════════════════════════════════════════════════════
+
+def flag_oi_outliers(v_oi: dict, tests: list, mcap: float | None = None,
+                     mcap_ceiling: float = 0.15, max_ratio: float = 8.0) -> None:
+    """
+    بهره باز ناسازگار را علامت می‌زند و از تجمیع کنار می‌گذارد.
+
+    دو درس از آزمون ۹ اوت ۲۰۲۶ — نسخه اول و دوم هر دو باگ داشتند:
+
+      نسخه ۱: با دو صرافی، میانه وسط دو عدد می‌نشیند و **درستی** را
+              علامت می‌زند نه غلط را.
+      نسخه ۲: با سه صرافی، عدد خراب خودش میانه را آلوده می‌کند و از
+              آستانه نسبت رد می‌شود.
+
+    نتیجه: نسبت به میانه، سنجه ضعیفی است، چون پراکندگی واقعی بین صرافی
+    بزرگ و کوچک به‌طور طبیعی ده برابر هم می‌شود.
+
+    سنجه قوی، **سقف نسبت به ارزش بازار** است. این دانش دامنه است نه آمار:
+    هیچ صرافی متوسطی به‌تنهایی پانزده درصد ارزش بازار یک کوین را در
+    قرارداد دائمی نگه نمی‌دارد. رخداد واقعی: گیت ۲.۳۱ میلیارد اعلام کرد
+    در حالی که ارزش بازار ۸.۶۶ میلیارد بود — یعنی ۲۷ درصد. غیرممکن.
+
+    ترتیب داوری:
+      ۱ — اگر ارزش بازار داریم: سقف پانزده درصد. قاطع و مستقل از تعداد منبع.
+      ۲ — وگرنه با ۳ منبع یا بیشتر: نسبت به میانه، فقط به‌عنوان هشدار ضعیف.
+      ۳ — وگرنه با ۲ منبع متناقض: هر دو مشکوک. حدس زدن بدتر از اعتراف است.
+
+    در همه حالت‌ها تغییر درصدی همان صرافی معتبر می‌ماند —
+    خطا در واحد یا ضریب تبدیل است، نه در جهت حرکت.
+    """
+    vals = {k: o["usd"] for k, o in v_oi.items() if o.get("usd")}
+    if not vals:
+        return
+
+    # ── داور ۱ — سقف ارزش بازار ──
+    if mcap and mcap > 0:
+        any_flag = False
+        for k, v in vals.items():
+            share = v / mcap
+            ok = share <= mcap_ceiling
+            v_oi[k]["suspect"] = not ok
+            any_flag |= not ok
+            tests.append((
+                f"راستی‌آزمایی ۴ — سقف بهره باز به ارزش بازار ({k})", ok,
+                f"{100*share:.1f}٪ ارزش بازار"
+                + ("" if ok else f" ← بالای سقف {100*mcap_ceiling:.0f}٪،"
+                                 " از تجمیع کنار گذاشته شد"),
+            ))
+        # داور قاطع است: چه چیزی علامت خورده باشد چه نه، آزمون‌های ضعیف‌تر
+        # اجرا نمی‌شوند. پراکندگی بین صرافی بزرگ و کوچک طبیعی است و
+        # اجرای آزمون نسبت پس از آن، فقط مثبت کاذب می‌سازد.
+        return
+
+    if len(vals) < 2:
+        return
+
+    # ── داور ۲ — دو منبع، بدون ارزش بازار ──
+    if len(vals) == 2:
+        (k1, v1), (k2, v2) = vals.items()
+        hi, lo = max(v1, v2), min(v1, v2)
+        ok = lo > 0 and (hi / lo) <= max_ratio
+        for k in vals:
+            v_oi[k]["suspect"] = not ok
+        tests.append((
+            "راستی‌آزمایی ۴ — سازگاری بهره باز (۲ صرافی)", ok,
+            f"{k1}={v1:,.0f} در برابر {k2}={v2:,.0f} — نسبت {hi/lo:.1f}×"
+            + ("" if ok else " ← هر دو مشکوک. با دو منبع متناقض داور نداریم."),
+        ))
+        return
+
+    # ── داور ۳ — سه منبع یا بیشتر ──
+    import statistics
+    med = statistics.median(vals.values())
+    if med <= 0:
+        return
+    for k, v in vals.items():
+        r = v / med
+        ok = (1.0 / max_ratio) <= r <= max_ratio
+        v_oi[k]["suspect"] = not ok
+        tests.append((
+            f"راستی‌آزمایی ۴ — سازگاری بهره باز ({k})", ok,
+            f"{r:.2f}× میانه {med:,.0f} دلار"
+            + ("" if ok else " ← از تجمیع کنار گذاشته شد"),
+        ))
+
 
 def ema(s: pd.Series, n: int) -> pd.Series:
     return s.ewm(span=n, adjust=False).mean()
@@ -1267,10 +1351,30 @@ def snapshot(df: pd.DataFrame, name: str) -> str:
         f"| بالاترین | {fmt_num(r['high'])} | — |",
         f"| پایین‌ترین | {fmt_num(r['low'])} | — |",
     ]
-    for lbl, col in [("EMA ۲۰", "ema20"), ("EMA ۵۰", "ema50"), ("EMA ۲۰۰", "ema200")]:
+    # درس رخداد واقعی ۹ اوت ۲۰۲۶:
+    #   OKX فقط ۲۶۰ کندل روزانه داد. میانگین نمایی ۲۰۰ با ۲۶۰ کندل هنوز
+    #   گرم نشده و عدد ۴۴۷ داد، در حالی که با تاریخچه کامل ۳۴۴ بود.
+    #   فاصله قیمت از میانگین ۱۵٪ گزارش شد در حالی که واقعی ۴۹.۵٪ بود —
+    #   یعنی «سالم» خوانده شد چیزی که «کشیده» بود.
+    #
+    # قاعده: میانگین نمایی دوره n تقریباً ۳n کندل لازم دارد تا وزن اولیه
+    # به زیر پنج درصد برسد. کمتر از آن، عدد سوگیرانه است و باید علامت بخورد.
+    n_bars = len(df)
+    for lbl, col, span in [("EMA ۲۰", "ema20", 20),
+                           ("EMA ۵۰", "ema50", 50),
+                           ("EMA ۲۰۰", "ema200", 200)]:
         v = float(r[col]) if math.isfinite(r[col]) else None
+        mature = n_bars >= 3 * span
         rel = f"{100*(price-v)/v:+.2f}%" if v else "—"
+        if v and not mature:
+            rel += f" ⚠️ نابالغ ({n_bars} کندل، حداقل {3*span} لازم)"
         lines.append(f"| {lbl} | {fmt_num(v)} | {rel} |")
+
+    if n_bars < 600:
+        lines.append("")
+        lines.append(f"> ⚠️ **هشدار بلوغ:** فقط {n_bars} کندل در دسترس است. "
+                     "میانگین‌های بلندمدت سوگیری دارند و **نباید امتیاز بگیرند**. "
+                     "برای عدد درست، همان تایم را روی تریدینگ‌ویو با تاریخچه کامل بررسی کن.")
     vr = r["vol_ma20"]
     vol_rel = f"{r['vol']/vr:.2f}x میانگین ۲۰" if (math.isfinite(vr) and vr > 0) else "—"
     lines += [
@@ -1281,7 +1385,10 @@ def snapshot(df: pd.DataFrame, name: str) -> str:
         "",
     ]
     order = []
-    for lbl, col in [("قیمت", None), ("۲۰", "ema20"), ("۵۰", "ema50"), ("۲۰۰", "ema200")]:
+    for lbl, col, span in [("قیمت", None, 0), ("۲۰", "ema20", 20),
+                           ("۵۰", "ema50", 50), ("۲۰۰", "ema200", 200)]:
+        if col is not None and n_bars < 3 * span:
+            continue                      # میانگین نابالغ وارد چیدمان نمی‌شود
         order.append((lbl, price if col is None else float(r[col])))
     order = [o for o in order if math.isfinite(o[1])]
     order.sort(key=lambda x: -x[1])
@@ -1472,7 +1579,8 @@ def run3(symbol, balance, profile, macro_event, deep, order):
               file=sys.stderr)
 
     print(f"[۱/۵] کندل — تلاش به ترتیب {', '.join(order)} ...", file=sys.stderr)
-    got, vn, pair = candles_first_ok(base, order, 1000 if deep else 400, b.tests)
+    # ۶۰۰ کف تازه است: میانگین نمایی ۲۰۰ برای بلوغ حدود ۳×۲۰۰ کندل لازم دارد
+    got, vn, pair = candles_first_ok(base, order, 1500 if deep else 600, b.tests)
     b.candles, b.candle_venue, b.pair_btc = got, vn, pair
 
     price = None
@@ -1497,12 +1605,28 @@ def run3(symbol, balance, profile, macro_event, deep, order):
             b.tests.append((f"آزمون بزرگی بهره باز ({vn2})", o["usd"] > 1_000_000,
                             f"{o['usd']:,.0f} دلار"))
 
+    # ── راستی‌آزمایی ۴ — سازگاری بین صرافی‌ها (افزوده ۹ اوت ۲۰۲۶) ──
+    #
+    # درس رخداد واقعی: گیت برای ZEC عدد ۲.۳۱ میلیارد داد در حالی که مقدار
+    # واقعی حدود ۲۱ میلیون بود — خطای صد برابر. آزمون بزرگی از آن رد شد
+    # چون فقط کف داشت (بزرگ‌تر از یک میلیون) و سقف نداشت.
+    #
+    # اصل عمومی: وقتی چند منبع مستقل یک کمیت را اندازه می‌گیرند، عدد پرت
+    # با مقایسه با میانه شناسایی می‌شود، نه با آستانه مطلق. آستانه مطلق
+    # نمی‌داند «بزرگ» برای این دارایی یعنی چه؛ میانه می‌داند.
+    # فراخوانی واقعی پس از گرفتن ارزش بازار انجام می‌شود (گام ۴)
+
     print("[۳/۵] ماکرو رسمی فدرال‌رزرو ...", file=sys.stderr)
     b.fred = fetch_fred(http_text)
 
     print("[۴/۵] بازار، بنیادی، آزادسازی ...", file=sys.stderr)
     fetch_macro(b.macro)
     fetch_fundamental(base, b.fundamental)
+
+    # حالا ارزش بازار را داریم — داوری بهره باز اینجا انجام می‌شود، نه زودتر
+    _mc = b.fundamental.get("mcap")
+    flag_oi_outliers(b.v_oi, b.tests,
+                     mcap=_mc.value if (_mc and _mc.ok and _mc.value) else None)
     fetch_unlocks(base, b.fundamental)
 
     print("[۵/۵] پروفایل حجم و فیبوناچی ...", file=sys.stderr)
@@ -1575,10 +1699,16 @@ def report3(b: Bundle) -> str:
     # آزمون نسبت بهره باز به ارزش بازار
     mc = b.fundamental.get("mcap")
     if mc and mc.ok and mc.value:
-        tot_oi = sum(o["usd"] for o in b.v_oi.values() if o.get("usd"))
+        tot_oi = sum(o["usd"] for o in b.v_oi.values()
+                     if o.get("usd") and not o.get("suspect"))
+        n_drop = sum(1 for o in b.v_oi.values() if o.get("suspect"))
         if tot_oi:
             ratio = tot_oi / mc.value
-            A(f"**نسبت بهره باز به ارزش بازار:** {100*ratio:.1f}٪")
+            A(f"**نسبت بهره باز به ارزش بازار:** {100*ratio:.1f}٪"
+              + (f"  _(از {n_drop} صرافی مشکوک صرف‌نظر شد)_" if n_drop else ""))
+            A("")
+            A("> این نسبت فقط از صرافی‌های در دسترس است، نه کل بازار. "
+              "برای عدد تجمیعی واقعی، کوین‌گلس مرجع است.")
             if ratio > 0.35:
                 A("")
                 A("> ⚠️ **بهره باز نسبت به ارزش بازار غیرعادی بزرگ است.** "

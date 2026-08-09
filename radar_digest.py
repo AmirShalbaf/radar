@@ -43,8 +43,21 @@ except ImportError:  # اجرای مستقل
     def is_boilerplate(t):  # type: ignore
         return False
 
-VERSION = "1.0"
+VERSION = "1.1"
 UTC = timezone.utc
+
+# اجبار خروجی یونیکد روی ویندوز فارسی — همان دلیل radar_intake
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+    try:
+        import ctypes
+        ctypes.windll.kernel32.SetConsoleOutputCP(65001)
+    except Exception:
+        pass
 
 
 # ===========================================================================

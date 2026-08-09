@@ -76,9 +76,32 @@ except ImportError:
     NoTranscriptFound = TranscriptsDisabled = VideoUnavailable = Exception
 
 
-VERSION = "1.3"
+VERSION = "1.4"
 UTC = timezone.utc
 USER_AGENT = "radar-intake/1.0 (research; contact via github.com/AmirShalbaf/radar)"
+
+# ---------------------------------------------------------------------------
+# اجبار خروجی یونیکد
+#
+# درس اجرای ۶ اوت ۲۰۲۶ روی ویندوز فارسی:
+#     پایتون خروجی کنسول را با کدگذاری پیش‌فرض سیستم می‌نویسد. روی ویندوز
+#     فارسی این cp1256 است که حرف «ی» (\u06cc) را ندارد → UnicodeEncodeError
+#     و توقف کامل برنامه، نه فقط بدنمایی.
+#
+# نکته: این خطا در کولب هرگز رخ نمی‌داد چون لینوکس پیش‌فرض یونیکد است.
+# مهاجرت به محیط تازه، خطاهای تازه رو می‌کند.
+# ---------------------------------------------------------------------------
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+    try:                                      # صفحه‌کد کنسول را هم عوض کن
+        import ctypes
+        ctypes.windll.kernel32.SetConsoleOutputCP(65001)
+    except Exception:
+        pass
 
 
 # ===========================================================================
