@@ -58,7 +58,7 @@ import numpy as np
 import pandas as pd
 import requests
 
-VERSION = "1.0"
+VERSION = "1.1"
 
 PRESETS = {
     "main":  ["BTC", "ETH", "SOL"],
@@ -146,6 +146,11 @@ class Level:
     last_idx: int
     kind: str                       # "حمایت" یا "مقاومت"
     members: list = field(default_factory=list)
+    flipped: bool = False           # تازه از مقاومت به حمایت برگشته
+
+    @property
+    def tag(self) -> str:
+        return f"{self.touches}{'⚡' if self.flipped else ''}"
 
 
 def cluster_levels(pivots: list, tol: float, n_bars: int,
@@ -195,13 +200,15 @@ class Assessment:
     resistance: Level | None = None
     dist_sup_atr: float = math.nan
     rr: float = math.nan
+    swing_low_4h: float = math.nan      # کف نوسان چهارساعته
+    rr_tactical: float = math.nan       # نسبت با استاپ چهارساعته
     verdict: str = ""
     note: str = ""
     n_bars: int = 0
 
 
 def assess(sym: str, df: pd.DataFrame, buffer_atr: float = 0.25,
-           tol_atr: float = 1.0) -> Assessment:
+           tol_atr: float = 1.0, df_4h: pd.DataFrame | None = None) -> Assessment:
     a = Assessment(symbol=sym, n_bars=len(df))
     if df is None or len(df) < 60:
         a.verdict = "داده کم"
@@ -217,19 +224,36 @@ def assess(sym: str, df: pd.DataFrame, buffer_atr: float = 0.25,
     a.price, a.atr = price, atr
 
     # جهت روند — قاعده ر۱: خلاف روند وارد نشو
+    #
+    # درس رخداد ۹ اوت ۲۰۲۶ (بی‌ان‌بی):
+    #   نسخه اول وقتی میانگین ۲۰۰ نابالغ بود، آن را **کلاً دور می‌انداخت**
+    #   و فقط قیمت را با میانگین ۵۰ می‌سنجید. برای بی‌ان‌بی این یعنی
+    #   برچسب «صعودی» در حالی که میانگین ۲۰۰ روی ۶۴۶ بود و قیمت ۶۰۵ —
+    #   یعنی ساختار روزانه نزولی بود.
+    #
+    # قاعده درست: عدد نابالغ **سوگیری** دارد، ولی **بی‌اطلاع** نیست.
+    #   نادیده‌گرفتنش بدتر از استفاده با هشدار است.
     e50 = float(df["ema50"].iloc[-1])
-    mature200 = len(df) >= 600
-    e200 = float(df["ema200"].iloc[-1]) if mature200 else math.nan
-    if mature200:
+    e200 = float(df["ema200"].iloc[-1])
+    mature200 = len(df) >= 3 * 200
+
+    if math.isfinite(e200):
         if price > e50 > e200:
             a.trend = "صعودی"
         elif price < e50 < e200:
             a.trend = "نزولی"
+        elif price < e200 and price > e50:
+            a.trend = "بی‌ساختار ↓"      # زیر بلندمدت، بالای میان‌مدت
+        elif price > e200 and price < e50:
+            a.trend = "بی‌ساختار ↑"
         else:
             a.trend = "بی‌ساختار"
+        if not mature200:
+            a.trend += "*"
+            a.note = f"میانگین ۲۰۰ نابالغ ({len(df)} کندل، {3*200} لازم) — با تریدینگ‌ویو تأیید کن"
     else:
-        a.trend = "صعودی*" if price > e50 else "نزولی*"
-        a.note = f"میانگین ۲۰۰ نابالغ ({len(df)} کندل)"
+        a.trend = "؟"
+        a.note = "میانگین ۲۰۰ محاسبه نشد"
 
     highs, lows = find_pivots(df)
     # درس آزمون ۹ اوت ۲۰۲۶:
@@ -245,6 +269,13 @@ def assess(sym: str, df: pd.DataFrame, buffer_atr: float = 0.25,
         L.kind = "مقاومت"
     for L in sup_all:
         L.kind = "حمایت"
+
+    # سطحی که از مقاومت به حمایت برگشته، هنوز به‌عنوان حمایت آزمون نشده.
+    # درس رخداد سولانا ۹ اوت: اسکنر «حمایت با ۵ برخورد» گفت، ولی هر پنج
+    # برخورد **به‌عنوان مقاومت** بود. قیمت تازه از رویش رد شده بود.
+    for L in res_all:
+        if L.price < price:
+            L.flipped = True
 
     below = [L for L in (sup_all + res_all) if L.price < price]
     above = [L for L in (sup_all + res_all) if L.price > price]
@@ -270,6 +301,20 @@ def assess(sym: str, df: pd.DataFrame, buffer_atr: float = 0.25,
     reward = a.resistance.price - price
     a.dist_sup_atr = (price - a.support.price) / atr if atr else math.nan
     a.rr = reward / risk if risk > 0 else math.nan
+
+    # ── نسبت تاکتیکی: استاپ از ساختار چهارساعته، نه روزانه ──
+    #
+    # درس رخداد زی‌کش: تز معامله شکست چهارساعته بود، ولی اسکنر استاپ را
+    # از حمایت روزانه (۴۹۱) گرفت. ریسک ۳۹ به‌جای ۷ → نسبت ۰.۴۰ به‌جای ۲.۶۵.
+    # استاپ باید به همان ساختاری بچسبد که **تز** را تعریف می‌کند.
+    if df_4h is not None and len(df_4h) > 30:
+        _, lows4 = find_pivots(df_4h, 2, 2)
+        recent = [v for i, v in lows4 if i >= len(df_4h) - 30 and v < price]
+        if recent:
+            a.swing_low_4h = max(recent)
+            risk_t = price - a.swing_low_4h * 0.998
+            if risk_t > 0:
+                a.rr_tactical = reward / risk_t
 
     if a.dist_sup_atr <= 0.5:
         a.verdict = "روی سطح"
@@ -300,19 +345,25 @@ def report(rows: list[Assessment], min_rr: float) -> str:
         "> **اصل:** نسبت ریسک به پاداش با تنگ‌کردن استاپ ساخته نمی‌شود،",
         "> با نزدیک‌بودن ورود به سطح ابطال ساخته می‌شود.",
         "",
-        "| نماد | قیمت | روند | وضعیت | فاصله تا حمایت | حمایت (برخورد) | مقاومت | نسبت |",
-        "|---|---|---|---|---|---|---|---|",
+        "| نماد | قیمت | روند | وضعیت | فاصله | حمایت | مقاومت | نسبت | نسبت ۴س |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     for a in ok:
-        sup = f"{fmt(a.support.price)} ({a.support.touches})" if a.support else "—"
-        res = f"{fmt(a.resistance.price)} ({a.resistance.touches})" if a.resistance else "—"
+        sup = f"{fmt(a.support.price)} ({a.support.tag})" if a.support else "—"
+        res = f"{fmt(a.resistance.price)} ({a.resistance.tag})" if a.resistance else "—"
+        rrt = f"**{fmt(a.rr_tactical, 2)}**" if math.isfinite(a.rr_tactical) else "—"
         L.append(
             f"| {a.symbol} | {fmt(a.price)} | {a.trend} | {a.verdict} | "
-            f"{fmt(a.dist_sup_atr, 2)}× دامنه | {sup} | {res} | **{fmt(a.rr, 2)}** |"
+            f"{fmt(a.dist_sup_atr, 2)}× | {sup} | {res} | {fmt(a.rr, 2)} | {rrt} |"
         )
 
-    cand = [a for a in ok if a.rr >= min_rr and a.verdict in ("روی سطح", "نزدیک سطح")
-            and a.trend.startswith("صعودی")]
+    # فقط «صعودی» خالص — «بی‌ساختار» و «صعودی*» با ستاره هم رد می‌شوند
+    def _best(a):
+        return max([x for x in (a.rr, a.rr_tactical) if math.isfinite(x)], default=0.0)
+    cand = [a for a in ok
+            if _best(a) >= min_rr
+            and a.verdict in ("روی سطح", "نزدیک سطح")
+            and a.trend == "صعودی"]
     L += ["", "---", "", f"## نامزدها — نسبت ≥ {min_rr}، نزدیک سطح، روند صعودی", ""]
     if cand:
         for a in cand:
@@ -327,7 +378,9 @@ def report(rows: list[Assessment], min_rr: float) -> str:
                 f"| استاپ پیشنهادی | {fmt(stop)} |",
                 f"| فاصله استاپ | {fmt(100*(a.price-stop)/a.price, 2)}٪ |",
                 f"| مقاومت ({a.resistance.touches} برخورد) | {fmt(a.resistance.price)} |",
-                f"| نسبت | **{fmt(a.rr, 2)}** |",
+                f"| نسبت با استاپ روزانه | **{fmt(a.rr, 2)}** |",
+                f"| کف نوسان چهارساعته | {fmt(a.swing_low_4h)} |",
+                f"| نسبت با استاپ چهارساعته | **{fmt(a.rr_tactical, 2)}** |",
                 f"| دامنه روزانه | {fmt(100*a.atr/a.price, 2)}٪ |",
                 "",
             ]
@@ -348,7 +401,10 @@ def report(rows: list[Assessment], min_rr: float) -> str:
         "| تعداد برخورد | شمارش تاریخی است، نه تضمین واکنش آینده |",
         "| سطوح | فقط از تایم روزانه. زیر روزانه ماشه است نه سطح |",
         "| مقاومت نزدیک | نسبت بالا با مقاومت خیلی نزدیک، توهم است |",
-        "| برچسب `*` روی روند | میانگین ۲۰۰ هنوز بالغ نشده |",
+        "| برچسب `*` روی روند | میانگین ۲۰۰ هنوز بالغ نشده — با تریدینگ‌ویو تأیید کن |",
+        "| علامت ⚡ کنار سطح | تازه از مقاومت به حمایت برگشته، هنوز آزمون نشده |",
+        "| نسبت ۴س | استاپ از کف نوسان چهارساعته — برای تز شکست کوتاه‌مدت |",
+        "| **مهم** | اسکنر فقط ساختار قیمت را می‌بیند. موضع‌گیری، جریان و بهره باز را نمی‌بیند |",
         "",
         "> این خروجی **نامزد** می‌دهد، نه **حکم**. هر نامزد باید با",
         "> `radar_fetch3.py` عمیق بررسی شود و از دروازه پذیرش رادار بگذرد.",
@@ -362,7 +418,7 @@ def main() -> int:
     ap.add_argument("--watchlist", help="جدا با کاما")
     ap.add_argument("--preset", choices=list(PRESETS), default="all")
     ap.add_argument("--min-rr", type=float, default=2.0, dest="min_rr")
-    ap.add_argument("--bars", type=int, default=600)
+    ap.add_argument("--bars", type=int, default=700)
     ap.add_argument("--tol", type=float, default=1.0, dest="tol_atr",
                     help="رواداری خوشه‌بندی سطح، بر حسب دامنه روزانه")
     ap.add_argument("--out")
@@ -376,7 +432,8 @@ def main() -> int:
     for s in syms:
         print(f"  {s} ...", end="", flush=True, file=sys.stderr)
         df = okx_candles(f"{s}-USDT", "1D", args.bars)
-        a = (assess(s, df, tol_atr=args.tol_atr) if df is not None
+        df4 = okx_candles(f"{s}-USDT", "4H", 200) if df is not None else None
+        a = (assess(s, df, tol_atr=args.tol_atr, df_4h=df4) if df is not None
              else Assessment(symbol=s, verdict="بدون داده"))
         rows.append(a)
         print(f" {a.verdict}  نسبت={fmt(a.rr,2)}", file=sys.stderr)
