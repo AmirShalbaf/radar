@@ -35,6 +35,10 @@ PRESETS = {
 
 # ═══════════════════ امتیازدهی غربال ═══════════════════
 
+# مجموع وزن همه اجزای ممکن — مبنای امتیاز خام در قانون سوگیری صفر
+W_FULL_LONG = 1.00
+W_FULL_SHORT = 1.00
+
 def _close_at(df: pd.DataFrame, ts) -> float | None:
     """آخرین قیمت بسته‌شدن در تاریخ ts یا قبل از آن. هم‌ترازی تاریخی، نه موقعیتی."""
     if df is None or len(df) == 0:
@@ -52,7 +56,9 @@ def score_symbol(base: str, order: list[str], btc_ref: pd.DataFrame | None
     شش سنجه غربال. هر کدام که داده نداشته باشد None می‌ماند — هرگز صفر فرضی.
     امتیاز نهایی فقط روی سنجه‌های موجود نرمال می‌شود (قانون سوگیری صفر).
     """
-    got, vn, _ = R.candles_first_ok(base, order, 300, [])
+    # ۶۰۰ کندل: میانگین نمایی دوره n برای بلوغ حدود ۳n کندل لازم دارد.
+    # با ۳۰۰ کندل، EMA200 هنوز گرم نشده است.
+    got, vn, _ = R.candles_first_ok(base, order, 600, [])
     if "1D" not in got:
         return None
     d = got["1D"]
@@ -61,15 +67,18 @@ def score_symbol(base: str, order: list[str], btc_ref: pd.DataFrame | None
         return None
     r = d.iloc[-1]
     price = float(r["close"])
+    n_bars = len(d)
 
     row: dict = {"symbol": base, "venue": vn, "price": price,
-                 "date": str(r["ts"].date())}
+                 "date": str(r["ts"].date()), "bars": n_bars}
 
-    # ۱ — فاصله از EMA200: ساختار بلندمدت
-    if math.isfinite(r["ema200"]) and r["ema200"] > 0:
+    # ۱ — فاصله از EMA200: ساختار بلندمدت — مشروط به بلوغ ۳n
+    row["ema200_mature"] = n_bars >= 600
+    if math.isfinite(r["ema200"]) and r["ema200"] > 0 and n_bars >= 600:
         row["vs_ema200"] = 100 * (price - r["ema200"]) / r["ema200"]
-    # ۲ — فاصله از EMA50: ساختار میان‌مدت
-    if math.isfinite(r["ema50"]) and r["ema50"] > 0:
+    # ۲ — فاصله از EMA50: ساختار میان‌مدت — مشروط به بلوغ ۳n
+    row["ema50_mature"] = n_bars >= 150
+    if math.isfinite(r["ema50"]) and r["ema50"] > 0 and n_bars >= 150:
         row["vs_ema50"] = 100 * (price - r["ema50"]) / r["ema50"]
     # ۳ — RSI
     if math.isfinite(r["rsi14"]):
@@ -189,6 +198,11 @@ def short_composite(row: dict) -> tuple[float | None, int]:
             s = max(0.3, 2.0 - (abs(v50) - 12) / 10)   # خیلی دور، کشیده شده
         if v200 is not None and v200 < -30:
             s *= 0.5                      # از قبل له شده، سوخت کم
+        elif v200 is None and not row.get("ema200_mature", True):
+            # ساختار بلندمدت نامعلوم است. برای شورت، محافظه‌کارانه یعنی
+            # فرض کن ممکن است از قبل له شده باشد — وگرنه نبود داده خودش
+            # جریمه را حذف می‌کند و امتیاز شورت را متورم می‌کند.
+            s *= 0.5
         parts.append((max(0.0, min(2.0, s)), 0.20))
 
     # ۲ — پذیرش بازار: موقعیت نسبت به ناحیه ارزش (وزن ۲۲٪)
@@ -257,8 +271,12 @@ def short_composite(row: dict) -> tuple[float | None, int]:
 
     if not parts:
         return None, 0
+    # قانون سوگیری صفر (رادار ۵.۳): حذف جزء غایب از مخرج، اگر آن جزء
+    # جریمه‌کننده بود، امتیاز را **بالا** می‌برد. آزمون واقعی: نبود EMA200
+    # جریمه «از قبل له شده» را حذف کرد و امتیاز شورت از ۱.۴۱ به ۱.۵۵ پرید.
+    num = sum(v * w for v, w in parts)
     wsum = sum(w for _, w in parts)
-    return round(sum(v * w for v, w in parts) / wsum, 3), len(parts)
+    return round(min(num / W_FULL_SHORT, num / wsum), 3), len(parts)
 
 
 def composite(row: dict) -> tuple[float | None, int]:
@@ -303,8 +321,10 @@ def composite(row: dict) -> tuple[float | None, int]:
 
     if not parts:
         return None, 0
+    # قانون سوگیری صفر — همان منطق تابع شورت.
+    num = sum(v * w for v, w in parts)
     wsum = sum(w for _, w in parts)
-    return round(sum(s * w for s, w in parts) / wsum, 3), len(parts)
+    return round(min(num / W_FULL_LONG, num / wsum), 3), len(parts)
 
 
 def flags(row: dict) -> str:
@@ -390,13 +410,21 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
     for i, r in enumerate(ok, 1):
         def pc(k, d=1):
             v = r.get(k)
-            return f"{v:+.{d}f}%" if v is not None else "—"
+            if v is not None:
+                return f"{v:+.{d}f}%"
+            # «نابالغ» با «داده ندارم» یکی نیست — باید جدا دیده شود
+            if k == "vs_ema200" and not r.get("ema200_mature", True):
+                return "نابالغ"
+            if k == "vs_ema50" and not r.get("ema50_mature", True):
+                return "نابالغ"
+            return "—"
         def nm(k, d=1):
             v = r.get(k)
             return f"{v:.{d}f}" if v is not None else "—"
         ss = r.get("short_score")
         ss_txt = f"**{ss:.2f}**" if ss is not None else "—"
-        A(f"| {i} | **{r['symbol']}** | {R.fmt_num(r['price'])} | {r['score']:+.2f} | {ss_txt} "
+        _mk = "" if r.get("ema200_mature", True) else " ⚠"
+        A(f"| {i} | **{r['symbol']}**{_mk} | {R.fmt_num(r['price'])} | {r['score']:+.2f} | {ss_txt} "
           f"| {pc('vs_ema200')} | {pc('vs_ema50')} | {nm('rsi')} | {pc('rs_btc_30d')} "
           f"| {pc('rs_btc_7d')} | {nm('atr_pct',2)} | {pc('funding_8h',4)} | {pc('oi_chg24')} |")
     A("")
@@ -404,6 +432,17 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
     bad = [r for r in rows if r.get("score") is None]
     if bad:
         A(f"**بدون داده کافی:** {', '.join(r['symbol'] for r in bad)}")
+        A("")
+
+    imm = [r for r in rows if not r.get("ema200_mature", True)]
+    if imm:
+        A("> ⚠️ **هشدار بلوغ میانگین:** این نمادها کمتر از ۶۰۰ کندل روزانه دارند. "
+          "میانگین نمایی ۲۰۰ برایشان **محاسبه نشد** و از مخرج امتیاز کم شد. "
+          "ستون vs EMA200 «نابالغ» است، نه «داده ندارم».")
+        A("")
+        A("| نماد | کندل موجود | حداقل لازم |"); A("|---|---|---|")
+        for r in imm[:15]:
+            A(f"| {r['symbol']} | {r.get('bars','?')} | ۶۰۰ |")
         A("")
 
     A("### هشدارها"); A("")
@@ -466,6 +505,8 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
                 st = "هنوز نشکسته"
             elif r.get("vs_ema200") is not None and r["vs_ema200"] < -30:
                 st = "از قبل له شده"
+            elif not r.get("ema200_mature", True):
+                st = "⚠ میانگین نابالغ — ساختار بلندمدت نامعلوم"
             elif r.get("rs_decay"):
                 st = "**فرسایش تازه — بهترین لحظه**"
             else:
@@ -485,7 +526,9 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
     for r in ok[:top]:
         A(f"### {r['symbol']}  —  امتیاز {r['score']:+.2f}")
         A("")
-        A(f"- ساختار: قیمت {R.fmt_num(r.get('vs_ema200'),1)}٪ نسبت به EMA200، "
+        _v2 = r.get("vs_ema200")
+        _v2t = f"{R.fmt_num(_v2,1)}٪" if _v2 is not None else "نامعلوم (میانگین نابالغ)"
+        A(f"- ساختار: قیمت {_v2t} نسبت به EMA200، "
           f"{R.fmt_num(r.get('vs_ema50'),1)}٪ نسبت به EMA50")
         if r.get("rs_btc_30d") is not None:
             if r["symbol"] == "BTC":
