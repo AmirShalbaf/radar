@@ -97,7 +97,10 @@ def rs_pair(df: pd.DataFrame, btc: pd.DataFrame, days: int) -> float | None:
 
 
 def analyze(sym: str, order: list[str], btc: pd.DataFrame) -> dict | None:
-    got, vn, _ = R.candles_first_ok(sym, order, 200, [])
+    # ۶۰۰ کندل: میانگین نمایی دوره n برای بلوغ حدود ۳n کندل لازم دارد.
+    # با ۲۰۰ کندل، EMA200 هنوز گرم نشده و عدد سوگیرانه می‌دهد —
+    # همان باگی که در radar_fetch3.py فاصله ۴۹.۵٪ را ۱۵٪ گزارش کرد.
+    got, vn, _ = R.candles_first_ok(sym, order, 600, [])
     if "1D" not in got:
         return None
     d = got["1D"]
@@ -106,14 +109,19 @@ def analyze(sym: str, order: list[str], btc: pd.DataFrame) -> dict | None:
         return None
     r = d.iloc[-1]
     px = float(r["close"])
-    row = {"symbol": sym, "price": px, "venue": vn, "bars": len(d)}
+    n_bars = len(d)
+    row = {"symbol": sym, "price": px, "venue": vn, "bars": n_bars}
 
     row["rs30"] = rs_pair(d, btc, 30)
     row["rs7"] = rs_pair(d, btc, 7)
     row["rs3"] = rs_pair(d, btc, 3)
-    for lbl, col in [("e50", "ema50"), ("e200", "ema200")]:
+
+    # قاعده بلوغ ۳n — میانگین نابالغ امتیاز نمی‌گیرد و از مخرج کم می‌شود
+    for lbl, col, span in [("e50", "ema50", 50), ("e200", "ema200", 200)]:
         v = float(r[col])
-        row[lbl] = 100 * (px - v) / v if math.isfinite(v) and v > 0 else None
+        ok = math.isfinite(v) and v > 0 and n_bars >= 3 * span
+        row[lbl] = 100 * (px - v) / v if ok else None
+        row[lbl + "_mature"] = n_bars >= 3 * span
     row["rsi"] = float(r["rsi14"]) if math.isfinite(r["rsi14"]) else None
     row["atr_pct"] = 100*float(r["atr14"])/px if math.isfinite(r["atr14"]) else None
     vm = float(r["vol_ma20"])
@@ -133,7 +141,11 @@ def analyze(sym: str, order: list[str], btc: pd.DataFrame) -> dict | None:
     return row
 
 
-def score(row: dict) -> tuple[float | None, int, list[str]]:
+# مجموع وزن همه اجزای ممکن: قدرت نسبی ۰.۴۰ + ناحیه ارزش ۰.۲۵ + میانگین ۰.۲۰ + RSI ۰.۱۵
+W_FULL = 1.00
+
+
+def score(row: dict) -> tuple:
     """
     امتیاز چرخش ۰ تا ۲. قانون سخت: قدرت نسبی باید در **هر دو** پنجره مثبت باشد،
     وگرنه امتیاز سقف می‌خورد. دلیل: قدرت ۳۰ روزه بدون تأیید ۷ روزه یعنی
@@ -174,6 +186,14 @@ def score(row: dict) -> tuple[float | None, int, list[str]]:
         if e200 > 0 and e50 > 0 and e50 < e200: s += 0.3   # چیدمان سالم
         parts.append((min(2.0, s), 0.20))
         if e200 > 0: flags.append("بالای‌EMA200")
+    elif e50 is not None:
+        # EMA200 نابالغ. فقط جزء e50 از مقیاس بالغ برداشته می‌شود (۰.۷)،
+        # نه یک مقیاس سخاوتمندانه‌تر. اگر اینجا عدد بزرگ‌تری بگذاریم،
+        # کوین کم‌داده از کوین پرداده جلو می‌زند — همان تورمی که آزمون گرفت.
+        parts.append((0.7 if e50 > 0 else 0.0, 0.10))
+        flags.append(f"⚠️EMA200 نابالغ ({row.get('bars','?')} کندل)")
+    else:
+        flags.append(f"⚠️میانگین‌ها نابالغ ({row.get('bars','?')} کندل)")
 
     rsi = row.get("rsi")
     if rsi is not None:
@@ -193,9 +213,21 @@ def score(row: dict) -> tuple[float | None, int, list[str]]:
         flags.append("⚠️نوسان‌مفرط")
 
     if not parts:
-        return None, 0, flags
+        return None, 0, flags, None, None
+
+    # ── قانون سوگیری صفر (رادار ۵.۳) ─────────────────────────────
+    # حذف ساده جزء غایب از مخرج یک باگ تازه می‌سازد: اگر آن جزء
+    # جریمه‌کننده بود، امتیاز **بالا** می‌رود. آزمون واقعی: کوین زیر
+    # EMA200 با داده نابالغ، از ۱.۵۲ به ۱.۷۲ پرید.
+    # راه‌حل: هر دو امتیاز محاسبه و محافظه‌کارانه‌تر انتخاب می‌شود.
+    num = sum(v * x for v, x in parts)
     w = sum(x[1] for x in parts)
-    return round(sum(v*x for v, x in parts)/w, 3), len(parts), flags
+    raw = num / W_FULL          # غایب = صفر در صورت، مخرج کامل
+    norm = num / w              # غایب = کسر از مخرج
+    final = min(raw, norm)      # امتیاز چرخش: پایین‌تر محافظه‌کارانه‌تر است
+    if abs(raw - norm) > 0.15:
+        flags.append(f"⚠️شکاف خام/نرمال {abs(raw-norm):.2f}")
+    return round(final, 3), len(parts), flags, round(raw, 3), round(norm, 3)
 
 
 def pump_check(sym: str, order: list[str], px: float) -> str:
@@ -223,7 +255,7 @@ def build_report(rows: list[dict], uni_n: int, pool_n: int,
                  order: list[str], min_vol: float, deep: dict) -> str:
     L: list[str] = []; A = L.append
     now = datetime.now(UTC)
-    A(f"# شکارچی چرخش رادار {R.FRAMEWORK}")
+    A(f"# شکارچی چرخش رادار {R.FRAMEWORK} — اسکنر نسخه ۱.۱")
     A("")
     A(f"تولید: **{now.strftime('%Y-%m-%d %H:%M UTC')}** | نسخه {R.VERSION} | "
       f"صرافی: {', '.join(order)}")
@@ -237,6 +269,18 @@ def build_report(rows: list[dict], uni_n: int, pool_n: int,
 
     ok = [r for r in rows if r.get("score") is not None]
     ok.sort(key=lambda r: r["score"], reverse=True)
+
+    imm = [r for r in ok if not r.get("e200_mature", True)]
+    if imm:
+        A(f"> ⚠️ **هشدار بلوغ:** {len(imm)} نماد کمتر از ۶۰۰ کندل روزانه دارند. "
+          "میانگین نمایی ۲۰۰ برایشان محاسبه شد ولی **امتیاز نگرفت** و از مخرج کم شد. "
+          "ستون vs EMA200 برای این نمادها «نابالغ» است، نه «داده ندارم».")
+        A("")
+        A("| نماد | کندل موجود | حداقل لازم |")
+        A("|---|---|---|")
+        for r in imm[:15]:
+            A(f"| {r['symbol']} | {r.get('bars','?')} | ۶۰۰ |")
+        A("")
 
     dual = [r for r in ok if (r.get("rs30") or -1) > 0 and (r.get("rs7") or -1) > 0]
     A("## ۱ — قدرت نسبی پایدار (هر دو پنجره مثبت)")
@@ -370,7 +414,7 @@ def main() -> int:
             r = None
         if r:
             r["vol24"] = u["vol24"]
-            r["score"], r["cov"], r["flags"] = score(r)
+            r["score"], r["cov"], r["flags"], r["raw"], r["norm"] = score(r)
             rows.append(r)
         time.sleep(0.25)
 
