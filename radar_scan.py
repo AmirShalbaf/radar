@@ -27,9 +27,15 @@ UTC = timezone.utc
 
 PRESETS = {
     "main":  ["BTC", "ETH", "SOL"],
-    "watch": ["BTC", "ETH", "SOL", "TAO", "HYPE", "ONDO", "LINK", "AAVE", "SUI"],
+    "watch": ["BTC", "ETH", "SOL", "TAO", "HYPE", "ONDO", "LINK", "AAVE",
+              "SUI", "BNB"],
+    # «all» باید هر چیزی را که در سبد است بپوشاند، وگرنه دارایی واقعی
+    # از رادار بیرون می‌ماند. BNB و ZEC هر دو پوزیشن باز دارند.
     "all":   ["BTC", "ETH", "SOL", "TAO", "HYPE", "ONDO", "HBAR", "XLM",
-              "RNDR", "AAVE", "DOGE", "LINK", "SUI"],
+              "RNDR", "AAVE", "DOGE", "LINK", "SUI", "BNB", "ZEC"],
+    # فقط دارایی‌های سبد — برای بازبینی سریع پوزیشن‌ها
+    "portfolio": ["SOL", "ETH", "BNB", "TAO", "ZEC", "HYPE", "SUI",
+                  "XRP", "AAVE", "ONDO"],
 }
 
 
