@@ -36,7 +36,18 @@ BENCHMARK = "BTC"          # معیار قدرت نسبی — با خودش مق
 GOLD = {"XAUT", "PAXG", "TGOLD", "XAU"}   # توکن طلا — دارایی پناهگاه، نه آلت
 
 STABLES = {"USDT","USDC","DAI","TUSD","FDUSD","USDE","PYUSD","BUSD","USDD",
-           "EURT","EURS","USDP","GUSD","LUSD","FRAX","SUSD","USDS"}
+           "EURT","EURS","USDP","GUSD","LUSD","FRAX","SUSD","USDS",
+           "USDG","USD1","USDF","RLUSD","USDY","USDX","USDB","USDL",
+           "EURC"}
+# توجه: توکن طلا اینجا نمی‌آید. طلا نوسان واقعی دارد (XAUT حدود ۱.۶٪)
+# و در GOLD جداگانه برچسب «پناهگاه» می‌خورد — حذفش اطلاعات را می‌کشد.
+
+# فهرست نام همیشه ناقص است — استیبل‌کوین تازه هر ماه می‌آید.
+# پس یک آزمون رفتاری هم لازم است: دارایی‌ای که تکان نمی‌خورد،
+# چرخش هم نمی‌کند. آستانه از روی داده واقعی: USDG نوسان روزانه
+# ۰.۰۲٪ داشت و رتبه ۱۰ گرفت؛ کم‌نوسان‌ترین دارایی واقعی فهرست
+# (TRX) ۱.۱۶٪ بود. مرز ۰.۵٪ هر دو را با فاصله امن جدا می‌کند.
+PEG_ATR_MAX = 0.5
 
 
 def universe_okx(min_vol: float) -> list[dict]:
@@ -124,6 +135,12 @@ def analyze(sym: str, order: list[str], btc: pd.DataFrame) -> dict | None:
         row[lbl + "_mature"] = n_bars >= 3 * span
     row["rsi"] = float(r["rsi14"]) if math.isfinite(r["rsi14"]) else None
     row["atr_pct"] = 100*float(r["atr14"])/px if math.isfinite(r["atr14"]) else None
+
+    # آزمون رفتاری میخکوب (peg): نوسان تقریباً صفر یعنی دارایی به چیزی
+    # میخکوب است. «قدرت نسبی مثبت» برای چنین دارایی‌ای فقط یعنی بیت‌کوین
+    # ریخته — نه اینکه این قوی است. از رتبه‌بندی حذف، ولی گزارش می‌شود.
+    ap = row["atr_pct"]
+    row["pegged"] = ap is not None and ap < PEG_ATR_MAX
     vm = float(r["vol_ma20"])
     row["vol_x"] = float(r["vol"])/vm if math.isfinite(vm) and vm > 0 else None
 
@@ -255,7 +272,7 @@ def build_report(rows: list[dict], uni_n: int, pool_n: int,
                  order: list[str], min_vol: float, deep: dict) -> str:
     L: list[str] = []; A = L.append
     now = datetime.now(UTC)
-    A(f"# شکارچی چرخش رادار {R.FRAMEWORK} — اسکنر نسخه ۱.۱")
+    A(f"# شکارچی چرخش رادار {R.FRAMEWORK} — اسکنر نسخه ۱.۲")
     A("")
     A(f"تولید: **{now.strftime('%Y-%m-%d %H:%M UTC')}** | نسخه {R.VERSION} | "
       f"صرافی: {', '.join(order)}")
@@ -267,8 +284,22 @@ def build_report(rows: list[dict], uni_n: int, pool_n: int,
       "تحلیل عمیق شوند و از دروازه رژیم عبور کنند.")
     A("")
 
-    ok = [r for r in rows if r.get("score") is not None]
+    # حذف میخکوب‌ها از رتبه‌بندی — ولی صریح گزارش می‌شوند، نه بی‌صدا
+    pegs = [r for r in rows if r.get("pegged")]
+    ok = [r for r in rows if r.get("score") is not None and not r.get("pegged")]
     ok.sort(key=lambda r: r["score"], reverse=True)
+
+    if pegs:
+        A(f"> ℹ️ **{len(pegs)} دارایی میخکوب از رتبه‌بندی حذف شد.** "
+          f"نوسان روزانه زیر {PEG_ATR_MAX}٪ یعنی دارایی به چیزی میخکوب است. "
+          "«قدرت نسبی مثبت» برای این‌ها فقط یعنی بیت‌کوین ریخته — "
+          "نه اینکه این‌ها قوی‌اند. چرخش روی دارایی بی‌نوسان بی‌معناست.")
+        A("")
+        A("| نماد | نوسان روزانه | ق.ن ۳۰ر |"); A("|---|---|---|")
+        for r in pegs[:10]:
+            A(f"| {r['symbol']} | {r.get('atr_pct',0):.2f}٪ | "
+              f"{R.fmt_num(r.get('rs30'),1)}٪ |")
+        A("")
 
     imm = [r for r in ok if not r.get("e200_mature", True)]
     if imm:
