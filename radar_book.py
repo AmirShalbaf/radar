@@ -118,6 +118,56 @@ def okx_candles(symbol: str, bar: str = "1D", want: int = 260):
     return df
 
 
+
+def gate_candles(symbol: str, want: int = 260):
+    """
+    کندل روزانه از گیت — منبع دوم.
+
+    دلیل وجود: برخی نمادها در اوکی‌اکس نیستند. نمونه واقعی: TAO.
+    بدون این تابع، آن نمادها «داده ندارم» می‌گیرند و ریسکشان
+    ۱۰۰٪ شمرده می‌شود — حتی اگر سطح ابطال داشته باشند.
+
+    ترتیب ستون‌های گیت متفاوت است:
+        [زمان، حجم به ارز مظنه، بسته، بالا، پایین، باز، حجم پایه، ...]
+    """
+    if requests is None or pd is None:
+        return None
+    try:
+        r = requests.get("https://api.gateio.ws/api/v4/spot/candlesticks",
+                         params={"currency_pair": f"{symbol.upper()}_USDT",
+                                 "interval": "1d",
+                                 "limit": str(min(want, 1000))}, timeout=20)
+        if r.status_code != 200:
+            return None
+        rows = r.json()
+    except Exception:
+        return None
+    if not rows or len(rows) < 60:
+        return None
+    out = []
+    for x in rows:
+        try:
+            out.append({"ts": int(float(x[0])) * 1000,
+                        "c": float(x[2]), "h": float(x[3]),
+                        "l": float(x[4]), "o": float(x[5]),
+                        "v": float(x[6]) if len(x) > 6 else 0.0})
+        except (ValueError, IndexError):
+            continue
+    if len(out) < 60:
+        return None
+    df = pd.DataFrame(out)
+    df["ts"] = pd.to_datetime(df["ts"], unit="ms", utc=True)
+    return df.sort_values("ts").reset_index(drop=True)
+
+
+def candles(symbol: str, bar: str = "1D", want: int = 260):
+    """اوکی‌اکس اول، گیت به‌عنوان جایگزین."""
+    df = okx_candles(symbol, bar, want)
+    if df is not None and len(df) >= 60:
+        return df
+    return gate_candles(symbol, want)
+
+
 def ema(s, n):
     return s.ewm(span=n, adjust=False).mean()
 
@@ -448,7 +498,7 @@ def build_report(book: dict, rows: list[dict], reg: dict,
         if r["rs30"] is not None and r["rs30"] < 0:
             why.append(f"قدرت نسبی {r['rs30']*100:+.1f}٪")
         W(f"| {i} | {p['symbol']} | {p['size_usd']:,.0f} دلار | "
-          f"{'، '.join(why) if why else 'قوی‌ترین — آخر بفروش'} |")
+          f"{'، '.join(why) if why else ('سطح ابطال دارد — ریسک محدود' if p.get('invalidation') else 'هیچ نشانه ضعفی ندارد')} |")
     W("")
 
     # ── ۵ فهرست اقدام امروز
@@ -541,12 +591,12 @@ def main() -> int:
     state = load_state()
 
     print("واکشی داده بیت‌کوین به‌عنوان مرجع قدرت نسبی...")
-    btc = okx_candles("BTC")
+    btc = candles("BTC")
 
     rows = []
     for p in book["positions"]:
         print(f"  واکشی {p['symbol']}...")
-        df = okx_candles(p["symbol"])
+        df = candles(p["symbol"])
         sc = score_position(df, btc)
         score = sc["score"] if sc else None
         strikes, _ = update_strikes(state, p["symbol"], score if score is not None else 0.0)
@@ -565,7 +615,7 @@ def main() -> int:
     cands = []
     for s in [x.strip().upper() for x in a.candidates.split(",") if x.strip()]:
         print(f"  واکشی نامزد {s}...")
-        sc = score_position(okx_candles(s), btc)
+        sc = score_position(candles(s), btc)
         cands.append({"symbol": s, "score": sc["score"] if sc else None})
 
     # بهترین جفت جانشینی برای هر پوزیشن
