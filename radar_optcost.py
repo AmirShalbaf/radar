@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-radar_optcost.py — دفتر هزینه فرصت و خودسنجی چارچوب، رادار ۶.۰
+radar_optcost.py — دفتر هزینه فرصت و خودسنجی چارچوب، رادار ۶.۱
 ================================================================
 
 چرا این فایل مهم‌ترین ابزار کالیبراسیون ۶.۰ است
@@ -47,7 +47,7 @@ try:
 except ImportError:
     requests = None
 
-VERSION = "6.0"
+VERSION = "6.1"
 UTC = timezone.utc
 FILE = "radar_optcost.json"
 OKX = "https://www.okx.com"

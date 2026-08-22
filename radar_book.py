@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-radar_book.py — موتور بازبینی سبد و خروج، رادار ۶.۰
+radar_book.py — موتور بازبینی سبد و خروج، رادار ۶.۱
 ====================================================
 
 چرا این فایل نوشته شد
@@ -52,7 +52,7 @@ try:
 except ImportError:
     pd = None
 
-VERSION = "6.0"
+VERSION = "6.1"
 UTC = timezone.utc
 STATE_FILE = "book_state.json"
 OKX = "https://www.okx.com"

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-radar_size.py — موتور اندازه مدرج رادار ۶.۰
+radar_size.py — موتور اندازه مدرج رادار ۶.۱
 ============================================
 
 مسئله‌ای که حل می‌کند
@@ -35,7 +35,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-VERSION = "6.0"
+VERSION = "6.1"
 
 # ─────────────────────── جدول‌های مرجع ───────────────────────
 
