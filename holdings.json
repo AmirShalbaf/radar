@@ -1,0 +1,15 @@
+{
+  "balance_total": 1940.74,
+  "stable_usd": 129.26,
+  "positions": [
+    {"symbol":"SOL","size_usd":442.44,"invalidation":null,"side":"long","spot":true},
+    {"symbol":"ETH","size_usd":385.41,"invalidation":null,"side":"long","spot":true},
+    {"symbol":"BNB","size_usd":333.63,"invalidation":null,"side":"long","spot":true},
+    {"symbol":"TAO","size_usd":198.66,"invalidation":null,"side":"long","spot":true},
+    {"symbol":"HYPE","size_usd":188.97,"invalidation":null,"side":"long","spot":true},
+    {"symbol":"SUI","size_usd":120.35,"invalidation":null,"side":"long","spot":true},
+    {"symbol":"XRP","size_usd":115.69,"invalidation":null,"side":"long","spot":true},
+    {"symbol":"AAVE","size_usd":95.93,"invalidation":null,"side":"long","spot":true},
+    {"symbol":"ONDO","size_usd":57.93,"invalidation":null,"side":"long","spot":true}
+  ]
+}

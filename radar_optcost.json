@@ -1,0 +1,37 @@
+{
+  "rejects": [
+    {
+      "id": 1,
+      "date": "2026-08-22",
+      "symbol": "ZEC",
+      "price": 802.31,
+      "blocker": "رده کیفیت F — نسبت غیرممکن در این قیمت",
+      "grade": "F",
+      "score": null,
+      "regime": -0.6,
+      "side": "long",
+      "entry": 802.0,
+      "stop": 650.0,
+      "target": 900.0,
+      "note": "RSI 85، لنگرها پراکنده، نزدیک‌ترین سطح ساختاری ۴۲٪ پایین‌تر",
+      "p14": null,
+      "p30": null,
+      "r_lost": null,
+      "r_note": null
+    }
+  ],
+  "sessions": [
+    {
+      "date": "2026-08-22",
+      "action": false,
+      "kind": "رد",
+      "symbol": "ZEC"
+    },
+    {
+      "date": "2026-08-22",
+      "action": true,
+      "kind": "بازمحاسبه رژیم و ثبت کالیبراسیون",
+      "symbol": ""
+    }
+  ]
+}

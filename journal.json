@@ -1,0 +1,33 @@
+{
+ "version": 1,
+ "trades": [
+  {
+   "id": 1,
+   "opened": "2026-08-22 13:08 UTC",
+   "symbol": "ZEC",
+   "side": "long",
+   "entry": 515.79,
+   "stop": 478.0,
+   "target": 575.0,
+   "invalidation": 480.43,
+   "size_usd": 143.0,
+   "leverage": 1.0,
+   "risk_pct": 7.33,
+   "risk_usd": 10.48,
+   "framework_verdict": "no-entry",
+   "user_decision": "entered",
+   "rr_planned": 1.41,
+   "ev_planned": null,
+   "regime_score": -1.25,
+   "coin_score": null,
+   "note": "استاپ خورد، سپس قیمت به بالای ۸۰۰ رفت",
+   "status": "closed",
+   "exit": 478.0,
+   "closed": "2026-08-22 13:09 UTC",
+   "exit_reason": "stop",
+   "r_realized": -1.0,
+   "lesson": "استاپ ۱.۲۸ برابر ATR بود — مرزی. ایراد اصلی نسبت ۱.۴۱ در ورود بود، نه جای استاپ. با نردبان ورود ضرر حدود ۶۰٪ کمتر می‌شد.",
+   "pnl_usd": -10.48
+  }
+ ]
+}

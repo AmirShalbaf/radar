@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "symbol": "ZEC",
+      "side": "long",
+      "invalidation": null,
+      "ladder": [552.10, 461.99],
+      "targets": [],
+      "alerts": [701.64, 650.80],
+      "note": "ورود ممنوع در ۸۰۲. سطوح ورود محتمل پایین‌تر"
+    },
+    {
+      "symbol": "BTC",
+      "side": "long",
+      "invalidation": null,
+      "ladder": [],
+      "targets": [],
+      "alerts": [80000, 71000],
+      "note": "۷۱ هزار مرز شکست شش‌هفته‌ای بود"
+    }
+  ]
+}
