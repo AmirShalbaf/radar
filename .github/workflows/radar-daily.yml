@@ -1,0 +1,148 @@
+name: رادار — اسکن روزانه
+
+# ─────────────────────────────────────────────────────────────
+# این فایل باید در مسیر .github/workflows/radar-daily.yml قرار بگیرد.
+#
+# چه می‌کند: هر روز اسکن واچ‌لیست را اجرا می‌کند، خروجی را در
+# reports/ می‌نویسد و به مخزن کامیت می‌کند. بعد در گفتگو فقط
+# می‌گویی «گزارش امروز را بخوان» و کلاود از گیت‌هاب می‌خواندش.
+#
+# چرا مهم است: روتین روزانه دیگر به روشن‌بودن کامپیوتر وابسته نیست.
+# سنجه «نرخ اقدام» فقط وقتی معنا دارد که جلسات منظم باشند.
+#
+# هشدار جغرافیایی: رانرهای گیت‌هاب در آمریکا هستند. بایننس ۴۵۱ و
+# بای‌بیت ۴۰۳ برمی‌گردانند. فقط okx,gate کار می‌کنند — همان محدودیت کولب.
+# ─────────────────────────────────────────────────────────────
+
+on:
+  schedule:
+    # ۰۶:۳۰ به وقت هماهنگ جهانی — پس از بسته‌شدن کندل روزانه
+    - cron: "30 6 * * *"
+  workflow_dispatch:
+    inputs:
+      preset:
+        description: "پریست واچ‌لیست"
+        required: false
+        default: "watch"
+        type: choice
+        options: [main, watch, all]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radar-daily
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: برداشت مخزن
+        uses: actions/checkout@v4
+
+      - name: نصب پایتون
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: نصب وابستگی‌ها
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: ساخت پوشه گزارش
+        run: mkdir -p reports
+
+      - name: اسکن واچ‌لیست
+        env:
+          PYTHONUTF8: "1"
+          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+          COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
+        run: |
+          PRESET="${{ github.event.inputs.preset || 'watch' }}"
+          python radar_scan.py \
+            --preset "$PRESET" \
+            --venues okx,gate \
+            --top 5 \
+            --out "reports/scan-$(date -u +%Y-%m-%d).md" || true
+
+      - name: بازبینی سبد و موتور خروج
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          if [ -f holdings.json ]; then
+            python radar_book.py \
+              --holdings holdings.json \
+              --regime "${RADAR_REGIME:--1.0}" \
+              --out "reports/book-$(date -u +%Y-%m-%d).md" || true
+          else
+            echo "holdings.json نیست — بازبینی سبد رد شد."
+            echo "برای ساختش: python radar_book.py --init"
+          fi
+
+      - name: به‌روزرسانی پیگیری دفتر هزینه فرصت
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          if [ -f radar_optcost.json ]; then
+            python radar_optcost.py followup || true
+            python radar_optcost.py report --out reports/optcost.md || true
+          fi
+
+      - name: ساخت خلاصه امروز
+        run: |
+          D=$(date -u +%Y-%m-%d)
+          {
+            echo "# گزارش رادار — $D"
+            echo
+            echo "تولیدشده خودکار توسط گردش‌کار گیت‌هاب."
+            echo
+            echo "## فایل‌های امروز"
+            echo
+            for f in reports/*-$D.md; do
+              [ -e "$f" ] && echo "- \`$f\`"
+            done
+            echo
+            echo "## پرسش گشایش رادار ۶.۰"
+            echo
+            echo "۱. رژیم امروز کدام است و بودجه ریسکش چقدر است؟"
+            echo "۲. از بودجه، چقدر همین حالا مصرف شده؟"
+            echo "۳. **کوچک‌ترین اقدام درست امروز چیست؟**"
+            echo
+            echo "پاسخ سوم هرگز «هیچ کاری» نیست. چهار اقدام همیشه‌مجاز:"
+            echo "سفارش در انتظار، هشدار قیمتی، کاهش پله‌ای، افزایش ذخیره."
+          } > reports/LATEST.md
+
+      - name: کامیت گزارش‌ها
+        run: |
+          git config user.name  "radar-bot"
+          git config user.email "radar-bot@users.noreply.github.com"
+          git add reports/ radar_optcost.json book_state.json 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "تغییری نبود."
+          else
+            git commit -m "گزارش خودکار رادار — $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      - name: اعلان تلگرام
+        if: success()
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ -n "$TG_TOKEN" ] && [ -n "$TG_CHAT" ]; then
+            MSG=$(head -c 3500 reports/LATEST.md)
+            curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+              -d chat_id="${TG_CHAT}" \
+              -d parse_mode="Markdown" \
+              --data-urlencode "text=${MSG}" > /dev/null
+            echo "اعلان تلگرام ارسال شد."
+          else
+            echo "کلید تلگرام تنظیم نشده — رد شد."
+            echo "برای فعال‌سازی: Settings > Secrets > TELEGRAM_BOT_TOKEN و TELEGRAM_CHAT_ID"
+          fi

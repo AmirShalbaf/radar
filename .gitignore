@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.env
+*.tmp
+out.txt
+scan.txt
+rotate.txt
+btc.txt
+
+# نگهداری عمدی: این‌ها داده کالیبراسیون‌اند، نه فایل موقت
+!radar_journal.json
+!radar_optcost.json
+!book_state.json
