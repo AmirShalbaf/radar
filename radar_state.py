@@ -59,8 +59,11 @@ STATE_FILES = {
 
 def sh(cmd: str) -> str:
     try:
+        # رمزگذاری صریح utf-8 — بدون آن، ویندوز از کدپیج محلی استفاده می‌کند
+        # و پیام کامیت فارسی خراب می‌شود
         return subprocess.run(cmd, shell=True, capture_output=True,
-                              text=True, timeout=15).stdout.strip()
+                              text=True, encoding="utf-8", errors="replace",
+                              timeout=15).stdout.strip()
     except Exception:
         return ""
 
