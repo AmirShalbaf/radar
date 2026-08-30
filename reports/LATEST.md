@@ -6,6 +6,7 @@
 
 - `reports/book-2026-08-30.md`
 - `reports/book-weekly-2026-08-30.md`
+- `reports/scan-2026-08-30.md`
 - `reports/scan-error-2026-08-30.md`
 - `reports/selfcheck-2026-08-30.md`
 
