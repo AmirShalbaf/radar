@@ -1,0 +1,95 @@
+{
+  "version": "7.0-p1",
+  "generated_utc": "2026-08-30 19:44 UTC",
+  "stale_after_hours": 5.0,
+  "symbols": {
+    "AAVE": {
+      "price": 127.65,
+      "chg24_pct": 2.8191703584373737,
+      "funding_8h_pct": -0.0041514001277,
+      "oi_usd": 19119271.478999995,
+      "oi_chg_pct_vs_prev": null,
+      "source": "okx"
+    },
+    "BNB": {
+      "price": 699.0,
+      "chg24_pct": 0.8076146524372688,
+      "funding_8h_pct": 0.01,
+      "oi_usd": 48078184.620000005,
+      "oi_chg_pct_vs_prev": null,
+      "source": "okx"
+    },
+    "BTC": {
+      "price": 78800.0,
+      "chg24_pct": 0.7058354430865098,
+      "funding_8h_pct": 0.0037732905162300005,
+      "oi_usd": 2205403960.1200075,
+      "oi_chg_pct_vs_prev": null,
+      "source": "okx"
+    },
+    "ETH": {
+      "price": 2499.99,
+      "chg24_pct": 1.8089486351437596,
+      "funding_8h_pct": 0.00878877933646,
+      "oi_usd": 1592260268.4334538,
+      "oi_chg_pct_vs_prev": null,
+      "source": "okx"
+    },
+    "HYPE": {
+      "price": 82.711,
+      "chg24_pct": -0.26047005197343226,
+      "funding_8h_pct": 0.01,
+      "oi_usd": 120917435.82589999,
+      "oi_chg_pct_vs_prev": null,
+      "source": "okx"
+    },
+    "ONDO": {
+      "price": 0.3586,
+      "chg24_pct": 1.4140271493212524,
+      "funding_8h_pct": 0.00330278442587,
+      "oi_usd": 11790724.967999998,
+      "oi_chg_pct_vs_prev": null,
+      "source": "okx"
+    },
+    "SOL": {
+      "price": 105.68,
+      "chg24_pct": 0.0947149081265472,
+      "funding_8h_pct": -0.0032448787732699998,
+      "oi_usd": 344791628.23760015,
+      "oi_chg_pct_vs_prev": null,
+      "source": "okx"
+    },
+    "SUI": {
+      "price": 0.7549,
+      "chg24_pct": 1.1930294906166246,
+      "funding_8h_pct": 0.0019018364494499999,
+      "oi_usd": 27414576.9892,
+      "oi_chg_pct_vs_prev": null,
+      "source": "okx"
+    },
+    "TAO": {
+      "price": 238.1,
+      "chg24_pct": 0.6339814032121724,
+      "funding_8h_pct": 0.01,
+      "oi_usd": 20471016.555,
+      "oi_chg_pct_vs_prev": null,
+      "source": "okx"
+    },
+    "XRP": {
+      "price": 1.4109,
+      "chg24_pct": 0.850607576840602,
+      "funding_8h_pct": 0.00721288019486,
+      "oi_usd": 104889580.69889992,
+      "oi_chg_pct_vs_prev": null,
+      "source": "okx"
+    },
+    "ZEC": {
+      "price": 863.23,
+      "chg24_pct": 3.824735696330427,
+      "funding_8h_pct": 0.00736643227119,
+      "oi_usd": 128721283.82779999,
+      "oi_chg_pct_vs_prev": null,
+      "source": "okx"
+    }
+  }
+}

@@ -12,6 +12,11 @@ name: رادار — اسکن روزانه
 #
 # هشدار جغرافیایی: رانرهای گیت‌هاب در آمریکا هستند. بایننس ۴۵۱ و
 # بای‌بیت ۴۰۳ برمی‌گردانند. فقط okx,gate کار می‌کنند — همان محدودیت کولب.
+#
+# تغییر فاز ۱ رادار ۷ (۲۹ اوت ۲۰۲۶): گام اسکن بازنویسی شد.
+# پیش از این «|| true» هر خطایی را می‌بلعید و --out پوشه می‌ساخت؛
+# نتیجه: اسکن بی‌صدا خراب بود و هیچ scan-*.md در مخزن نمی‌نشست.
+# حالا خطا در reports/scan-error-*.md ثبت و دیده می‌شود.
 # ─────────────────────────────────────────────────────────────
 
 on:
@@ -63,12 +68,27 @@ jobs:
           COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
           COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
         run: |
+          D=$(date -u +%Y-%m-%d)
           PRESET="${{ github.event.inputs.preset || 'watch' }}"
-          python radar_scan.py \
-            --preset "$PRESET" \
-            --venues okx,gate \
-            --top 5 \
-            --out "reports/scan-$(date -u +%Y-%m-%d).md" || true
+          if python radar_scan.py \
+               --preset "$PRESET" \
+               --venues okx,gate \
+               --top 5 \
+               --stdout > /tmp/scan.md 2> /tmp/scan.log; then
+            mv /tmp/scan.md "reports/scan-$D.md"
+            echo "اسکن موفق: reports/scan-$D.md"
+          else
+            {
+              echo "# خطای اسکن — $D"
+              echo
+              echo "اسکن با خطا افتاد. ته گزارش خطا:"
+              echo
+              echo '```'
+              tail -c 4000 /tmp/scan.log
+              echo '```'
+            } > "reports/scan-error-$D.md"
+            echo "اسکن خطا داد — reports/scan-error-$D.md نوشته شد."
+          fi
 
       - name: بازبینی سبد و موتور خروج
         env:
@@ -107,6 +127,14 @@ jobs:
               [ -e "$f" ] && echo "- \`$f\`"
             done
             echo
+            echo "## تازگی نبض"
+            echo
+            if [ -f reports/SNAPSHOT.md ]; then
+              head -n 6 reports/SNAPSHOT.md | tail -n 3
+            else
+              echo "هنوز نبض چهارساعته اجرا نشده."
+            fi
+            echo
             echo "## پرسش گشایش رادار ۶.۰"
             echo
             echo "۱. رژیم امروز کدام است و بودجه ریسکش چقدر است؟"
@@ -125,6 +153,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "تغییری نبود."
           else
+            git pull --rebase --autostash || true
             git commit -m "گزارش خودکار رادار — $(date -u +%Y-%m-%d)"
             git push
           fi

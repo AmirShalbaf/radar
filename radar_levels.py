@@ -71,7 +71,14 @@ PRESETS = {
 # ═══════════════════════ واکشی ═══════════════════════
 
 def okx_candles(inst: str, bar: str = "1D", want: int = 600) -> pd.DataFrame | None:
-    """کندل از OKX با صفحه‌بندی. ترتیب صعودی، فقط کندل‌های بسته‌شده."""
+    """
+    کندل از OKX با صفحه‌بندی. ترتیب صعودی، همراه کندل باز آخر.
+
+    درس باگ ۲۲ اوت ۲۰۲۶ (زی‌کش): نسخه قبلی کندل باز را همین‌جا دور می‌ریخت
+    و «قیمت» تا ۲۸ ساعت کهنه می‌شد — ۶۵۳.۹۹ به‌جای ۸۰۲.۳۱ در روز ۴۵ درصدی.
+    جداسازی بسته از باز کار ارزیابی است، نه واکشی: قیمت از کندل زنده،
+    ساختار فقط از کندل بسته.
+    """
     rows, cursor, guard = [], None, 0
     while len(rows) < want and guard < 20:
         guard += 1
@@ -100,8 +107,7 @@ def okx_candles(inst: str, bar: str = "1D", want: int = 600) -> pd.DataFrame | N
         df[c] = pd.to_numeric(df[c], errors="coerce")
     df["confirm"] = pd.to_numeric(df["confirm"], errors="coerce")
     df["ts"] = pd.to_datetime(pd.to_numeric(df["ts"]), unit="ms", utc=True)
-    df = df.drop_duplicates(subset="ts").sort_values("ts").reset_index(drop=True)
-    return df[df["confirm"] == 1].reset_index(drop=True)
+    return df.drop_duplicates(subset="ts").sort_values("ts").reset_index(drop=True)
 
 
 # ═══════════════════════ اندیکاتور ═══════════════════════
@@ -209,8 +215,19 @@ class Assessment:
 
 def assess(sym: str, df: pd.DataFrame, buffer_atr: float = 0.25,
            tol_atr: float = 1.0, df_4h: pd.DataFrame | None = None) -> Assessment:
-    a = Assessment(symbol=sym, n_bars=len(df))
+    a = Assessment(symbol=sym)
     if df is None or len(df) < 60:
+        a.n_bars = 0 if df is None else len(df)
+        a.verdict = "داده کم"
+        return a
+
+    # قیمت از کندل زنده، ساختار فقط از کندل بسته. اندیکاتور روی کندل باز
+    # ممنوع است، ولی قیمت کهنه هم فاصله و نسبت را غلط می‌کند.
+    live_close = float(df["close"].iloc[-1])
+    if "confirm" in df.columns:
+        df = df[df["confirm"] == 1].reset_index(drop=True)
+    a.n_bars = len(df)
+    if len(df) < 60:
         a.verdict = "داده کم"
         return a
 
@@ -219,7 +236,7 @@ def assess(sym: str, df: pd.DataFrame, buffer_atr: float = 0.25,
     df["ema50"] = ema(df["close"], 50)
     df["ema200"] = ema(df["close"], 200)
 
-    price = float(df["close"].iloc[-1])
+    price = live_close
     atr = float(df["atr"].iloc[-1])
     a.price, a.atr = price, atr
 
@@ -307,6 +324,8 @@ def assess(sym: str, df: pd.DataFrame, buffer_atr: float = 0.25,
     # درس رخداد زی‌کش: تز معامله شکست چهارساعته بود، ولی اسکنر استاپ را
     # از حمایت روزانه (۴۹۱) گرفت. ریسک ۳۹ به‌جای ۷ → نسبت ۰.۴۰ به‌جای ۲.۶۵.
     # استاپ باید به همان ساختاری بچسبد که **تز** را تعریف می‌کند.
+    if df_4h is not None and "confirm" in df_4h.columns:
+        df_4h = df_4h[df_4h["confirm"] == 1].reset_index(drop=True)
     if df_4h is not None and len(df_4h) > 30:
         _, lows4 = find_pivots(df_4h, 2, 2)
         recent = [v for i, v in lows4 if i >= len(df_4h) - 30 and v < price]
@@ -356,6 +375,25 @@ def report(rows: list[Assessment], min_rr: float) -> str:
             f"| {a.symbol} | {fmt(a.price)} | {a.trend} | {a.verdict} | "
             f"{fmt(a.dist_sup_atr, 2)}× | {sup} | {res} | {fmt(a.rr, 2)} | {rrt} |"
         )
+
+    # قانون مادر داده: نماد بدون نسبت «داده ندارم» است — گزارش‌شدنی، نه حذف‌شدنی.
+    # نسخه قبلی این سطرها را بی‌صدا حذف می‌کرد (ETH و HYPE در ۲۲ اوت ۲۰۲۶).
+    rest = [a for a in rows if not math.isfinite(a.rr)]
+    if rest:
+        L += [
+            "",
+            "## بدون نسبت — جدا گزارش‌شده",
+            "",
+            "نبود نسبت یعنی «داده ندارم»، نه صفر و نه حذف.",
+            "",
+            "| نماد | قیمت | روند | وضعیت | یادداشت |",
+            "|---|---|---|---|---|",
+        ]
+        for a in rest:
+            # جداکننده «|» داخل یادداشت، ستون جدول مارک‌داون را می‌شکند
+            note = (a.note or "—").replace(" | ", "؛ ")
+            L.append(f"| {a.symbol} | {fmt(a.price)} | {a.trend} | "
+                     f"{a.verdict} | {note} |")
 
     # فقط «صعودی» خالص — «بی‌ساختار» و «صعودی*» با ستاره هم رد می‌شوند
     def _best(a):

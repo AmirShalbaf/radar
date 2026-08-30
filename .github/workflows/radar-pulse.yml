@@ -1,0 +1,101 @@
+name: رادار — نبض چهارساعته
+
+# ─────────────────────────────────────────────────────────────
+# مسیر فایل: .github/workflows/radar-pulse.yml
+#
+# چه می‌کند: هر چهار ساعت
+#   ۱) radar_snapshot.py — عکس سبک قیمت، فاندینگ و بهره باز
+#   ۲) radar_watch.py --once — سنجش ابطال، پله ورود، هدف و هشدار قیمتی
+# و نتیجه را کامیت می‌کند. اگر کلید تلگرام تنظیم باشد، هشدارها
+# همان لحظه به تلگرام می‌روند (radar_watch خودش می‌فرستد).
+#
+# چرا مهم است: قانون تازگی فاز ۱. هر جلسه رادار حداکثر با داده
+# چهارساعته شروع می‌شود، بی‌وابستگی به روشن‌بودن کامپیوتر کاربر.
+# ─────────────────────────────────────────────────────────────
+
+on:
+  schedule:
+    # دقیقه ۱۷ برای دوری از ازدحام سرِ ساعت رانرها
+    - cron: "17 */4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radar-pulse
+  cancel-in-progress: false
+
+jobs:
+  pulse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: برداشت مخزن
+        uses: actions/checkout@v4
+
+      - name: نصب پایتون
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: نصب وابستگی‌ها
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: نبض بازار
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          mkdir -p reports
+          python radar_snapshot.py \
+            --out reports/SNAPSHOT.md \
+            --json snapshot.json 2> /tmp/snap.log \
+          || {
+            D=$(date -u '+%Y-%m-%d %H:%M UTC')
+            {
+              echo "# خطای نبض — $D"
+              echo
+              echo '```'
+              tail -c 3000 /tmp/snap.log
+              echo '```'
+            } > reports/SNAPSHOT.md
+          }
+
+      - name: پایش زنده سطوح
+        env:
+          PYTHONUTF8: "1"
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          D=$(date -u '+%Y-%m-%d %H:%M UTC')
+          if [ -f watch.json ]; then
+            python radar_watch.py --once > /tmp/watch.log 2>&1 || true
+            {
+              echo "# پایش زنده — $D"
+              echo
+              echo '```'
+              tail -c 3000 /tmp/watch.log
+              echo '```'
+            } > reports/WATCH.md
+          else
+            echo "# پایش زنده — $D" > reports/WATCH.md
+            echo >> reports/WATCH.md
+            echo "watch.json نیست — پایش رد شد." >> reports/WATCH.md
+          fi
+
+      - name: کامیت
+        run: |
+          git config user.name  "radar-bot"
+          git config user.email "radar-bot@users.noreply.github.com"
+          git add reports/SNAPSHOT.md reports/WATCH.md snapshot.json watch_state.json 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "تغییری نبود."
+          else
+            git pull --rebase --autostash || true
+            git commit -m "نبض — $(date -u +%Y-%m-%d_%H:%M)"
+            git push
+          fi
