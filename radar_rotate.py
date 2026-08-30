@@ -321,11 +321,13 @@ def build_report(rows: list[dict], uni_n: int, pool_n: int,
         A("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|")
         for i, r in enumerate(dual[:20], 1):
             g = lambda k, f="{:+.1f}%": (f.format(r[k]) if r.get(k) is not None else "—")
+            atr_pct = r.get("atr_pct")
+            stop_1_5x_txt = f"{atr_pct * 1.5:.2f}%" if atr_pct else "—"
             A(f"| {i} | **{r['symbol']}** | {px_fmt(r['price'])} | **{r['score']:.2f}** "
               f"| {g('rs30')} | {g('rs7')} | {g('rs3')} | {g('e200')} | {g('e50')} "
               f"| {g('rsi','{:.0f}')} | {r.get('zone','—')} | {g('vs_poc')} "
               f"| {g('atr_pct','{:.2f}%')} "
-              f"| {f'{r[chr(97)] if False else r["atr_pct"]*1.5:.2f}%' if r.get('atr_pct') else '—'} "
+              f"| {stop_1_5x_txt} "
               f"| {'، '.join(r.get('flags', [])) or '—'} |")
         A("")
     else:

@@ -470,10 +470,12 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
             nb_txt = f"{nb}" if nb else "—"
             if nb and nb < 15:
                 nb_txt += " ⚠️"
+            vs_poc = r.get("vs_poc")
+            vs_poc_txt = f"{vs_poc:+.1f}%" if vs_poc is not None else "—"
             A(f"| **{r['symbol']}** | {r.get('vp_from','—')} تا {r.get('vp_to','—')} "
               f"| {nb_txt} | **{R.fmt_num(r['poc'])}** | {R.fmt_num(r.get('val'))} "
               f"| {R.fmt_num(r.get('vah'))} | {r.get('vp_zone','—')} "
-              f"| {f"{r['vs_poc']:+.1f}%" if r.get('vs_poc') is not None else '—'} |")
+              f"| {vs_poc_txt} |")
         A("")
         thin = [r["symbol"] for r in vp if r.get("vp_bars") and r["vp_bars"] < 15]
         if thin:
@@ -521,11 +523,17 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
             va_txt = ("—" if not z else
                       f"{tv:+.1f}%" if (z == "زیر ناحیه ارزش" and tv is not None)
                       else ("داخل" if z == "داخل ناحیه ارزش" else "بالای"))
+            v50_txt = f"{v50:+.1f}%" if v50 is not None else "—"
+            rsi_txt = f"{rsi:.1f}" if rsi is not None else "—"
+            funding_8h = r.get("funding_8h")
+            funding_txt = f"{funding_8h:+.4f}%" if funding_8h is not None else "—"
+            cw = r.get("crowd_vs_whale")
+            cw_txt = f"{cw:.2f}x" if cw else "—"
             A(f"| {i} | **{r['symbol']}** | **{r['short_score']:.2f}** "
-              f"| {f'{v50:+.1f}%' if v50 is not None else '—'} | {va_txt} "
-              f"| {f'{rsi:.1f}' if rsi is not None else '—'} "
-              f"| {f'{r[chr(34)]}' if False else (f'{r["funding_8h"]:+.4f}%' if r.get('funding_8h') is not None else '—')} "
-              f"| {f'{r["crowd_vs_whale"]:.2f}x' if r.get('crowd_vs_whale') else '—'} | {st} |")
+              f"| {v50_txt} | {va_txt} "
+              f"| {rsi_txt} "
+              f"| {funding_txt} "
+              f"| {cw_txt} | {st} |")
         A("")
 
     A("---"); A(""); A(f"## ۴ — نامزدهای تحلیل عمیق سمت لانگ (بالاترین {top})"); A("")
