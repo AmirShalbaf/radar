@@ -10,7 +10,8 @@ radar_journal.py — ژورنال و موتور کالیبراسیون رادا�
 
     python radar_journal.py add --symbol ZEC --side long --entry 524 \\
         --stop 476 --target 575 --size 200 --verdict no-entry \\
-        --decision entered --rr 1.32 --ev -0.60 --note "خلاف حکم چارچوب"
+        --decision entered --rr 1.32 --ev -0.60 --note "خلاف حکم چارچوب" \\
+        --setup-name "ب۱ — بازپس‌گیری پس از دررفتگی عمیق" --decision-id D-2026-09-05-1
 
     python radar_journal.py update          # قیمت زنده، R تحقق‌نیافته، هشدارها
     python radar_journal.py close --id 1 --exit 575 --reason target
@@ -28,16 +29,24 @@ UTC = timezone.utc
 HERE = os.path.dirname(os.path.abspath(__file__))
 DB = os.path.join(HERE, "journal.json")
 
+# پیش از کتابخانه ستاپ، رکوردها نام ستاپ و شناسه تصمیم نداشتند.
+# قانون سوگیری صفر: خالی نگذار، ولی هم برچسبش بزن که «نامشخص» است.
+UNKNOWN_SETUP = "نامشخص — پیش از کتابخانه ستاپ"
+
 
 def load() -> dict:
     if not os.path.exists(DB):
         return {"version": 1, "trades": []}
     try:
         with open(DB, encoding="utf-8") as f:
-            return json.load(f)
+            d = json.load(f)
     except Exception as exc:
         print(f"خطا در خواندن ژورنال: {exc}", file=sys.stderr)
         sys.exit(1)
+    for t in d.get("trades", []):
+        t.setdefault("setup_name", UNKNOWN_SETUP)
+        t.setdefault("decision_id", UNKNOWN_SETUP)
+    return d
 
 
 def save(d: dict) -> None:
@@ -83,6 +92,7 @@ def cmd_add(a) -> None:
         # فعال می‌شود؛ ابطال یک **حکم ساختاری** است که فقط با بسته‌شدن
         # کندل روزانه سنجیده می‌شود.
         "invalidation": a.invalidation,
+        "setup_name": a.setup_name, "decision_id": a.decision_id,
         "size_usd": a.size, "leverage": a.leverage,
         "risk_pct": round(risk_pct, 2),
         "risk_usd": round(a.size * risk_pct / 100, 2),
@@ -373,6 +383,10 @@ def main() -> int:
     p.add_argument("--target", type=float, default=None)
     p.add_argument("--invalidation", type=float, default=None,
                    help="سطح ابطال ساختاری — با بسته روزانه سنجیده می‌شود")
+    p.add_argument("--setup-name", dest="setup_name", required=True,
+                   help="نام ستاپ از کتابخانه ستاپ — بدون آن ورود تعریف‌شده نیست")
+    p.add_argument("--decision-id", dest="decision_id", required=True,
+                   help="شناسه تصمیم — همان که در تحلیل باز شد")
     p.add_argument("--size", type=float, required=True, help="حجم دلاری")
     p.add_argument("--leverage", type=float, default=1.0)
     p.add_argument("--verdict", default="unknown",
