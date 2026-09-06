@@ -9,12 +9,23 @@
 | `radar_scan.py` | اسکن چند کوین، رتبه‌بندی لانگ و شورت |
 | `radar_fetch3.py` | تحلیل عمیق یک کوین |
 | `radar_colab.ipynb` | اجرا از موبایل، بدون نصب |
-| `requirements.txt` | کتابخانه‌ها |
+| `requirements.txt` | کتابخانه‌های اجرا |
+| `requirements-dev.txt` | کتابخانه‌های آزمون |
 
 ## اجرا
 
+دو فایل وابستگی از هم جدا هستند: `requirements.txt` فقط چیزی را دارد که
+برای **اجرای** رادار لازم است، و گردش‌کارهای گیت‌هاب هم تنها همین را نصب
+می‌کنند. `requirements-dev.txt` روی آن سوار می‌شود و ابزار **آزمون** را
+اضافه می‌کند. اگر فقط رادار را اجرا می‌کنی، دومی را نصب نکن.
+
 ```bash
+# اجرا
 pip install -r requirements.txt
+
+# توسعه و آزمون — شامل موارد بالا هم می‌شود
+pip install -r requirements-dev.txt
+python -m pytest tests/ -q
 
 # اسکن
 python radar_scan.py --preset all --venues okx,gate

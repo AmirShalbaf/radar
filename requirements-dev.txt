@@ -1,0 +1,9 @@
+# وابستگی‌های توسعه — فقط برای آزمون، نه برای اجرا.
+# اجرای رادار به این‌ها نیازی ندارد. گردش‌کارهای گیت‌هاب
+# هم فقط requirements.txt را نصب می‌کنند.
+#
+#   pip install -r requirements-dev.txt
+
+-r requirements.txt
+
+pytest>=8.0,<10.0
