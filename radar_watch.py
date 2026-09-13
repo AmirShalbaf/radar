@@ -147,7 +147,49 @@ def notify(msg: str, quiet: bool = False) -> None:
         requests.post(f"https://api.telegram.org/bot{tok}/sendMessage",
                       data={"chat_id": chat, "text": msg}, timeout=15)
     except Exception as e:
-        print(f"  ارسال تلگرام ناموفق: {e}")
+        # فقط نوع استثنا — متن استثنای requests گاهی نشانی درخواست را
+        # برمی‌گرداند و توکن بخشی از همان نشانی است.
+        print(f"  ارسال تلگرام ناموفق: {type(e).__name__}")
+
+
+def ping_telegram() -> bool:
+    """
+    یک پیام آزمایشی به تلگرام می‌فرستد و بلافاصله نتیجه را می‌دهد —
+    بدون منتظر ماندن برای فعال‌شدن هیچ هشداری.
+
+    توکن هرگز چاپ نمی‌شود: نه در پیام موفقیت، نه در پیام خطا، نه در خطای
+    شبکه. حتی متن استثنای requests گاهی نشانی کامل درخواست را برمی‌گرداند
+    و توکن بخشی از آن نشانی است، پس فقط نوع استثنا گزارش می‌شود.
+    """
+    tok = os.getenv("TELEGRAM_BOT_TOKEN")
+    chat = os.getenv("TELEGRAM_CHAT_ID")
+    missing = [name for name, v in
+               (("TELEGRAM_BOT_TOKEN", tok), ("TELEGRAM_CHAT_ID", chat))
+               if not v]
+    if missing:
+        print(f"❌ متغیر محیطی غایب: {', '.join(missing)}")
+        return False
+
+    try:
+        r = requests.post(
+            f"https://api.telegram.org/bot{tok}/sendMessage",
+            data={"chat_id": chat,
+                  "text": "🔔 آزمایش رادار — این یک پیام آزمایشی است."},
+            timeout=15)
+    except Exception as e:
+        print(f"❌ خطای شبکه: {type(e).__name__}")
+        return False
+
+    try:
+        j = r.json()
+    except ValueError:
+        j = {}
+
+    if r.status_code == 200 and j.get("ok"):
+        print("✅ پیام آزمایشی با موفقیت به تلگرام ارسال شد.")
+        return True
+    print(f"❌ ارسال ناموفق — کد {r.status_code}: {j.get('description', '؟')}")
+    return False
 
 
 # ─────────────────────── پایش ───────────────────────
@@ -258,8 +300,13 @@ def main() -> int:
     ap.add_argument("--once", action="store_true", help="یک اجرا و خروج")
     ap.add_argument("--loop", type=int, default=0, help="حلقه با فاصله ثانیه")
     ap.add_argument("--init", action="store_true", help="ساخت فایل نمونه watch.json")
+    ap.add_argument("--ping", action="store_true",
+                    help="پیام آزمایشی به تلگرام و خروج، بدون پایش")
     ap.add_argument("--quiet", action="store_true")
     a = ap.parse_args()
+
+    if a.ping:
+        return 0 if ping_telegram() else 1
 
     if a.init:
         save_json(a.watch, SAMPLE)
