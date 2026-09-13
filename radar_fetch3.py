@@ -663,13 +663,60 @@ BAR = {  # نگاشت تایم‌فریم برای هر صرافی
 }
 
 
-def _df(rows, cols, ms=True) -> pd.DataFrame:
+BAR_SECONDS = {"1D": 86_400, "4H": 14_400, "1W": 604_800}
+
+
+def _closed(df):
+    """
+    فقط کندل‌های بسته. ورودی تهی یا بدون ستون تأیید دست‌نخورده برمی‌گردد.
+
+    این تابع هرگز برای گرفتن قیمت استفاده نمی‌شود — قیمت از آخرین سطر
+    قاب کامل می‌آید. اینجا فقط ساختار و اندیکاتور فیلتر می‌شود.
+    """
+    if df is None or len(df) == 0:
+        return df
+    if "confirm" not in df.columns:
+        return df
+    return df[df["confirm"] == 1].reset_index(drop=True)
+
+
+def _df(rows, cols, ms=True, bar: str | None = None,
+        confirm: list | None = None) -> pd.DataFrame:
+    """
+    قاب کندل استاندارد با ستون تأیید صادق.
+
+    پیش از این ستون تأیید برای همه یک گذاشته می‌شد. نتیجه: صافی کندل بسته
+    در radar_scan.py و radar_rotate.py و همین فایل بی‌اثر بود و کندل باز
+    وارد اندیکاتور می‌شد. هر ستاپ کتابخانه تازه باید روی کندل بسته بایستد.
+
+    ترتیب اولویت برای تعیین تأیید:
+      ۱) پرچم صریح صرافی — فقط اوکی‌اکس می‌دهد.
+      ۲) محاسبه از مهر زمانی: اگر زمان باز شدن به‌علاوه طول کندل از اکنون
+         گذشته باشد، کندل بسته است. این روش به لنگر تقویمی صرافی وابسته
+         نیست، چون مبنا زمان باز شدن خود همان کندل است.
+      ۳) اگر نه پرچم باشد و نه تایم‌فریم، همه یک می‌شوند — رفتار قدیمی،
+         فقط برای سازگاری عقب‌رو.
+
+    سطر باز حذف نمی‌شود، فقط برچسب صفر می‌گیرد. حذف آن قیمت را کهنه
+    می‌کند — همان باگ ۸ در radar_levels.py. قاعده: قیمت از کندل زنده،
+    ساختار از کندل بسته.
+    """
     df = pd.DataFrame(rows, columns=cols)
     for c in df.columns:
         if c != "ts":
             df[c] = pd.to_numeric(df[c], errors="coerce")
     df["ts"] = pd.to_datetime(pd.to_numeric(df["ts"]), unit="ms" if ms else "s", utc=True)
-    df["confirm"] = 1
+
+    if confirm is not None:
+        df["confirm"] = pd.to_numeric(pd.Series(confirm, index=df.index),
+                                      errors="coerce").fillna(0).astype(int)
+    elif bar in BAR_SECONDS:
+        dur = pd.Timedelta(seconds=BAR_SECONDS[bar])
+        now = pd.Timestamp.now(tz="UTC")
+        df["confirm"] = ((df["ts"] + dur) <= now).astype(int)
+    else:
+        df["confirm"] = 1
+
     return df.drop_duplicates("ts").sort_values("ts").reset_index(drop=True)
 
 
@@ -697,7 +744,12 @@ class OKX(Venue):
             if not d: break
             rows += d; cur = d[-1][0]; time.sleep(.12)
         if not rows: return None
-        df = _df([r[:6] for r in rows], ["ts","open","high","low","close","vol"])
+        # اوکی‌اکس پرچم تأیید را در اندیس ۸ می‌دهد. پیش از این بریدن r[:6]
+        # آن را دور می‌ریخت و بعد همه یک گذاشته می‌شدند.
+        flags = [r[8] if len(r) > 8 else None for r in rows]
+        has_flag = all(f is not None for f in flags)
+        df = _df([r[:6] for r in rows], ["ts","open","high","low","close","vol"],
+                 bar=bar, confirm=flags if has_flag else None)
         return df
 
     def funding(self, base, http):
@@ -769,7 +821,7 @@ class Binance(Venue):
             time.sleep(.15)
         if not rows: return None
         return _df([[r[0],r[1],r[2],r[3],r[4],r[5]] for r in rows],
-                   ["ts","open","high","low","close","vol"])
+                   ["ts","open","high","low","close","vol"], bar=bar)
 
     def funding(self, base, http):
         d = http(f"{self.F}/fapi/v1/premiumIndex", {"symbol": self.perp(base)},
@@ -833,7 +885,8 @@ class Bybit(Venue):
                     {"category":"spot","symbol":self.spot(base),
                      "interval":BAR["bybit"][bar],"limit":1000}, f"کندل {bar}")
         if not r or not r.get("list"): return None
-        return _df([x[:6] for x in r["list"]], ["ts","open","high","low","close","vol"])
+        return _df([x[:6] for x in r["list"]], ["ts","open","high","low","close","vol"],
+                   bar=bar)
 
     def funding(self, base, http):
         r = self._g(http, "/v5/market/tickers",
@@ -888,7 +941,7 @@ class Gate(Venue):
         if not isinstance(d, list) or not d: return None
         # قالب گیت: [ts(s), quoteVol, close, high, low, open, baseVol, ...]
         rows = [[x[0], x[5], x[3], x[4], x[2], x[6] if len(x) > 6 else x[1]] for x in d]
-        return _df(rows, ["ts","open","high","low","close","vol"], ms=False)
+        return _df(rows, ["ts","open","high","low","close","vol"], ms=False, bar=bar)
 
     def funding(self, base, http):
         d = http(f"{self.B}/futures/usdt/contracts/{self.perp(base)}",
@@ -1583,10 +1636,13 @@ def run3(symbol, balance, profile, macro_event, deep, order):
     got, vn, pair = candles_first_ok(base, order, 1500 if deep else 600, b.tests)
     b.candles, b.candle_venue, b.pair_btc = got, vn, pair
 
+    # قیمت از کندل زنده، ساختار از کندل بسته. پیش از رفع باگ ستون تأیید،
+    # این صافی بی‌اثر بود و اتفاقی قیمت زنده می‌داد. حالا که صادق شده،
+    # باید صریحاً آخرین سطر گرفته شود وگرنه قیمت تا یک روز کهنه می‌شود —
+    # همان باگ ۸.
     price = None
     if "1D" in b.candles:
         cl = b.candles["1D"]
-        cl = cl[cl["confirm"] == 1] if "confirm" in cl.columns else cl
         if len(cl):
             price = float(cl.iloc[-1]["close"])
 
@@ -1631,8 +1687,12 @@ def run3(symbol, balance, profile, macro_event, deep, order):
 
     print("[۵/۵] پروفایل حجم و فیبوناچی ...", file=sys.stderr)
     if "1D" in b.candles:
-        b.vprofile = three_anchors(b.candles["1D"], macro_event, b.candles.get("4H"))
-        b.fib = fibonacci(b.candles["1D"])
+        # ساختار فقط از کندل بسته. کندل باز حجم و دامنه ناقص دارد و
+        # پروفایل حجم و فیبوناچی را جابه‌جا می‌کند.
+        _d1 = _closed(b.candles["1D"])
+        _d4 = _closed(b.candles.get("4H"))
+        b.vprofile = three_anchors(_d1, macro_event, _d4)
+        b.fib = fibonacci(_d1)
     return b
 
 
@@ -1689,7 +1749,7 @@ def report3(b: Bundle) -> str:
         A("")
         atr_d = None
         if "1D" in b.candles:
-            c = b.candles["1D"]; c = c[c["confirm"]==1]
+            c = _closed(b.candles["1D"])
             if len(c): atr_d = float(c.iloc[-1]["atr14"])
         vd, why = convergence(b.vprofile, atr_d)
         A(f"**آزمون هم‌گرایی: {vd}** — {why}"); A("")
@@ -1731,7 +1791,7 @@ def report3(b: Bundle) -> str:
         A("")
         atr_d2 = None
         if "1D" in b.candles:
-            c2 = b.candles["1D"]; c2 = c2[c2["confirm"] == 1]
+            c2 = _closed(b.candles["1D"])
             if len(c2): atr_d2 = float(c2.iloc[-1]["atr14"])
         A(f"**آزمون هم‌نشینی با پروفایل حجم:** {fib_vp_confluence(b.fib, b.vprofile, atr_d2)}")
         A("")
@@ -1867,9 +1927,11 @@ def report3(b: Bundle) -> str:
     A("---"); A(""); A("## ۸ — حجم و اهرم (ریسک ۲٪)"); A("")
     price = atr = None
     if "1D" in b.candles:
-        c = b.candles["1D"]; c = c[c["confirm"]==1]
-        if len(c):
-            price, atr = float(c.iloc[-1]["close"]), float(c.iloc[-1]["atr14"])
+        full = b.candles["1D"]
+        c = _closed(full)
+        if len(c) and len(full):
+            # قیمت زنده برای فاصله تا استاپ، دامنه واقعی از کندل بسته
+            price, atr = float(full.iloc[-1]["close"]), float(c.iloc[-1]["atr14"])
     if b.balance > 0 and price and atr and math.isfinite(atr):
         risk = b.balance*0.02; ap = 100*atr/price
         A(f"موجودی **{b.balance:,.0f}** دلار | ریسک ۲٪ **{risk:,.2f}** دلار | "

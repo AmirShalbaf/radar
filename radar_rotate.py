@@ -115,11 +115,14 @@ def analyze(sym: str, order: list[str], btc: pd.DataFrame) -> dict | None:
     if "1D" not in got:
         return None
     d = got["1D"]
-    d = d[d["confirm"] == 1] if "confirm" in d.columns else d
-    if len(d) < 60:
+    # قیمت از کندل زنده، ساختار و اندیکاتور از کندل بسته — همان قاعده
+    # radar_levels.py. پیش از رفع باگ ستون تأیید این صافی بی‌اثر بود.
+    live_close = float(d["close"].iloc[-1]) if len(d) else None
+    d = d[d["confirm"] == 1].reset_index(drop=True) if "confirm" in d.columns else d
+    if len(d) < 60 or live_close is None:
         return None
     r = d.iloc[-1]
-    px = float(r["close"])
+    px = live_close
     n_bars = len(d)
     row = {"symbol": sym, "price": px, "venue": vn, "bars": n_bars}
 

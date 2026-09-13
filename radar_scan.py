@@ -68,11 +68,15 @@ def score_symbol(base: str, order: list[str], btc_ref: pd.DataFrame | None
     if "1D" not in got:
         return None
     d = got["1D"]
-    d = d[d["confirm"] == 1] if "confirm" in d.columns else d
-    if len(d) < 60:
+    # قیمت از کندل زنده، ساختار و اندیکاتور از کندل بسته. تا پیش از رفع
+    # باگ ستون تأیید، این صافی بی‌اثر بود و اندیکاتورها کندل باز را
+    # می‌دیدند. حالا که صادق شده، قیمت باید صریحاً از قاب کامل بیاید.
+    live_close = float(d["close"].iloc[-1]) if len(d) else None
+    d = d[d["confirm"] == 1].reset_index(drop=True) if "confirm" in d.columns else d
+    if len(d) < 60 or live_close is None:
         return None
     r = d.iloc[-1]
-    price = float(r["close"])
+    price = live_close
     n_bars = len(d)
 
     row: dict = {"symbol": base, "venue": vn, "price": price,
