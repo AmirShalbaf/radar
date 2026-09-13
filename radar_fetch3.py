@@ -680,6 +680,32 @@ def _closed(df):
     return df[df["confirm"] == 1].reset_index(drop=True)
 
 
+def last_close(df) -> float | None:
+    """
+    آخرین قیمت بسته‌شدن از قاب **کامل** — یا None اگر قاب تهی باشد یا
+    مقدار پوچ.
+
+    چرا نگهبان `is None` کافی نیست: عبارت `float(nan)` مقدار `nan`
+    می‌دهد نه `None`، پس پوچ از آن نگهبان رد می‌شود. این بدتر از غیبت
+    ساده است — سنجه‌هایی مثل فاصله از میانگین شرطشان فقط روی خود میانگین
+    است، نه روی قیمت. پس با قیمت پوچ کلیدشان **ساخته می‌شود** و سنجه
+    «موجود» شمرده می‌شود، در حالی که محتوایش پوچ است. آن‌گاه در مخرج
+    نرمال‌سازی می‌ماند و امتیاز را می‌آلاید — نقض قانون سوگیری صفر.
+
+    قیمت عمداً از قاب کامل خوانده می‌شود، نه از خروجی `_closed`.
+    قاعده: قیمت از کندل زنده، ساختار از کندل بسته.
+
+    مقدار بی‌نهایت هم پوچ حساب می‌شود. `math.isfinite` هر دو را می‌گیرد.
+    """
+    if df is None or len(df) == 0 or "close" not in df.columns:
+        return None
+    try:
+        v = float(df["close"].iloc[-1])
+    except (TypeError, ValueError):
+        return None
+    return v if math.isfinite(v) else None
+
+
 def _df(rows, cols, ms=True, bar: str | None = None,
         confirm: list | None = None) -> pd.DataFrame:
     """

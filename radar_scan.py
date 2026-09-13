@@ -71,9 +71,17 @@ def score_symbol(base: str, order: list[str], btc_ref: pd.DataFrame | None
     # قیمت از کندل زنده، ساختار و اندیکاتور از کندل بسته. تا پیش از رفع
     # باگ ستون تأیید، این صافی بی‌اثر بود و اندیکاتورها کندل باز را
     # می‌دیدند. حالا که صادق شده، قیمت باید صریحاً از قاب کامل بیاید.
-    live_close = float(d["close"].iloc[-1]) if len(d) else None
-    d = d[d["confirm"] == 1].reset_index(drop=True) if "confirm" in d.columns else d
-    if len(d) < 60 or live_close is None:
+    #
+    # نگهبان پوچ از R می‌آید، نه `is None` محلی: مقدار nan از `is None`
+    # رد می‌شود و بعد کلید vs_ema200 با محتوای پوچ ساخته می‌شود —
+    # سنجه «موجود» جا می‌زند و در مخرج نرمال‌سازی می‌ماند.
+    live_close = R.last_close(d)
+    d = R._closed(d)
+    if live_close is None:
+        # «داده ندارم» گزارش‌شدنی است، نه حذف‌شدنی — درس رویداد ۱۴
+        R.FAILURES.append(f"{base}: قیمت آخرین کندل پوچ است")
+        return None
+    if len(d) < 60:
         return None
     r = d.iloc[-1]
     price = live_close

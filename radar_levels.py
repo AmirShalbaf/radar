@@ -123,6 +123,27 @@ def ema(s: pd.Series, n: int) -> pd.Series:
     return s.ewm(span=n, adjust=False).mean()
 
 
+def _last_close(df: pd.DataFrame | None) -> float | None:
+    """
+    آخرین قیمت بسته‌شدن از قاب کامل — یا None اگر تهی یا پوچ باشد.
+
+    نسخه محلی `radar_fetch3.last_close` است. این فایل عمداً مستقل نوشته
+    شده و واکشی خودش را دارد (فقط اوکی‌اکس)، پس ایمپورت نمی‌کند تا آن
+    استقلال نشکند. **هر تغییر اینجا باید در نسخه اصلی هم بیاید** —
+    آزمون `test_levels_guard_matches_canonical` این دو را قفل می‌کند.
+
+    نگهبان `is None` کافی نیست: `float(nan)` مقدار `nan` می‌دهد نه
+    `None`. پوچ بدتر از غیبت است، چون سنجه را «موجود» جا می‌زند.
+    """
+    if df is None or len(df) == 0 or "close" not in df.columns:
+        return None
+    try:
+        v = float(df["close"].iloc[-1])
+    except (TypeError, ValueError):
+        return None
+    return v if math.isfinite(v) else None
+
+
 # ═══════════════════════ یافتن سطح ═══════════════════════
 
 def find_pivots(df: pd.DataFrame, left: int = 3, right: int = 3) -> tuple[list, list]:
@@ -223,7 +244,16 @@ def assess(sym: str, df: pd.DataFrame, buffer_atr: float = 0.25,
 
     # قیمت از کندل زنده، ساختار فقط از کندل بسته. اندیکاتور روی کندل باز
     # ممنوع است، ولی قیمت کهنه هم فاصله و نسبت را غلط می‌کند.
-    live_close = float(df["close"].iloc[-1])
+    #
+    # منشأ الگوی نگهبان پوچ همین‌جا بود: پیش از این هیچ نگهبانی نداشت و
+    # مقدار nan مستقیم وارد فاصله و نسبت می‌شد. «داده ندارم» برچسب
+    # می‌گیرد، نه حذف بی‌صدا — درس رویداد ۱۴.
+    live_close = _last_close(df)
+    if live_close is None:
+        a.n_bars = len(df)
+        a.verdict = "داده ندارم"
+        a.note = "قیمت آخرین کندل پوچ است"
+        return a
     if "confirm" in df.columns:
         df = df[df["confirm"] == 1].reset_index(drop=True)
     a.n_bars = len(df)

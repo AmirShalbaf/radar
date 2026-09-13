@@ -117,9 +117,16 @@ def analyze(sym: str, order: list[str], btc: pd.DataFrame) -> dict | None:
     d = got["1D"]
     # قیمت از کندل زنده، ساختار و اندیکاتور از کندل بسته — همان قاعده
     # radar_levels.py. پیش از رفع باگ ستون تأیید این صافی بی‌اثر بود.
-    live_close = float(d["close"].iloc[-1]) if len(d) else None
-    d = d[d["confirm"] == 1].reset_index(drop=True) if "confirm" in d.columns else d
-    if len(d) < 60 or live_close is None:
+    #
+    # نگهبان پوچ از R می‌آید، نه `is None` محلی — همان دلیل radar_scan.py:
+    # مقدار nan از `is None` رد می‌شود و سنجه پوچ را «موجود» جا می‌زند.
+    live_close = R.last_close(d)
+    d = R._closed(d)
+    if live_close is None:
+        # «داده ندارم» گزارش‌شدنی است، نه حذف‌شدنی — درس رویداد ۱۴
+        R.FAILURES.append(f"{sym}: قیمت آخرین کندل پوچ است")
+        return None
+    if len(d) < 60:
         return None
     r = d.iloc[-1]
     px = live_close
