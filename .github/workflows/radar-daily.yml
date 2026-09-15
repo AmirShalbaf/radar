@@ -113,7 +113,13 @@ jobs:
             python radar_optcost.py report --out reports/optcost.md || true
           fi
 
+      # قاعده این گام: هیچ متنی اینجا دوباره نوشته نمی‌شود.
+      # برچسب نسخه و قانون تازگی هر دو از اسکریپت پایتون می‌آیند، چون
+      # متنی که در دو جا نوشته شود دیر یا زود از هم جدا می‌افتد — یک بار
+      # افتاد و گردش‌کار ماه‌ها «رادار ۶.۰» می‌فرستاد.
       - name: ساخت خلاصه امروز
+        env:
+          PYTHONUTF8: "1"
         run: |
           D=$(date -u +%Y-%m-%d)
           {
@@ -130,19 +136,12 @@ jobs:
             echo "## تازگی نبض"
             echo
             if [ -f reports/SNAPSHOT.md ]; then
-              head -n 6 reports/SNAPSHOT.md | tail -n 3
+              python radar_snapshot.py --freshness
             else
               echo "هنوز نبض چهارساعته اجرا نشده."
             fi
             echo
-            echo "## پرسش گشایش رادار ۶.۰"
-            echo
-            echo "۱. رژیم امروز کدام است و بودجه ریسکش چقدر است؟"
-            echo "۲. از بودجه، چقدر همین حالا مصرف شده؟"
-            echo "۳. **کوچک‌ترین اقدام درست امروز چیست؟**"
-            echo
-            echo "پاسخ سوم هرگز «هیچ کاری» نیست. چهار اقدام همیشه‌مجاز:"
-            echo "سفارش در انتظار، هشدار قیمتی، کاهش پله‌ای، افزایش ذخیره."
+            python radar_state.py --opening
           } > reports/LATEST.md
 
       - name: کامیت گزارش‌ها

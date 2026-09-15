@@ -41,6 +41,39 @@ UTC = timezone.utc
 VERSION = "6.1"
 STATE = "STATE.md"
 
+FA_DIGITS = str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹")
+
+
+def fa(s) -> str:
+    """رقم لاتین به رقم فارسی."""
+    return str(s).translate(FA_DIGITS)
+
+
+def opening_questions() -> str:
+    """
+    متن پرسش گشایش — **تنها منبع اصلی**.
+
+    پیش از این همین متن در سه جا نوشته شده بود: اینجا، در تابع snapshot
+    پایین‌تر، و در یک heredoc دستی داخل `.github/workflows/radar-daily.yml`.
+    وقتی نسخه از ۶.۰ به ۶.۱ رفت فقط دو تای اول به‌روز شد و گردش‌کار
+    ماه‌ها «رادار ۶.۰» به تلگرام می‌فرستاد.
+
+    شماره نسخه از ثابت `VERSION` می‌آید، نه دست‌نویس. هر مصرف‌کننده‌ای —
+    از جمله گردش‌کار — باید همین را صدا بزند:
+
+        python radar_state.py --opening
+    """
+    return "\n".join([
+        f"## پرسش گشایش رادار {fa(VERSION)}",
+        "",
+        "۱. رژیم امروز کدام است و بودجه ریسکش چقدر است؟",
+        "۲. از بودجه، چقدر همین حالا مصرف شده؟",
+        "۳. **کوچک‌ترین اقدام درست امروز چیست؟**",
+        "",
+        "پاسخ سوم هرگز «هیچ کاری» نیست. چهار اقدام همیشه‌مجاز:",
+        "سفارش در انتظار، هشدار قیمتی، کاهش پله‌ای، افزایش ذخیره.",
+    ])
+
 SCRIPTS = [
     "radar_fetch3.py", "radar_scan.py", "radar_rotate.py", "radar_levels.py",
     "radar_journal.py", "radar_intake.py", "radar_digest.py",
@@ -213,11 +246,8 @@ def snapshot() -> None:
     except ImportError:
         lines.append("کتابخانه requests نصب نیست.")
 
-    lines += ["", "## پرسش گشایش رادار ۶.۱", "",
-              "۱. رژیم امروز کدام است و بودجه ریسکش چقدر؟",
-              "۲. از بودجه چقدر مصرف شده؟",
-              "۳. **کوچک‌ترین اقدام درست امروز چیست؟**", "",
-              "پاسخ سوم هرگز «هیچ کاری» نیست."]
+    # متن از تنها منبع اصلی می‌آید — دست‌نویس نشود
+    lines += ["", opening_questions()]
 
     with open("reports/LATEST.md", "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
@@ -228,7 +258,14 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=f"به‌روزرسانی حافظه پروژه — رادار {VERSION}")
     ap.add_argument("--snapshot", action="store_true",
                     help="به‌علاوه ساخت reports/LATEST.md از رابط صرافی")
+    ap.add_argument("--opening", action="store_true",
+                    help="فقط چاپ متن پرسش گشایش و خروج — برای گردش‌کار")
     a = ap.parse_args()
+
+    # پیش از هر چیز: نه به STATE.md نیاز دارد، نه به شبکه
+    if a.opening:
+        print(opening_questions())
+        return 0
 
     if a.snapshot:
         snapshot()

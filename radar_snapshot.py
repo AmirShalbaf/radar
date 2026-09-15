@@ -167,6 +167,37 @@ def fmt(v, d=4):
     return f"{v:.{d}f}".rstrip("0").rstrip(".")
 
 
+def freshness_note() -> list[str]:
+    """
+    بخش «قانون تازگی» — **هر سه سطرش**، به‌عنوان تنها منبع اصلی.
+
+    سه سطر است، نه یکی: سطر اول قاعده را می‌گوید، سطر دوم نتیجه، سطر
+    سوم اقدام.
+
+    جدا شد چون گردش‌کار روزانه این بخش را با `head -n 6 | tail -n 3`
+    برش می‌زد، به این فرض که توضیح یک سطر است. نتیجه: جمله همیشه درست
+    همان‌جا قطع می‌شد که نتیجه و اقدام شروع می‌شود. برش بر پایه شماره
+    سطر ثابت به ساختار این تابع وابسته است و با هر سطر اضافه می‌شکند.
+    """
+    return [
+        f"**قانون تازگی:** اگر بیش از {STALE_HOURS:.0f} ساعت از مهر بالا گذشته،",
+        "این داده کهنه است و طبق قانون مادر داده یعنی «داده ندارم».",
+        "برای تصمیم، اول پالس تازه بگیر.",
+    ]
+
+
+def freshness_block(stamp: str | None = None) -> str:
+    """
+    همان سه سطر، به‌علاوه مهر زمانی در صورت وجود.
+
+    بدون مهر، عبارت «مهر بالا» در سطر اول بی‌مرجع می‌ماند — در
+    `SNAPSHOT.md` مهر بالای همین بخش هست، ولی وقتی بخش را جدا چاپ
+    می‌کنیم باید همراهش بیاید.
+    """
+    head = [f"تولید نبض: **{stamp}**", ""] if stamp else []
+    return "\n".join(head + freshness_note())
+
+
 def build(rows: list[dict], prev: dict, failures: list[str]) -> tuple[str, dict]:
     now = datetime.now(UTC)
     stamp = now.strftime("%Y-%m-%d %H:%M UTC")
@@ -178,9 +209,7 @@ def build(rows: list[dict], prev: dict, failures: list[str]) -> tuple[str, dict]
         f"تولید: **{stamp}**",
         f"پالس قبلی: {prev_at}",
         "",
-        f"**قانون تازگی:** اگر بیش از {STALE_HOURS:.0f} ساعت از مهر بالا گذشته،",
-        "این داده کهنه است و طبق قانون مادر داده یعنی «داده ندارم».",
-        "برای تصمیم، اول پالس تازه بگیر.",
+        *freshness_note(),
         "",
         "| نماد | قیمت | تغییر ۲۴س ٪ | فاندینگ ۸س ٪ | بهره باز (دلار) | تغییر بهره باز از پالس قبل ٪ | منبع |",
         "|---|---|---|---|---|---|---|",
@@ -229,7 +258,21 @@ def main() -> int:
     ap.add_argument("--symbols", help="فهرست جدا با کاما؛ پیش‌فرض: سبد + پایش + هسته")
     ap.add_argument("--out", default="reports/SNAPSHOT.md")
     ap.add_argument("--json", default="snapshot.json")
+    ap.add_argument("--freshness", action="store_true",
+                    help="فقط چاپ بخش قانون تازگی و خروج — برای گردش‌کار")
     a = ap.parse_args()
+
+    # پیش از هر چیز: بدون شبکه. مهر از آخرین نبض ثبت‌شده خوانده می‌شود.
+    if a.freshness:
+        stamp = None
+        if os.path.exists(a.json):
+            try:
+                with open(a.json, encoding="utf-8") as f:
+                    stamp = json.load(f).get("generated_utc")
+            except Exception:
+                stamp = None
+        print(freshness_block(stamp))
+        return 0
 
     syms = load_symbols(a.symbols)
     prev = {}
