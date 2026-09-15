@@ -78,10 +78,15 @@ SCRIPTS = [
     "radar_watch.py", "radar_validate.py", "radar_state.py",
 ]
 
+# نام فایل دفترچه معاملات. باید دقیقاً با `DB_NAME` در
+# `radar_journal.py` یکی باشد — وگرنه این شمارنده بی‌صدا صفر می‌ماند.
+# `tests/test_journal_layer.py` دو مقدار را به هم قفل می‌کند.
+JOURNAL_DB = "radar_journal.json"
+
 STATE_FILES = {
     "holdings.json": "سبد واقعی",
     "watch.json": "فهرست پایش زنده",
-    "radar_journal.json": "دفترچه معاملات",
+    JOURNAL_DB: "دفترچه معاملات",
     "radar_optcost.json": "دفتر هزینه فرصت",
     "book_state.json": "تاریخچه ضربه‌ها",
 }
@@ -174,18 +179,28 @@ def build_auto() -> str:
     W(f"| کلید تلگرام | {tg} |")
 
     # شمارش رکوردها
-    for f, key, label in (("radar_journal.json", "trades", "معامله ثبت‌شده"),
-                          ("radar_optcost.json", "rejects", "رکورد هزینه فرصت")):
-        n = 0
-        if os.path.exists(f):
-            try:
-                with open(f, encoding="utf-8") as fh:
-                    n = len(json.load(fh).get(key, []))
-            except Exception:
-                pass
-        need = 20 if key == "trades" else 15
-        flag = "✅" if n >= need else f"⚠️ حداقل لازم {need}"
-        W(f"| تعداد {label} | {n} — {flag} |")
+    def records(path: str, key: str) -> list:
+        if not os.path.exists(path):
+            return []
+        try:
+            with open(path, encoding="utf-8") as fh:
+                return json.load(fh).get(key, []) or []
+        except Exception:
+            return []
+
+    # دفترچه معاملات: واقعی و فرضی جدا شمرده می‌شوند. نتیجه فرضی
+    # سیستماتیک با واقعی فرق دارد — لغزش اجرا، فشار روانی، خروج
+    # زودهنگام — پس آستانه بیست‌تایی بازتنظیم وزن‌ها فقط با معامله
+    # واقعی باز می‌شود.
+    trades = records(JOURNAL_DB, "trades")
+    paper = sum(1 for t in trades if t.get("paper"))
+    real = len(trades) - paper
+    flag = "✅" if real >= 20 else f"⚠️ حداقل لازم {fa(20)} واقعی"
+    W(f"| تعداد معامله ثبت‌شده | {real} واقعی + {paper} فرضی — {flag} |")
+
+    n = len(records("radar_optcost.json", "rejects"))
+    flag = "✅" if n >= 15 else f"⚠️ حداقل لازم {fa(15)}"
+    W(f"| تعداد رکورد هزینه فرصت | {n} — {flag} |")
 
     W("")
     if not reports:

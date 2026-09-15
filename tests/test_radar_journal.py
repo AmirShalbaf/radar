@@ -34,7 +34,7 @@ def check(name: str, cond: bool, detail: str = "") -> None:
 def test_add_requires_setup_and_decision() -> None:
     orig_argv, orig_db = sys.argv, RJ.DB
     with tempfile.TemporaryDirectory() as tmp:
-        RJ.DB = os.path.join(tmp, "journal.json")
+        RJ.DB = os.path.join(tmp, RJ.DB_NAME)
         try:
             sys.argv = ["radar_journal.py", "add", "--symbol", "TST",
                         "--side", "long", "--entry", "1", "--stop", "0.9",
@@ -52,7 +52,7 @@ def test_add_requires_setup_and_decision() -> None:
 def test_add_stores_setup_and_decision() -> None:
     orig_argv, orig_db = sys.argv, RJ.DB
     with tempfile.TemporaryDirectory() as tmp:
-        RJ.DB = os.path.join(tmp, "journal.json")
+        RJ.DB = os.path.join(tmp, RJ.DB_NAME)
         try:
             sys.argv = ["radar_journal.py", "add", "--symbol", "TST",
                         "--side", "long", "--entry", "1", "--stop", "0.9",

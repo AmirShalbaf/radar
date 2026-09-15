@@ -103,6 +103,14 @@ python radar_digest.py --report overlap
 python radar_journal.py add --symbol ZEC --side long --entry 515.79 --stop 480 --target 575 --invalidation 480.43 --size 200 --verdict "بدون ورود" --decision "ورود" --rr 1.7 --regime -1.25 --note "..."
 ```
 
+**معامله فرضی** — همان دستور، به‌علاوه `--paper`:
+
+```
+python radar_journal.py add ... --paper
+```
+
+فرضی و واقعی جدا شمرده می‌شوند. آستانه بیست‌تایی بازتنظیم وزن‌ها فقط با معامله واقعی باز می‌شود.
+
 **بقیه:**
 
 ```

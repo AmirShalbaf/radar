@@ -13,13 +13,22 @@ radar_journal.py — ژورنال و موتور کالیبراسیون رادا�
         --decision entered --rr 1.32 --ev -0.60 --note "خلاف حکم چارچوب" \\
         --setup-name "ب۱ — بازپس‌گیری پس از دررفتگی عمیق" --decision-id D-2026-09-05-1
 
+    python radar_journal.py add ... --paper  # معامله فرضی، بدون پول واقعی
+
     python radar_journal.py update          # قیمت زنده، R تحقق‌نیافته، هشدارها
     python radar_journal.py close --id 1 --exit 575 --reason target
     python radar_journal.py report          # گزارش کالیبراسیون
     python radar_journal.py list
 
-فایل داده: journal.json کنار همین اسکریپت. **در .gitignore بگذارش** —
-موقعیت‌های معاملاتی داده شخصی است.
+فایل داده: radar_journal.json کنار همین اسکریپت — **همان نامی که
+`radar_state.py` و گردش‌کار هفتگی دنبالش می‌گردند**. نام باید یکدست
+بماند: شمارنده‌ای که فایل اشتباه را می‌شمارد همیشه صفر می‌ماند و
+هیچ‌وقت خطا نمی‌دهد.
+
+این فایل **عمداً در مخزن ردیابی می‌شود** — داده کالیبراسیون است، نه
+فایل موقت. بدون تاریخچه‌اش نرخ برد و میانگین R قابل محاسبه نیست.
+استثنای صریحش در `.gitignore` نوشته شده. اگر روزی شخصی‌بودنش مهم شد،
+مخزن باید خصوصی شود، نه فایل حذف.
 """
 from __future__ import annotations
 import argparse, json, os, sys
@@ -27,7 +36,10 @@ from datetime import datetime, timezone
 
 UTC = timezone.utc
 HERE = os.path.dirname(os.path.abspath(__file__))
-DB = os.path.join(HERE, "journal.json")
+# نام فایل داده — تنها منبع اصلی. `radar_state.py` و گردش‌کار
+# `radar-weekly.yml` همین نام را می‌خوانند. عوضش نکن بدون آن دو.
+DB_NAME = "radar_journal.json"
+DB = os.path.join(HERE, DB_NAME)
 
 # پیش از کتابخانه ستاپ، رکوردها نام ستاپ و شناسه تصمیم نداشتند.
 # قانون سوگیری صفر: خالی نگذار، ولی هم برچسبش بزن که «نامشخص» است.
@@ -46,6 +58,10 @@ def load() -> dict:
     for t in d.get("trades", []):
         t.setdefault("setup_name", UNKNOWN_SETUP)
         t.setdefault("decision_id", UNKNOWN_SETUP)
+        # رکوردهای پیش از افزودن این میدان همه با پول واقعی بودند.
+        # پیش‌فرض نادرست یعنی همان معنا حفظ می‌شود و رکورد قدیمی
+        # بدون دست‌خوردن معتبر می‌ماند.
+        t.setdefault("paper", False)
     return d
 
 
@@ -101,13 +117,17 @@ def cmd_add(a) -> None:
         "user_decision": a.decision,           # followed / entered / skipped
         "rr_planned": a.rr, "ev_planned": a.ev,
         "regime_score": a.regime, "coin_score": a.score,
+        # فرضی یا واقعی. نتیجه فرضی سیستماتیک با واقعی فرق دارد —
+        # لغزش اجرا، فشار روانی، خروج زودهنگام — پس این دو هرگز با هم
+        # میانگین گرفته نمی‌شوند.
+        "paper": bool(a.paper),
         "note": a.note, "status": "open",
         "exit": None, "closed": None, "exit_reason": None,
         "r_realized": None,
     }
     d["trades"].append(t)
     save(d)
-    print(f"✅ ثبت شد — شناسه {tid}")
+    print(f"✅ ثبت شد — شناسه {tid} — معامله {'فرضی' if t['paper'] else 'واقعی'}")
     print(f"   {t['symbol']} {t['side']} | ورود {a.entry} | استاپ {a.stop} "
           f"({risk_pct:.2f}%) | ریسک {t['risk_usd']} دلار")
     if a.verdict != "enter" and a.decision == "entered":
@@ -181,39 +201,52 @@ def cmd_list(a) -> None:
         print("ژورنال خالی است."); return
     for t in d["trades"]:
         r = f"{t['r_realized']:+.2f}R" if t["r_realized"] is not None else "باز"
+        kind = "فرضی" if t.get("paper") else "واقعی"
         print(f"[{t['id']:>2}] {t['opened'][:10]} {t['symbol']:<6} {t['side']:<5} "
               f"ورود {t['entry']:<10.4f} → {r:<8} "
-              f"| حکم چارچوب: {t['framework_verdict']:<9} تصمیم: {t['user_decision']}")
+              f"| حکم چارچوب: {t['framework_verdict']:<9} تصمیم: {t['user_decision']} "
+              f"| {kind}")
 
 
-def cmd_report(a) -> None:
+def _split_paper(rows: list[dict]) -> tuple[list[dict], list[dict]]:
     """
-    گزارش کالیبراسیون — تنها بخشی که واقعاً یاد می‌گیرد.
+    تفکیک واقعی از فرضی — **تنها منبع اصلی این تفکیک**. هر مصرف‌کننده‌ای
+    باید همین را صدا بزند تا تعریف در دو جا از هم جدا نیفتد.
 
-    پرسش مرکزی: آیا وقتی چارچوب «ورود» گفت، نتیجه بهتر از وقتی بود که
-    «بدون ورود» گفت و تو وارد شدی؟ اگر نه، وزن‌ها یا آستانه‌ها غلط‌اند.
+    رکورد بدون میدان `paper` واقعی شمرده می‌شود: پیش از افزودن این میدان
+    هر ثبتی با پول واقعی بود.
+    """
+    real = [t for t in rows if not t.get("paper")]
+    paper = [t for t in rows if t.get("paper")]
+    return real, paper
+
+
+def _group_report(cl: list[dict], op: list[dict], title: str,
+                  why: list[str]) -> None:
+    """
+    تحلیل یک دسته. برای واقعی و فرضی **جدا** اجرا می‌شود، هرگز روی مخلوط.
+
+    دسته خالی هم چاپ می‌شود، نه حذف. سکوت یک سنجه خودش باید مشکوک باشد:
+    اگر دسته نشان داده نشود، صفر بودنش هم دیده نمی‌شود.
     """
     import statistics as st
-    d = load()
-    cl = [t for t in d["trades"] if t["status"] == "closed" and t["r_realized"] is not None]
-    op = [t for t in d["trades"] if t["status"] == "open"]
-
-    print("# گزارش کالیبراسیون رادار\n")
-    print(f"تاریخ: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}")
-    print(f"معاملات بسته: **{len(cl)}** | باز: **{len(op)}**\n")
-
-    if len(cl) < 5:
-        print(f"> ⚠️ فقط {len(cl)} معامله بسته ثبت شده. **زیر ۵ مورد، هیچ نتیجه‌ای")
-        print("> آماری معتبر نیست.** ادامه بده تا نمونه جمع شود. نتایج زیر")
-        print("> صرفاً توصیفی‌اند، نه شاهد.\n")
+    print(f"## {title}")
+    print()
+    print(f"بسته: **{len(cl)}** | باز: **{len(op)}**")
+    print()
+    for line in why:
+        print(f"> {line}")
+    print()
 
     if not cl:
-        print("هنوز معامله بسته‌ای نیست.")
+        print("هنوز معامله بسته‌ای در این دسته نیست.")
+        print()
         return
 
     rs = [t["r_realized"] for t in cl]
     wins = [r for r in rs if r > 0]
-    print("## ۱ — عملکرد کلی\n")
+    print("### ۱ — عملکرد کلی")
+    print()
     print("| سنجه | مقدار |")
     print("|---|---|")
     print(f"| تعداد | {len(cl)} |")
@@ -228,7 +261,8 @@ def cmd_report(a) -> None:
     print()
 
     # ── آزمون مرکزی: حکم چارچوب در برابر نتیجه
-    print("## ۲ — آیا حکم چارچوب ارزش داشت؟\n")
+    print("### ۲ — آیا حکم چارچوب ارزش داشت؟")
+    print()
     groups: dict[str, list[float]] = {}
     for t in cl:
         key = f"{t['framework_verdict']} / {t['user_decision']}"
@@ -260,7 +294,8 @@ def cmd_report(a) -> None:
     # ── آیا R/R پیش‌بینی‌شده با نتیجه رابطه دارد؟
     pairs = [(t["rr_planned"], t["r_realized"]) for t in cl if t.get("rr_planned")]
     if len(pairs) >= 5:
-        print("## ۳ — آیا R/R پیش‌بینی‌شده پیش‌بین خوبی بود؟\n")
+        print("### ۳ — آیا R/R پیش‌بینی‌شده پیش‌بین خوبی بود؟")
+        print()
         hi = [r for rr, r in pairs if rr >= 2.0]
         lo = [r for rr, r in pairs if rr < 2.0]
         print("| گروه | تعداد | میانگین R |")
@@ -273,7 +308,8 @@ def cmd_report(a) -> None:
             print()
 
     # ── دلایل خروج
-    print("## ۴ — دلایل خروج\n")
+    print("### ۴ — دلایل خروج")
+    print()
     rz: dict[str, list[float]] = {}
     for t in cl:
         rz.setdefault(t.get("exit_reason") or "نامشخص", []).append(t["r_realized"])
@@ -287,12 +323,59 @@ def cmd_report(a) -> None:
     ls = [(t["symbol"], t["r_realized"], t.get("lesson"))
           for t in cl if t.get("lesson")]
     if ls:
-        print("## ۵ — درس‌های ثبت‌شده\n")
-        for s, r, l in ls:
-            print(f"- **{s}** ({r:+.2f}R): {l}")
+        print("### ۵ — درس‌های ثبت‌شده")
+        print()
+        for sym, r, lesson in ls:
+            print(f"- **{sym}** ({r:+.2f}R): {lesson}")
         print()
 
-    print("---\n")
+
+def cmd_report(a) -> None:
+    """
+    گزارش کالیبراسیون — تنها بخشی که واقعاً یاد می‌گیرد.
+
+    پرسش مرکزی: آیا وقتی چارچوب «ورود» گفت، نتیجه بهتر از وقتی بود که
+    «بدون ورود» گفت و تو وارد شدی؟ اگر نه، وزن‌ها یا آستانه‌ها غلط‌اند.
+
+    واقعی و فرضی **جدا** گزارش می‌شوند: نه مخلوط، نه فرضی حذف‌شده.
+    مخلوط‌کردن عدد بی‌معنا می‌سازد و حذف، داده را دور می‌ریزد.
+    """
+    d = load()
+    cl = [t for t in d["trades"] if t["status"] == "closed" and t["r_realized"] is not None]
+    op = [t for t in d["trades"] if t["status"] == "open"]
+    real_cl, paper_cl = _split_paper(cl)
+    real_op, paper_op = _split_paper(op)
+
+    print("# گزارش کالیبراسیون رادار")
+    print()
+    print(f"تاریخ: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}")
+    print()
+    print("| دسته | بسته | باز |")
+    print("|---|---|---|")
+    print(f"| واقعی | {len(real_cl)} | {len(real_op)} |")
+    print(f"| فرضی | {len(paper_cl)} | {len(paper_op)} |")
+    print(f"| **جمع** | **{len(cl)}** | **{len(op)}** |")
+    print()
+
+    if len(real_cl) < 5:
+        print(f"> ⚠️ فقط {len(real_cl)} معامله **واقعی** بسته ثبت شده. **زیر ۵ مورد،")
+        print("> هیچ نتیجه‌ای آماری معتبر نیست.** ادامه بده تا نمونه جمع شود.")
+        print("> نتایج زیر صرفاً توصیفی‌اند، نه شاهد. معامله فرضی این")
+        print("> شمارنده را پر نمی‌کند.")
+        print()
+
+    _group_report(real_cl, real_op, "معاملات واقعی", [
+        "مرجع کالیبراسیون همین دسته است. آستانه بیست‌تایی بازتنظیم",
+        "وزن‌ها فقط با معامله واقعی شمرده می‌شود.",
+    ])
+    _group_report(paper_cl, paper_op, "معاملات فرضی", [
+        "نتیجه فرضی لغزش اجرا و فشار روانی و خروج زودهنگام را ندارد،",
+        "پس سیستماتیک خوش‌بینانه‌تر است. برای آزمودن یک ستاپ مفید است،",
+        "برای بازتنظیم وزن‌ها نه.",
+    ])
+
+    print("---")
+    print()
     print("**این گزارش را در گفت‌وگو با کلاود بچسبان و بنویس «کالیبراسیون رادار».**")
 
 
@@ -400,6 +483,8 @@ def main() -> int:
     p.add_argument("--regime", type=float, default=None, help="امتیاز رژیم")
     p.add_argument("--score", type=float, default=None, help="امتیاز کوین")
     p.add_argument("--note", default="")
+    p.add_argument("--paper", action="store_true",
+                   help="معامله فرضی — بدون پول واقعی. جدا از واقعی شمرده می‌شود")
     p.set_defaults(func=cmd_add)
 
     p = sub.add_parser("update", help="قیمت زنده و هشدار موقعیت‌های باز")
