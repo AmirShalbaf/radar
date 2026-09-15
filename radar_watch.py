@@ -54,8 +54,20 @@ OKX = "https://www.okx.com"
 WATCH_FILE = "watch.json"
 STATE_FILE = "watch_state.json"
 
+# آستانه کهنگی سطوح پایش، به روز.
+#
+# چهارده روز انتخاب شد چون دو برابر افق معمول یک ستاپ نوسانی است.
+# کمتر از این، هر بازبینی عقب‌افتاده هشدار می‌دهد و هشدار بی‌ارزش می‌شود.
+# بیشتر از این، سطح ماه‌کهنه بی‌صدا می‌ماند — همان حالتی که این هشدار
+# برای گرفتنش ساخته شد.
+STALE_AFTER_DAYS = 14
+
 SAMPLE = {
     "_راهنما": "هر مورد یک پوزیشن یا یک ستاپ در انتظار است",
+    "_راهنمای_updated": "تاریخ آخرین بازبینی سطوح، به شکل YYYY-MM-DD. "
+                        "پس از هر ویرایش سطوح به‌روزش کن، وگرنه هشدار "
+                        "کهنگی فعال می‌شود",
+    "updated": None,
     "items": [
         {
             "symbol": "ZEC",
@@ -134,6 +146,60 @@ def load_json(path: str, default: dict) -> dict:
 def save_json(path: str, data: dict) -> None:
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+# ─────────────────────── کهنگی سطوح ───────────────────────
+
+def watch_age_days(path: str, now: datetime | None = None) -> float | None:
+    """
+    سن سطوح پایش به روز. مقدار None یعنی فایل نیست.
+
+    ترتیب اولویت:
+      ۱) میدان `updated` داخل خود فایل. تنها منبعی که در رانر گیت‌هاب هم
+         معتبر است.
+      ۲) مهر زمانی آخرین ویرایش فایل. برای اجرای محلی.
+
+    **چرا میدان صریح مقدم است:** گیت مهر زمانی را ذخیره نمی‌کند. هر
+    `actions/checkout` به همه فایل‌ها مهر لحظه چک‌اوت می‌زند، پس در رانر
+    هر فایل همیشه «تازه» دیده می‌شود — و هشدار دقیقاً در جایی که هر چهار
+    ساعت اجرا می‌شود بی‌اثر می‌ماند.
+    """
+    now = now or datetime.now(UTC)
+    if not os.path.exists(path):
+        return None
+
+    stamp = None
+    raw = load_json(path, {}).get("updated")
+    if raw:
+        try:
+            d = datetime.fromisoformat(str(raw))
+            stamp = d if d.tzinfo else d.replace(tzinfo=UTC)
+        except (ValueError, TypeError):
+            stamp = None          # میدان خراب: به مهر زمانی برگرد
+
+    if stamp is None:
+        try:
+            stamp = datetime.fromtimestamp(os.path.getmtime(path), UTC)
+        except OSError:
+            return None
+
+    return (now - stamp).total_seconds() / 86_400
+
+
+def stale_warning(path: str, now: datetime | None = None) -> str | None:
+    """
+    متن هشدار کهنگی، یا None اگر سطوح تازه باشند یا فایل نباشد.
+
+    فایل غایب هشدار کهنگی نمی‌گیرد — مسئله دیگری است و `main` جداگانه
+    گزارشش می‌کند. دو مسئله متفاوت نباید یک پیام بگیرند.
+    """
+    age = watch_age_days(path, now)
+    if age is None or age < STALE_AFTER_DAYS:
+        return None
+    return (f"⚠️ سطوح پایش کهنه است — {age:.0f} روز از آخرین بازبینی "
+            f"{os.path.basename(path)} گذشته (آستانه {STALE_AFTER_DAYS} روز).\n"
+            f"پایشگر دارد سطوح قدیمی را می‌سنجد. ابطال و نردبان را بازبینی کن، "
+            f"سپس میدان updated را به‌روز کن.")
 
 
 def notify(msg: str, quiet: bool = False) -> None:
@@ -279,10 +345,27 @@ def check_item(it: dict, state: dict) -> list[str]:
     return fired
 
 
-def run_once(watch: dict, state: dict, quiet: bool = False) -> int:
+def run_once(watch: dict, state: dict, quiet: bool = False,
+             path: str = WATCH_FILE) -> int:
     ts = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     if not quiet:
         print(f"پایش — {ts}")
+
+    # هشدار کهنگی پیش از هر سنجشی — اگر سطوح کهنه‌اند، بقیه خروجی هم
+    # باید با همین چشم خوانده شود.
+    warn = stale_warning(path)
+    if warn:
+        day = datetime.now(UTC).strftime("%Y-%m-%d")
+        key = f"stale_{day}"
+        if state.get(key):
+            # پایش هر چهار ساعت یعنی شش اجرا در روز. همان هشدار شش بار
+            # در تلگرام نویز است — در خروجی می‌ماند، در تلگرام روزی یک بار.
+            if not quiet:
+                print(warn)
+        else:
+            state[key] = True
+            notify(warn, quiet=quiet)
+
     n = 0
     for it in watch.get("items", []):
         for msg in check_item(it, state):
@@ -309,9 +392,13 @@ def main() -> int:
         return 0 if ping_telegram() else 1
 
     if a.init:
-        save_json(a.watch, SAMPLE)
+        sample = dict(SAMPLE)
+        sample["updated"] = datetime.now(UTC).strftime("%Y-%m-%d")
+        save_json(a.watch, sample)
         print(f"فایل نمونه ساخته شد: {a.watch}")
         print("سطوح واقعی خودت را جایگزین کن، سپس اجرا کن.")
+        print(f"پس از هر ویرایش سطوح، میدان updated را هم به‌روز کن — "
+              f"وگرنه بعد از {STALE_AFTER_DAYS} روز هشدار کهنگی می‌گیری.")
         print("\nبرای هشدار تلگرام، این دو متغیر را تنظیم کن:")
         print("  TELEGRAM_BOT_TOKEN")
         print("  TELEGRAM_CHAT_ID")
@@ -328,13 +415,13 @@ def main() -> int:
         print(f"حلقه پایش هر {a.loop} ثانیه. برای توقف: Ctrl+C")
         try:
             while True:
-                run_once(watch, state, a.quiet)
+                run_once(watch, state, a.quiet, path=a.watch)
                 time.sleep(a.loop)
         except KeyboardInterrupt:
             print("\nمتوقف شد.")
         return 0
 
-    run_once(watch, state, a.quiet)
+    run_once(watch, state, a.quiet, path=a.watch)
     return 0
 
 
