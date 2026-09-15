@@ -42,6 +42,9 @@ import sys
 import time
 from datetime import datetime, timezone
 
+# تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
+from radar_text import fa
+
 try:
     import requests
 except ImportError:
@@ -196,8 +199,8 @@ def stale_warning(path: str, now: datetime | None = None) -> str | None:
     age = watch_age_days(path, now)
     if age is None or age < STALE_AFTER_DAYS:
         return None
-    return (f"⚠️ سطوح پایش کهنه است — {age:.0f} روز از آخرین بازبینی "
-            f"{os.path.basename(path)} گذشته (آستانه {STALE_AFTER_DAYS} روز).\n"
+    return (f"⚠️ سطوح پایش کهنه است — {fa(f'{age:.0f}')} روز از آخرین بازبینی "
+            f"{os.path.basename(path)} گذشته (آستانه {fa(STALE_AFTER_DAYS)} روز).\n"
             f"پایشگر دارد سطوح قدیمی را می‌سنجد. ابطال و نردبان را بازبینی کن، "
             f"سپس میدان updated را به‌روز کن.")
 
@@ -378,7 +381,8 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=f"پایشگر زنده سطوح — رادار {VERSION}")
+    ap = argparse.ArgumentParser(
+        description=f"پایشگر زنده سطوح — رادار {fa(VERSION)}")
     ap.add_argument("--watch", default=WATCH_FILE)
     ap.add_argument("--once", action="store_true", help="یک اجرا و خروج")
     ap.add_argument("--loop", type=int, default=0, help="حلقه با فاصله ثانیه")
@@ -398,7 +402,7 @@ def main() -> int:
         print(f"فایل نمونه ساخته شد: {a.watch}")
         print("سطوح واقعی خودت را جایگزین کن، سپس اجرا کن.")
         print(f"پس از هر ویرایش سطوح، میدان updated را هم به‌روز کن — "
-              f"وگرنه بعد از {STALE_AFTER_DAYS} روز هشدار کهنگی می‌گیری.")
+              f"وگرنه بعد از {fa(STALE_AFTER_DAYS)} روز هشدار کهنگی می‌گیری.")
         print("\nبرای هشدار تلگرام، این دو متغیر را تنظیم کن:")
         print("  TELEGRAM_BOT_TOKEN")
         print("  TELEGRAM_CHAT_ID")

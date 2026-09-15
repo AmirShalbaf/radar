@@ -58,6 +58,9 @@ import numpy as np
 import pandas as pd
 import requests
 
+# تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
+from radar_text import fa
+
 VERSION = "1.1"
 
 PRESETS = {
@@ -389,7 +392,7 @@ def report(rows: list[Assessment], min_rr: float) -> str:
     ok.sort(key=lambda a: (-a.rr))
 
     L = [
-        f"# اسکنر سطوح رادار — نسخه {VERSION}",
+        f"# اسکنر سطوح رادار — نسخه {fa(VERSION)}",
         "",
         "> **اصل:** نسبت ریسک به پاداش با تنگ‌کردن استاپ ساخته نمی‌شود،",
         "> با نزدیک‌بودن ورود به سطح ابطال ساخته می‌شود.",

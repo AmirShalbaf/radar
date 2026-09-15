@@ -42,6 +42,9 @@ import os
 import sys
 from datetime import datetime, timezone
 
+# تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
+from radar_text import fa
+
 try:
     import requests
 except ImportError:
@@ -327,7 +330,7 @@ def build_report(book: dict, rows: list[dict], reg: dict,
     stable_pct = stable / total * 100 if total else 0
 
     W("=" * 66)
-    W(f"بازبینی سبد و موتور خروج — رادار {VERSION}")
+    W(f"بازبینی سبد و موتور خروج — رادار {fa(VERSION)}")
     W(f"تاریخ: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}")
     W("=" * 66)
     W("")
@@ -461,9 +464,11 @@ def build_report(book: dict, rows: list[dict], reg: dict,
             W(f"| {c['symbol']} | {c['score']:+.2f} | {worst['pos']['symbol']} | "
               f"{worst['score']:+.2f} | {edge:+.2f} | {v} |")
         W("")
-        W(f"مزیت = امتیاز نامزد − امتیاز موجود − {SWAP_COST_SCORE} (هزینه تعویض).")
-        W(f"آستانه اجرا: {SWAP_MIN_EDGE}. حداکثر {MAX_SWAPS_WEEK} تعویض در هفته.")
-        W(f"حداقل دوره نگهداری پیش از تعویض: {MIN_HOLD_DAYS} روز.")
+        W(f"مزیت = امتیاز نامزد − امتیاز موجود − {fa(SWAP_COST_SCORE)} "
+          f"(هزینه تعویض).")
+        W(f"آستانه اجرا: {fa(SWAP_MIN_EDGE)}. "
+          f"حداکثر {fa(MAX_SWAPS_WEEK)} تعویض در هفته.")
+        W(f"حداقل دوره نگهداری پیش از تعویض: {fa(MIN_HOLD_DAYS)} روز.")
         W("نامزد باید آزمون پامپ کاذب را رد کند: `radar_rotate.py --deep`")
     W("")
 
@@ -561,7 +566,7 @@ SAMPLE = {
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=f"بازبینی سبد و موتور خروج — رادار {VERSION}")
+    ap = argparse.ArgumentParser(description=f"بازبینی سبد و موتور خروج — رادار {fa(VERSION)}")
     ap.add_argument("--holdings", default="holdings.json")
     ap.add_argument("--regime", type=float, required=False, default=0.0,
                     help="امتیاز رژیم از تحلیل ماکرو")

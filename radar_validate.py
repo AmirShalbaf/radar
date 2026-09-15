@@ -39,6 +39,9 @@ import argparse
 import sys
 from datetime import datetime, timezone
 
+# تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
+from radar_text import fa
+
 try:
     import requests
     import pandas as pd
@@ -158,7 +161,7 @@ ORDER = ["بسیار قوی (۱.۲+)", "قوی (۰.۸ تا ۱.۲)", "متوسط 
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=f"سنجش اعتبار موتور امتیازدهی — رادار {VERSION}")
+    ap = argparse.ArgumentParser(description=f"سنجش اعتبار موتور امتیازدهی — رادار {fa(VERSION)}")
     ap.add_argument("--symbols", default="BTC,ETH,SOL,LINK,AAVE,SUI,ONDO,TAO,XRP,BNB")
     ap.add_argument("--horizon", type=int, default=30, help="افق بازده به روز")
     ap.add_argument("--out", default=None)
@@ -199,7 +202,7 @@ def main() -> int:
 
     o: list[str] = []
     W = o.append
-    W(f"# سنجش اعتبار موتور امتیازدهی — رادار {VERSION}")
+    W(f"# سنجش اعتبار موتور امتیازدهی — رادار {fa(VERSION)}")
     W("")
     W(f"تاریخ اجرا: {datetime.now(UTC).strftime('%Y-%m-%d')}")
     W(f"نمادها: {'، '.join(syms)}")
@@ -231,7 +234,7 @@ def main() -> int:
           f"{pos:.0f}٪ | {rel:+.2f}٪ |")
         rows.append((b, len(g), mean, rel))
     W("")
-    W(f"⚠️ = نمونه کمتر از {MIN_BUCKET_N}؛ قضاوت‌پذیر نیست.")
+    W(f"⚠️ = نمونه کمتر از {fa(MIN_BUCKET_N)}؛ قضاوت‌پذیر نیست.")
     W("")
 
     # ── نرخ پایه

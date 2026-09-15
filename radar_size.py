@@ -35,6 +35,9 @@ from __future__ import annotations
 import argparse
 import sys
 
+# تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
+from radar_text import fa
+
 VERSION = "6.1"
 
 # ─────────────────────── جدول‌های مرجع ───────────────────────
@@ -237,7 +240,7 @@ def compute(a) -> str:
 
     # ── گزارش
     W("=" * 66)
-    W(f"موتور اندازه مدرج — رادار {VERSION}")
+    W(f"موتور اندازه مدرج — رادار {fa(VERSION)}")
     W("=" * 66)
     W("")
     W("## ۱ — رژیم و بودجه")
@@ -429,7 +432,7 @@ def compute(a) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser(
-        description=f"موتور اندازه مدرج رادار {VERSION}")
+        description=f"موتور اندازه مدرج رادار {fa(VERSION)}")
     ap.add_argument("--balance", type=float, required=True, help="کل موجودی دلاری")
     ap.add_argument("--regime", type=float, required=True, help="امتیاز رژیم، منفی۲ تا مثبت۲")
     ap.add_argument("--score", type=float, required=True,

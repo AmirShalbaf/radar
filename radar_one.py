@@ -41,16 +41,16 @@ except ImportError:
 
 def video_id(raw: str) -> str:
     """شناسه را از هر شکل نشانی یوتیوب بیرون می‌کشد — شورت، watch، یا خام."""
-    for pat in (r"/shorts/([\w-]{11})",
-                r"[?&]v=([\w-]{11})",
-                r"youtu\.be/([\w-]{11})",
-                r"/embed/([\w-]{11})",
-                r"/live/([\w-]{11})"):
+    for pat in (r"/shorts/([A-Za-z0-9_-]{11})",
+                r"[?&]v=([A-Za-z0-9_-]{11})",
+                r"youtu\.be/([A-Za-z0-9_-]{11})",
+                r"/embed/([A-Za-z0-9_-]{11})",
+                r"/live/([A-Za-z0-9_-]{11})"):
         m = re.search(pat, raw or "")
         if m:
             return m.group(1)
     raw = (raw or "").strip()
-    return raw if re.fullmatch(r"[\w-]{11}", raw) else ""
+    return raw if re.fullmatch(r"[A-Za-z0-9_-]{11}", raw) else ""
 
 
 def main() -> int:

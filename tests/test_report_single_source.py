@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import radar_snapshot as SNAP
 import radar_state as ST
+from radar_text import fa
 
 ROOT = Path(__file__).resolve().parent.parent
 WORKFLOW = ROOT / ".github" / "workflows" / "radar-daily.yml"
@@ -50,9 +51,13 @@ def test_opening_has_no_latin_version_digits() -> None:
     assert not re.search(r"[0-9]", head)
 
 
-def test_fa_converts_all_digits() -> None:
+def test_state_reexports_the_shared_helper() -> None:
+    """
+    `fa` حالا در `radar_text.py` زندگی می‌کند. `radar_state` همان را
+    ایمپورت می‌کند، پس باید **همان شیء** باشد نه کپی.
+    """
+    assert ST.fa is fa
     assert ST.fa("6.1") == "۶.۱"
-    assert ST.fa("2026-09-15") == "۲۰۲۶-۰۹-۱۵"
 
 
 def test_opening_has_three_questions_and_the_rule() -> None:
@@ -108,8 +113,14 @@ def test_freshness_lines_carry_rule_result_and_action() -> None:
 
 
 def test_freshness_uses_the_stale_hours_constant() -> None:
-    """عدد سقف عمر از ثابت می‌آید، نه دست‌نویس."""
-    assert f"{SNAP.STALE_HOURS:.0f}" in SNAP.freshness_note()[0]
+    """
+    عدد سقف عمر از ثابت می‌آید، نه دست‌نویس — و با رقم فارسی چاپ می‌شود.
+
+    شکل مورد انتظار از خود ثابت ساخته می‌شود، نه سخت‌نویسی. اگر ثابت
+    عوض شود، آزمون همراهش عوض می‌شود.
+    """
+    expected = fa(f"{SNAP.STALE_HOURS:.0f}")
+    assert expected in SNAP.freshness_note()[0]
 
 
 def test_freshness_block_includes_stamp_when_given() -> None:

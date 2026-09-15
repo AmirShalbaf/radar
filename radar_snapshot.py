@@ -50,6 +50,9 @@ import sys
 import time
 from datetime import datetime, timezone
 
+# تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
+from radar_text import fa
+
 try:
     import requests
 except ImportError:
@@ -180,7 +183,8 @@ def freshness_note() -> list[str]:
     سطر ثابت به ساختار این تابع وابسته است و با هر سطر اضافه می‌شکند.
     """
     return [
-        f"**قانون تازگی:** اگر بیش از {STALE_HOURS:.0f} ساعت از مهر بالا گذشته،",
+        f"**قانون تازگی:** اگر بیش از {fa(f'{STALE_HOURS:.0f}')} ساعت "
+        f"از مهر بالا گذشته،",
         "این داده کهنه است و طبق قانون مادر داده یعنی «داده ندارم».",
         "برای تصمیم، اول پالس تازه بگیر.",
     ]
@@ -254,7 +258,7 @@ def build(rows: list[dict], prev: dict, failures: list[str]) -> tuple[str, dict]
 # ─────────────────────── اجرا ───────────────────────
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=f"نبض بازار — رادار {VERSION}")
+    ap = argparse.ArgumentParser(description=f"نبض بازار — رادار {fa(VERSION)}")
     ap.add_argument("--symbols", help="فهرست جدا با کاما؛ پیش‌فرض: سبد + پایش + هسته")
     ap.add_argument("--out", default="reports/SNAPSHOT.md")
     ap.add_argument("--json", default="snapshot.json")

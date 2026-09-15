@@ -40,6 +40,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
+# تنها منبع اصلی نگاشت رقم — کپی محلی نگیر
+from radar_text import EN_DIGITS
+
 # ---------------------------------------------------------------------------
 # وابستگی‌های اختیاری — نبودشان اسکریپت را نمی‌کشد، فقط قابلیت را خاموش می‌کند
 # ---------------------------------------------------------------------------
@@ -110,12 +113,11 @@ if sys.platform == "win32":
 
 # ارقام فارسی و عربی به لاتین. بدون این کار، هیچ الگوی عددی روی متن فارسی
 # گیر نمی‌افتد و بخش نامزد ادعا برای منابع فارسی عملاً خالی می‌ماند.
-_PERSIAN_DIGITS = "۰۱۲۳۴۵۶۷۸۹"
-_ARABIC_DIGITS = "٠١٢٣٤٥٦٧٨٩"
-_LATIN_DIGITS = "0123456789"
-
-_DIGIT_MAP = {ord(p): l for p, l in zip(_PERSIAN_DIGITS, _LATIN_DIGITS)}
-_DIGIT_MAP.update({ord(a): l for a, l in zip(_ARABIC_DIGITS, _LATIN_DIGITS)})
+#
+# نگاشت از `radar_text.py` می‌آید. تعریف اصلی همین‌جا بود و پوشش هر دو
+# خانواده رقم شرقی از همین‌جا کشف شد؛ هنگام ساخت پیمانه مشترک منتقل شد
+# تا دو نسخه از هم جدا نیفتند. نام محلی می‌ماند چون بقیه فایل با آن کار می‌کند.
+_DIGIT_MAP = EN_DIGITS
 
 # یکسان‌سازی حروف عربی/فارسی که در رونویسی خودکار قاطی می‌شوند
 _CHAR_MAP = {
@@ -448,7 +450,7 @@ def resolve_channel_id(handle_or_url: str, session) -> str | None:
     # ۱ — پیوند متعارف: یکتا و متعلق به صاحب صفحه
     m = re.search(
         r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']'
-        r'https://www\.youtube\.com/channel/(UC[\w-]{22})',
+        r'https://www\.youtube\.com/channel/(UC[A-Za-z0-9_-]{22})',
         html,
     )
     if m:
@@ -457,7 +459,7 @@ def resolve_channel_id(handle_or_url: str, session) -> str | None:
     # ۲ — og:url — همان نقش
     m = re.search(
         r'<meta[^>]+property=["\']og:url["\'][^>]+content=["\']'
-        r'https://www\.youtube\.com/channel/(UC[\w-]{22})',
+        r'https://www\.youtube\.com/channel/(UC[A-Za-z0-9_-]{22})',
         html,
     )
     if m:
@@ -466,12 +468,12 @@ def resolve_channel_id(handle_or_url: str, session) -> str | None:
     # ۳ — externalId داخل بلوک فراداده کانال (نه هر externalId در صفحه)
     anchor = html.find("channelMetadataRenderer")
     if anchor != -1:
-        m = re.search(r'"externalId"\s*:\s*"(UC[\w-]{22})"', html[anchor : anchor + 4000])
+        m = re.search(r'"externalId"\s*:\s*"(UC[A-Za-z0-9_-]{22})"', html[anchor : anchor + 4000])
         if m:
             return m.group(1)
 
     # ۴ — آخرین تلاش: تگ فراداده استاندارد
-    m = re.search(r'<meta[^>]+itemprop=["\']identifier["\'][^>]+content=["\'](UC[\w-]{22})', html)
+    m = re.search(r'<meta[^>]+itemprop=["\']identifier["\'][^>]+content=["\'](UC[A-Za-z0-9_-]{22})', html)
     if m:
         return m.group(1)
 
@@ -547,7 +549,7 @@ def fetch_youtube_items(src: Source, session) -> list[dict]:
     for e in feed.entries:
         vid = getattr(e, "yt_videoid", None) or ""
         if not vid:
-            m = re.search(r"v=([\w-]{11})", getattr(e, "link", ""))
+            m = re.search(r"v=([A-Za-z0-9_-]{11})", getattr(e, "link", ""))
             vid = m.group(1) if m else ""
         if not vid:
             continue
@@ -710,7 +712,7 @@ def whisper_fallback(video_url: str, model_size: str = "small") -> tuple[list[di
 
 def extract_playlist_id(raw: str) -> str:
     """شناسه پلی‌لیست را از نشانی کامل یا خود شناسه بیرون می‌کشد."""
-    m = re.search(r"[?&]list=([\w-]+)", raw or "")
+    m = re.search(r"[?&]list=([A-Za-z0-9_-]+)", raw or "")
     return m.group(1) if m else (raw or "").strip()
 
 
@@ -798,7 +800,9 @@ def fetch_index_items(src: Source, session) -> list[dict]:
 
     base_m = re.match(r"(https?://[^/]+)", src.url)
     base = base_m.group(1) if base_m else ""
-    pat = re.compile(src.link_pattern or r'href="(/insights/[\w\-]+)"')
+    # مسیر نشانی اسکی است — الگو هم اسکی، وگرنه \w حرف و رقم فارسی را
+    # هم می‌گیرد و زباله را شناسه پیوند جا می‌زند
+    pat = re.compile(src.link_pattern or r'href="(/insights/[A-Za-z0-9_-]+)"')
 
     items, seen = [], set()
     for m in pat.finditer(r.text):
@@ -895,6 +899,8 @@ def fetch_article_text(url: str, session) -> tuple[str, str]:
 # ===========================================================================
 
 def slugify(text: str, maxlen: int = 40) -> str:
+    # \u0627\u06CC\u0646\u062C\u0627 \w \u0639\u0645\u062F\u0627\u064B \u0645\u0627\u0646\u062F\u0647: \u0628\u0627\u06CC\u062F \u062D\u0631\u0641 \u0648 \u0631\u0642\u0645 \u0641\u0627\u0631\u0633\u06CC \u0631\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0631\u062F\u060C \u0686\u0648\u0646 \u0639\u0646\u0648\u0627\u0646
+    # \u0641\u0627\u0631\u0633\u06CC \u0627\u0633\u062A. \u0628\u0631\u062E\u0644\u0627\u0641 \u0627\u0644\u06AF\u0648\u0647\u0627\u06CC \u0634\u0646\u0627\u0633\u0647\u060C \u062F\u0627\u0645\u0646\u0647 \u0648\u0631\u0648\u062F\u06CC \u0627\u0633\u06A9\u06CC \u0646\u06CC\u0633\u062A.
     text = re.sub(r"[^\w\u0600-\u06FF\s-]", "", text or "").strip()
     text = re.sub(r"\s+", "-", text)
     return text[:maxlen].strip("-") or "untitled"

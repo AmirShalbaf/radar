@@ -42,6 +42,9 @@ import os
 import sys
 from datetime import datetime, timedelta, timezone
 
+# تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
+from radar_text import fa
+
 try:
     import requests
 except ImportError:
@@ -211,7 +214,7 @@ def cmd_report(a) -> None:
     W = o.append
 
     W("=" * 66)
-    W(f"گزارش خودسنجی چارچوب — رادار {VERSION}")
+    W(f"گزارش خودسنجی چارچوب — رادار {fa(VERSION)}")
     W(f"تاریخ: {now()}")
     W("=" * 66)
     W("")
@@ -232,7 +235,7 @@ def cmd_report(a) -> None:
     W(f"| باند سالم | {ACTION_RATE_HEALTHY[0]:.0f} تا {ACTION_RATE_HEALTHY[1]:.0f}٪ |")
     W("")
     if tot < MIN_N_SESSIONS:
-        W(f"⚠️ نمونه کوچک است ({tot} از {MIN_N_SESSIONS}). "
+        W(f"⚠️ نمونه کوچک است ({fa(tot)} از {fa(MIN_N_SESSIONS)}). "
           "هر قضاوتی اینجا یک برداشت است، نه یک اندازه‌گیری.")
     elif rate < ACTION_RATE_LOW:
         W("⛔ **نرخ اقدام زیر ۲۰٪.** تشخیص: چارچوب بیش‌ازحد سخت‌گیر است.")
@@ -261,7 +264,7 @@ def cmd_report(a) -> None:
         W(f"| آستانه هشدار | +{OPP_COST_ALARM}R |")
         W("")
         if len(scored) < MIN_N_RECORDS:
-            W(f"⚠️ نمونه کوچک ({len(scored)} از {MIN_N_RECORDS}).")
+            W(f"⚠️ نمونه کوچک ({fa(len(scored))} از {fa(MIN_N_RECORDS)}).")
         elif avg > OPP_COST_ALARM:
             W("⛔ **ردها گران‌اند.** تشخیص: شرط پرتکرارِ مسدودکننده کالیبره نیست.")
             W("اقدام: آن شرط را شل کن یا به ضریب اندازه تبدیلش کن.")
@@ -299,7 +302,7 @@ def cmd_report(a) -> None:
         W("")
         for k, share, avg_r in flagged:
             W(f"⛔ **شرط «{k}» تنهایی {share:.0f}٪ ردها را ساخته** "
-              f"(آستانه {BLOCKER_CONC_ALARM:.0f}٪).")
+              f"(آستانه {fa(f'{BLOCKER_CONC_ALARM:.0f}')}٪).")
             # سه حالت جدا: تهی یعنی «داده ندارم»، نه منفی — قانون مادر داده
             if avg_r is None:
                 W("   ولی R ازدست‌رفته‌اش هنوز محاسبه نشده — درباره گرانی یا")
@@ -333,7 +336,7 @@ def cmd_report(a) -> None:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=f"دفتر هزینه فرصت — رادار {VERSION}")
+    ap = argparse.ArgumentParser(description=f"دفتر هزینه فرصت — رادار {fa(VERSION)}")
     sp = ap.add_subparsers(dest="cmd", required=True)
 
     p = sp.add_parser("add", help="ثبت یک حکم رد یا صبر")

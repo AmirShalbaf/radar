@@ -37,16 +37,12 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 
+# تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
+from radar_text import FA_DIGITS, fa
+
 UTC = timezone.utc
 VERSION = "6.1"
 STATE = "STATE.md"
-
-FA_DIGITS = str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹")
-
-
-def fa(s) -> str:
-    """رقم لاتین به رقم فارسی."""
-    return str(s).translate(FA_DIGITS)
 
 
 def opening_questions() -> str:
@@ -73,6 +69,7 @@ def opening_questions() -> str:
         "پاسخ سوم هرگز «هیچ کاری» نیست. چهار اقدام همیشه‌مجاز:",
         "سفارش در انتظار، هشدار قیمتی، کاهش پله‌ای، افزایش ذخیره.",
     ])
+
 
 SCRIPTS = [
     "radar_fetch3.py", "radar_scan.py", "radar_rotate.py", "radar_levels.py",
@@ -108,7 +105,7 @@ def file_version(path: str) -> str:
     try:
         with open(path, encoding="utf-8", errors="replace") as f:
             head = f.read(4000)
-        m = re.search(r'VERSION\s*=\s*["\']([\d.]+)["\']', head)
+        m = re.search(r'VERSION\s*=\s*["\']([0-9.]+)["\']', head)
         return m.group(1) if m else "—"
     except Exception:
         return "—"
@@ -133,7 +130,7 @@ def build_auto() -> str:
     W("")
     W("| مورد | مقدار |")
     W("|---|---|")
-    W(f"| نسخه فعال | **رادار {VERSION}** |")
+    W(f"| نسخه فعال | **رادار {fa(VERSION)}** |")
     last = sh("git log -1 --format=%h") or "—"
     msg = sh("git log -1 --format=%s") or "—"
     W(f"| آخرین کامیت | `{last}` — {msg} |")
@@ -255,7 +252,8 @@ def snapshot() -> None:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=f"به‌روزرسانی حافظه پروژه — رادار {VERSION}")
+    ap = argparse.ArgumentParser(
+        description=f"به‌روزرسانی حافظه پروژه — رادار {fa(VERSION)}")
     ap.add_argument("--snapshot", action="store_true",
                     help="به‌علاوه ساخت reports/LATEST.md از رابط صرافی")
     ap.add_argument("--opening", action="store_true",
