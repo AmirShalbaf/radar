@@ -1,9 +1,9 @@
 {
   "ZEC": {
-    "last_px": 1472.0
+    "last_px": 1515.24
   },
   "BTC": {
-    "last_px": 81213.7,
+    "last_px": 81125.2,
     "alert_80000": true
   },
   "stale_2026-09-15": true,
