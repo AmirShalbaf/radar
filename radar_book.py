@@ -61,14 +61,10 @@ UTC = timezone.utc
 STATE_FILE = "book_state.json"
 OKX = "https://www.okx.com"
 
-# ─────────── جدول رژیم (هم‌راستا با radar_size.py و risk-budget.md) ───────────
-REGIMES = [
-    (0.50,  "انبساطی", 8.0, 1.00, 5, 10),
-    (0.00,  "سازنده",  6.0, 0.75, 4, 15),
-    (-0.50, "محتاط",   4.0, 0.50, 3, 25),
-    (-1.20, "انقباضی", 2.5, 0.30, 2, 40),
-    (-99.0, "بحرانی",  1.5, 0.20, 1, 55),
-]
+# ─────────── جدول رژیم — تنها منبع اصلی radar_budget.py، کپی محلی نگیر ───────────
+# پیش از نشست ۲ این جدول اینجا و در radar_size.py جدا نوشته شده بود.
+# روی مرز دقیق باند پایین‌تر انتخاب می‌شود؛ پیش از این `>=` بود.
+from radar_budget import regime_band as regime_row
 
 # قاعده بلوغ ۳n: میانگین نمایی ۲۰۰ دست‌کم ۶۰۰ کندل **بسته** لازم دارد،
 # و صرافی کندل باز را هم می‌فرستد که جدا می‌شود — پس یکی بیشتر.
@@ -149,14 +145,6 @@ def load_regime(path=REGIME_FILE, now: datetime | None = None
                       f"بیش از {fa(REGIME_MAX_AGE_DAYS)} روز")
     stamp = ts.astimezone(UTC).strftime("%Y-%m-%d %H:%M UTC")
     return float(score), f"{name}، تولید {stamp}"
-
-
-def regime_row(score: float) -> dict:
-    for floor, name, cap, mult, maxpos, stable in REGIMES:
-        if score >= floor:
-            return {"name": name, "cap": cap, "mult": mult,
-                    "maxpos": maxpos, "stable": stable}
-    return {"name": "بحرانی", "cap": 1.5, "mult": 0.20, "maxpos": 1, "stable": 55}
 
 
 # ─────────────────────── واکشی داده ───────────────────────

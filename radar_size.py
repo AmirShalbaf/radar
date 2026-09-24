@@ -42,27 +42,14 @@ VERSION = "6.1"
 
 # ─────────────────────── جدول‌های مرجع ───────────────────────
 
-# (کف امتیاز رژیم، نام، سقف ریسک باز٪، ضریب اندازه، حداکثر پوزیشن هم‌جهت، هدف ذخیره٪)
-REGIMES = [
-    (0.50,  "انبساطی", 8.0, 1.00, 5, 10),
-    (0.00,  "سازنده",  6.0, 0.75, 4, 15),
-    (-0.50, "محتاط",   4.0, 0.50, 3, 25),
-    (-1.20, "انقباضی", 2.5, 0.30, 2, 40),
-    (-99.0, "بحرانی",  1.5, 0.20, 1, 55),
-]
+# جدول رژیم — تنها منبع اصلی radar_budget.py، کپی محلی نگیر.
+# پیش از نشست ۲ این جدول اینجا و در radar_book.py جدا نوشته شده بود.
+# روی مرز دقیق باند پایین‌تر انتخاب می‌شود؛ پیش از این `>=` بود.
+from radar_budget import regime_band as regime_row
 
 BASE_RISK = 2.0          # ریسک پایه درصد حساب
 SWAP_COST_SCORE = 0.15   # هزینه تعویض بر حسب واحد امتیاز
 MIN_TICKET_RATIO = 0.15  # سقف نسبت کارمزد به ریسک دلاری
-
-
-def regime_row(score: float):
-    """ردیف رژیم را از امتیاز برمی‌گرداند."""
-    for floor, name, cap, mult, maxpos, stable in REGIMES:
-        if score >= floor:
-            return {"name": name, "cap": cap, "mult": mult,
-                    "maxpos": maxpos, "stable": stable}
-    return {"name": "بحرانی", "cap": 1.5, "mult": 0.20, "maxpos": 1, "stable": 55}
 
 
 def quality_grade(score: float, rr: float, side: str,
