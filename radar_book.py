@@ -346,7 +346,8 @@ def score_position(df, btc, days_rs: int = 30) -> dict | None:
         else:
             s -= 0.5
         if not mature:
-            notes.append("EMA200 نابالغ — کمتر از ۶۰۰ کندل، قانون ۳n")
+            # آستانه از همان ثابتی که منطق بالا می‌خواند — درس رویداد ۲۲
+            notes.append(f"EMA200 نابالغ — کمتر از {fa(EMA200_MATURE_BARS)} کندل، قانون ۳n")
     parts["ساختار"] = max(-2, min(2, s))
 
     # ۲ — مومنتوم (فقط یک ابزار از خانواده شاخص قدرت نسبی)

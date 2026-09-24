@@ -339,3 +339,37 @@ def test_book_relative_strength_untouched(monkeypatch) -> None:
     old = (a1 / a0 - 1) - (b1 / b0 - 1)
     sc = B.score_position(df, btc)
     assert sc["rs30"] == round(old, 4)
+
+
+# ═══════════════ متن و منطق بلوغ در چرخش و سبد — تک‌منبع ═══════════════
+#
+# همان درس رویداد ۲۲: عدد «۶۰۰» در متن دستی نوشته شده بود. اگر آستانه
+# عوض شود، متن دروغ می‌گوید. در چرخش منطق هم `3 * span` محلی بود؛ حالا
+# متن و منطق هر دو از R.EMA200_MATURE_BARS می‌آیند.
+
+def test_rotate_logic_and_text_follow_constant(monkeypatch) -> None:
+    """آستانه ۷۰۰، قاب با ۶۵۰ کندل بسته: منطق نابالغ بگوید و متن ۷۰۰."""
+    monkeypatch.setattr(R, "EMA200_MATURE_BARS", 700)
+    monkeypatch.setattr(R, "candles_first_ok",
+                        lambda *a, **k: ({"1D": _frame(651)}, "okx", None))
+    monkeypatch.setattr(R, "FAILURES", [])
+    row = RT.analyze("TEST", ["okx"], R._closed(_frame(400)))
+    assert row["bars"] == 650
+    assert row["e200_mature"] is False
+    assert row["e200"] is None
+    row["vol24"] = 1e7
+    row["score"], row["cov"], row["flags"], row["raw"], row["norm"] = RT.score(row)
+    rep = RT.build_report([row], 1, 1, ["okx"], 0, {})
+    assert "کمتر از ۷۰۰ کندل" in rep
+    assert "| TEST | 650 | ۷۰۰ |" in rep
+    assert "۶۰۰" not in rep
+
+
+def test_book_note_follows_constant(monkeypatch) -> None:
+    """یادداشت بلوغ سبد از همان ثابتی بیاید که منطقش از آن می‌آید."""
+    monkeypatch.setattr(B, "EMA200_MATURE_BARS", 700)
+    monkeypatch.setattr(B, "requests", _gate_requests())
+    sc = B.score_position(B.gate_candles("TEST", 651), None)
+    assert sc["mature"] is False
+    assert any("کمتر از ۷۰۰ کندل" in n for n in sc["notes"])
+    assert not any("۶۰۰" in n for n in sc["notes"])

@@ -171,12 +171,14 @@ def analyze(sym: str, order: list[str], btc: pd.DataFrame) -> dict | None:
     row["rs7"] = rs_pair(d, btc, 7)
     row["rs3"] = rs_pair(d, btc, 3)
 
-    # قاعده بلوغ ۳n — میانگین نابالغ امتیاز نمی‌گیرد و از مخرج کم می‌شود
-    for lbl, col, span in [("e50", "ema50", 50), ("e200", "ema200", 200)]:
+    # قاعده بلوغ ۳n — میانگین نابالغ امتیاز نمی‌گیرد و از مخرج کم می‌شود.
+    # آستانه ۲۰۰ از ثابت اصلی، همان که متن گزارش می‌خواند — تک‌منبع.
+    for lbl, col, need in [("e50", "ema50", 3 * 50),
+                           ("e200", "ema200", R.EMA200_MATURE_BARS)]:
         v = float(r[col])
-        ok = math.isfinite(v) and v > 0 and n_bars >= 3 * span
+        ok = math.isfinite(v) and v > 0 and n_bars >= need
         row[lbl] = 100 * (px - v) / v if ok else None
-        row[lbl + "_mature"] = n_bars >= 3 * span
+        row[lbl + "_mature"] = n_bars >= need
     row["rsi"] = float(r["rsi14"]) if math.isfinite(r["rsi14"]) else None
     row["atr_pct"] = 100*float(r["atr14"])/px if math.isfinite(r["atr14"]) else None
 
@@ -352,14 +354,16 @@ def build_report(rows: list[dict], uni_n: int, pool_n: int,
 
     imm = [r for r in ok if not r.get("e200_mature", True)]
     if imm:
-        A(f"> ⚠️ **هشدار بلوغ:** {len(imm)} نماد کمتر از ۶۰۰ کندل روزانه دارند. "
+        # آستانه از ثابت، نه متن دستی — درس رویداد ۲۲
+        need = fa(R.EMA200_MATURE_BARS)
+        A(f"> ⚠️ **هشدار بلوغ:** {len(imm)} نماد کمتر از {need} کندل روزانه دارند. "
           "میانگین نمایی ۲۰۰ برایشان محاسبه شد ولی **امتیاز نگرفت** و از مخرج کم شد. "
           "ستون vs EMA200 برای این نمادها «نابالغ» است، نه «داده ندارم».")
         A("")
         A("| نماد | کندل موجود | حداقل لازم |")
         A("|---|---|---|")
         for r in imm[:15]:
-            A(f"| {r['symbol']} | {r.get('bars','?')} | ۶۰۰ |")
+            A(f"| {r['symbol']} | {r.get('bars','?')} | {need} |")
         A("")
 
     dual = [r for r in ok if (r.get("rs30") or -1) > 0 and (r.get("rs7") or -1) > 0]
