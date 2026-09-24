@@ -23,6 +23,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+import radar_book as B
 import radar_fetch3 as R
 import radar_levels as L
 import radar_rotate as RT
@@ -234,3 +235,46 @@ def test_levels_guard_matches_canonical() -> None:
             L._last_close(df) is None and R.last_close(df) is None)
     assert L._last_close(None) is None
     assert L._last_close(pd.DataFrame(columns=COLS)) is None
+
+
+# ═══════════════ radar_book.score_position ═══════════════
+#
+# نشست ۱ نقشه رادار ۷. سبد نگهبان نداشت و اثرش بدتر از اسکن بود: هر
+# مقایسه با nan نادرست است، پس ساختار «زیر همه میانگین‌ها» و قدرت نسبی
+# کمینه ‎-۲ می‌گرفت. نتیجه یک امتیاز نزولی ساختگی بود که ضربه می‌سازد.
+# این فایل هم مستقل است، پس نسخه محلی نگهبان دارد و آزمون قفلش می‌کند.
+
+BOOK_COLS = {"open": "o", "high": "h", "low": "l", "close": "c", "vol": "v"}
+
+
+def _as_book(df: pd.DataFrame) -> pd.DataFrame:
+    """همان قاب مصنوعی، به نام ستون‌های radar_book.py."""
+    return df[["ts", "open", "high", "low", "close", "vol", "confirm"]] \
+        .rename(columns=BOOK_COLS)
+
+
+def test_book_healthy_still_works() -> None:
+    """قاب سالم مثل قبل کار می‌کند."""
+    sc = B.score_position(_as_book(_frame()), _as_book(_frame(400)))
+    assert sc is not None
+    assert math.isfinite(sc["price"])
+    assert math.isfinite(sc["score"])
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf")])
+def test_book_null_price_rejects_symbol(bad) -> None:
+    """قیمت پوچ یعنی «داده ناکافی»، نه امتیاز نزولی ساختگی."""
+    sc = B.score_position(_as_book(_frame(last_close=bad)),
+                          _as_book(_frame(400)))
+    assert sc is None
+
+
+def test_book_guard_matches_canonical() -> None:
+    """نسخه محلی سبد و نسخه اصلی باید یک رفتار بدهند."""
+    for lc in [float("nan"), float("inf"), None]:
+        df = _frame(last_close=lc) if lc is not None else _frame()
+        assert B._last_close(_as_book(df)) == R.last_close(df) or (
+            B._last_close(_as_book(df)) is None and R.last_close(df) is None)
+    assert B._last_close(None) is None
+    assert B._last_close(pd.DataFrame(columns=list(BOOK_COLS.values()))) is None
+    assert B._last_close(pd.DataFrame({"o": [1.0, 2.0]})) is None

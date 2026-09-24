@@ -38,6 +38,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import sys
 from datetime import datetime, timezone
@@ -197,6 +198,28 @@ def candles(symbol: str, bar: str = "1D", want: int = DAILY_WANT):
     return gate_candles(symbol, want)
 
 
+def _last_close(df) -> float | None:
+    """
+    آخرین قیمت بسته‌شدن از قاب کامل (ستون c) — یا None اگر تهی یا پوچ باشد.
+
+    نسخه محلی `radar_fetch3.last_close` با نام ستون این فایل. ایمپورت
+    نمی‌شود تا استقلال فایل نشکند. **هر تغییر اینجا باید در نسخه اصلی هم
+    بیاید** — آزمون `test_book_guard_matches_canonical` این دو را قفل می‌کند.
+
+    نگهبان `is None` کافی نیست: `float(nan)` مقدار `nan` می‌دهد نه `None`.
+    اینجا پوچ بدتر از اسکن بود: هر مقایسه با nan نادرست است، پس ساختار
+    «زیر همه میانگین‌ها» و قدرت نسبی کمینه می‌گرفت — امتیاز نزولی ساختگی
+    که ضربه می‌سازد. مقدار بی‌نهایت هم پوچ حساب می‌شود.
+    """
+    if df is None or len(df) == 0 or "c" not in df.columns:
+        return None
+    try:
+        v = float(df["c"].iloc[-1])
+    except (TypeError, ValueError):
+        return None
+    return v if math.isfinite(v) else None
+
+
 def ema(s, n):
     return s.ewm(span=n, adjust=False).mean()
 
@@ -226,7 +249,10 @@ def score_position(df, btc, days_rs: int = 30) -> dict | None:
         return None
     c_full = df["c"]      # فقط قیمت زنده و قدرت نسبی — مورد اخیر مال نشست ۱۲
     c = closed["c"]
-    px = float(c_full.iloc[-1])
+    # نگهبان پوچ: قیمت پوچ یعنی «داده ناکافی» در گزارش، نه امتیاز ساختگی
+    px = _last_close(df)
+    if px is None:
+        return None
     e20, e50 = float(ema(c, 20).iloc[-1]), float(ema(c, 50).iloc[-1])
     mature = len(closed) >= EMA200_MATURE_BARS    # قانون بلوغ ۳n برای EMA200
     e200 = float(ema(c, 200).iloc[-1]) if len(closed) >= 200 else None
