@@ -43,6 +43,7 @@ import math
 import os
 import sys
 import tempfile
+import traceback
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 
@@ -501,6 +502,49 @@ def write_json(path, doc: dict) -> None:
     os.replace(tmp, path)
 
 
+def _is_valid_doc(doc) -> bool:
+    """
+    «معتبر» یعنی ساختار قرارداد — score متناهی و generated_at با منطقه
+    زمانی — و سند خطا نبودن. تازگی شرط نیست: کهنگی را سبد می‌سنجد.
+    """
+    if not isinstance(doc, dict) or "error" in doc:
+        return False
+    s, ts = doc.get("score"), doc.get("generated_at")
+    if isinstance(s, bool) or not isinstance(s, (int, float)) or not math.isfinite(s):
+        return False
+    if not isinstance(ts, str):
+        return False
+    try:
+        return datetime.fromisoformat(ts).tzinfo is not None
+    except ValueError:
+        return False
+
+
+def record_build_error(path, message: str, now: datetime) -> str:
+    """
+    خطای ساخت را ثبت می‌کند، بی‌آنکه رژیم معتبر قبلی را بازنویسی کند.
+
+    فایل معتبر می‌ماند و فقط last_build_error می‌گیرد؛ قاعده عمر هفت‌روزه
+    سبد خودش کهنگی را می‌سنجد. سند خطا فقط وقتی نوشته می‌شود که فایل
+    معتبری نبود — غایب، خراب یا خودش سند خطا. خروجی: شرح کاری که شد.
+    """
+    doc, state = None, "نبود"
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as f:
+                doc = json.load(f)
+            state = "معتبر نبود"
+        except (OSError, ValueError) as exc:
+            # فایل خراب معتبر نیست — سند خطا جایش می‌نشیند، و این گفته می‌شود
+            state = f"خوانا نبود ({type(exc).__name__})"
+    if _is_valid_doc(doc):
+        doc["last_build_error"] = {"at": _iso(now), "error": message}
+        write_json(path, doc)
+        return f"رژیم معتبر قبلی در {path} ماند و last_build_error گرفت"
+    write_json(path, {"generated_at": _iso(now), "error": message, "version": VERSION})
+    return f"فایل معتبری در {path} {state} — سند خطا نوشته شد"
+
+
 def _num(v, d: int = 2) -> str:
     return "—" if v is None else f"{v:+.{d}f}"
 
@@ -579,12 +623,21 @@ def main(argv: list[str] | None = None) -> int:
     now = datetime.now(UTC)
     order = [v.strip().lower() for v in a.venues.split(",") if v.strip()]
 
+    # هر خطای ساخت — پیش‌بینی‌شده یا نه — ثبت می‌شود و کد خروج غیرصفر
+    # می‌دهد. بلعیده نمی‌شود: خطای پیش‌بینی‌نشده ردش را هم چاپ می‌کند.
     try:
         history = load_history(a.history)
         inp = measure(gather(order), history, now)
         res = aggregate(inp)
-    except RegimeError as exc:
-        print(f"⛔ ساخت رژیم خطا داد: {exc}", file=sys.stderr)
+    except Exception as exc:
+        if isinstance(exc, RegimeError):
+            msg = str(exc)
+        else:
+            traceback.print_exc()
+            msg = f"{type(exc).__name__}: {exc}"
+        print(f"⛔ ساخت رژیم خطا داد: {msg}", file=sys.stderr)
+        if not a.stdout:
+            print(record_build_error(a.json, msg, now), file=sys.stderr)
         return 2
 
     doc = build_doc(res, inp, now)
