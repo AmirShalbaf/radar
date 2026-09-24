@@ -1032,6 +1032,7 @@ FRED_SERIES = {
     "DGS30":      ("بازده ۳۰ ساله", "%"),
     "T10YIE":     ("نرخ سربه‌سر تورم ۱۰ ساله", "%"),
     "DFEDTARU":   ("سقف نرخ بهره فدرال", "%"),
+    "DFEDTARL":   ("کف نرخ بهره فدرال", "%"),
     "DTWEXBGS":   ("شاخص دلار، سبد وسیع", "شاخص"),
     "WALCL":      ("دارایی کل فدرال‌رزرو", "میلیون دلار"),
     "RRPONTSYD":  ("ریپوی معکوس شبانه", "میلیارد دلار"),
@@ -1084,7 +1085,7 @@ def fred_series(sid: str, http_text) -> tuple[float, datetime, float | None] | N
 def fetch_fred(http_text) -> dict:
     """
     ستون نقدینگی جهانی رادار — همان بخشی که تا امروز خالی می‌ماند.
-    خروجی خام + سنجه‌های مشتق وصله ۵.۳ (فاصله سیاست از خنثی، شیب منحنی).
+    خروجی خام + سنجه‌های مشتق وصله ۵.۳ (انتظار بازار از مسیر نرخ، شیب منحنی).
     """
     raw: dict[str, dict] = {}
     for sid in FRED_SERIES:
@@ -1098,16 +1099,35 @@ def fetch_fred(http_text) -> dict:
     g = lambda k: raw[k]["value"] if k in raw else None
 
     y2, y10, y30 = g("DGS2"), g("DGS10"), g("DGS30")
-    ffr, be10 = g("DFEDTARU"), g("T10YIE")
+    ffr_hi, ffr_lo, be10 = g("DFEDTARU"), g("DFEDTARL"), g("T10YIE")
 
     def sane(v, lo, hi):
         return v if (v is not None and lo <= v <= hi) else None
 
-    if y2 is not None and ffr is not None:
-        d["derived"]["neutral_gap"] = {
-            "value": sane(y2 - ffr, -5, 5),
-            "label": "فاصله سیاست از خنثی (بازده ۲ ساله منهای سقف نرخ بهره)",
-            "read": "مثبت یعنی سیاست دیگر انقباضی نیست" if y2 > ffr else "منفی یعنی واقعاً انقباضی"}
+    # انتظار بازار از مسیر نرخ — بازده ۲ساله در برابر **کل** محدوده هدف.
+    #
+    # پیش از این «فاصله سیاست از خنثی» نام داشت و ۲ساله فقط با سقف سنجیده
+    # می‌شد؛ مثبت‌بودنش «سیاست دیگر انقباضی نیست» خوانده می‌شد. ولی این عدد
+    # فاصله از نرخ خنثی نیست، مسیری است که بازار انتظار دارد: بالای سقف
+    # یعنی افزایش بیشتر قیمت شده. در اسکن ۲۴ سپتامبر ۲۰۲۶ مقدار +0.710 بود
+    # و خوانش برعکس. مرزها جزو محدوده‌اند. ورودی غایب یعنی «داده ناکافی».
+    # این سنجه فقط نمایشی است و در هیچ امتیاز یا رأی ماکرویی به کار نمی‌رود.
+    if y2 is not None or ffr_hi is not None or ffr_lo is not None:
+        rp = {"label": "انتظار بازار از مسیر نرخ", "value": None}
+        gone = [n for n, v in (("بازده ۲ساله", y2), ("سقف محدوده هدف", ffr_hi),
+                               ("کف محدوده هدف", ffr_lo)) if v is None]
+        if gone:
+            rp["read"] = f"داده ناکافی — {'، '.join(gone)} نیامد"
+        elif y2 > ffr_hi:
+            rp["value"] = sane(y2 - ffr_hi, -5, 5)
+            rp["read"] = "انتظار افزایش بیشتر — باد مخالف دارایی ریسکی"
+        elif y2 < ffr_lo:
+            rp["value"] = sane(y2 - ffr_lo, -5, 5)
+            rp["read"] = "انتظار کاهش نرخ — بازار تسهیل را قیمت کرده"
+        else:
+            rp["value"] = 0.0
+            rp["read"] = "بازار تغییر روشنی را قیمت نکرده"
+        d["derived"]["rate_path"] = rp
     if y30 is not None and y2 is not None:
         d["derived"]["curve_30_2"] = {
             "value": sane(y30 - y2, -5, 5), "label": "شیب منحنی ۳۰ منهای ۲",
