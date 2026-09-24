@@ -90,6 +90,36 @@ jobs:
             echo "اسکن خطا داد — reports/scan-error-$D.md نوشته شد."
           fi
 
+      # رژیم پیش از سبد ساخته می‌شود تا سبد رژیم امروز را بخواند.
+      # خطای ساخت رژیم معتبر قبلی را بازنویسی نمی‌کند — فقط last_build_error؛
+      # سند خطا فقط وقتی فایل معتبری نبود (کار خود radar_regime.py). خطا
+      # بی‌صدا نیست، ولی گام‌های بعد هم متوقف نمی‌شوند: سبد خودش «رژیم کهنه»
+      # یا هشدار خطای ساخت را کنار رژیم می‌گوید.
+      - name: ساخت رژیم
+        env:
+          PYTHONUTF8: "1"
+          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+        run: |
+          D=$(date -u +%Y-%m-%d)
+          if python radar_regime.py \
+               --venues okx,gate \
+               --report "reports/regime-$D.md" > /tmp/regime.log 2>&1; then
+            tail -n 1 /tmp/regime.log
+          else
+            echo "::error::ساخت رژیم خطا داد — reports/regime-error-$D.md"
+            {
+              echo "# خطای ساخت رژیم — $D"
+              echo
+              echo "ساخت رژیم با خطا افتاد. regime.json معتبر قبلی بازنویسی نشد و فقط"
+              echo "last_build_error گرفت؛ اگر فایل معتبری نبود، سند خطا نوشته شد."
+              echo "ته گزارش خطا:"
+              echo
+              echo '```'
+              tail -c 4000 /tmp/regime.log
+              echo '```'
+            } > "reports/regime-error-$D.md"
+          fi
+
       - name: بازبینی سبد و موتور خروج
         env:
           PYTHONUTF8: "1"
@@ -163,6 +193,15 @@ jobs:
           git config user.name  "radar-bot"
           git config user.email "radar-bot@users.noreply.github.com"
           git add reports/ radar_optcost.json book_state.json 2>/dev/null || true
+          # رژیم و تاریخچه‌اش — خط git add جدا، بدون || true. فایل غایب
+          # اعلام می‌شود، نه بلعیده؛ تاریخچه تا نخستین ساخت موفق نیست.
+          for f in regime.json regime_history.json; do
+            if [ -f "$f" ]; then
+              git add "$f"
+            else
+              echo "::warning::$f نیست — کامیت نشد"
+            fi
+          done
           if git diff --staged --quiet; then
             echo "تغییری نبود."
           else
