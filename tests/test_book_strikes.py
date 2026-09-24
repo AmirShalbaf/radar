@@ -123,5 +123,72 @@ def run_book(tmp_path, monkeypatch):
 def test_main_empty_score_leaves_history_untouched(run_book) -> None:
     """محل فراخوانی: main امتیاز خالی را خالی بفرستد، نه صفر."""
     st = _state(0.9, 0.5)
+    st["score_basis"] = B.SCORE_BASIS        # دور عادی، نه خط پایه
     saved, _ = run_book(st, no_data=("AAA",))
     assert saved["reviews"]["AAA"] == st["reviews"]["AAA"]
+
+
+# ═══════════════ مبنای امتیاز — score_basis ═══════════════
+#
+# از کامیت 5526c40 امتیاز سبد با کندل بسته حساب می‌شود و با امتیازهای
+# پیشین مقایسه‌پذیر نیست. قانون سه‌ضربه هر امتیاز را با قبلی می‌سنجد،
+# پس نخستین دور پس از پوش ضربه ساختگی می‌گرفت یا از دست می‌داد.
+# رفع: میدان score_basis. اگر مبنا فرق داشت، آن دور فقط خط پایه تازه
+# ثبت می‌شود و هیچ ضربه‌ای شمرده نمی‌شود. تاریخچه مبنای قدیم بایگانی
+# می‌شود، نه اینکه کنار تازه بماند — وگرنه زنجیره کاهش فردا از مرز
+# دو مبنا رد می‌شود.
+
+
+def test_begin_round_without_basis_resets_and_archives() -> None:
+    st = _state(2.0, 1.5)
+    old = st["reviews"]
+    assert B.begin_round(st) is True
+    assert st["reviews"] == {}
+    assert st["score_basis"] == B.SCORE_BASIS
+    assert st["archive"][-1]["basis"] is None
+    assert st["archive"][-1]["reviews"] == old
+
+
+def test_begin_round_other_basis_is_archived_by_name() -> None:
+    st = _state(2.0, 1.5)
+    st["score_basis"] = "old-v0"
+    assert B.begin_round(st) is True
+    assert st["archive"][-1]["basis"] == "old-v0"
+
+
+def test_begin_round_same_basis_touches_nothing() -> None:
+    st = _state(2.0, 1.5)
+    st["score_basis"] = B.SCORE_BASIS
+    before = json.loads(json.dumps(st))
+    assert B.begin_round(st) is False
+    assert st == before
+
+
+def test_begin_round_fresh_state_archives_nothing() -> None:
+    st = {"reviews": {}, "swaps": []}
+    assert B.begin_round(st) is True
+    assert "archive" not in st
+
+
+def test_main_basis_change_counts_no_strike(run_book) -> None:
+    """
+    تاریخچه ۲.۰ ← ۱.۵ و امتیاز امروز حدود ۱.۱: بدون رفع دو ضربه
+    ساختگی می‌گرفت و حکم «آماده‌سازی کاهش». با رفع: خط پایه تازه.
+    """
+    st = _state(2.0, 1.5)
+    saved, rep = run_book(st)
+    assert saved["score_basis"] == B.SCORE_BASIS
+    assert len(saved["reviews"]["AAA"]) == 1
+    assert saved["archive"][-1]["reviews"] == st["reviews"]
+    assert "آماده‌سازی کاهش" not in rep
+    assert "خط پایه تازه" in rep
+
+
+def test_main_same_basis_still_counts(run_book) -> None:
+    """قفل: دور عادی با همان مبنا مثل قبل ضربه می‌شمارد."""
+    st = _state(2.0, 1.5)
+    st["score_basis"] = B.SCORE_BASIS
+    saved, rep = run_book(st)
+    assert len(saved["reviews"]["AAA"]) == 3
+    assert "آماده‌سازی کاهش" in rep
+    assert "خط پایه تازه" not in rep

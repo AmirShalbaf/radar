@@ -415,6 +415,37 @@ def save_state(d: dict) -> None:
         json.dump(d, f, ensure_ascii=False, indent=2)
 
 
+# مبنای امتیاز سبد. هر تغییری در ورودی امتیاز — کندل، اندیکاتور، وزن —
+# باید این شناسه را عوض کند. امتیاز دو مبنا مقایسه‌پذیر نیست و قانون
+# سه‌ضربه هر امتیاز را با قبلی می‌سنجد، پس نخستین دور پس از تغییر فقط
+# خط پایه ثبت می‌کند. نسخه ۱: کندل بسته و ۶۰۱ کندل — نشست ۱ رادار ۷.
+SCORE_BASIS = "closed-candle-v1"
+
+
+def begin_round(state: dict) -> bool:
+    """
+    آغاز هر دور بازبینی. اگر مبنای ذخیره‌شده با SCORE_BASIS فرق داشت:
+    تاریخچه قبلی زیر archive بایگانی می‌شود، reviews خالی می‌شود تا
+    امتیاز امروز خط پایه تازه باشد، و مبنا به‌روز می‌شود.
+
+    خالی‌کردن لازم است، نه فقط افزودن: اگر تاریخچه مبنای قدیم کنار تازه
+    بماند، زنجیره کاهش فردا از مرز دو مبنا رد می‌شود و ضربه ساختگی
+    برمی‌گردد. خروجی True یعنی این دور خط پایه است و ضربه‌ای شمرده نمی‌شود.
+    """
+    old = state.get("score_basis")
+    if old == SCORE_BASIS:
+        return False
+    if state.get("reviews"):
+        state.setdefault("archive", []).append({
+            "basis": old,
+            "until": datetime.now(UTC).strftime("%Y-%m-%d"),
+            "reviews": state["reviews"],
+        })
+    state["reviews"] = {}
+    state["score_basis"] = SCORE_BASIS
+    return True
+
+
 def update_strikes(state: dict, sym: str, score: float | None) -> tuple[int, list]:
     """
     تاریخچه امتیاز را نگه می‌دارد و تعداد ضربه‌های متوالی را می‌شمارد.
@@ -457,11 +488,13 @@ def fmt(x, d=4):
 
 
 def build_report(book: dict, rows: list[dict], reg: dict | None,
-                 candidates: list[dict], regime_note: str = "") -> str:
+                 candidates: list[dict], regime_note: str = "",
+                 baseline: bool = False) -> str:
     """
     reg خالی یعنی رژیم کهنه یا غایب. آن‌وقت هر سطر وابسته به رژیم برچسب
     «رژیم کهنه» می‌گیرد و هیچ باند جانشینی جا زده نمی‌شود. regime_note
-    در حالت سالم منبع رژیم است، در حالت کهنه دلیل آن.
+    در حالت سالم منبع رژیم است، در حالت کهنه دلیل آن. baseline یعنی
+    این دور پس از تغییر مبنای امتیاز فقط خط پایه ثبت کرد.
     """
     o: list[str] = []
     W = o.append
@@ -478,6 +511,11 @@ def build_report(book: dict, rows: list[dict], reg: dict | None,
     if reg is None:
         W(f"⛔ **{REGIME_STALE}.** {regime_note}.")
         W("هر سطر وابسته به رژیم در این گزارش عدد ندارد. مقدار پیش‌فرض جا زده نشده است.")
+        W("")
+    if baseline:
+        W(f"ℹ️ **این دور خط پایه تازه است.** مبنای امتیاز عوض شده (`{SCORE_BASIS}`) "
+          "و امتیاز امروز با دورهای پیشین مقایسه‌پذیر نیست. پس هیچ ضربه‌ای شمرده "
+          "نشد. تاریخچه پیشین در `book_state.json` زیر `archive` بایگانی شد.")
         W("")
 
     # ── ۱ حرارت واقعی سبد
@@ -766,6 +804,10 @@ def main() -> int:
     if reg is None:
         print(f"⚠️ {REGIME_STALE}: {regime_note}")
     state = load_state()
+    # مبنای امتیاز عوض شده باشد، این دور فقط خط پایه است — بدون ضربه
+    baseline = begin_round(state)
+    if baseline:
+        print(f"ℹ️ مبنای امتیاز عوض شده ({SCORE_BASIS}) — این دور فقط خط پایه ثبت می‌شود")
 
     print("واکشی داده بیت‌کوین به‌عنوان مرجع قدرت نسبی...")
     btc = candles("BTC")
@@ -809,7 +851,7 @@ def main() -> int:
                 r["swap_to"] = best["symbol"]
 
     save_state(state)
-    txt = build_report(book, rows, reg, cands, regime_note)
+    txt = build_report(book, rows, reg, cands, regime_note, baseline)
     if a.out:
         with open(a.out, "w", encoding="utf-8") as f:
             f.write(txt)
