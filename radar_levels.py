@@ -41,6 +41,7 @@ import math
 import sys
 import time
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 
 if sys.platform == "win32":
     try:
@@ -62,6 +63,7 @@ import requests
 from radar_text import fa
 
 VERSION = "1.1"
+UTC = timezone.utc
 
 PRESETS = {
     "main":  ["BTC", "ETH", "SOL"],
@@ -393,12 +395,22 @@ def fmt(x, d=4):
     return f"{x:,.{d}f}".rstrip("0").rstrip(".") if d else f"{x:,.0f}"
 
 
-def report(rows: list[Assessment], min_rr: float) -> str:
+def report(rows: list[Assessment], min_rr: float,
+           now: datetime | None = None) -> str:
+    """
+    now تزریق‌پذیر است تا آزمون به ساعت سیستم وابسته نباشد. زمان با هر
+    منطقه زمانی به وقت جهانی برگردانده می‌شود.
+    """
     ok = [a for a in rows if math.isfinite(a.rr)]
     ok.sort(key=lambda a: (-a.rr))
+    stamp = (now or datetime.now(UTC)).astimezone(UTC).strftime("%Y-%m-%d %H:%M UTC")
 
     L = [
         f"# اسکنر سطوح رادار — نسخه {fa(VERSION)}",
+        "",
+        # بدون مهر زمان، قانون تازگی روی این گزارش اجراشدنی نبود —
+        # هم‌قالب اسکن، چرخش و نبض
+        f"تولید: **{stamp}**",
         "",
         "> **اصل:** نسبت ریسک به پاداش با تنگ‌کردن استاپ ساخته نمی‌شود،",
         "> با نزدیک‌بودن ورود به سطح ابطال ساخته می‌شود.",
