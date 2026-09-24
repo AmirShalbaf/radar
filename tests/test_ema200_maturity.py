@@ -176,6 +176,33 @@ def test_snapshot_ema200_value_from_closed_frame() -> None:
     assert f"| EMA ۲۰۰ | {want} |" in R.snapshot(df, "روزانه")
 
 
+# ═══════════════ متن گزارش اسکن — تک‌منبع ═══════════════
+
+def _imm_rows() -> list[dict]:
+    return [{"symbol": "AAA", "score": 0.3, "covered": 5, "price": 1.0,
+             "ema200_mature": False, "bars": 650, "date": "2026-09-23",
+             "venue": "okx"}]
+
+
+def test_scan_report_threshold_from_constant(monkeypatch) -> None:
+    """
+    عدد آستانه در متن هشدار از ثابت بیاید، نه دستی — درس رویداد ۲۲:
+    متنی که در دو جا نوشته شود، دیر یا زود از هم جدا می‌افتد.
+    """
+    monkeypatch.setattr(R, "EMA200_MATURE_BARS", 700)
+    rep = S.build_scan_report(_imm_rows(), {}, {}, ["okx"], 5, [])
+    assert "کمتر از ۷۰۰ کندل" in rep
+    assert "| AAA | 650 | ۷۰۰ |" in rep
+    assert "۶۰۰" not in rep
+
+
+def test_scan_report_threshold_persian_digits() -> None:
+    """قفل، نه قرمز: خروجی امروز همان بماند — آستانه با رقم فارسی."""
+    rep = S.build_scan_report(_imm_rows(), {}, {}, ["okx"], 5, [])
+    assert "کمتر از ۶۰۰ کندل" in rep
+    assert "| AAA | 650 | ۶۰۰ |" in rep
+
+
 # ═══════════════ radar_levels.py — استقلال با ثابت محلی ═══════════════
 
 def test_levels_default_fetch_is_enough() -> None:

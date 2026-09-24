@@ -22,6 +22,8 @@ import numpy as np
 import pandas as pd
 
 import radar_fetch3 as R
+# تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
+from radar_text import fa
 
 UTC = timezone.utc
 
@@ -455,13 +457,15 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
 
     imm = [r for r in rows if not r.get("ema200_mature", True)]
     if imm:
-        A("> ⚠️ **هشدار بلوغ میانگین:** این نمادها کمتر از ۶۰۰ کندل روزانه دارند. "
+        # آستانه از ثابت، نه متن دستی — درس رویداد ۲۲
+        need = fa(R.EMA200_MATURE_BARS)
+        A(f"> ⚠️ **هشدار بلوغ میانگین:** این نمادها کمتر از {need} کندل روزانه دارند. "
           "میانگین نمایی ۲۰۰ برایشان **محاسبه نشد** و از مخرج امتیاز کم شد. "
           "ستون vs EMA200 «نابالغ» است، نه «داده ندارم».")
         A("")
         A("| نماد | کندل موجود | حداقل لازم |"); A("|---|---|---|")
         for r in imm[:15]:
-            A(f"| {r['symbol']} | {r.get('bars','?')} | ۶۰۰ |")
+            A(f"| {r['symbol']} | {r.get('bars','?')} | {need} |")
         A("")
 
     A("### هشدارها"); A("")
