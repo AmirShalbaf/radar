@@ -69,6 +69,14 @@ REGIMES = [
     (-99.0, "بحرانی",  1.5, 0.20, 1, 55),
 ]
 
+# قاعده بلوغ ۳n: میانگین نمایی ۲۰۰ دست‌کم ۶۰۰ کندل **بسته** لازم دارد،
+# و صرافی کندل باز را هم می‌فرستد که جدا می‌شود — پس یکی بیشتر.
+# کپی محلی از radar_fetch3.py، چون ایمپورت آن استقلال این فایل و
+# ایمپورت اختیاری pandas را می‌شکند. آزمون tests/test_ema200_maturity.py
+# برابری دو نسخه را قفل می‌کند.
+EMA200_MATURE_BARS = 3 * 200
+DAILY_WANT = EMA200_MATURE_BARS + 1
+
 SWAP_COST_SCORE = 0.15    # هزینه تعویض بر حسب واحد امتیاز
 SWAP_MIN_EDGE = 0.50      # آستانه اجرای جانشینی
 SWAP_WATCH_EDGE = 0.30    # آستانه نامزدی
@@ -86,7 +94,25 @@ def regime_row(score: float) -> dict:
 
 # ─────────────────────── واکشی داده ───────────────────────
 
-def okx_candles(symbol: str, bar: str = "1D", want: int = 260):
+def _mark_confirm(df):
+    """
+    ستون confirm صادق: ۱ برای کندل بسته، ۰ برای کندل باز. سطر باز حذف
+    نمی‌شود — قیمت زنده از همان می‌آید.
+
+    اولویت با پرچم صرافی (اوکی‌اکس، ستون conf). اگر نبود، از زمان:
+    کندلی بسته است که زمان باز شدنش به‌علاوه یک روز گذشته باشد — همان
+    قاعده _df در radar_fetch3.py. پرچم پوچ یعنی باز؛ محافظه‌کارانه‌تر.
+    """
+    if "conf" in df.columns:
+        df["confirm"] = (pd.to_numeric(df["conf"], errors="coerce")
+                         .fillna(0).astype(int))
+    else:
+        now = pd.Timestamp.now(tz="UTC")
+        df["confirm"] = ((df["ts"] + pd.Timedelta(days=1)) <= now).astype(int)
+    return df
+
+
+def okx_candles(symbol: str, bar: str = "1D", want: int = DAILY_WANT):
     """کندل روزانه از اوکی‌اکس. صرافی‌های دیگر از کولب مسدودند."""
     if requests is None or pd is None:
         return None
@@ -118,11 +144,11 @@ def okx_candles(symbol: str, bar: str = "1D", want: int = 260):
             df[col] = pd.to_numeric(df[col], errors="coerce")
     df["ts"] = pd.to_datetime(pd.to_numeric(df["ts"]), unit="ms", utc=True)
     df = df.sort_values("ts").reset_index(drop=True)
-    return df
+    return _mark_confirm(df)
 
 
 
-def gate_candles(symbol: str, want: int = 260):
+def gate_candles(symbol: str, want: int = DAILY_WANT):
     """
     کندل روزانه از گیت — منبع دوم.
 
@@ -160,10 +186,10 @@ def gate_candles(symbol: str, want: int = 260):
         return None
     df = pd.DataFrame(out)
     df["ts"] = pd.to_datetime(df["ts"], unit="ms", utc=True)
-    return df.sort_values("ts").reset_index(drop=True)
+    return _mark_confirm(df.sort_values("ts").reset_index(drop=True))
 
 
-def candles(symbol: str, bar: str = "1D", want: int = 260):
+def candles(symbol: str, bar: str = "1D", want: int = DAILY_WANT):
     """اوکی‌اکس اول، گیت به‌عنوان جایگزین."""
     df = okx_candles(symbol, bar, want)
     if df is not None and len(df) >= 60:
@@ -191,11 +217,19 @@ def score_position(df, btc, days_rs: int = 30) -> dict | None:
     """
     if df is None or len(df) < 60:
         return None
-    c = df["c"]
-    px = float(c.iloc[-1])
+    # قیمت از کندل زنده، ساختار از کندل بسته — قاعده radar_levels.py.
+    # پیش از این همه اندیکاتورها کندل باز را می‌دیدند و شمارش بلوغ
+    # کندل باز را هم حساب می‌کرد.
+    closed = df[df["confirm"] == 1].reset_index(drop=True) \
+        if "confirm" in df.columns else df
+    if len(closed) < 60:
+        return None
+    c_full = df["c"]      # فقط قیمت زنده و قدرت نسبی — مورد اخیر مال نشست ۱۲
+    c = closed["c"]
+    px = float(c_full.iloc[-1])
     e20, e50 = float(ema(c, 20).iloc[-1]), float(ema(c, 50).iloc[-1])
-    mature = len(df) >= 600          # قانون بلوغ ۳n برای EMA200
-    e200 = float(ema(c, 200).iloc[-1]) if len(df) >= 200 else None
+    mature = len(closed) >= EMA200_MATURE_BARS    # قانون بلوغ ۳n برای EMA200
+    e200 = float(ema(c, 200).iloc[-1]) if len(closed) >= 200 else None
     r = float(rsi_wilder(c).iloc[-1])
 
     parts, notes = {}, []
@@ -239,7 +273,7 @@ def score_position(df, btc, days_rs: int = 30) -> dict | None:
     # ۳ — قدرت نسبی به بیت‌کوین
     rs = None
     if btc is not None and len(btc) > days_rs and len(df) > days_rs:
-        a0, a1 = float(c.iloc[-days_rs - 1]), px
+        a0, a1 = float(c_full.iloc[-days_rs - 1]), px
         b0, b1 = float(btc["c"].iloc[-days_rs - 1]), float(btc["c"].iloc[-1])
         if a0 > 0 and b0 > 0:
             rs = (a1 / a0 - 1) - (b1 / b0 - 1)
@@ -268,7 +302,7 @@ def score_position(df, btc, days_rs: int = 30) -> dict | None:
             "rs30": round(rs, 4) if rs is not None else None,
             "e20": e20, "e50": e50, "e200": e200,
             "coverage": round(den * 100, 0), "parts": parts,
-            "notes": notes, "mature": mature, "bars": len(df)}
+            "notes": notes, "mature": mature, "bars": len(closed)}
 
 
 # ─────────────────────── وضعیت ماندگار ───────────────────────

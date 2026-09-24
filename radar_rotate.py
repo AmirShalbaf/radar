@@ -111,10 +111,11 @@ def rs_pair(df: pd.DataFrame, btc: pd.DataFrame, days: int) -> float | None:
 
 
 def analyze(sym: str, order: list[str], btc: pd.DataFrame) -> dict | None:
-    # ۶۰۰ کندل: میانگین نمایی دوره n برای بلوغ حدود ۳n کندل لازم دارد.
+    # میانگین نمایی دوره n برای بلوغ حدود ۳n کندل بسته لازم دارد.
     # با ۲۰۰ کندل، EMA200 هنوز گرم نشده و عدد سوگیرانه می‌دهد —
     # همان باگی که در radar_fetch3.py فاصله ۴۹.۵٪ را ۱۵٪ گزارش کرد.
-    got, vn, _ = R.candles_first_ok(sym, order, 600, [])
+    # کندل باز جدا می‌شود، پس ۶۰۱ درخواست، نه ۶۰۰ — درس ۱۴ سپتامبر ۲۰۲۶.
+    got, vn, _ = R.candles_first_ok(sym, order, R.DAILY_WANT, [])
     if "1D" not in got:
         return None
     d = got["1D"]

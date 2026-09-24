@@ -62,9 +62,9 @@ def score_symbol(base: str, order: list[str], btc_ref: pd.DataFrame | None
     شش سنجه غربال. هر کدام که داده نداشته باشد None می‌ماند — هرگز صفر فرضی.
     امتیاز نهایی فقط روی سنجه‌های موجود نرمال می‌شود (قانون سوگیری صفر).
     """
-    # ۶۰۰ کندل: میانگین نمایی دوره n برای بلوغ حدود ۳n کندل لازم دارد.
-    # با ۳۰۰ کندل، EMA200 هنوز گرم نشده است.
-    got, vn, _ = R.candles_first_ok(base, order, 600, [])
+    # میانگین نمایی دوره n برای بلوغ حدود ۳n کندل بسته لازم دارد، و کندل
+    # باز جدا می‌شود. پس ۶۰۱ درخواست، نه ۶۰۰ — درس ۱۴ سپتامبر ۲۰۲۶.
+    got, vn, _ = R.candles_first_ok(base, order, R.DAILY_WANT, [])
     if "1D" not in got:
         return None
     d = got["1D"]
@@ -91,8 +91,9 @@ def score_symbol(base: str, order: list[str], btc_ref: pd.DataFrame | None
                  "date": str(r["ts"].date()), "bars": n_bars}
 
     # ۱ — فاصله از EMA200: ساختار بلندمدت — مشروط به بلوغ ۳n
-    row["ema200_mature"] = n_bars >= 600
-    if math.isfinite(r["ema200"]) and r["ema200"] > 0 and n_bars >= 600:
+    row["ema200_mature"] = n_bars >= R.EMA200_MATURE_BARS
+    if (math.isfinite(r["ema200"]) and r["ema200"] > 0
+            and n_bars >= R.EMA200_MATURE_BARS):
         row["vs_ema200"] = 100 * (price - r["ema200"]) / r["ema200"]
     # ۲ — فاصله از EMA50: ساختار میان‌مدت — مشروط به بلوغ ۳n
     row["ema50_mature"] = n_bars >= 150

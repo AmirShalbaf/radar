@@ -73,7 +73,13 @@ PRESETS = {
 
 # ═══════════════════════ واکشی ═══════════════════════
 
-def okx_candles(inst: str, bar: str = "1D", want: int = 600) -> pd.DataFrame | None:
+# کپی محلی DAILY_WANT از radar_fetch3.py — ایمپورت آن استقلال این فایل را
+# می‌شکند. قاعده بلوغ ۳n برای میانگین ۲۰۰، به‌علاوه یک کندل باز که جدا
+# می‌شود. آزمون tests/test_ema200_maturity.py برابری دو نسخه را قفل می‌کند.
+DAILY_WANT = 3 * 200 + 1
+
+
+def okx_candles(inst: str, bar: str = "1D", want: int = DAILY_WANT) -> pd.DataFrame | None:
     """
     کندل از OKX با صفحه‌بندی. ترتیب صعودی، همراه کندل باز آخر.
 

@@ -665,6 +665,16 @@ BAR = {  # نگاشت تایم‌فریم برای هر صرافی
 
 BAR_SECONDS = {"1D": 86_400, "4H": 14_400, "1W": 604_800}
 
+# قاعده بلوغ ۳n: میانگین نمایی ۲۰۰ دست‌کم ۶۰۰ کندل **بسته** لازم دارد.
+EMA200_MATURE_BARS = 3 * 200
+# صرافی کندل باز امروز را هم می‌فرستد و آن جدا می‌شود — پس یکی بیشتر.
+# درس ۱۴ سپتامبر ۲۰۲۶: درخواست ۶۰۰ یعنی ۵۹۹ کندل بسته، و میانگین
+# دویست‌روزه همه نمادها، حتی بیت‌کوین، «نابالغ» گزارش شد.
+# radar_levels.py و radar_book.py نسخه محلی دارند تا استقلالشان نشکند؛
+# آزمون tests/test_ema200_maturity.py برابری را قفل می‌کند.
+DAILY_WANT = EMA200_MATURE_BARS + 1
+DAILY_WANT_DEEP = 1500 + 1
+
 
 def _closed(df):
     """
@@ -1422,7 +1432,7 @@ def snapshot(df: pd.DataFrame, name: str) -> str:
     lines = [
         f"### {name}",
         "",
-        f"آخرین کندل بسته‌شده: **{r['ts'].date()}**  |  تعداد کندل: {len(df)}",
+        f"آخرین کندل بسته‌شده: **{r['ts'].date()}**  |  تعداد کندل: {len(closed)}",
         "",
         "| سنجه | مقدار | نسبت به قیمت |",
         "|---|---|---|",
@@ -1438,7 +1448,10 @@ def snapshot(df: pd.DataFrame, name: str) -> str:
     #
     # قاعده: میانگین نمایی دوره n تقریباً ۳n کندل لازم دارد تا وزن اولیه
     # به زیر پنج درصد برسد. کمتر از آن، عدد سوگیرانه است و باید علامت بخورد.
-    n_bars = len(df)
+    #
+    # فقط کندل بسته شمرده می‌شود. پیش از این قاب کامل شمرده می‌شد و با
+    # ۵۹۹ کندل بسته برچسب «بالغ» می‌خورد — درست برعکس اسکن.
+    n_bars = len(closed)
     for lbl, col, span in [("EMA ۲۰", "ema20", 20),
                            ("EMA ۵۰", "ema50", 50),
                            ("EMA ۲۰۰", "ema200", 200)]:
@@ -1449,7 +1462,7 @@ def snapshot(df: pd.DataFrame, name: str) -> str:
             rel += f" ⚠️ نابالغ ({n_bars} کندل، حداقل {3*span} لازم)"
         lines.append(f"| {lbl} | {fmt_num(v)} | {rel} |")
 
-    if n_bars < 600:
+    if n_bars < EMA200_MATURE_BARS:
         lines.append("")
         lines.append(f"> ⚠️ **هشدار بلوغ:** فقط {n_bars} کندل در دسترس است. "
                      "میانگین‌های بلندمدت سوگیری دارند و **نباید امتیاز بگیرند**. "
@@ -1658,8 +1671,10 @@ def run3(symbol, balance, profile, macro_event, deep, order):
               file=sys.stderr)
 
     print(f"[۱/۵] کندل — تلاش به ترتیب {', '.join(order)} ...", file=sys.stderr)
-    # ۶۰۰ کف تازه است: میانگین نمایی ۲۰۰ برای بلوغ حدود ۳×۲۰۰ کندل لازم دارد
-    got, vn, pair = candles_first_ok(base, order, 1500 if deep else 600, b.tests)
+    # میانگین نمایی ۲۰۰ برای بلوغ حدود ۳×۲۰۰ کندل بسته لازم دارد،
+    # به‌علاوه کندل باز که جدا می‌شود
+    got, vn, pair = candles_first_ok(
+        base, order, DAILY_WANT_DEEP if deep else DAILY_WANT, b.tests)
     b.candles, b.candle_venue, b.pair_btc = got, vn, pair
 
     # قیمت از کندل زنده، ساختار از کندل بسته. پیش از رفع باگ ستون تأیید،
