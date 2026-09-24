@@ -51,7 +51,8 @@ def _doc(score=-0.6, age=timedelta(days=1), **extra) -> dict:
 # ═══════════════ load_regime ═══════════════
 
 def test_fresh_file_gives_score(tmp_path) -> None:
-    score, note = B.load_regime(_write(tmp_path / "regime.json", _doc()), now=NOW)
+    r = B.load_regime(_write(tmp_path / "regime.json", _doc()), now=NOW)
+    score, note = r.score, r.source
     assert score == -0.6
     assert "regime.json" in note
 
@@ -59,19 +60,21 @@ def test_fresh_file_gives_score(tmp_path) -> None:
 def test_extra_fields_are_ignored(tmp_path) -> None:
     """نشست ۲ میدان اضافه می‌نویسد — خواننده نباید بشکند."""
     doc = _doc(name="انقباضی", cap=2.5, missing=["DXY"], raw=-0.4, norm=-0.6)
-    score, _ = B.load_regime(_write(tmp_path / "regime.json", doc), now=NOW)
+    score = B.load_regime(_write(tmp_path / "regime.json", doc), now=NOW).score
     assert score == -0.6
 
 
 def test_missing_file(tmp_path) -> None:
-    score, note = B.load_regime(tmp_path / "regime.json", now=NOW)
+    r = B.load_regime(tmp_path / "regime.json", now=NOW)
+    score, note = r.score, r.source
     assert score is None
     assert "نیست" in note
 
 
 def test_eight_days_is_stale(tmp_path) -> None:
     p = _write(tmp_path / "regime.json", _doc(age=timedelta(days=8)))
-    score, note = B.load_regime(p, now=NOW)
+    r = B.load_regime(p, now=NOW)
+    score, note = r.score, r.source
     assert score is None
     assert "بیش از ۷ روز" in note
 
@@ -79,21 +82,23 @@ def test_eight_days_is_stale(tmp_path) -> None:
 def test_exactly_seven_days_is_fresh(tmp_path) -> None:
     """«بالای هفت روز» کهنه است؛ خود هفت روز هنوز نه."""
     p = _write(tmp_path / "regime.json", _doc(age=timedelta(days=7)))
-    score, _ = B.load_regime(p, now=NOW)
+    score = B.load_regime(p, now=NOW).score
     assert score == -0.6
 
 
 def test_naive_timestamp_is_invalid(tmp_path) -> None:
     """generated_at بدون منطقه زمانی نامعتبر است — عمرش را نمی‌شود دانست."""
     doc = {"score": -0.6, "generated_at": "2026-09-24T12:00:00"}
-    score, note = B.load_regime(_write(tmp_path / "regime.json", doc), now=NOW)
+    r = B.load_regime(_write(tmp_path / "regime.json", doc), now=NOW)
+    score, note = r.score, r.source
     assert score is None
     assert "منطقه زمانی" in note
 
 
 def test_future_timestamp_is_invalid(tmp_path) -> None:
     p = _write(tmp_path / "regime.json", _doc(age=timedelta(days=-1)))
-    score, note = B.load_regime(p, now=NOW)
+    r = B.load_regime(p, now=NOW)
+    score, note = r.score, r.source
     assert score is None
     assert "آینده" in note
 
@@ -112,7 +117,8 @@ def test_broken_file_gives_none_with_reason(tmp_path, content) -> None:
     """فایل خراب یعنی «رژیم کهنه» با دلیل — نه سقوط و نه مقدار جانشین."""
     p = tmp_path / "regime.json"
     p.write_text(content, encoding="utf-8")
-    score, note = B.load_regime(p, now=NOW)
+    r = B.load_regime(p, now=NOW)
+    score, note = r.score, r.source
     assert score is None
     assert note
 

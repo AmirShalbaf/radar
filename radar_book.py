@@ -42,6 +42,7 @@ import math
 import os
 import sys
 from datetime import datetime, timedelta, timezone
+from typing import NamedTuple
 
 # تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
 from radar_text import fa
@@ -102,49 +103,108 @@ REGIME_CLOCK_SKEW = timedelta(minutes=10)
 REGIME_STALE = "رژیم کهنه — بازمحاسبه لازم است"
 
 
-def load_regime(path=REGIME_FILE, now: datetime | None = None
-                ) -> tuple[float | None, str]:
+class RegimeInfo(NamedTuple):
+    """
+    خروجی load_regime. NamedTuple، نه تاپل ساده: مصرف‌کننده با نام میدان
+    می‌خواند، پس افزودن میدان بعدی او را نمی‌شکند.
+
+    score     امتیاز رژیم، یا None یعنی «رژیم کهنه»
+    source    در حالت سالم منبع رژیم، در حالت کهنه دلیل آن
+    warnings  هشدارهایی که باید کنار رژیم دیده شوند: پوشش کم، خطای ساخت
+    """
+    score: float | None
+    source: str
+    warnings: list
+
+
+def _stamp(raw) -> str:
+    """زمان ISO با منطقه زمانی به قالب گزارش؛ در غیر این صورت «زمان نامعلوم»."""
+    if isinstance(raw, str):
+        try:
+            ts = datetime.fromisoformat(raw)
+        except ValueError:
+            return "زمان نامعلوم"
+        if ts.tzinfo is not None:
+            return ts.astimezone(UTC).strftime("%Y-%m-%d %H:%M UTC")
+    return "زمان نامعلوم"
+
+
+def _regime_warnings(doc: dict) -> list[str]:
+    """
+    هشدار میدان‌های اضافه‌ای که خواننده می‌فهمد. میدان شناخته‌شده با شکل
+    نادرست هشدار «نامعتبر» می‌گیرد — نادیده‌گرفتنش بی‌صدا بود.
+    """
+    w = []
+    lc = doc.get("low_coverage")
+    if lc is not None:
+        if not isinstance(lc, bool):
+            w.append("⚠️ میدان low_coverage در regime.json نامعتبر است")
+        elif lc:
+            cov = doc.get("coverage")
+            if (isinstance(cov, (int, float)) and not isinstance(cov, bool)
+                    and math.isfinite(cov) and 0 <= cov <= 1):
+                w.append(f"⚠️ پوشش کم ({100 * cov:.0f}٪) — امتیاز رژیم از بخش "
+                         "کوچکی از وزن ورودی‌ها ساخته شده")
+            else:
+                w.append("⚠️ پوشش کم — درصد پوشش نامعلوم")
+    lbe = doc.get("last_build_error")
+    if lbe is not None:
+        if not isinstance(lbe, dict) or not isinstance(lbe.get("error"), str):
+            w.append("⚠️ میدان last_build_error در regime.json نامعتبر است")
+        else:
+            w.append(f"⚠️ آخرین ساخت رژیم خطا داد ({_stamp(lbe.get('at'))}): "
+                     f"{lbe['error']} — رژیم این گزارش از ساخت موفق قبلی است")
+    return w
+
+
+def load_regime(path=REGIME_FILE, now: datetime | None = None) -> RegimeInfo:
     """
     امتیاز رژیم از regime.json، یا None با دلیل خوانا.
 
-    خروجی دوم در حالت سالم منبع است، در حالت خراب دلیل. هیچ استثنایی
-    بالا نمی‌رود: فایل خراب هم «رژیم کهنه» است، با دلیل صریح در گزارش.
+    هیچ استثنایی بالا نمی‌رود: فایل خراب هم «رژیم کهنه» است، با دلیل صریح
+    در گزارش. سند خطا — میدان error در بالاترین سطح — همیشه کهنه است،
+    حتی اگر امتیاز هم داشته باشد: محافظه‌کارانه‌تر.
     """
     now = now or datetime.now(UTC)
     name = os.path.basename(str(path))
     if not os.path.exists(path):
-        return None, f"فایل {name} نیست"
+        return RegimeInfo(None, f"فایل {name} نیست", [])
     try:
         with open(path, encoding="utf-8") as f:
             doc = json.load(f)
     except (OSError, ValueError) as exc:
-        return None, f"{name} خوانا نیست (`{type(exc).__name__}`)"
+        return RegimeInfo(None, f"{name} خوانا نیست (`{type(exc).__name__}`)", [])
     if not isinstance(doc, dict):
-        return None, f"{name} شیء JSON نیست"
+        return RegimeInfo(None, f"{name} شیء JSON نیست", [])
+
+    warns = _regime_warnings(doc)
+    if "error" in doc:
+        return RegimeInfo(None, f"ساخت رژیم خطا داد ({_stamp(doc.get('generated_at'))}): "
+                                f"{doc['error']}", warns)
 
     score = doc.get("score")
     if (isinstance(score, bool) or not isinstance(score, (int, float))
             or not math.isfinite(score)):
-        return None, f"میدان score در {name} نیست یا عدد معتبر نیست"
+        return RegimeInfo(None, f"میدان score در {name} نیست یا عدد معتبر نیست", warns)
 
     raw_ts = doc.get("generated_at")
     if not isinstance(raw_ts, str):
-        return None, f"میدان generated_at در {name} نیست"
+        return RegimeInfo(None, f"میدان generated_at در {name} نیست", warns)
     try:
         ts = datetime.fromisoformat(raw_ts)
     except ValueError:
-        return None, f"generated_at در {name} قابل‌خواندن نیست"
+        return RegimeInfo(None, f"generated_at در {name} قابل‌خواندن نیست", warns)
     if ts.tzinfo is None:
-        return None, f"generated_at در {name} منطقه زمانی ندارد"
+        return RegimeInfo(None, f"generated_at در {name} منطقه زمانی ندارد", warns)
 
     age = now - ts
     if age < -REGIME_CLOCK_SKEW:
-        return None, f"generated_at در {name} در آینده است"
+        return RegimeInfo(None, f"generated_at در {name} در آینده است", warns)
     if age > timedelta(days=REGIME_MAX_AGE_DAYS):
-        return None, (f"{name} {age.total_seconds() / 86400:.1f} روز عمر دارد — "
-                      f"بیش از {fa(REGIME_MAX_AGE_DAYS)} روز")
+        return RegimeInfo(None, f"{name} {age.total_seconds() / 86400:.1f} روز عمر دارد — "
+                                f"بیش از {fa(REGIME_MAX_AGE_DAYS)} روز", warns)
     stamp = ts.astimezone(UTC).strftime("%Y-%m-%d %H:%M UTC")
-    return float(score), f"{name}، تولید {stamp}"
+    return RegimeInfo(float(score), f"{name}، تولید {stamp}", warns)
 
 
 # ─────────────────────── واکشی داده ───────────────────────
@@ -477,13 +537,16 @@ def fmt(x, d=4):
 
 def build_report(book: dict, rows: list[dict], reg: dict | None,
                  candidates: list[dict], regime_note: str = "",
-                 baseline: bool = False) -> str:
+                 baseline: bool = False,
+                 regime_warnings: list[str] | None = None) -> str:
     """
     reg خالی یعنی رژیم کهنه یا غایب. آن‌وقت هر سطر وابسته به رژیم برچسب
     «رژیم کهنه» می‌گیرد و هیچ باند جانشینی جا زده نمی‌شود. regime_note
     در حالت سالم منبع رژیم است، در حالت کهنه دلیل آن. baseline یعنی
-    این دور پس از تغییر مبنای امتیاز فقط خط پایه ثبت کرد.
+    این دور پس از تغییر مبنای امتیاز فقط خط پایه ثبت کرد. regime_warnings
+    کنار رژیم دیده می‌شوند: بالای گزارش و در سطر «هشدار رژیم».
     """
+    regime_warnings = regime_warnings or []
     o: list[str] = []
     W = o.append
 
@@ -499,6 +562,10 @@ def build_report(book: dict, rows: list[dict], reg: dict | None,
     if reg is None:
         W(f"⛔ **{REGIME_STALE}.** {regime_note}.")
         W("هر سطر وابسته به رژیم در این گزارش عدد ندارد. مقدار پیش‌فرض جا زده نشده است.")
+        W("")
+    for w in regime_warnings:
+        W(w)
+    if regime_warnings:
         W("")
     if baseline:
         W(f"ℹ️ **این دور خط پایه تازه است.** مبنای امتیاز عوض شده (`{SCORE_BASIS}`) "
@@ -540,6 +607,10 @@ def build_report(book: dict, rows: list[dict], reg: dict | None,
         W(f"| رژیم | {reg['name']} — سقف ریسک {reg['cap']}٪ |")
         W(f"| **هدف ذخیره استیبل رژیم** | **{reg['stable']}٪** |")
     W(f"| منبع رژیم | {regime_note or '—'} |")
+    if regime_warnings:
+        # خط عمودی داخل خانه جدول، جدول را می‌شکند
+        cell = "؛ ".join(w.replace("|", "\\|") for w in regime_warnings)
+        W(f"| هشدار رژیم | {cell} |")
     W(f"| ریسک اسمی باز | {heat_usd:,.0f} دلار ({heat_pct:.1f}٪) |")
     W(f"| ضریب همبستگی ({n_alt} آلت) | {corr:.2f} |")
     if reg is None:
@@ -785,12 +856,14 @@ def main() -> int:
 
     # کلید دستی، سپس فایل تازه، سپس «رژیم کهنه» — بدون مقدار جانشین
     if a.regime is not None:
-        score, regime_note = a.regime, "دستی (کلید `--regime`)"
+        info = RegimeInfo(a.regime, "دستی (کلید `--regime`)", [])
     else:
-        score, regime_note = load_regime(a.regime_file)
-    reg = regime_row(score) if score is not None else None
+        info = load_regime(a.regime_file)
+    reg = regime_row(info.score) if info.score is not None else None
     if reg is None:
-        print(f"⚠️ {REGIME_STALE}: {regime_note}")
+        print(f"⚠️ {REGIME_STALE}: {info.source}")
+    for w in info.warnings:
+        print(w)
     state = load_state()
     # مبنای امتیاز عوض شده باشد، این دور فقط خط پایه است — بدون ضربه
     baseline = begin_round(state)
@@ -839,7 +912,8 @@ def main() -> int:
                 r["swap_to"] = best["symbol"]
 
     save_state(state)
-    txt = build_report(book, rows, reg, cands, regime_note, baseline)
+    txt = build_report(book, rows, reg, cands, info.source, baseline,
+                       info.warnings)
     if a.out:
         with open(a.out, "w", encoding="utf-8") as f:
             f.write(txt)

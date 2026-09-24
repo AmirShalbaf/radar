@@ -364,7 +364,8 @@ def test_doc_contract_and_book_reader_round_trip(tmp_path) -> None:
     assert datetime.fromisoformat(loaded["generated_at"]).tzinfo is not None
     assert loaded["freshness_days"]["WALCL"] == 14
     assert "فرضیه" in loaded["note"]
-    score, note = B.load_regime(p, now=NOW + timedelta(hours=1))
+    r = B.load_regime(p, now=NOW + timedelta(hours=1))
+    score, note = r.score, r.source
     assert score == res["score"]
 
 
