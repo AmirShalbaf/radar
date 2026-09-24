@@ -455,9 +455,17 @@ def test_main_writes_three_files(fake_net, tmp_path) -> None:
 
 
 def test_main_zero_coverage_fails_loudly(fake_net, tmp_path) -> None:
+    """
+    پوشش صفر خطای صریح است. از م۵ (تصمیم ۸ نشست ۲): چون فایل معتبری
+    نبود، سند خطا نوشته می‌شود — نه امتیاز، نه سکوت. رفتار م۳ «هیچ فایلی
+    نوشته نمی‌شود» بود و با آن تصمیم جایگزین شد.
+    """
     fake_net(empty=True)
     j = tmp_path / "regime.json"
     rc = G.main(["--json", str(j), "--history", str(tmp_path / "h.json"),
                  "--report", str(tmp_path / "r.md")])
     assert rc != 0
-    assert not j.exists()
+    doc = json.loads(j.read_text(encoding="utf-8"))
+    assert "score" not in doc
+    assert "پوشش صفر" in doc["error"]
+    assert not (tmp_path / "h.json").exists()
