@@ -43,10 +43,19 @@ def test_rate_path_above_ceiling_is_negative(x, s) -> None:
     assert G.score_input("rate_path", x) == pytest.approx(s)
 
 
-@pytest.mark.parametrize("x, s", [(1.0, 0.0), (2.0, -2.0), (1.5, -1.0),
-                                  (0.0, 2.0), (2.78, -2.0)])
+@pytest.mark.parametrize("x, s", [(1.0, 0.0), (2.0, -1.0), (1.5, -0.5),
+                                  (0.0, 1.0), (2.78, -1.78), (2.2, -1.2),
+                                  (3.5, -2.0), (-1.5, 2.0)])
 def test_real_yield(x, s) -> None:
+    """
+    k = 1.0، خنثی 1.0. با k = 0.5 هر بازده واقعی بالای ۲٪ در ‎-2 اشباع
+    می‌شد و ورودی کور بود: گشایش واقعی از 2.78 به 2.2 هیچ اثری نداشت.
+    """
     assert G.score_input("real_10y", x) == pytest.approx(s)
+
+
+def test_real_yield_is_not_blind_between_2_2_and_2_78() -> None:
+    assert G.score_input("real_10y", 2.2) > G.score_input("real_10y", 2.78)
 
 
 @pytest.mark.parametrize("x, s", [(0.55, 0.0), (2.0, 0.0), (0.0, 0.0),
@@ -259,8 +268,8 @@ def _history(days_back: int = 30, dom: float = 60.0, usdt: float = 5.5) -> dict:
 
 def test_measure_all_inputs_from_synthetic_sources() -> None:
     inp = G.measure(_src(), _history(), NOW)
-    # قیمت پول: مسیر نرخ ‎+0.5 ← ‎-1؛ بازده واقعی 1.5 ← ‎-1
-    assert inp["money_price"].score == pytest.approx(-1.0)
+    # قیمت پول: مسیر نرخ ‎+0.5 ← ‎-1؛ بازده واقعی 1.5 ← ‎-0.5؛ میانگین ‎-0.75
+    assert inp["money_price"].score == pytest.approx(-0.75)
     assert inp["curve"].score == pytest.approx(0.0)
     assert inp["net_liq"].score == pytest.approx(-0.4)
     assert inp["dollar"].score == pytest.approx(-1.0)
@@ -284,8 +293,8 @@ def test_freshness_follows_release_cadence(sid, age, ok) -> None:
     key = {"DGS2": "money_price", "DTWEXBGS": "dollar", "WALCL": "net_liq"}[sid]
     inp = G.measure(_src(fred=_fred(ages={sid: age})), _history(), NOW)
     if key == "money_price" and not ok:
-        # مسیر نرخ کهنه شد؛ بازده واقعی تنها می‌ماند: ‎-1 ← قانون سوگیری صفر ‎-1
-        assert inp[key].score == pytest.approx(-1.0)
+        # مسیر نرخ کهنه شد؛ بازده واقعی تنها می‌ماند: ‎-0.5 ← قانون سوگیری صفر ‎-0.5
+        assert inp[key].score == pytest.approx(-0.5)
         assert "DGS2" in inp[key].detail
     else:
         assert (inp[key].score is not None) is ok
@@ -369,7 +378,9 @@ def test_history_records_scores_and_dominance() -> None:
     assert day["btc_dominance"] == pytest.approx(57.0)
     for k in ("raw", "norm", "score", "band", "coverage", "inputs"):
         assert k in day
-    assert day["inputs"]["money_price"] == pytest.approx(-1.0)
+    assert day["inputs"]["money_price"] == pytest.approx(-0.75)
+    # باند هر روز ثبت می‌شود — شمارش جابه‌جایی باند برای قاعده هیسترزیس
+    assert day["band"] == res["band"]["name"]
     # تاریخچه پیشین پاک نمی‌شود
     assert len(h["days"]) == 2
 
