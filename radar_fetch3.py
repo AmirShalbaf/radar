@@ -1036,7 +1036,9 @@ FRED_SERIES = {
     "DTWEXBGS":   ("شاخص دلار، سبد وسیع", "شاخص"),
     "WALCL":      ("دارایی کل فدرال‌رزرو", "میلیون دلار"),
     "RRPONTSYD":  ("ریپوی معکوس شبانه", "میلیارد دلار"),
-    "WTREGEN":    ("حساب خزانه‌داری", "میلیارد دلار"),
+    # میلیون، نه میلیارد: برچسب پیش از نشست ۲ غلط بود؛ محاسبه نقدینگی خالص
+    # از قبل درست بر ۱۰۰۰ تقسیم می‌کرد
+    "WTREGEN":    ("حساب خزانه‌داری", "میلیون دلار"),
     "M2SL":       ("عرضه پول M2", "میلیارد دلار"),
     "CPIAUCSL":   ("شاخص قیمت مصرف‌کننده", "شاخص"),
     "ICSA":       ("مدعیان اولیه بیکاری", "نفر"),
@@ -1104,6 +1106,14 @@ def fetch_fred(http_text) -> dict:
     def sane(v, lo, hi):
         return v if (v is not None and lo <= v <= hi) else None
 
+    def stamp(*sids: str) -> dict:
+        """
+        سری‌های منبع و قدیمی‌ترین تاریخ مشاهده‌شان. radar_regime.py با این
+        دو، مهلت تازگی هر سری را جدا و بر اساس آهنگ انتشارش می‌سنجد.
+        """
+        seen = [raw[s]["ts"] for s in sids if s in raw]
+        return {"sources": list(sids), "ts": min(seen) if seen else None}
+
     # انتظار بازار از مسیر نرخ — بازده ۲ساله در برابر **کل** محدوده هدف.
     #
     # پیش از این «فاصله سیاست از خنثی» نام داشت و ۲ساله فقط با سقف سنجیده
@@ -1113,7 +1123,8 @@ def fetch_fred(http_text) -> dict:
     # و خوانش برعکس. مرزها جزو محدوده‌اند. ورودی غایب یعنی «داده ناکافی».
     # این سنجه فقط نمایشی است و در هیچ امتیاز یا رأی ماکرویی به کار نمی‌رود.
     if y2 is not None or ffr_hi is not None or ffr_lo is not None:
-        rp = {"label": "انتظار بازار از مسیر نرخ", "value": None}
+        rp = {"label": "انتظار بازار از مسیر نرخ", "value": None,
+              **stamp("DGS2", "DFEDTARU", "DFEDTARL")}
         gone = [n for n, v in (("بازده ۲ساله", y2), ("سقف محدوده هدف", ffr_hi),
                                ("کف محدوده هدف", ffr_lo)) if v is None]
         if gone:
@@ -1131,12 +1142,14 @@ def fetch_fred(http_text) -> dict:
     if y30 is not None and y2 is not None:
         d["derived"]["curve_30_2"] = {
             "value": sane(y30 - y2, -5, 5), "label": "شیب منحنی ۳۰ منهای ۲",
-            "read": "شیب مثبت" if y30 > y2 else "منحنی معکوس"}
+            "read": "شیب مثبت" if y30 > y2 else "منحنی معکوس",
+            **stamp("DGS30", "DGS2")}
     if y10 is not None and be10 is not None:
         d["derived"]["real_10y"] = {
             "value": sane(y10 - be10, -5, 8),
             "label": "بازده واقعی ۱۰ ساله (از نرخ سربه‌سر تورم، نه CPI)",
-            "read": "مثبت — رقیب جدی دارایی بدون بازده" if y10 > be10 else "منفی"}
+            "read": "مثبت — رقیب جدی دارایی بدون بازده" if y10 > be10 else "منفی",
+            **stamp("DGS10", "T10YIE")}
 
     # نقدینگی خالص — تله واحد: WALCL میلیون است، دو تای دیگر میلیارد
     w, rr, tga = g("WALCL"), g("RRPONTSYD"), g("WTREGEN")
@@ -1149,7 +1162,8 @@ def fetch_fred(http_text) -> dict:
             "label": "نقدینگی خالص فدرال‌رزرو (میلیارد دلار)",
             "read": ("دارایی ÷۱۰۰۰ منهای ریپوی معکوس منهای خزانه‌داری ÷۱۰۰۰"
                      if plausible else
-                     f"⚠️ عدد خام {nl:,.0f} خارج از بازه منطقی — احتمال تغییر واحد در منبع. رد شد")}
+                     f"⚠️ عدد خام {nl:,.0f} خارج از بازه منطقی — احتمال تغییر واحد در منبع. رد شد"),
+            **stamp("WALCL", "RRPONTSYD", "WTREGEN")}
         pw  = raw.get("WALCL", {}).get("prev30")
         prr = raw.get("RRPONTSYD", {}).get("prev30")
         ptg = raw.get("WTREGEN", {}).get("prev30")
@@ -1166,8 +1180,25 @@ def fetch_fred(http_text) -> dict:
                 rd = f"{pct:+.2f}٪ — انقباض، باد مخالف"
             d["derived"]["net_liq_trend"] = {
                 "value": delta,
+                "pct": pct,
                 "label": "تغییر ۳۰ روزه نقدینگی خالص (میلیارد دلار)",
-                "read": rd}
+                "read": rd,
+                **stamp("WALCL", "RRPONTSYD", "WTREGEN")}
+
+    # روند ۳۰ روزه شاخص دلار — سطح شاخص نقطه خنثی ندارد، روندش دارد.
+    # دلار قوی‌تر یعنی نقدینگی دلاری جهانی تنگ‌تر.
+    dx = raw.get("DTWEXBGS")
+    if dx:
+        dp = dx.get("prev30")
+        if dp:
+            chg = 100 * (dx["value"] / dp - 1)
+            rd = ("دلار قوی‌تر — نقدینگی دلاری تنگ‌تر" if chg > 0 else
+                  "دلار ضعیف‌تر — نقدینگی دلاری گشادتر" if chg < 0 else "بدون تغییر")
+        else:
+            chg, rd = None, "داده ناکافی — مقدار ۳۰ روز قبل نیامد"
+        d["derived"]["dollar_30d"] = {
+            "value": chg, "label": "تغییر ۳۰ روزه شاخص دلار (٪)", "read": rd,
+            **stamp("DTWEXBGS")}
 
     # ترکیب اشتغال — قانون ۶ وصله ۵.۳
     u, cp = raw.get("UNRATE"), raw.get("CIVPART")
@@ -1180,7 +1211,8 @@ def fetch_fred(http_text) -> dict:
         else:
             verdict = "بیکاری در حال افزایش"
         d["derived"]["labor_composition"] = {
-            "value": None, "label": "آزمون ترکیب اشتغال", "read": verdict}
+            "value": None, "label": "آزمون ترکیب اشتغال", "read": verdict,
+            **stamp("UNRATE", "CIVPART")}
     return d
 
 
@@ -1242,38 +1274,57 @@ def fetch_macro(out: dict[str, Field]) -> None:
     t = http_get(f"{CG_BASE}/coins/markets",
                  {"vs_currency": "usd", "ids": "tether,usd-coin", "per_page": "5"},
                  label="ارزش بازار استیبل‌کوین‌ها")
-    tether_mc = usdc_mc = None
+
+    # مهر زمان مشتق‌ها = قدیمی‌ترین جزء، نه لحظه واکشی. پیش از نشست ۲
+    # همه `datetime.now` می‌گرفتند و ادعای تازگی می‌کردند که نداشتند.
+    # جزء بی‌مهر یعنی عمر نامعلوم — None، نه «همین حالا».
+    def _cg_ts(row: dict) -> datetime | None:
+        s = row.get("last_updated")
+        if not isinstance(s, str):
+            return None
+        try:
+            ts = datetime.fromisoformat(s.replace("Z", "+00:00"))
+        except ValueError:
+            FAILURES.append(f"کوین‌گکو: مهر زمان {row.get('id')} قابل‌خواندن نیست")
+            return None
+        return ts if ts.tzinfo else None
+
+    def _oldest(*ts: datetime | None) -> datetime | None:
+        return None if not ts or any(x is None for x in ts) else min(ts)
+
+    tether_mc = usdc_mc = tether_ts = usdc_ts = None
     if isinstance(t, list):
         for row in t:
             if row.get("id") == "tether":
-                tether_mc = row.get("market_cap")
+                tether_mc, tether_ts = row.get("market_cap"), _cg_ts(row)
             elif row.get("id") == "usd-coin":
-                usdc_mc = row.get("market_cap")
+                usdc_mc, usdc_ts = row.get("market_cap"), _cg_ts(row)
     tm = out.get("total_mcap")
     if tether_mc and tm and tm.ok and tm.value:
-        out["usdt_mcap"] = Field(tether_mc, "CoinGecko", datetime.now(UTC))
+        out["usdt_mcap"] = Field(tether_mc, "CoinGecko", tether_ts)
         out["usdt_dominance"] = Field(
-            100.0 * tether_mc / tm.value, "محاسبه‌شده", datetime.now(UTC),
+            100.0 * tether_mc / tm.value, "محاسبه‌شده", _oldest(tether_ts, tm.ts),
             "تسلط تتر — بالا رفتنش یعنی پول به حاشیه امن رفته")
     if usdc_mc and tm and tm.ok and tm.value:
         out["usdc_dominance"] = Field(100.0 * usdc_mc / tm.value,
-                                      "محاسبه‌شده", datetime.now(UTC))
+                                      "محاسبه‌شده", _oldest(usdc_ts, tm.ts))
 
     # ── TOTAL2 و TOTAL3: ارزش بازار بدون بیت‌کوین، و بدون بیت‌کوین و اتریوم
     bd_, ed_ = out.get("btc_dominance"), out.get("eth_dominance")
     if tm and tm.ok and bd_ and bd_.ok:
         btc_mc_ = tm.value * bd_.value / 100.0
-        out["total2"] = Field(tm.value - btc_mc_, "محاسبه‌شده", datetime.now(UTC),
+        out["total2"] = Field(tm.value - btc_mc_, "محاسبه‌شده", _oldest(tm.ts, bd_.ts),
                               "ارزش بازار آلت‌کوین‌ها، بدون بیت‌کوین")
         if ed_ and ed_.ok:
             eth_mc_ = tm.value * ed_.value / 100.0
             out["total3"] = Field(tm.value - btc_mc_ - eth_mc_, "محاسبه‌شده",
-                                  datetime.now(UTC), "بدون بیت‌کوین و اتریوم")
+                                  _oldest(tm.ts, bd_.ts, ed_.ts), "بدون بیت‌کوین و اتریوم")
             if out.get("stable_supply") and out["stable_supply"].ok:
                 # TOTAL3 منهای استیبل‌کوین = پول ریسک‌پذیر واقعی در آلت‌ها
                 out["total3_ex_stable"] = Field(
                     tm.value - btc_mc_ - eth_mc_ - out["stable_supply"].value,
-                    "محاسبه‌شده", datetime.now(UTC),
+                    "محاسبه‌شده",
+                    _oldest(tm.ts, bd_.ts, ed_.ts, out["stable_supply"].ts),
                     "پول واقعاً ریسک‌پذیر در آلت‌کوین‌ها")
 
     # تسلط بدون استیبل‌کوین — از ترکیب دو منبع بالا محاسبه می‌شود
@@ -1284,10 +1335,10 @@ def fetch_macro(out: dict[str, Field]) -> None:
             btc_mcap = tm.value * bd.value / 100.0
             out["btc_dom_ex_stable"] = Field(
                 100.0 * btc_mcap / denom, "محاسبه‌شده از CoinGecko و DefiLlama",
-                datetime.now(UTC),
+                _oldest(bd.ts, tm.ts, ss.ts),
                 "تسلط بیت‌کوین با حذف استیبل‌کوین از مخرج — ورودی ستون چرخه بیت‌کوین")
             out["stable_dominance"] = Field(
-                100.0 * ss.value / tm.value, "محاسبه‌شده", datetime.now(UTC),
+                100.0 * ss.value / tm.value, "محاسبه‌شده", _oldest(ss.ts, tm.ts),
                 "سهم استیبل‌کوین از کل بازار — سنجه پول کنارگذاشته")
 
 
