@@ -94,3 +94,17 @@ def test_budget_is_stdlib_only() -> None:
     src = (ROOT / "radar_budget.py").read_text(encoding="utf-8")
     for heavy in ("pandas", "numpy", "requests", "radar_fetch3"):
         assert f"import {heavy}" not in src
+
+
+# هدف ذخیره استیبل هر باند. منشأ: کامیت f714c33 (رادار ۶.۱، ۲۲ اوت
+# ۲۰۲۶)، هم‌زمان در radar_book.py و radar_size.py. کامنت آن به
+# risk-budget.md ارجاع می‌داد که در مخزن نیست — پس دلیل عدد ثبت نشده.
+# از نشست ۲ فقط در radar_budget.py است. این آزمون قفل است، نه قرمز.
+STABLE = {"انبساطی": 10, "سازنده": 15, "محتاط": 25, "انقباضی": 40, "بحرانی": 55}
+
+
+@pytest.mark.parametrize("name", list(STABLE))
+def test_stable_reserve_target_is_locked(name) -> None:
+    rows = {r["name"]: r for r in (BG.regime_band(s)
+                                   for s in (1.0, 0.25, -0.25, -1.0, -2.0))}
+    assert rows[name]["stable"] == STABLE[name]
