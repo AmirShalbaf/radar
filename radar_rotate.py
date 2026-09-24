@@ -53,32 +53,62 @@ STABLES = {"USDT","USDC","DAI","TUSD","FDUSD","USDE","PYUSD","BUSD","USDD",
 PEG_ATR_MAX = 0.5
 
 
-def universe_okx(min_vol: float) -> list[dict]:
+def universe_okx(min_vol: float) -> tuple[list[dict], float | None]:
     """
     مرحله ۱ — یک درخواست، همه جفت‌های نقدی. غربال ارزان پیش از کندل.
     بدون این مرحله باید برای هر کوین کندل گرفت که ساعت‌ها طول می‌کشد.
+
+    خروجی دوم: تغییر ۲۴ساعته بیت‌کوین از **همان** پاسخ تیکر، تا مبنای
+    `rel24` با کوین‌ها هم‌زمان باشد. بیت‌کوین خودش نامزد نمی‌شود. اگر در
+    پاسخ نبود یا قیمتش نامعتبر بود، None — نه صفر.
     """
     d = R.okx_get("/api/v5/market/tickers", {"instType": "SPOT"}, label="فهرست بازار")
     if not d:
-        return []
-    out = []
+        return [], None
+    out, bench = [], None
     for t in d:
         inst = t.get("instId", "")
         if not inst.endswith("-USDT"):
             continue
         base = inst[:-5]
-        if base in STABLES or base == BENCHMARK or LEV_RE.search(base):
+        if base in STABLES or LEV_RE.search(base):
             continue
         try:
             last = float(t["last"]); o24 = float(t["open24h"])
             vol = float(t.get("volCcy24h") or 0)     # حجم به واحد ارز مظنه
         except (KeyError, ValueError, TypeError):
             continue
+        if base == BENCHMARK:
+            # مبنا صافی حجم ندارد — فقط قیمت معتبر
+            if last > 0 and o24 > 0:
+                bench = 100 * (last / o24 - 1)
+            continue
         if last <= 0 or o24 <= 0 or vol < min_vol:
             continue
         out.append({"symbol": base, "price": last,
                     "chg24": 100 * (last / o24 - 1), "vol24": vol})
-    return out
+    return out, bench
+
+
+def pre_rank(uni: list[dict], btc_chg24: float | None, top: int) -> list[dict]:
+    """
+    پیش‌رتبه‌بندی ارزان: تغییر ۲۴ساعته نسبت به بیت‌کوین.
+
+    هر دو طرف زنده و از یک پاسخ تیکر. پیش از این مبنای بیت‌کوین تغییر
+    آخرین روز بسته بود و کوین تغییر غلتان ۲۴ساعته — دو بازه متفاوت.
+
+    کم‌کردن عدد ثابت ترتیب را عوض نمی‌کند، پس ترتیب با تغییر خام ساخته
+    می‌شود. بدون مبنا، `rel24` خالی می‌ماند — نه صفر — و گزارش هشدار می‌دهد.
+    """
+    for u in uni:
+        u["rel24"] = None if btc_chg24 is None else u["chg24"] - btc_chg24
+    return sorted(uni, key=lambda u: -u["chg24"])[:top]
+
+
+# هشدار بالای گزارش وقتی مبنای `rel24` نیست — آزمون همین متن را می‌جوید
+NO_BTC_TICKER = ("**تیکر بیت‌کوین در پاسخ نبود.** تغییر نسبی ۲۴ساعته (rel24) "
+                 "خالی ماند و پیش‌رتبه‌بندی با تغییر خام ۲۴ساعته انجام شد. "
+                 "ترتیب نامزدها همان است، چون کم‌کردن عدد ثابت ترتیب را عوض نمی‌کند.")
 
 
 def px_fmt(v: float) -> str:
@@ -283,7 +313,8 @@ def pump_check(sym: str, order: list[str], px: float) -> str:
 
 
 def build_report(rows: list[dict], uni_n: int, pool_n: int,
-                 order: list[str], min_vol: float, deep: dict) -> str:
+                 order: list[str], min_vol: float, deep: dict,
+                 warnings: list[str] | None = None) -> str:
     L: list[str] = []; A = L.append
     now = datetime.now(UTC)
     A(f"# شکارچی چرخش رادار {R.FRAMEWORK} — اسکنر نسخه ۱.۲")
@@ -291,6 +322,10 @@ def build_report(rows: list[dict], uni_n: int, pool_n: int,
     A(f"تولید: **{now.strftime('%Y-%m-%d %H:%M UTC')}** | نسخه {R.VERSION} | "
       f"صرافی: {', '.join(order)}")
     A("")
+    # هشدار داده ناقص بالای گزارش — بی‌صدا نه، ولی توقف هم نه
+    for w in warnings or []:
+        A(f"> ⚠️ {w}")
+        A("")
     A(f"جهان بازار: **{uni_n}** جفت نقدی با حجم بالای {min_vol:,.0f} دلار "
       f"← **{pool_n}** نامزد وارد تحلیل کندل شد")
     A("")
@@ -428,26 +463,27 @@ def main() -> int:
         print(f"     ✓ {', '.join(live)}", file=sys.stderr)
 
     print("[۱] غربال ارزان — یک درخواست برای کل بازار ...", file=sys.stderr)
-    uni = universe_okx(a.min_vol)
+    uni, btc_chg24 = universe_okx(a.min_vol)
     if not uni:
         print("جهان بازار خالی برگشت.", file=sys.stderr); return 3
     uni = [u for u in uni if u["symbol"] not in excl]
     print(f"     {len(uni)} جفت با حجم کافی", file=sys.stderr)
+    warnings: list[str] = []
+    if btc_chg24 is None:
+        warnings.append(NO_BTC_TICKER)
+        print("     ⚠️ تیکر بیت‌کوین در پاسخ نبود — تغییر نسبی ۲۴ساعته خالی می‌ماند",
+              file=sys.stderr)
 
-    # مرجع بیت‌کوین
+    # مرجع بیت‌کوین — کندل بسته، برای قدرت نسبی ۳۰ و ۷ و ۳ روزه
     print("[۲] مرجع بیت‌کوین ...", file=sys.stderr)
     bg, _, _ = R.candles_first_ok("BTC", order, 200, [])
     if "1D" not in bg:
         print("کندل بیت‌کوین نیامد — قدرت نسبی ممکن نیست.", file=sys.stderr); return 4
     btc = bg["1D"]
     btc = (btc[btc["confirm"] == 1] if "confirm" in btc.columns else btc).reset_index(drop=True)
-    b_now, b_open = float(btc["close"].iloc[-1]), float(btc["close"].iloc[-2])
-    btc_chg = 100 * (b_now / b_open - 1)
 
-    # پیش‌رتبه‌بندی ارزان: تغییر ۲۴ ساعته نسبت به بیت‌کوین
-    for u in uni:
-        u["rel24"] = u["chg24"] - btc_chg
-    pool = sorted(uni, key=lambda u: -u["rel24"])[:a.top]
+    # پیش‌رتبه‌بندی ارزان: تغییر ۲۴ساعته نسبت به بیت‌کوین، هر دو از تیکر
+    pool = pre_rank(uni, btc_chg24, a.top)
     print(f"[۳] تحلیل کندل {len(pool)} نامزد ...", file=sys.stderr)
 
     rows = []
@@ -477,7 +513,8 @@ def main() -> int:
                 deep[r["symbol"]] = "خطا"
             time.sleep(0.3)
 
-    rep = build_report(rows, len(uni), len(pool), order, a.min_vol, deep)
+    rep = build_report(rows, len(uni), len(pool), order, a.min_vol, deep,
+                       warnings)
     if a.stdout:
         print(rep)
     else:

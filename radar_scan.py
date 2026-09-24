@@ -115,15 +115,22 @@ def score_symbol(base: str, order: list[str], btc_ref: pd.DataFrame | None
     if btc_ref is not None and len(btc_ref):
         # هم‌ترازی بر اساس **تاریخ**، نه شماره ردیف. اگر تعداد کندل کوین و
         # بیت‌کوین فرق کند، مقایسه موقعیتی دو تاریخ متفاوت را کنار هم می‌گذارد.
+        #
+        # هر دو طرف از کندل **بسته**، در همان تاریخ now_ts. پیش از این بازده
+        # کوین از قیمت زنده بود و بازده بیت‌کوین از کندل بسته — قدرت نسبی
+        # بیت‌کوین به خودش در اسکن ۲۴ سپتامبر ۲۰۲۶ در هر دو پنجره -0.8% بود.
+        # قیمت زنده فقط برای فاصله از میانگین‌ها می‌ماند.
         now_ts = r["ts"]
+        c_now = float(r["close"])
         b_now = _close_at(btc_ref, now_ts)
         for days, tag in [(30, "30d"), (7, "7d")]:
             back = now_ts - pd.Timedelta(days=days)
             c_then = _close_at(d, back)
             b_then = _close_at(btc_ref, back)
-            if None in (c_then, b_then, b_now) or c_then <= 0 or b_then <= 0:
+            if (None in (c_then, b_then, b_now) or c_then <= 0 or b_then <= 0
+                    or not math.isfinite(c_now) or c_now <= 0):
                 continue
-            cw = 100 * (price / c_then - 1)
+            cw = 100 * (c_now / c_then - 1)
             bw = 100 * (b_now / b_then - 1)
             row[f"rs_btc_{tag}"] = cw - bw
             row[f"chg_{tag}"] = cw
