@@ -415,18 +415,27 @@ def save_state(d: dict) -> None:
         json.dump(d, f, ensure_ascii=False, indent=2)
 
 
-def update_strikes(state: dict, sym: str, score: float) -> tuple[int, list]:
+def update_strikes(state: dict, sym: str, score: float | None) -> tuple[int, list]:
     """
     تاریخچه امتیاز را نگه می‌دارد و تعداد ضربه‌های متوالی را می‌شمارد.
     ضربه = امتیاز این بازبینی کمتر از بازبینی قبل.
+
+    امتیاز خالی یعنی «داده ندارم» در این دور: تاریخچه دست نمی‌خورد — نه
+    ورودی تازه، نه بازنویسی ورودی امروز. شمارش از همان تاریخچه دست‌نخورده
+    می‌آید، پس ضربه تازه‌ای اضافه نمی‌شود و ضربه‌های قبلی هم صفر نمی‌شوند.
+    پیش از این main به‌جای خالی صفر می‌فرستاد و صفر ضربه ساختگی می‌ساخت —
+    نقض قانون سوگیری صفر. بازطراحی کامل منطق ضربه مال نشست ۱۲ است.
     """
-    hist = state["reviews"].setdefault(sym, [])
-    today = datetime.now(UTC).strftime("%Y-%m-%d")
-    if hist and hist[-1]["date"] == today:
-        hist[-1]["score"] = score
+    if score is None:
+        hist = state["reviews"].get(sym, [])
     else:
-        hist.append({"date": today, "score": score})
-    hist[:] = hist[-12:]
+        hist = state["reviews"].setdefault(sym, [])
+        today = datetime.now(UTC).strftime("%Y-%m-%d")
+        if hist and hist[-1]["date"] == today:
+            hist[-1]["score"] = score
+        else:
+            hist.append({"date": today, "score": score})
+        hist[:] = hist[-12:]
 
     strikes = 0
     for i in range(len(hist) - 1, 0, -1):
@@ -767,7 +776,8 @@ def main() -> int:
         df = candles(p["symbol"])
         sc = score_position(df, btc)
         score = sc["score"] if sc else None
-        strikes, _ = update_strikes(state, p["symbol"], score if score is not None else 0.0)
+        # امتیاز خالی همان خالی می‌رود، نه صفر — صفر ضربه ساختگی می‌ساخت
+        strikes, _ = update_strikes(state, p["symbol"], score)
         rows.append({
             "pos": p,
             "price": sc["price"] if sc else None,
