@@ -93,12 +93,26 @@ jobs:
       - name: بازبینی سبد و موتور خروج
         env:
           PYTHONUTF8: "1"
+        # رژیم از regime.json می‌آید. پیش از این `-1.0` ثابت تزریق می‌شد.
+        # نبود یا کهنگی فایل در خود گزارش «رژیم کهنه» اعلام می‌شود.
+        # خطا بی‌صدا نیست، ولی گام‌های بعد را هم متوقف نمی‌کند.
         run: |
+          D=$(date -u +%Y-%m-%d)
           if [ -f holdings.json ]; then
-            python radar_book.py \
-              --holdings holdings.json \
-              --regime "${RADAR_REGIME:--1.0}" \
-              --out "reports/book-$(date -u +%Y-%m-%d).md" || true
+            if ! python radar_book.py \
+                   --holdings holdings.json \
+                   --out "reports/book-$D.md" > /tmp/book.log 2>&1; then
+              echo "::error::بازبینی سبد خطا داد — reports/book-error-$D.md"
+              {
+                echo "# خطای بازبینی سبد — $D"
+                echo
+                echo "بازبینی سبد با خطا افتاد. ته گزارش خطا:"
+                echo
+                echo '```'
+                tail -c 4000 /tmp/book.log
+                echo '```'
+              } > "reports/book-error-$D.md"
+            fi
           else
             echo "holdings.json نیست — بازبینی سبد رد شد."
             echo "برای ساختش: python radar_book.py --init"

@@ -19,9 +19,9 @@ on:
   workflow_dispatch:
     inputs:
       regime:
-        description: "امتیاز رژیم ماکرو (منفی۲ تا مثبت۲)"
+        description: "امتیاز رژیم دستی (منفی۲ تا مثبت۲). خالی یعنی خواندن از regime.json"
         required: false
-        default: "-1.0"
+        default: ""
       min_vol:
         description: "حداقل حجم روزانه دلاری"
         required: false
@@ -71,16 +71,31 @@ jobs:
       - name: بازبینی سبد با نامزدهای چرخش
         env:
           PYTHONUTF8: "1"
+          # ورودی دستی از راه env، نه جاگذاری مستقیم در متن فرمان.
+          # خالی یعنی radar_book.py رژیم را از regime.json می‌خواند.
+          REGIME_INPUT: ${{ github.event.inputs.regime }}
         run: |
+          D=$(date -u +%Y-%m-%d)
           if [ -f holdings.json ]; then
-            CANDS=$(grep -oE '^\| *[A-Z0-9]{2,10} ' "reports/rotate-$(date -u +%Y-%m-%d).md" 2>/dev/null \
+            CANDS=$(grep -oE '^\| *[A-Z0-9]{2,10} ' "reports/rotate-$D.md" 2>/dev/null \
                     | tr -d '| ' | head -5 | paste -sd, -) || CANDS=""
             echo "نامزدها: ${CANDS:-هیچ}"
-            python radar_book.py \
-              --holdings holdings.json \
-              --regime "${{ github.event.inputs.regime || '-1.0' }}" \
-              ${CANDS:+--candidates "$CANDS"} \
-              --out "reports/book-weekly-$(date -u +%Y-%m-%d).md" || true
+            if ! python radar_book.py \
+                   --holdings holdings.json \
+                   ${REGIME_INPUT:+--regime "$REGIME_INPUT"} \
+                   ${CANDS:+--candidates "$CANDS"} \
+                   --out "reports/book-weekly-$D.md" > /tmp/book.log 2>&1; then
+              echo "::error::بازبینی هفتگی سبد خطا داد — reports/book-error-weekly-$D.md"
+              {
+                echo "# خطای بازبینی هفتگی سبد — $D"
+                echo
+                echo "بازبینی سبد با خطا افتاد. ته گزارش خطا:"
+                echo
+                echo '```'
+                tail -c 4000 /tmp/book.log
+                echo '```'
+              } > "reports/book-error-weekly-$D.md"
+            fi
           fi
 
       - name: گزارش کالیبراسیون معاملات

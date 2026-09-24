@@ -41,7 +41,7 @@ import json
 import math
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 # تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
 from radar_text import fa
@@ -83,6 +83,72 @@ SWAP_MIN_EDGE = 0.50      # آستانه اجرای جانشینی
 SWAP_WATCH_EDGE = 0.30    # آستانه نامزدی
 MAX_SWAPS_WEEK = 2
 MIN_HOLD_DAYS = 10
+
+
+# ─────────── منبع رژیم — رفع موقت تا نشست ۲ (radar_regime.py) ───────────
+#
+# پیش از این گردش‌کار روزانه هر روز `-1.0` تزریق می‌کرد و پیش‌فرض این فایل
+# 0.0 بود. حالا رژیم از regime.json می‌آید، یا از کلید دستی --regime.
+# اگر هیچ‌کدام معتبر نبود، گزارش «رژیم کهنه» می‌گوید — هیچ مقدار جانشینی
+# جا زده نمی‌شود.
+#
+# قرارداد regime.json — خواننده فقط دو میدان لازم دارد و بقیه را نادیده
+# می‌گیرد، تا نشست ۲ میدان اضافه کند بی‌آنکه چیزی بشکند:
+#   score         امتیاز **نهایی تصمیم**: باند محافظه‌کارانه‌تر میان امتیاز
+#                 خام و نرمال‌شده (قاعده ۲، قانون سوگیری صفر). نه خام، نه نرمال.
+#   generated_at  زمان ISO با منطقه زمانی. بدون منطقه زمانی نامعتبر است،
+#                 چون عمرش را نمی‌شود دانست. عمر از همین میدان حساب می‌شود،
+#                 نه از زمان تغییر فایل — دریافت مخزن در گیت آن را تازه می‌کند.
+REGIME_FILE = "regime.json"
+REGIME_MAX_AGE_DAYS = 7
+# کجی ساعت مجاز میان دستگاه سازنده و خواننده
+REGIME_CLOCK_SKEW = timedelta(minutes=10)
+REGIME_STALE = "رژیم کهنه — بازمحاسبه لازم است"
+
+
+def load_regime(path=REGIME_FILE, now: datetime | None = None
+                ) -> tuple[float | None, str]:
+    """
+    امتیاز رژیم از regime.json، یا None با دلیل خوانا.
+
+    خروجی دوم در حالت سالم منبع است، در حالت خراب دلیل. هیچ استثنایی
+    بالا نمی‌رود: فایل خراب هم «رژیم کهنه» است، با دلیل صریح در گزارش.
+    """
+    now = now or datetime.now(UTC)
+    name = os.path.basename(str(path))
+    if not os.path.exists(path):
+        return None, f"فایل {name} نیست"
+    try:
+        with open(path, encoding="utf-8") as f:
+            doc = json.load(f)
+    except (OSError, ValueError) as exc:
+        return None, f"{name} خوانا نیست (`{type(exc).__name__}`)"
+    if not isinstance(doc, dict):
+        return None, f"{name} شیء JSON نیست"
+
+    score = doc.get("score")
+    if (isinstance(score, bool) or not isinstance(score, (int, float))
+            or not math.isfinite(score)):
+        return None, f"میدان score در {name} نیست یا عدد معتبر نیست"
+
+    raw_ts = doc.get("generated_at")
+    if not isinstance(raw_ts, str):
+        return None, f"میدان generated_at در {name} نیست"
+    try:
+        ts = datetime.fromisoformat(raw_ts)
+    except ValueError:
+        return None, f"generated_at در {name} قابل‌خواندن نیست"
+    if ts.tzinfo is None:
+        return None, f"generated_at در {name} منطقه زمانی ندارد"
+
+    age = now - ts
+    if age < -REGIME_CLOCK_SKEW:
+        return None, f"generated_at در {name} در آینده است"
+    if age > timedelta(days=REGIME_MAX_AGE_DAYS):
+        return None, (f"{name} {age.total_seconds() / 86400:.1f} روز عمر دارد — "
+                      f"بیش از {fa(REGIME_MAX_AGE_DAYS)} روز")
+    stamp = ts.astimezone(UTC).strftime("%Y-%m-%d %H:%M UTC")
+    return float(score), f"{name}، تولید {stamp}"
 
 
 def regime_row(score: float) -> dict:
@@ -380,8 +446,13 @@ def fmt(x, d=4):
     return str(x)
 
 
-def build_report(book: dict, rows: list[dict], reg: dict,
-                 candidates: list[dict]) -> str:
+def build_report(book: dict, rows: list[dict], reg: dict | None,
+                 candidates: list[dict], regime_note: str = "") -> str:
+    """
+    reg خالی یعنی رژیم کهنه یا غایب. آن‌وقت هر سطر وابسته به رژیم برچسب
+    «رژیم کهنه» می‌گیرد و هیچ باند جانشینی جا زده نمی‌شود. regime_note
+    در حالت سالم منبع رژیم است، در حالت کهنه دلیل آن.
+    """
     o: list[str] = []
     W = o.append
 
@@ -394,6 +465,10 @@ def build_report(book: dict, rows: list[dict], reg: dict,
     W(f"تاریخ: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}")
     W("=" * 66)
     W("")
+    if reg is None:
+        W(f"⛔ **{REGIME_STALE}.** {regime_note}.")
+        W("هر سطر وابسته به رژیم در این گزارش عدد ندارد. مقدار پیش‌فرض جا زده نشده است.")
+        W("")
 
     # ── ۱ حرارت واقعی سبد
     W("## ۱ — حرارت واقعی سبد")
@@ -422,14 +497,27 @@ def build_report(book: dict, rows: list[dict], reg: dict,
     W("|---|---|")
     W(f"| کل موجودی | {total:,.0f} دلار |")
     W(f"| ذخیره استیبل | {stable:,.0f} دلار ({stable_pct:.1f}٪) |")
-    W(f"| رژیم | {reg['name']} — سقف ریسک {reg['cap']}٪ |")
-    W(f"| **هدف ذخیره استیبل رژیم** | **{reg['stable']}٪** |")
+    if reg is None:
+        W(f"| رژیم | ⛔ {REGIME_STALE} |")
+        W("| **هدف ذخیره استیبل رژیم** | رژیم کهنه |")
+    else:
+        W(f"| رژیم | {reg['name']} — سقف ریسک {reg['cap']}٪ |")
+        W(f"| **هدف ذخیره استیبل رژیم** | **{reg['stable']}٪** |")
+    W(f"| منبع رژیم | {regime_note or '—'} |")
     W(f"| ریسک اسمی باز | {heat_usd:,.0f} دلار ({heat_pct:.1f}٪) |")
     W(f"| ضریب همبستگی ({n_alt} آلت) | {corr:.2f} |")
-    W(f"| **ریسک مؤثر** | **{heat_pct*corr:.1f}٪ از سقف {reg['cap']}٪** |")
+    if reg is None:
+        W(f"| **ریسک مؤثر** | **{heat_pct*corr:.1f}٪** — سقف: رژیم کهنه |")
+    else:
+        W(f"| **ریسک مؤثر** | **{heat_pct*corr:.1f}٪ از سقف {reg['cap']}٪** |")
     W(f"| پوزیشن بدون سطح ابطال | {len(no_inval)} از {len(rows)} |")
     W("")
-    if heat_pct * corr > reg["cap"]:
+    if reg is None:
+        # حذف بی‌صدای این دو هشدار همان خطایی است که جلویش را می‌گیریم
+        W("⚠️ **مقایسه ممکن نیست — رژیم کهنه است.** حرارت با سقف رژیم سنجیده "
+          "نشد و کسری ذخیره استیبل حساب نشد.")
+        W("")
+    elif heat_pct * corr > reg["cap"]:
         W(f"⛔ **حرارت سبد {heat_pct*corr:.1f}٪ است، بیش از سقف رژیم {reg['cap']}٪.**")
         W("")
         W("**این عدد را درست بخوان.** سقف رژیم بر «ریسک جدید خالص» حاکم است.")
@@ -444,7 +532,7 @@ def build_report(book: dict, rows: list[dict], reg: dict,
         W("علت اصلی این عدد معمولاً پوزیشن اسپات بدون سطح ابطال است که با")
         W("ریسک ۱۰۰٪ شمرده می‌شود. با نوشتن ابطال برای هر پوزیشن، عدد واقعی‌تر می‌شود.")
         W("")
-    if stable_pct < reg["stable"]:
+    if reg is not None and stable_pct < reg["stable"]:
         gap = (reg["stable"] - stable_pct) / 100 * total
         W(f"⚠️ ذخیره استیبل {stable_pct:.1f}٪ است، هدف رژیم {reg['stable']}٪.")
         W(f"**کسری: {gap:,.0f} دلار.** ترتیب فروش در بخش ۴.")
@@ -580,7 +668,7 @@ def build_report(book: dict, rows: list[dict], reg: dict,
         elif r["verdict"].startswith("🔄"):
             actions.append(f"**{p['symbol']}** — چرخش به {r['swap_to']}، "
                            f"مزیت {r['swap_edge']:+.2f}")
-    if stable_pct < reg["stable"]:
+    if reg is not None and stable_pct < reg["stable"]:
         gap = (reg["stable"] - stable_pct) / 100 * total
         actions.append(f"**ذخیره استیبل** — فروش {gap:,.0f} دلار به ترتیب بخش ۴")
     for r in rows:
@@ -598,7 +686,10 @@ def build_report(book: dict, rows: list[dict], reg: dict,
         W("- گذاشتن سفارش در انتظار روی سطح ساختاری، بالای نقطه ابطال")
         W("- گذاشتن هشدار قیمتی با عدد دقیق")
         W("- کاهش پله‌ای ضعیف‌ترین پوزیشن")
-        W(f"- افزایش ذخیره استیبل به سمت هدف رژیم ({reg['stable']}٪)")
+        if reg is None:
+            W("- افزایش ذخیره استیبل — هدف رژیم پس از بازمحاسبه معلوم می‌شود")
+        else:
+            W(f"- افزایش ذخیره استیبل به سمت هدف رژیم ({reg['stable']}٪)")
     W("")
     W("---")
     W("")
@@ -628,8 +719,12 @@ SAMPLE = {
 def main() -> int:
     ap = argparse.ArgumentParser(description=f"بازبینی سبد و موتور خروج — رادار {fa(VERSION)}")
     ap.add_argument("--holdings", default="holdings.json")
-    ap.add_argument("--regime", type=float, required=False, default=0.0,
-                    help="امتیاز رژیم از تحلیل ماکرو")
+    # پیش‌فرض خالی است، نه عدد: پیش از این 0.0 بود و اجرای بی‌کلید بی‌صدا
+    # «سازنده» می‌گرفت
+    ap.add_argument("--regime", type=float, default=None,
+                    help="امتیاز رژیم دستی — بر regime.json مقدم است")
+    ap.add_argument("--regime-file", default=REGIME_FILE,
+                    help="فایل رژیم؛ اگر نبود یا کهنه بود، گزارش «رژیم کهنه» می‌گوید")
     ap.add_argument("--candidates", default="", help="نمادهای نامزد جانشینی، جدا با کاما")
     ap.add_argument("--init", action="store_true", help="ساخت فایل نمونه holdings.json")
     ap.add_argument("--out", default=None)
@@ -652,7 +747,14 @@ def main() -> int:
         print("کتابخانه requests یا pandas نصب نیست: pip install requests pandas")
         return 1
 
-    reg = regime_row(a.regime)
+    # کلید دستی، سپس فایل تازه، سپس «رژیم کهنه» — بدون مقدار جانشین
+    if a.regime is not None:
+        score, regime_note = a.regime, "دستی (کلید `--regime`)"
+    else:
+        score, regime_note = load_regime(a.regime_file)
+    reg = regime_row(score) if score is not None else None
+    if reg is None:
+        print(f"⚠️ {REGIME_STALE}: {regime_note}")
     state = load_state()
 
     print("واکشی داده بیت‌کوین به‌عنوان مرجع قدرت نسبی...")
@@ -696,7 +798,7 @@ def main() -> int:
                 r["swap_to"] = best["symbol"]
 
     save_state(state)
-    txt = build_report(book, rows, reg, cands)
+    txt = build_report(book, rows, reg, cands, regime_note)
     if a.out:
         with open(a.out, "w", encoding="utf-8") as f:
             f.write(txt)
