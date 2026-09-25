@@ -304,3 +304,29 @@ def test_main_invalid_holdings_is_loud(tmp_path, monkeypatch) -> None:
     monkeypatch.setattr(W, "ticker", lambda s: PX.get(s))
     assert W.main(["--once", "--watch", "watch.json", "--holdings", "holdings.json"]) == 2
     assert any("holdings.json" in m and "نامعتبر" in m for m in sent)
+
+
+# ═══════════════ سطح گذشته‌نگر نیست ═══════════════
+
+def test_week_closed_before_level_was_set_is_not_judged() -> None:
+    """
+    یافته پیش‌نمایش ۲۵ سپتامبر: بسته هفتگی ONDO تا ۲۱ سپتامبر 0.4326 بود،
+    زیر سطحی که ۲۵ سپتامبر گذاشته شد. سطح از هفته پس از updated معتبر است.
+    """
+    w, st = _watch(updated="2026-09-25"), {}
+    old = _wk({"SOL": 90.0, "ONDO": 0.40, "BTC": 70000.0}, closed_at="2026-09-21T00:00:00+00:00")
+    assert not [x for x in _run(w, _h(), st, old, now=datetime(2026, 9, 25, 22, tzinfo=UTC))
+                if "ابطال هفتگی" in x or "هشدار بازار" in x]
+    new = _wk({"SOL": 90.0, "ONDO": 0.40, "BTC": 70000.0})
+    msgs = _run(w, _h(), st, new)
+    assert any("SOL" in x and "ابطال هفتگی" in x for x in msgs)
+    assert any("هشدار بازار" in x for x in msgs)
+
+
+def test_level_sections_need_valid_updated() -> None:
+    w = _watch()
+    del w["updated"]
+    with pytest.raises(W.WatchError):
+        W.validate_watch(w)
+    with pytest.raises(W.WatchError):
+        W.validate_watch(_watch(updated="دیروز"))

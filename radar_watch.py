@@ -471,12 +471,31 @@ def _aware(raw, what: str) -> datetime:
     return d
 
 
+def levels_since(w: dict) -> datetime:
+    """
+    سطوح از این لحظه معتبرند: میدان updated، تاریخ خالی یعنی ۰۰:۰۰ وقت جهانی.
+    هفته‌ای که پیش از آن بسته شده با این سطوح سنجیده نمی‌شود — یافته پیش‌نمایش
+    ۲۵ سپتامبر: بسته ONDO تا ۲۱ سپتامبر زیر سطحی بود که چهار روز بعد گذاشته شد.
+    """
+    raw = w.get("updated")
+    try:
+        d = datetime.fromisoformat(str(raw)) if raw else None
+    except ValueError:
+        d = None
+    if d is None:
+        raise WatchError(f"میدان updated نیست یا نامعتبر است: {raw!r} — زمان اعتبار سطوح "
+                         "معلوم نیست")
+    return d if d.tzinfo else d.replace(tzinfo=UTC)
+
+
 def exit_fraction(w: dict) -> float:
     return float(w.get("exit_fraction", DEFAULT_EXIT_FRACTION))
 
 
 def validate_watch(w: dict) -> None:
     """شکل بخش‌های دفتر موقعیت در watch.json. فایل نیمه‌درست یعنی پایش خاموش — خطای صریح."""
+    if w.get("positions") or w.get("market"):
+        levels_since(w)
     if "exit_fraction" in w:
         f = w["exit_fraction"]
         if not _num(f) or not 0 < f <= 1:
@@ -547,7 +566,12 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
     msgs: list[str] = []
     day, week = now.strftime("%Y-%m-%d"), _week_of(now)
     f = exit_fraction(watch)
+    since = levels_since(watch) if (watch.get("positions") or watch.get("market")) else None
     pos = {p["symbol"]: p for p in h.get("positions", []) if p.get("book") == "position"}
+
+    def before_levels(w) -> bool:
+        """هفته پیش از زمان اعتبار سطوح بسته شده — داوری نمی‌شود."""
+        return _aware(w["closed_at"], "زمان بسته هفتگی") <= since
     wk_cache: dict = {}
     px_cache: dict = {}
 
@@ -590,7 +614,8 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                   f"⚠️ داده ندارم — بسته هفتگی {sym} به لنگر وقت جهانی در دسترس نیست "
                   f"({'؛ '.join(why) or 'بی‌دلیل'}). ابطال{tag} سنجیده نشد؛ اجرای بعد "
                   "دوباره تلاش می‌کند.")
-        elif not state.get(f"wk_{sym}_{w['closed_at']}"):
+        elif (not state.get(f"wk_{sym}_{w['closed_at']}")
+              and not before_levels(w)):
             state[f"wk_{sym}_{w['closed_at']}"] = True
             close, qty = w["close"], P.position_qty(p)
             bkey = f"breach_{sym}"
@@ -662,7 +687,7 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
         if state.get(key):
             continue
         state[key] = True
-        if w["close"] < lvl:
+        if w["close"] < lvl and not before_levels(w):
             msgs.append(f"📉 هشدار بازار — بسته هفتگی {sym} {_n(w['close'])} زیر "
                         f"{m.get('label') or 'سطح'} {_n(lvl)}.\nفقط اطلاع؛ خروج نمی‌سازد. "
                         "سطح در بازبینی هفتگی به‌روز می‌شود.")
@@ -738,7 +763,8 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
         for msg in check_item(it, state):
             notify(msg, quiet=False)
             n += 1
-    scope = watch if h is not None else {"market": watch.get("market")}
+    scope = watch if h is not None else {"market": watch.get("market"),
+                                         "updated": watch.get("updated")}
     for msg in check_positions(scope, h or {"positions": [], "ledger": []}, state, now):
         notify(msg, quiet=False)
         n += 1
