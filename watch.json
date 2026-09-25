@@ -1,23 +1,40 @@
 {
-  "updated": "2026-08-26",
-  "items": [
-    {
-      "symbol": "ZEC",
-      "side": "long",
-      "invalidation": null,
-      "ladder": [552.10, 461.99],
-      "targets": [],
-      "alerts": [701.64, 650.80],
-      "note": "ورود ممنوع در ۸۰۲. سطوح ورود محتمل پایین‌تر"
-    },
-    {
-      "symbol": "BTC",
-      "side": "long",
-      "invalidation": null,
-      "ladder": [],
-      "targets": [],
-      "alerts": [80000, 71000],
-      "note": "۷۱ هزار مرز شکست شش‌هفته‌ای بود"
-    }
-  ]
+  "version": 2,
+  "updated": "2026-09-25",
+  "_قاعده": "سطح ابطال فقط در بازبینی هفتگی عوض می‌شود. گزارش روزانه سطوح فقط اطلاع است و این فایل را تغییر نمی‌دهد. هر سطح این فایل باید با invalidation همان نماد در holdings.json یکی باشد.",
+  "_ابطال": "بسته هفتگی وقت جهانی — هفته دوشنبه تا یکشنبه، بسته در دوشنبه 00:00 UTC. پیام حدود 04:30 تا 05:30 UTC دوشنبه می‌رسد.",
+  "_ورود_دوباره": "همان سطح ابطال: بسته هفتگی بالای آن، تا سهمیه ثبت‌شده در دفتر کل holdings.json.",
+  "_سهم_خروج": "exit_fraction: 1.0 یعنی خروج کامل با نخستین بسته هفتگی زیر سطح (گزینه الف). کمتر از 1 یعنی آن سهم در بسته اول و باقی فقط اگر بسته بعدی هم زیر سطح بود.",
+  "exit_fraction": 1.0,
+  "positions": [
+    {"symbol": "SOL", "invalidation": 96.7108, "touches": 4, "warnings": [119.53]},
+    {"symbol": "ETH", "invalidation": 2380.5606, "touches": 7, "warnings": [2615.52]},
+    {"symbol": "BNB", "invalidation": 702.3872, "touches": 3, "warnings": [736.42]},
+    {"symbol": "AAVE", "invalidation": 117.9002, "touches": 4, "warnings": [147.74]},
+    {"symbol": "LINK", "invalidation": 11.8996, "touches": 7, "warnings": [13.66]},
+    {"symbol": "SUI", "invalidation": 0.8890, "touches": 7, "warnings": [1.007]},
+    {"symbol": "ONDO", "invalidation": 0.4457, "touches": 3, "label": "سطح ضعیف", "warnings": [],
+     "note": "در بازبینی هفتگی دوباره سنجیده شود"},
+    {"symbol": "TAO", "invalidation": 247.4593, "touches": 7, "warnings": [295.35]}
+  ],
+  "market": [
+    {"symbol": "BTC", "weekly_close_below": 78822.35, "label": "میانگین ساده ۵۰ هفته",
+     "basis": "OKX 1Wutc، 50 بسته هفتگی تا هفته‌ای که 2026-09-21 بسته شد",
+     "note": "فقط هشدار بازار. در بازبینی هفتگی به‌روز می‌شود"}
+  ],
+  "reserve_plan": {
+    "created": "2026-09-25T16:00:00+00:00",
+    "deadline": "2026-10-05T00:00:00+00:00",
+    "account": "LBank",
+    "note": "انحراف آگاهانه از قاعده ترتیب فروش — رویداد ۳۶. هدف قفل است و در بازبینی هفتگی سنجیده می‌شود. پله سوم SOL زیر مقاومت 131.81.",
+    "steps": [
+      {"symbol": "ETH", "qty": 0.0472, "price": null},
+      {"symbol": "ETH", "qty": 0.0472, "price": 2790},
+      {"symbol": "ETH", "qty": 0.0472, "price": 2940},
+      {"symbol": "SOL", "qty": 0.749, "price": null},
+      {"symbol": "SOL", "qty": 0.749, "price": 125.5},
+      {"symbol": "SOL", "qty": 0.749, "price": 131.5}
+    ]
+  },
+  "items": []
 }
