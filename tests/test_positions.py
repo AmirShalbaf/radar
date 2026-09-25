@@ -472,8 +472,10 @@ def files(tmp_path):
 
 
 def _run(files, *args) -> int:
+    """همه مسیرها صریح و موقت — دفتر هزینه فرصت واقعی هرگز لمس نشود."""
     hp, jp = files
-    return P.main(["--holdings", str(hp), "--journal", str(jp), *args])
+    return P.main(["--holdings", str(hp), "--journal", str(jp),
+                   "--optcost", str(hp.parent / "optcost.json"), *args])
 
 
 def _read(p) -> dict:
