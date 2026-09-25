@@ -597,8 +597,8 @@ def _verdict(r: dict) -> str:
     if r.get("dust"):
         return "ناچیز"
     since = P.level_since(p)
-    fresh = (inv is not None and wk is not None and since is not None
-             and datetime.fromisoformat(wk["closed_at"]) <= since)
+    # تنها منبع مرز: radar_positions.judged — اکیداً بعد از مهر سطح
+    fresh = inv is not None and wk is not None and not P.judged(wk["closed_at"], since)
     if inv is not None and wk is not None and not fresh and wk["close"] < inv:
         return "⛔ خروج ۱۰۰٪ — بسته هفتگی زیر ابطال"
     if r["strikes"] >= 4:
@@ -630,7 +630,8 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
                  regime_warnings: list[str] | None = None,
                  val: dict | None = None, heat: dict | None = None,
                  reentry: list[dict] | None = None,
-                 tband: dict | None = None, tband_note: str = "") -> str:
+                 tband: dict | None = None, tband_note: str = "",
+                 level_notes: list[str] | None = None) -> str:
     """
     گزارش دو دفتر — تصمیم کاربر، ۲۵ سپتامبر ۲۰۲۶.
 
@@ -643,9 +644,11 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     می‌گیرد و هیچ باند جانشینی جا زده نمی‌شود. baseline یعنی این دور پس از
     تغییر مبنای امتیاز فقط خط پایه ثبت کرد. regime_warnings کنار رژیم دیده
     می‌شوند: بالای گزارش و در سطر «هشدار رژیم». tband باند مؤثر دفتر
-    معامله با هیسترزیس ک۳۲ است؛ غایب باشد، باند خام امروز.
+    معامله با هیسترزیس ک۳۲ است؛ غایب باشد، باند خام امروز. level_notes
+    سطرهای هم‌خوانی سطح ابطال با watch.json است، بالای گزارش.
     """
     regime_warnings = regime_warnings or []
+    level_notes = level_notes or []
     if tband is None:
         tband = reg
     val = val or {"total": 0.0, "stable_usd": 0.0, "incomplete": False, "missing": []}
@@ -661,6 +664,10 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     W(f"تاریخ: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}")
     W("=" * 66)
     W("")
+    for n in level_notes:
+        W(n)
+    if level_notes:
+        W("")
     if reg is None:
         W(f"⛔ **{REGIME_STALE}.** {regime_note}.")
         W("هر سطر وابسته به رژیم در این گزارش عدد ندارد. مقدار پیش‌فرض جا زده نشده است.")
@@ -962,9 +969,36 @@ def sample_holdings() -> dict:
             "ledger": []}
 
 
+def level_check(h: dict, watch_path: str) -> tuple[list[str], bool]:
+    """
+    هم‌خوانی سطح و مهر ابطال با watch.json — هر دو فایل آن را تکرار می‌کنند.
+    خروجی: سطرهای بالای گزارش، و اینکه خطاست یا نه. فایل غایب خطا نیست ولی
+    بی‌صدا هم نیست؛ فایل ناخوانا خطاست.
+    """
+    if not os.path.exists(watch_path):
+        return [f"⚠️ {os.path.basename(watch_path)} نیست — هم‌خوانی سطح ابطال با پایشگر "
+                "سنجیده نشد."], False
+    try:
+        with open(watch_path, encoding="utf-8") as f:
+            watch = json.load(f)
+        if not isinstance(watch, dict):
+            raise ValueError("شیء JSON نیست")
+    except (OSError, ValueError) as exc:
+        return [f"⛔ {os.path.basename(watch_path)} خوانا نیست ({type(exc).__name__}) — "
+                "هم‌خوانی سطح ابطال سنجیده نشد."], True
+    bad = P.level_mismatches(h, watch)
+    if not bad:
+        return [], False
+    return (["⛔ **ناهمخوانی سطح ابطال میان holdings.json و watch.json.** سبد با "
+             "holdings.json داوری می‌کند و پایشگر با محافظه‌کارانه‌تر؛ تا یکی شوند، هر دو "
+             "خطا می‌دهند:"] + [f"- {b}" for b in bad]), True
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=f"بازبینی سبد و موتور خروج — رادار {fa(VERSION)}")
     ap.add_argument("--holdings", default="holdings.json")
+    ap.add_argument("--watch", default="watch.json",
+                    help="برای هم‌خوانی سطح و مهر ابطال با پایشگر")
     ap.add_argument("--journal", default=None, help="پیش‌فرض radar_journal.json")
     # پیش‌فرض خالی است، نه عدد: پیش از این 0.0 بود و اجرای بی‌کلید بی‌صدا
     # «سازنده» می‌گرفت
@@ -990,6 +1024,9 @@ def main() -> int:
     except P.PositionsError as exc:
         print(f"⛔ {exc}", file=sys.stderr)
         return 2
+    level_notes, level_error = level_check(h, a.watch)
+    for n in level_notes:
+        print(n, file=sys.stderr)
 
     if requests is None or pd is None:
         print("کتابخانه requests یا pandas نصب نیست: pip install requests pandas")
@@ -1083,13 +1120,14 @@ def main() -> int:
     save_state(state)
     txt = build_report(h, rows, reg, cands, info.source, baseline,
                        info.warnings, val=val, heat=heat, reentry=reentry,
-                       tband=tband, tband_note=tband_note)
+                       tband=tband, tband_note=tband_note, level_notes=level_notes)
     if a.out:
         with open(a.out, "w", encoding="utf-8") as f:
             f.write(txt)
         print(f"\nذخیره شد در {a.out}")
     print("\n" + txt)
-    return 0
+    # گزارش نوشته شد، ولی ناهمخوانی خطای بلند است: گردش‌کار ::error:: می‌دهد
+    return 2 if level_error else 0
 
 
 if __name__ == "__main__":

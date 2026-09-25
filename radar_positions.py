@@ -143,18 +143,60 @@ def age_days(h: dict, now: datetime | None = None) -> float:
 
 def level_since(p: dict) -> datetime | None:
     """
-    زمان اعتبار سطح ابطال پوزیشن: میدان اختیاری invalidation_since. تاریخ خالی
-    یعنی ۰۰:۰۰ وقت جهانی. هفته‌ای که تا این لحظه بسته شده با این سطح داوری
-    نمی‌شود. غایب یعنی None: سطح از قبل معتبر بوده — رفتار پیشین.
+    زمان اعتبار سطح ابطال پوزیشن: میدان اختیاری invalidation_since، مهر کامل
+    با منطقه زمانی. فقط تاریخ خطاست — تصمیم کاربر، ۲۶ سپتامبر ۲۰۲۶. غایب
+    یعنی None: سطح از قبل معتبر بوده — رفتار پیشین.
     """
     raw = p.get("invalidation_since")
     if raw is None:
         return None
-    try:
-        d = datetime.fromisoformat(str(raw))
-    except ValueError as exc:
-        raise PositionsError(f"{p.get('symbol')}: invalidation_since نامعتبر {raw!r}") from exc
-    return d if d.tzinfo else d.replace(tzinfo=UTC)
+    return _ts(raw, f"{p.get('symbol')}: invalidation_since — مهر کامل با منطقه زمانی لازم است")
+
+
+def judged(closed_at, since: datetime | None) -> bool:
+    """
+    آیا بسته هفتگی با سطحی که از since معتبر است داوری می‌شود؟ فقط اگر زمان
+    بسته‌شدن اکیداً بعد از since باشد. سطحی که دقیقاً در لحظه بسته‌شدن ثبت
+    شده، آن بسته را ندیده — داوری نمی‌کند. تنها منبع: پایشگر و سبد هر دو.
+    """
+    if since is None:
+        return True
+    t = closed_at if isinstance(closed_at, datetime) else _ts(closed_at, "زمان بسته هفتگی")
+    return t > since
+
+
+def level_mismatches(h: dict, watch: dict) -> list[str]:
+    """
+    سطح و مهر ابطال در holdings.json و watch.json تکرار شده‌اند. هر ناهمخوانی
+    یک سطر خوانا؛ فهرست خالی یعنی یکی‌اند. پایشگر و سبد هر دو خطای بلند می‌دهند.
+    """
+    out: list[str] = []
+    pos = {p["symbol"]: p for p in h.get("positions", []) if p.get("book") == "position"}
+    seen = set()
+    for it in watch.get("positions") or []:
+        sym = str(it.get("symbol", "")).upper()
+        seen.add(sym)
+        p = pos.get(sym)
+        if p is None:
+            out.append(f"{sym} در watch.json هست ولی در دفتر موقعیت holdings.json نیست")
+            continue
+        wl, hl = it.get("invalidation"), p.get("invalidation")
+        if not (_num(wl) and _num(hl) and math.isclose(wl, hl, rel_tol=1e-9)):
+            out.append(f"{sym}: سطح ابطال watch.json {wl}، holdings.json {hl}")
+        try:
+            ws = _ts(it.get("invalidation_since"), f"{sym}: مهر watch.json")
+            hs = level_since(p)
+        except PositionsError as exc:
+            out.append(str(exc))
+            continue
+        if hs is None or ws != hs:
+            out.append(f"{sym}: مهر سطح watch.json {it.get('invalidation_since')}، "
+                       f"holdings.json {p.get('invalidation_since')}")
+    for sym, p in pos.items():
+        if p.get("invalidation") is not None and sym not in seen:
+            out.append(f"{sym} در holdings.json سطح ابطال دارد ولی در watch.json نیست — "
+                       "پایش نمی‌شود")
+    return out
 
 
 def _check_shape(h) -> None:

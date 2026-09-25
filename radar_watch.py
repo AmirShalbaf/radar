@@ -471,21 +471,7 @@ def _aware(raw, what: str) -> datetime:
     return d
 
 
-def levels_since(w: dict) -> datetime:
-    """
-    سطوح از این لحظه معتبرند: میدان updated، تاریخ خالی یعنی ۰۰:۰۰ وقت جهانی.
-    هفته‌ای که پیش از آن بسته شده با این سطوح سنجیده نمی‌شود — یافته پیش‌نمایش
-    ۲۵ سپتامبر: بسته ONDO تا ۲۱ سپتامبر زیر سطحی بود که چهار روز بعد گذاشته شد.
-    """
-    raw = w.get("updated")
-    try:
-        d = datetime.fromisoformat(str(raw)) if raw else None
-    except ValueError:
-        d = None
-    if d is None:
-        raise WatchError(f"میدان updated نیست یا نامعتبر است: {raw!r} — زمان اعتبار سطوح "
-                         "معلوم نیست")
-    return d if d.tzinfo else d.replace(tzinfo=UTC)
+FULL = "مهر کامل با منطقه زمانی لازم است"
 
 
 def exit_fraction(w: dict) -> float:
@@ -493,9 +479,13 @@ def exit_fraction(w: dict) -> float:
 
 
 def validate_watch(w: dict) -> None:
-    """شکل بخش‌های دفتر موقعیت در watch.json. فایل نیمه‌درست یعنی پایش خاموش — خطای صریح."""
-    if w.get("positions") or w.get("market"):
-        levels_since(w)
+    """
+    شکل بخش‌های دفتر موقعیت در watch.json. فایل نیمه‌درست یعنی پایش خاموش —
+    خطای صریح. نسخه ۲: updated و مهر هر سطح، مهر کامل با منطقه زمانی؛ فقط
+    تاریخ خطاست. updated فقط برای هشدار کهنگی است، نه برای داوری.
+    """
+    if w.get("version") == 2:
+        _aware(w.get("updated"), f"updated — {FULL}")
     if "exit_fraction" in w:
         f = w["exit_fraction"]
         if not _num(f) or not 0 < f <= 1:
@@ -506,6 +496,7 @@ def validate_watch(w: dict) -> None:
             raise WatchError(f"{where}: نماد نیست")
         if not _num(p.get("invalidation")) or p["invalidation"] <= 0:
             raise WatchError(f"{where} ({p['symbol']}): سطح ابطال عدد مثبت نیست")
+        _aware(p.get("invalidation_since"), f"{where} ({p['symbol']}): invalidation_since — {FULL}")
         ws = p.get("warnings", [])
         if not isinstance(ws, list) or not all(_num(x) and x > 0 for x in ws):
             raise WatchError(f"{where} ({p['symbol']}): سطوح هشدار نامعتبر")
@@ -513,6 +504,7 @@ def validate_watch(w: dict) -> None:
         if (not isinstance(m, dict) or not isinstance(m.get("symbol"), str)
                 or not _num(m.get("weekly_close_below"))):
             raise WatchError(f"market ردیف {i}: نماد یا weekly_close_below نامعتبر")
+        _aware(m.get("since"), f"market ردیف {i}: since — {FULL}")
     rp = w.get("reserve_plan")
     if rp is not None:
         _aware(rp.get("created"), "reserve_plan.created")
@@ -566,12 +558,14 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
     msgs: list[str] = []
     day, week = now.strftime("%Y-%m-%d"), _week_of(now)
     f = exit_fraction(watch)
-    since = levels_since(watch) if (watch.get("positions") or watch.get("market")) else None
     pos = {p["symbol"]: p for p in h.get("positions", []) if p.get("book") == "position"}
-
-    def before_levels(w) -> bool:
-        """هفته پیش از زمان اعتبار سطوح بسته شده — داوری نمی‌شود."""
-        return _aware(w["closed_at"], "زمان بسته هفتگی") <= since
+    if watch.get("positions"):
+        bad = P.level_mismatches(h, watch)
+        if bad:
+            _once(state, f"mismatch_{day}_{'|'.join(bad)}", msgs,
+                  "⛔ ناهمخوانی سطح ابطال میان watch.json و holdings.json:\n"
+                  + "\n".join(f"- {b}" for b in bad)
+                  + "\nتا یکی شوند، پایشگر با محافظه‌کارانه‌تر می‌سنجد: سطح بالاتر و مهر زودتر.")
     wk_cache: dict = {}
     px_cache: dict = {}
 
@@ -595,16 +589,19 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
         tag = f" ({item['label']})" if item.get("label") else ""
         p = pos.get(sym)
         if p is None:
-            _once(state, f"missing_{sym}_{day}", msgs,
-                  f"⚠️ {sym} در watch.json هست ولی در دفتر موقعیت holdings.json نیست — "
-                  "ابطالش سنجیده نشد.")
-            continue
+            continue                            # در پیام ناهمخوانی بالا آمده
+        since = _aware(item["invalidation_since"], f"{sym}: invalidation_since")
+        # ناهمخوانی: محافظه‌کارانه‌تر — سطح بالاتر زودتر خارج می‌کند، مهر زودتر
+        # بسته بیشتری را داوری می‌کند
         hinv = p.get("invalidation")
-        if not _num(hinv) or not math.isclose(float(hinv), lvl, rel_tol=1e-9):
-            _once(state, f"mismatch_{sym}_{day}", msgs,
-                  f"⚠️ ناهمخوانی سطح ابطال {sym}: watch.json {_n(lvl)}، holdings.json "
-                  f"{hinv}. پایشگر با watch.json می‌سنجد و سبد با holdings.json — "
-                  "در بازبینی هفتگی یکی شوند.")
+        if _num(hinv):
+            lvl = max(lvl, float(hinv))
+        try:
+            hs = P.level_since(p)
+        except P.PositionsError:
+            hs = None
+        if hs is not None:
+            since = min(since, hs)
         if p.get("status") != "open" or P.position_qty(p) <= 0:
             continue
 
@@ -615,7 +612,7 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                   f"({'؛ '.join(why) or 'بی‌دلیل'}). ابطال{tag} سنجیده نشد؛ اجرای بعد "
                   "دوباره تلاش می‌کند.")
         elif (not state.get(f"wk_{sym}_{w['closed_at']}")
-              and not before_levels(w)):
+              and P.judged(w["closed_at"], since)):
             state[f"wk_{sym}_{w['closed_at']}"] = True
             close, qty = w["close"], P.position_qty(p)
             bkey = f"breach_{sym}"
@@ -687,7 +684,7 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
         if state.get(key):
             continue
         state[key] = True
-        if w["close"] < lvl and not before_levels(w):
+        if w["close"] < lvl and P.judged(w["closed_at"], _aware(m["since"], f"{sym}: since")):
             msgs.append(f"📉 هشدار بازار — بسته هفتگی {sym} {_n(w['close'])} زیر "
                         f"{m.get('label') or 'سطح'} {_n(lvl)}.\nفقط اطلاع؛ خروج نمی‌سازد. "
                         "سطح در بازبینی هفتگی به‌روز می‌شود.")
@@ -828,6 +825,10 @@ def main(argv: list[str] | None = None) -> int:
             notify(f"⛔ holdings.json نامعتبر — ابطال دفتر موقعیت و نقشه ذخیره سنجیده "
                    f"نشد: {exc}")
             rc = 2
+        else:
+            # پیامش را check_positions می‌دهد؛ اینجا فقط کد خروج بلند می‌شود
+            if P.level_mismatches(h, watch):
+                rc = 2
     try:
         state = load_json(STATE_FILE, {})
     except WatchError as exc:

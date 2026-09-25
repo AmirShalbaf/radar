@@ -239,7 +239,7 @@ def test_week_closed_before_level_set_is_not_judged(run) -> None:
     یافته پیش‌نمایش ۲۵ سپتامبر: بسته هفتگی ONDO تا ۲۱ سپتامبر زیر سطحی بود که
     ۲۵ سپتامبر گذاشته شد. سبد نباید گذشته‌نگر حکم خروج بدهد.
     """
-    p = _pos("SOL", 6.0, inv=95.0, invalidation_since="2026-09-25")
+    p = _pos("SOL", 6.0, inv=95.0, invalidation_since="2026-09-25T21:34:47+00:00")
     rc, rep = run(_holdings([p]), weekly={"SOL": 90.0})       # بسته 2026-09-21
     row = _row(rep, "SOL")
     assert "زیر ابطال" not in row and "سطح تازه" in row

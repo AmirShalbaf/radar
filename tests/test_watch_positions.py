@@ -29,13 +29,16 @@ WEEK1 = "2026-09-28T00:00:00+00:00"
 WEEK2 = "2026-10-05T00:00:00+00:00"
 
 
+SINCE = "2026-09-26T00:00:00+00:00"      # مهر کامل — بند ۳ ایستگاه آخر
+
+
 def _watch(**over) -> dict:
-    w = {"version": 2, "updated": "2026-09-26", "exit_fraction": 1.0,
-         "positions": [{"symbol": "SOL", "invalidation": 96.71, "touches": 4,
-                        "warnings": [119.53]},
-                       {"symbol": "ONDO", "invalidation": 0.4457, "touches": 3,
-                        "label": "سطح ضعیف", "warnings": []}],
-         "market": [{"symbol": "BTC", "weekly_close_below": 78822.35,
+    w = {"version": 2, "updated": SINCE, "exit_fraction": 1.0,
+         "positions": [{"symbol": "SOL", "invalidation": 96.71, "invalidation_since": SINCE,
+                        "touches": 4, "warnings": [119.53]},
+                       {"symbol": "ONDO", "invalidation": 0.4457, "invalidation_since": SINCE,
+                        "touches": 3, "label": "سطح ضعیف", "warnings": []}],
+         "market": [{"symbol": "BTC", "weekly_close_below": 78822.35, "since": SINCE,
                      "label": "میانگین ساده ۵۰ هفته"}],
          "reserve_plan": {"created": "2026-09-25T16:00:00+00:00",
                           "deadline": "2026-10-05T00:00:00+00:00", "account": "LBank",
@@ -53,8 +56,10 @@ def _h(ledger=None, sol=6.0, sol_status="open") -> dict:
             "cash": [], "ledger": ledger or [],
             "positions": [
                 {"symbol": "SOL", "book": "position", "status": sol_status, "invalidation": 96.71,
+                 "invalidation_since": SINCE,
                  "lots": [{"qty": sol, "account": "LBank", "entry": None}] if sol else []},
                 {"symbol": "ONDO", "book": "position", "status": "open", "invalidation": 0.4457,
+                 "invalidation_since": SINCE,
                  "lots": [{"qty": 100.0, "account": "LBank", "entry": None}]}]}
 
 
@@ -311,9 +316,10 @@ def test_main_invalid_holdings_is_loud(tmp_path, monkeypatch) -> None:
 def test_week_closed_before_level_was_set_is_not_judged() -> None:
     """
     یافته پیش‌نمایش ۲۵ سپتامبر: بسته هفتگی ONDO تا ۲۱ سپتامبر 0.4326 بود،
-    زیر سطحی که ۲۵ سپتامبر گذاشته شد. سطح از هفته پس از updated معتبر است.
+    زیر سطحی که ۲۵ سپتامبر گذاشته شد. سطح از مهر خودش معتبر است — بند ۳
+    ایستگاه آخر: مهر هر سکه، نه updated کل فایل.
     """
-    w, st = _watch(updated="2026-09-25"), {}
+    w, st = _watch(), {}
     old = _wk({"SOL": 90.0, "ONDO": 0.40, "BTC": 70000.0}, closed_at="2026-09-21T00:00:00+00:00")
     assert not [x for x in _run(w, _h(), st, old, now=datetime(2026, 9, 25, 22, tzinfo=UTC))
                 if "ابطال هفتگی" in x or "هشدار بازار" in x]
