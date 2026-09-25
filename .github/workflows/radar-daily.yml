@@ -160,10 +160,13 @@ jobs:
           if [ -f holdings.json ]; then
             if ! SYMS=$(python radar_positions.py --holdings holdings.json symbols 2> /tmp/levels.log); then
               echo "::error::فهرست نمادهای سبد خطا داد — reports/levels-error-$D.md"
-              { echo "# خطای سطوح ساختاری — $D"; echo; echo '```'; tail -c 4000 /tmp/levels.log; echo '```'; }                 > "reports/levels-error-$D.md"
-            elif ! python radar_levels.py --watchlist "$SYMS"                    --out "reports/levels-$D.md" > /tmp/levels.log 2>&1; then
+              { echo "# خطای سطوح ساختاری — $D"; echo; echo '```'
+                tail -c 4000 /tmp/levels.log; echo '```'; } > "reports/levels-error-$D.md"
+            elif ! python radar_levels.py --watchlist "$SYMS" \
+                   --out "reports/levels-$D.md" > /tmp/levels.log 2>&1; then
               echo "::error::سطوح ساختاری خطا داد — reports/levels-error-$D.md"
-              { echo "# خطای سطوح ساختاری — $D"; echo; echo '```'; tail -c 4000 /tmp/levels.log; echo '```'; }                 > "reports/levels-error-$D.md"
+              { echo "# خطای سطوح ساختاری — $D"; echo; echo '```'
+                tail -c 4000 /tmp/levels.log; echo '```'; } > "reports/levels-error-$D.md"
             fi
           else
             echo "holdings.json نیست — سطوح ساختاری سبد رد شد."
@@ -187,10 +190,21 @@ jobs:
           PYTHONUTF8: "1"
         run: |
           D=$(date -u +%Y-%m-%d)
+          # تازگی داده‌های دستی — بالای خلاصه تا در پیام تلگرام هم بیاید.
+          # بیرون از گروه زیر: پوسته با bash -e اجرا می‌شود و شکست داخل گروه
+          # کل گام را می‌انداخت. خطا بی‌صدا نیست.
+          if ! python radar_watch.py --staleness --holdings holdings.json \
+                 --watch watch.json > /tmp/staleness.md 2> /tmp/staleness.err; then
+            echo "::error::سنجش تازگی داده‌های دستی خطا داد"
+            { echo "## تازگی داده‌های دستی"; echo; echo "⚠️ سنجش تازگی خطا داد:"; echo
+              echo '```'; tail -c 1500 /tmp/staleness.err; echo '```'; } > /tmp/staleness.md
+          fi
           {
             echo "# گزارش رادار — $D"
             echo
             echo "تولیدشده خودکار توسط گردش‌کار گیت‌هاب."
+            echo
+            cat /tmp/staleness.md
             echo
             echo "## فایل‌های امروز"
             echo

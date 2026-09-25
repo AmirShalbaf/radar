@@ -71,6 +71,8 @@ NET_ERRORS = (requests.RequestException,) if requests is not None else ()
 
 UTC = timezone.utc
 FORMAT_VERSION = 2
+# کهنگی holdings.json از میدان updated داخلی — تصمیم کاربر، ۲۵ سپتامبر ۲۰۲۶
+HOLDINGS_STALE_DAYS = 7
 HOLDINGS_FILE = "holdings.json"
 BOOKS = RJ.BOOKS
 ACTIONS = ("trim", "exit", "reenter", "add", "adjust")

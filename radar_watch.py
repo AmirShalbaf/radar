@@ -205,6 +205,58 @@ def stale_warning(path: str, now: datetime | None = None) -> str | None:
             f"سپس میدان updated را به‌روز کن.")
 
 
+def _file_age(path: str, now: datetime) -> tuple[str, float | None, str | None]:
+    """
+    (مهر خوانا، سن به روز، علت خطا) فقط از میدان updated داخلی. بازگشت به
+    زمان تغییر فایل نیست: در رانر گیت‌هاب checkout همه را تازه می‌کند.
+    """
+    if not os.path.exists(path):
+        return "—", None, "فایل نیست"
+    try:
+        with open(path, encoding="utf-8") as f:
+            raw = json.load(f).get("updated")
+    except (OSError, ValueError, AttributeError) as exc:
+        return "—", None, f"فایل خوانا نیست (`{type(exc).__name__}`)"
+    try:
+        d = datetime.fromisoformat(str(raw)) if raw else None
+    except ValueError:
+        d = None
+    if d is None:
+        return "—", None, "میدان updated نیست یا نامعتبر — کهنه فرض شد"
+    d = d if d.tzinfo else d.replace(tzinfo=UTC)          # قالب تاریخ خالی: ۰۰:۰۰ وقت جهانی
+    age = (now - d).total_seconds() / 86_400
+    if age < -1 / 144:                                    # ده دقیقه کجی ساعت
+        return d.strftime("%Y-%m-%d %H:%M UTC"), None, "updated در آینده است — کهنه فرض شد"
+    return d.strftime("%Y-%m-%d %H:%M UTC"), age, None
+
+
+def staleness_report(holdings_path: str, watch_path: str,
+                     now: datetime | None = None) -> tuple[str, bool]:
+    """
+    بخش «تازگی داده‌های دستی» برای LATEST.md و پیام تلگرام روزانه.
+    holdings.json بیش از ۷ روز، watch.json بیش از ۱۴ روز. خروجی دوم: کهنه هست؟
+    """
+    from radar_positions import HOLDINGS_STALE_DAYS
+    now = now or datetime.now(UTC)
+    rows, stale = [], False
+    for path, limit in ((holdings_path, HOLDINGS_STALE_DAYS), (watch_path, STALE_AFTER_DAYS)):
+        stamp, age, err = _file_age(path, now)
+        if err:
+            stale, verdict = True, f"⚠️ {err}"
+        elif age > limit:
+            stale, verdict = True, "⚠️ کهنه — بازبینی و به‌روزرسانی updated لازم است"
+        else:
+            verdict = "✅ تازه"
+        rows.append(f"| {os.path.basename(path)} | {stamp} | "
+                    f"{'—' if age is None else f'{age:.1f}'} | {fa(limit)} | {verdict} |")
+    lines = ["## تازگی داده‌های دستی", "",
+             "| فایل | به‌روزرسانی | سن، روز | آستانه، روز | وضعیت |",
+             "|---|---|---|---|---|", *rows, ""]
+    if stale:
+        lines += ["⚠️ **داده دستی کهنه است.** گزارش سبد و پایشگر روی آن ساخته می‌شوند.", ""]
+    return "\n".join(lines), stale
+
+
 def notify(msg: str, quiet: bool = False) -> None:
     """چاپ + ارسال تلگرام در صورت وجود کلید."""
     if not quiet:
@@ -380,7 +432,7 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
     return n
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(
         description=f"پایشگر زنده سطوح — رادار {fa(VERSION)}")
     ap.add_argument("--watch", default=WATCH_FILE)
@@ -390,7 +442,14 @@ def main() -> int:
     ap.add_argument("--ping", action="store_true",
                     help="پیام آزمایشی به تلگرام و خروج، بدون پایش")
     ap.add_argument("--quiet", action="store_true")
-    a = ap.parse_args()
+    ap.add_argument("--staleness", action="store_true",
+                    help="بخش تازگی holdings.json و watch.json برای گزارش روزانه و خروج")
+    ap.add_argument("--holdings", default="holdings.json")
+    a = ap.parse_args(argv)
+
+    if a.staleness:
+        print(staleness_report(a.holdings, a.watch)[0])
+        return 0
 
     if a.ping:
         return 0 if ping_telegram() else 1
