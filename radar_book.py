@@ -1046,9 +1046,10 @@ def main() -> int:
 
     reentry = []
     for p in h["positions"]:
-        if p["book"] == "position" and p["status"] == "exited":
+        # خارج‌شده، یا باز پس از خروج جزئی با ابطال — هر دو سهمیه دارند
+        if p["book"] == "position":
             st = P.reentry_state(h, p["symbol"])
-            if st is None:
+            if st is None or st["used"] >= st["max_qty"] - P.TOL:
                 continue
             wk, why = P.weekly_close(p["symbol"])
             reentry.append({"symbol": p["symbol"], "state": st, "weekly": wk, "why": why})

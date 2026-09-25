@@ -219,3 +219,16 @@ def test_correlation_and_maxpos_shown(run) -> None:
     rc, rep = run(h, journal=[_jt(f"D-{i}") for i in range(3)])
     sec = rep.split("## ۳")[1].split("## ۴")[0]
     assert "1.50" in sec and "3 از 3" in sec
+
+
+def test_reentry_watch_for_partial_invalidation_exit(run) -> None:
+    """خروج جزئی با ابطال: پوزیشن باز می‌ماند ولی سهمیه ورود دوباره دارد."""
+    ledger = [{"at": datetime.now(UTC).isoformat(), "action": "trim", "symbol": "SOL",
+               "delta": -3.0, "price": 90.0, "level": 95.0, "reason": "invalidation"}]
+    h = _holdings([_pos("SOL", 3.0, inv=95.0), _pos("ETH", 0.5)],
+                  members={"SOL": 6.0, "ETH": 0.5}, ledger=ledger)
+    rc, rep = run(h, weekly={"SOL": 97.0})
+    assert rc == 0
+    line = next(l for l in rep.splitlines() if l.startswith("| SOL") and "95" in l
+                and "ورود دوباره" in l)
+    assert "3" in line

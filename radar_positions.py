@@ -76,7 +76,8 @@ HOLDINGS_STALE_DAYS = 7
 HOLDINGS_FILE = "holdings.json"
 BOOKS = RJ.BOOKS
 ACTIONS = ("trim", "exit", "reenter", "add", "adjust")
-TRIM_REASONS = ("reserve", "rebalance")
+# invalidation: خروج جزئی با ابطال — سهم خروج در watch.json پارامتر است
+TRIM_REASONS = ("reserve", "rebalance", "invalidation")
 ADJUST_MAX = 0.01             # سقف هر ردیف adjust: ۱٪ مقدار نماد
 STABLE_ASSETS = {"USDT", "USDC"}
 STABLE_PRICE = 1.0            # استیبل با قیمت ثابت ۱ دلار ارزش‌گذاری می‌شود
@@ -214,6 +215,18 @@ def _check_trades(h: dict, jidx: dict) -> None:
             raise PositionsError(f"{sym}: قیمت خرید هر لات دفتر معامله لازم است")
 
 
+def _allow(reentry: dict, sym: str, level: float, qty: float) -> None:
+    """
+    سهمیه ورود دوباره. خروج جزئی و کامل با همان سطح جمع می‌شوند؛ سطح
+    تازه سهمیه تازه می‌سازد.
+    """
+    st = reentry.get(sym)
+    if st is not None and _close(st["level"], level):
+        st["max_qty"] += qty
+    else:
+        reentry[sym] = {"level": level, "max_qty": qty, "used": 0.0}
+
+
 def _replay(h: dict, jidx: dict, check_journal: bool = True) -> dict:
     """
     دفتر کل را به ترتیب بازپخش می‌کند و قاعده هر ردیف را می‌سنجد.
@@ -237,13 +250,17 @@ def _replay(h: dict, jidx: dict, check_journal: bool = True) -> dict:
                 raise PositionsError(f"{where}: دلیل باید یکی از {TRIM_REASONS} باشد")
             if not (d < 0 and -d <= cur + TOL) or not _num(r.get("price")):
                 raise PositionsError(f"{where}: کاهش نامعتبر یا بی‌قیمت")
+            if r["reason"] == "invalidation":
+                if not _num(r.get("level")):
+                    raise PositionsError(f"{where}: خروج جزئی با ابطال سطح لازم دارد")
+                _allow(reentry, sym, float(r["level"]), -d)
         elif act == "exit":
             if not _close(-d, cur) or cur <= TOL:
                 raise PositionsError(f"{where}: خروج با ابطال باید کامل باشد "
                                      f"(مقدار {cur}، delta {d})")
             if not _num(r.get("level")) or not _num(r.get("price")):
                 raise PositionsError(f"{where}: سطح یا قیمت خروج نیست")
-            reentry[sym] = {"level": float(r["level"]), "max_qty": cur, "used": 0.0}
+            _allow(reentry, sym, float(r["level"]), cur)
         elif act == "reenter":
             st = reentry.get(sym)
             if st is None:
@@ -500,8 +517,13 @@ def _apply(h: dict, a, journal: dict) -> dict:
     if a.cmd == "trim":
         if p is None or p["status"] != "open":
             raise PositionsError(f"{sym} در دفتر موقعیت باز نیست")
+        if a.reason == "invalidation" and a.level is None:
+            raise PositionsError("خروج جزئی با ابطال: --level لازم است — سطحی که بسته "
+                                 "هفتگی زیرش بسته شد")
         _take(p, a.qty, a.account)
         row.update(delta=-a.qty, price=a.price, reason=a.reason)
+        if a.reason == "invalidation":
+            row["level"] = a.level
     elif a.cmd == "exit":
         if p is None or p["status"] != "open":
             raise PositionsError(f"{sym} در دفتر موقعیت باز نیست")
@@ -572,6 +594,8 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--price", type=float, required=True)
         if name == "trim":
             p.add_argument("--reason", choices=TRIM_REASONS, required=True)
+            p.add_argument("--level", type=float, default=None,
+                           help="فقط با --reason invalidation: سطح ابطال نقض‌شده")
         if name == "exit":
             p.add_argument("--level", type=float, required=True,
                            help="سطح ابطال ساختاری که با بسته هفتگی نقض شد")
