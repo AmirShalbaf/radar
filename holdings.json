@@ -1,15 +1,45 @@
 {
-  "balance_total": 2070,
-  "stable_usd": 129,
+  "version": 2,
+  "updated": "2026-09-25T05:15:00+00:00",
+  "source": "اسکرین‌شات‌های ۲۵ سپتامبر ۲۰۲۶، حدود ۰۵:۱۵ UTC — LBank و صرافی دوم",
+  "frozen": {
+    "date": "2026-09-25",
+    "members": {
+      "SOL": 6.38005369,
+      "ETH": 0.40158056,
+      "BNB": 0.3296489,
+      "AAVE": 1.04895,
+      "LINK": 11.09889,
+      "SUI": 81.6183,
+      "ONDO": 115.43866,
+      "TAO": 0.153892,
+      "TRX": 0.6704
+    }
+  },
+  "cash": [
+    {"asset": "USDT", "qty": 0.1010102, "account": "LBank"},
+    {"asset": "USDT", "qty": 3.17443595, "account": "صرافی دوم"}
+  ],
   "positions": [
-    {"symbol":"SOL","size_usd":443,"entry":158.38,"invalidation":72.79,"side":"long","spot":true},
-    {"symbol":"ETH","size_usd":386,"entry":3119.59,"invalidation":1715.37,"side":"long","spot":true},
-    {"symbol":"BNB","size_usd":334,"entry":748.97,"invalidation":581.68,"side":"long","spot":true},
-    {"symbol":"TAO","size_usd":200,"entry":447.96,"invalidation":190.60,"side":"long","spot":true},
-    {"symbol":"HYPE","size_usd":188,"entry":32.72,"invalidation":58.07,"side":"long","spot":true},
-    {"symbol":"SUI","size_usd":121,"entry":1.8600,"invalidation":0.6731,"side":"long","spot":true},
-    {"symbol":"XRP","size_usd":116,"entry":2.5855,"invalidation":1.0617,"side":"long","spot":true},
-    {"symbol":"AAVE","size_usd":95,"entry":262.24,"invalidation":88.64,"side":"long","spot":true},
-    {"symbol":"ONDO","size_usd":58,"entry":0.8255,"invalidation":null,"side":"long","spot":true}
-  ]
+    {"symbol": "SOL", "book": "position", "status": "open", "invalidation": null,
+     "lots": [{"qty": 6.38005369, "account": "LBank", "entry": null}]},
+    {"symbol": "ETH", "book": "position", "status": "open", "invalidation": null,
+     "lots": [{"qty": 0.242657, "account": "LBank", "entry": null},
+              {"qty": 0.15892356, "account": "صرافی دوم", "entry": 2641.83}]},
+    {"symbol": "BNB", "book": "position", "status": "open", "invalidation": null,
+     "lots": [{"qty": 0.3296489, "account": "LBank", "entry": null}]},
+    {"symbol": "AAVE", "book": "position", "status": "open", "invalidation": null,
+     "lots": [{"qty": 1.04895, "account": "LBank", "entry": null}]},
+    {"symbol": "LINK", "book": "position", "status": "open", "invalidation": null,
+     "lots": [{"qty": 11.09889, "account": "LBank", "entry": null}]},
+    {"symbol": "SUI", "book": "position", "status": "open", "invalidation": null,
+     "lots": [{"qty": 81.6183, "account": "LBank", "entry": null}]},
+    {"symbol": "ONDO", "book": "position", "status": "open", "invalidation": null,
+     "lots": [{"qty": 115.43866, "account": "LBank", "entry": null}]},
+    {"symbol": "TAO", "book": "position", "status": "open", "invalidation": null,
+     "lots": [{"qty": 0.153892, "account": "LBank", "entry": null}]},
+    {"symbol": "TRX", "book": "position", "status": "open", "invalidation": null,
+     "lots": [{"qty": 0.6704, "account": "LBank", "entry": null}]}
+  ],
+  "ledger": []
 }
