@@ -201,13 +201,18 @@ def cluster_levels(pivots: list, tol: float, n_bars: int,
 
     tol معمولاً کسری از ATR است — دو برخورد در فاصله کمتر از نصف ATR
     عملاً یک سطح‌اند.
+
+    خوشه محدود — نشست ۳ رادار ۷: همه اعضا در بازه‌ای به پهنای tol از
+    کوچک‌ترین عضو. پیش از این زنجیره‌ای بود: هر نقطه به نقطه قبلی وصل
+    می‌شد، بی‌سقف برای کل خوشه. بی‌ان‌بی ۲۵ سپتامبر «۵۸ برخورد» در ناحیه‌ای
+    به پهنای ۳۹.۴٪ گرفت — ناحیه، نه سطح.
     """
     if not pivots:
         return []
     pts = sorted(pivots, key=lambda x: x[1])
     clusters, cur = [], [pts[0]]
     for p in pts[1:]:
-        if abs(p[1] - cur[-1][1]) <= tol:
+        if p[1] - cur[0][1] <= tol:
             cur.append(p)
         else:
             clusters.append(cur)
