@@ -65,16 +65,70 @@ MIN_N_RECORDS = 15
 MIN_N_SESSIONS = 20
 
 
-def load() -> dict:
-    if os.path.exists(FILE):
-        with open(FILE, encoding="utf-8") as f:
-            return json.load(f)
-    return {"rejects": [], "sessions": []}
+def load(path: str | None = None) -> dict:
+    path = path or FILE
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            d = json.load(f)
+    else:
+        d = {"rejects": [], "sessions": []}
+    # خروج‌ها و کاهش‌های دفتر موقعیت — از نشست ۳. فایل قدیمی بی‌این فهرست معتبر است.
+    d.setdefault("exits", [])
+    return d
 
 
-def save(d: dict) -> None:
-    with open(FILE, "w", encoding="utf-8") as f:
+def save(d: dict, path: str | None = None) -> None:
+    with open(path or FILE, "w", encoding="utf-8") as f:
         json.dump(d, f, ensure_ascii=False, indent=2)
+
+
+# ── خروج‌ها و کاهش‌های دفتر موقعیت ──
+#
+# تصمیم کاربر، ۲۵ سپتامبر ۲۰۲۶: هر خروج با ابطال و هر کاهش برای ذخیره یا
+# بازتوازن اینجا ثبت می‌شود. پیگیری ۱۴ و ۳۰ روزه می‌گوید فروش کمک کرد یا نه:
+#     تغییر = ۱۰۰ × (قیمت بعدی ÷ قیمت فروش − ۱)
+#     دلار جلوگیری‌شده = مقدار × (قیمت فروش − قیمت بعدی) — مثبت یعنی کمک کرد
+# هزینه ساختن ذخیره هم همین‌جا دیده می‌شود.
+EXIT_HORIZONS = (14, 30)
+
+
+def add_exit(d: dict, *, symbol: str, action: str, qty: float, price: float,
+             reason: str, level: float | None = None) -> dict:
+    """رکورد خروج یا کاهش؛ radar_positions.py پس از ثبت دفتر کل صدایش می‌زند."""
+    rid = max([r["id"] for r in d["exits"]], default=0) + 1
+    rec = {"id": rid, "date": now(), "at": datetime.now(UTC).isoformat(),
+           "book": "position", "symbol": symbol.upper(), "action": action,
+           "reason": reason, "qty": qty, "price": price, "level": level}
+    for h in EXIT_HORIZONS:
+        rec.update({f"p{h}": None, f"chg{h}": None, f"saved{h}": None})
+    d["exits"].append(rec)
+    return rec
+
+
+def _followup_exits(d: dict) -> int:
+    updated = 0
+    for r in d["exits"]:
+        if r.get(f"p{EXIT_HORIZONS[-1]}") is not None:
+            continue
+        start = datetime.strptime(r["date"], "%Y-%m-%d").replace(tzinfo=UTC)
+        age = (datetime.now(UTC) - start).days
+        due = [h for h in EXIT_HORIZONS if age >= h and r[f"p{h}"] is None]
+        if not due:
+            continue
+        bars = candles_since(r["symbol"], max(age + 2, 5))
+        if not bars:
+            print(f"  {r['symbol']}: داده در دسترس نیست — خروج {r['id']} پیگیری نشد")
+            continue
+        for h in due:
+            tgt = int((start + timedelta(days=h)).timestamp() * 1000)
+            px = min(bars, key=lambda b: abs(b["ts"] - tgt))["c"]
+            r[f"p{h}"] = px
+            r[f"chg{h}"] = 100 * (px / r["price"] - 1)
+            r[f"saved{h}"] = r["qty"] * (r["price"] - px)
+        updated += 1
+        print(f"  {r['symbol']}: خروج {r['id']} — "
+              + "، ".join(f"{h} روز {r[f'chg{h}']:+.1f}٪" for h in due))
+    return updated
 
 
 def now() -> str:
@@ -203,6 +257,7 @@ def cmd_followup(a) -> None:
         r["r_lost"], r["r_note"] = rl, note
         updated += 1
         print(f"  {r['symbol']}: R ازدست‌رفته {rl} — {note}")
+    updated += _followup_exits(d)
     save(d)
     print(f"\n{updated} رکورد به‌روز شد.")
 
@@ -314,7 +369,35 @@ def cmd_report(a) -> None:
                 W("   ولی R متوسطش صفر یا منفی است — یعنی محافظت کرده. فعلاً نگهش دار.")
     W("")
 
-    W("## ۴ — یادآوری")
+    W("## ۴ — خروج و کاهش دفتر موقعیت")
+    W("")
+    ex = d.get("exits", [])
+    if not ex:
+        W("هنوز هیچ خروج یا کاهشی ثبت نشده.")
+    else:
+        W("«کمک کرد» یعنی قیمت پس از فروش پایین‌تر بوده. دلار جلوگیری‌شده = "
+          "مقدار × (قیمت فروش − قیمت بعدی)؛ مثبت یعنی فروش ضرر را کم کرد.")
+        W("")
+        W("| # | تاریخ | نماد | نوع | دلیل | قیمت فروش | ۱۴ روز | ۳۰ روز | جلوگیری‌شده ۳۰ روز |")
+        W("|---|---|---|---|---|---|---|---|---|")
+        for r in ex:
+            c14 = f"{r['chg14']:+.1f}٪" if r.get("chg14") is not None else "در انتظار"
+            c30 = f"{r['chg30']:+.1f}٪" if r.get("chg30") is not None else "در انتظار"
+            s30 = f"{r['saved30']:+,.2f}" if r.get("saved30") is not None else "—"
+            W(f"| {r['id']} | {r['date']} | {r['symbol']} | {r['action']} | {r['reason']} | "
+              f"{r['price']:,.4f} | {c14} | {c30} | {s30} |")
+        W("")
+        for kind in ("exit", "trim"):
+            done = [r for r in ex if r["action"] == kind and r.get("saved30") is not None]
+            if done:
+                helped = sum(1 for r in done if r["saved30"] > 0)
+                W(f"- **{kind}:** {len(done)} رکورد پیگیری‌شده، {helped} کمک کرد؛ "
+                  f"جمع جلوگیری‌شده {sum(r['saved30'] for r in done):+,.2f} دلار")
+            else:
+                W(f"- **{kind}:** هنوز رکورد پیگیری‌شده ۳۰ روزه‌ای نیست")
+    W("")
+
+    W("## ۵ — یادآوری")
     W("")
     W("سه فرضیه رقیب برای «رادار درست عمل نمی‌کند»:")
     W("")

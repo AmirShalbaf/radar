@@ -59,6 +59,7 @@ import tempfile
 from datetime import datetime, timedelta, timezone
 
 import radar_journal as RJ
+import radar_optcost as RO
 
 try:
     import requests
@@ -555,6 +556,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="دو دفتر و دفتر کل تغییرات — رادار ۷")
     ap.add_argument("--holdings", default=HOLDINGS_FILE)
     ap.add_argument("--journal", default=None, help="پیش‌فرض radar_journal.json")
+    ap.add_argument("--optcost", default=None, help="پیش‌فرض radar_optcost.json")
     sp = ap.add_subparsers(dest="cmd", required=True)
     sp.add_parser("validate", help="اعتبارسنجی بدون تغییر")
     for name in ("trim", "exit", "reenter", "add", "adjust"):
@@ -594,6 +596,20 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     save(a.holdings, h2)
     print(f"✅ ثبت شد: {row['action']} {row['symbol']} delta {row['delta']}")
+    # هر خروج با ابطال و هر کاهش در دفتر هزینه فرصت، با پیگیری ۱۴ و ۳۰ روزه
+    if a.cmd in ("trim", "exit"):
+        try:
+            d = RO.load(a.optcost)
+            rec = RO.add_exit(d, symbol=row["symbol"], action=a.cmd, qty=-row["delta"],
+                              price=row["price"], reason=row["reason"],
+                              level=row.get("level"))
+            RO.save(d, a.optcost)
+        except (OSError, ValueError) as exc:
+            print(f"⛔ ردیف دفتر کل ثبت شد، ولی دفتر هزینه فرصت نه ({type(exc).__name__}: "
+                  f"{exc}). دستی ثبت کن تا پیگیری ۱۴ و ۳۰ روزه از دست نرود.",
+                  file=sys.stderr)
+            return 3
+        print(f"   دفتر هزینه فرصت: رکورد خروج {rec['id']} — پیگیری ۱۴ و ۳۰ روزه")
     return 0
 
 
