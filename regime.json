@@ -1,0 +1,188 @@
+{
+  "score": -0.03385059327987714,
+  "generated_at": "2026-09-25T04:55:48.262889+00:00",
+  "raw": -0.02708047462390171,
+  "norm": -0.03385059327987714,
+  "coverage": 0.7999999999999999,
+  "low_coverage": false,
+  "band": {
+    "name": "محتاط",
+    "cap": 4.0,
+    "mult": 0.5,
+    "maxpos": 3,
+    "stable": 25
+  },
+  "columns": {
+    "liquidity": {
+      "label": "نقدینگی جهانی",
+      "weight": 0.4,
+      "score": -0.7780368169974723,
+      "coverage": 1.0
+    },
+    "cycle": {
+      "label": "چرخه بیت‌کوین",
+      "weight": 0.35,
+      "score": 0.5156565115594713,
+      "coverage": 0.6666666666666666
+    },
+    "appetite": {
+      "label": "اشتهای ریسک",
+      "weight": 0.25,
+      "score": 0.9828863968672634,
+      "coverage": 0.6666666666666666
+    }
+  },
+  "inputs": [
+    {
+      "key": "money_price",
+      "column": "liquidity",
+      "label": "قیمت پول",
+      "weight": 0.1,
+      "value": null,
+      "score": -1.7399999999999998,
+      "ts": "2026-09-23T00:00:00+00:00",
+      "max_age_days": 7,
+      "reason": "",
+      "detail": "مسیر نرخ 0.850 ← امتیاز -1.70؛ بازده واقعی 2.780 ← امتیاز -1.78"
+    },
+    {
+      "key": "curve",
+      "column": "liquidity",
+      "label": "شیب منحنی ۳۰ منهای ۲",
+      "weight": 0.1,
+      "value": 0.5500000000000007,
+      "score": 0.0,
+      "ts": "2026-09-23T00:00:00+00:00",
+      "max_age_days": 7,
+      "reason": "",
+      "detail": ""
+    },
+    {
+      "key": "net_liq",
+      "column": "liquidity",
+      "label": "روند ۳۰ روزه نقدینگی خالص",
+      "weight": 0.1,
+      "value": -0.3745371379160667,
+      "score": -0.3745371379160667,
+      "ts": "2026-09-23T00:00:00+00:00",
+      "max_age_days": 7,
+      "reason": "",
+      "detail": ""
+    },
+    {
+      "key": "dollar",
+      "column": "liquidity",
+      "label": "روند ۳۰ روزه شاخص دلار",
+      "weight": 0.1,
+      "value": 0.9976101300738227,
+      "score": -0.9976101300738227,
+      "ts": "2026-09-18T00:00:00+00:00",
+      "max_age_days": 14,
+      "reason": "",
+      "detail": ""
+    },
+    {
+      "key": "ma50w",
+      "column": "cycle",
+      "label": "فاصله از میانگین ساده پنجاه‌هفته",
+      "weight": 0.11666666666666665,
+      "value": 6.790875988474077,
+      "score": 0.6790875988474077,
+      "ts": "2026-09-20T16:00:00+00:00",
+      "max_age_days": 14,
+      "reason": "",
+      "detail": "قیمت 84,174.70، میانگین 78,822.00"
+    },
+    {
+      "key": "dom_ex",
+      "column": "cycle",
+      "label": "تغییر ۳۰ روزه تسلط بدون استیبل",
+      "weight": 0.11666666666666665,
+      "value": null,
+      "score": null,
+      "ts": "2026-09-25T00:00:00+00:00",
+      "max_age_days": 7,
+      "reason": "تاریخچه ۳۰ روزه کافی نیست (0 روز ثبت شده)",
+      "detail": ""
+    },
+    {
+      "key": "ethbtc",
+      "column": "cycle",
+      "label": "تغییر ۳۰ روزه اتر به بیت‌کوین",
+      "weight": 0.11666666666666665,
+      "value": 1.7611271213576751,
+      "score": 0.352225424271535,
+      "ts": "2026-09-24T16:00:00+00:00",
+      "max_age_days": 7,
+      "reason": "",
+      "detail": ""
+    },
+    {
+      "key": "stable",
+      "column": "appetite",
+      "label": "رشد ۳۰ روزه عرضه استیبل",
+      "weight": 0.08333333333333333,
+      "value": 1.1257727937345272,
+      "score": 1.1257727937345272,
+      "ts": "2026-09-25T00:00:00+00:00",
+      "max_age_days": 7,
+      "reason": "",
+      "detail": ""
+    },
+    {
+      "key": "fng",
+      "column": "appetite",
+      "label": "ترس و طمع",
+      "weight": 0.08333333333333333,
+      "value": 71.0,
+      "score": 0.84,
+      "ts": "2026-09-25T00:00:00+00:00",
+      "max_age_days": 7,
+      "reason": "",
+      "detail": ""
+    },
+    {
+      "key": "usdt_dom",
+      "column": "appetite",
+      "label": "تغییر ۳۰ روزه تسلط تتر",
+      "weight": 0.08333333333333333,
+      "value": null,
+      "score": null,
+      "ts": "2026-09-25T04:45:56+00:00",
+      "max_age_days": 7,
+      "reason": "تاریخچه ۳۰ روزه کافی نیست (0 روز ثبت شده)",
+      "detail": ""
+    }
+  ],
+  "missing": [
+    {
+      "key": "dom_ex",
+      "label": "تغییر ۳۰ روزه تسلط بدون استیبل",
+      "reason": "تاریخچه ۳۰ روزه کافی نیست (0 روز ثبت شده)"
+    },
+    {
+      "key": "usdt_dom",
+      "label": "تغییر ۳۰ روزه تسلط تتر",
+      "reason": "تاریخچه ۳۰ روزه کافی نیست (0 روز ثبت شده)"
+    }
+  ],
+  "freshness_days": {
+    "DGS2": 7,
+    "DGS10": 7,
+    "DGS30": 7,
+    "T10YIE": 7,
+    "DFEDTARU": 7,
+    "DFEDTARL": 7,
+    "RRPONTSYD": 7,
+    "WALCL": 14,
+    "WTREGEN": 14,
+    "DTWEXBGS": 14,
+    "CoinGecko": 7,
+    "DefiLlama": 7,
+    "Alternative.me": 7,
+    "candle_1D": 7,
+    "candle_1W": 14
+  },
+  "version": "1.0",
+  "note": "نگاشت‌ها فرضیه‌اند، نه اندازه‌گیری — references/macro-liquidity.md"
+}
