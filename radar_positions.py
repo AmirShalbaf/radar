@@ -559,6 +559,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--optcost", default=None, help="پیش‌فرض radar_optcost.json")
     sp = ap.add_subparsers(dest="cmd", required=True)
     sp.add_parser("validate", help="اعتبارسنجی بدون تغییر")
+    sp.add_parser("symbols", help="نمادهای پوزیشن باز هر دو دفتر، جدا با کاما")
     for name in ("trim", "exit", "reenter", "add", "adjust"):
         p = sp.add_parser(name)
         p.add_argument("--symbol", required=True)
@@ -583,6 +584,10 @@ def main(argv: list[str] | None = None) -> int:
         h, journal = load(a.holdings, a.journal)
         if a.cmd == "validate":
             print(f"✅ {a.holdings} معتبر است — ناوردای دفتر کل برقرار")
+            return 0
+        if a.cmd == "symbols":
+            syms = [p["symbol"] for p in h["positions"] if p["status"] == "open"]
+            print(",".join(dict.fromkeys(syms)))
             return 0
         if a.cmd in ("trim", "reenter", "add") and a.qty <= 0:
             raise PositionsError("مقدار باید مثبت باشد")

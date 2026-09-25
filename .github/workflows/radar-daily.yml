@@ -148,6 +148,27 @@ jobs:
             echo "برای ساختش: python radar_book.py --init"
           fi
 
+      # سطوح ساختاری پوزیشن‌های باز — فهرست نمادها از holdings.json، نه از
+      # این متن. خطا بی‌صدا نیست، ولی گام‌های بعد را هم متوقف نمی‌کند.
+      # یادداشت: radar_levels هنوز کندل روزانه با لنگر هنگ‌کنگ می‌خواند —
+      # جابه‌جایی به وقت جهانی کار نشست ۳ب است.
+      - name: سطوح ساختاری سبد
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          D=$(date -u +%Y-%m-%d)
+          if [ -f holdings.json ]; then
+            if ! SYMS=$(python radar_positions.py --holdings holdings.json symbols 2> /tmp/levels.log); then
+              echo "::error::فهرست نمادهای سبد خطا داد — reports/levels-error-$D.md"
+              { echo "# خطای سطوح ساختاری — $D"; echo; echo '```'; tail -c 4000 /tmp/levels.log; echo '```'; }                 > "reports/levels-error-$D.md"
+            elif ! python radar_levels.py --watchlist "$SYMS"                    --out "reports/levels-$D.md" > /tmp/levels.log 2>&1; then
+              echo "::error::سطوح ساختاری خطا داد — reports/levels-error-$D.md"
+              { echo "# خطای سطوح ساختاری — $D"; echo; echo '```'; tail -c 4000 /tmp/levels.log; echo '```'; }                 > "reports/levels-error-$D.md"
+            fi
+          else
+            echo "holdings.json نیست — سطوح ساختاری سبد رد شد."
+          fi
+
       - name: به‌روزرسانی پیگیری دفتر هزینه فرصت
         env:
           PYTHONUTF8: "1"
