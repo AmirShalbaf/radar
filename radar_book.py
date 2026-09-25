@@ -46,6 +46,8 @@ from typing import NamedTuple
 
 # تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
 from radar_text import fa
+# دو دفتر و دفتر کل — کتابخانه استاندارد، استقلال این فایل نمی‌شکند
+import radar_positions as P
 
 try:
     import requests
@@ -535,23 +537,65 @@ def fmt(x, d=4):
     return str(x)
 
 
-def build_report(book: dict, rows: list[dict], reg: dict | None,
+def _pnl(r: dict) -> str:
+    """سود و زیان فقط وقتی قیمت خرید همه لات‌ها معلوم است — عدد ساخته نمی‌شود."""
+    if r.get("avg_entry") and r.get("price"):
+        return f"{100 * (r['price'] / r['avg_entry'] - 1):+.1f}٪"
+    return "—"
+
+
+def _verdict(r: dict) -> str:
+    p, wk = r["pos"], r.get("weekly")
+    inv = p.get("invalidation")
+    if r.get("dust"):
+        return "ناچیز"
+    if inv is not None and wk is not None and wk["close"] < inv:
+        return "⛔ خروج ۱۰۰٪ — بسته هفتگی زیر ابطال"
+    if r["strikes"] >= 4:
+        v = "⛔ خروج کامل (۴ ضربه)"
+    elif r["strikes"] == 3:
+        v = "🔻 کاهش ۵۰٪ اجباری"
+    elif r["strikes"] == 2:
+        v = "⚠️ آماده‌سازی کاهش"
+    elif r["swap_edge"] and r["swap_edge"] >= SWAP_MIN_EDGE:
+        v = f"🔄 چرخش به {r['swap_to']}"
+    elif r["score"] is None:
+        v = "داده ناکافی"
+    elif r["score"] < -0.5:
+        v = "⚠️ ضعیف — نامزد فروش"
+    else:
+        v = "نگه‌دار"
+    if inv is not None and wk is None:
+        v += " — ⚠️ بسته هفتگی: داده ندارم"
+    return v
+
+
+def build_report(h: dict, rows: list[dict], reg: dict | None,
                  candidates: list[dict], regime_note: str = "",
                  baseline: bool = False,
-                 regime_warnings: list[str] | None = None) -> str:
+                 regime_warnings: list[str] | None = None,
+                 val: dict | None = None, heat: dict | None = None,
+                 reentry: list[dict] | None = None) -> str:
     """
-    reg خالی یعنی رژیم کهنه یا غایب. آن‌وقت هر سطر وابسته به رژیم برچسب
-    «رژیم کهنه» می‌گیرد و هیچ باند جانشینی جا زده نمی‌شود. regime_note
-    در حالت سالم منبع رژیم است، در حالت کهنه دلیل آن. baseline یعنی
-    این دور پس از تغییر مبنای امتیاز فقط خط پایه ثبت کرد. regime_warnings
-    کنار رژیم دیده می‌شوند: بالای گزارش و در سطر «هشدار رژیم».
+    گزارش دو دفتر — تصمیم کاربر، ۲۵ سپتامبر ۲۰۲۶.
+
+    دفتر موقعیت با سقف رژیم مقایسه نمی‌شود: سقف برای معامله کوتاه با حد
+    ضرر طراحی شده و اعمال لفظی‌اش روی سبد بلندمدت یعنی فروش حدود ۹۰٪.
+    ریسک تا ابطالش فقط گزارش می‌شود و هدف ذخیره رژیم روی کل سرمایه است.
+    سقف رژیم فقط روی دفتر معامله.
+
+    reg خالی یعنی رژیم کهنه یا غایب: هر سطر وابسته به رژیم برچسب «رژیم کهنه»
+    می‌گیرد و هیچ باند جانشینی جا زده نمی‌شود. baseline یعنی این دور پس از
+    تغییر مبنای امتیاز فقط خط پایه ثبت کرد. regime_warnings کنار رژیم دیده
+    می‌شوند: بالای گزارش و در سطر «هشدار رژیم».
     """
     regime_warnings = regime_warnings or []
+    val = val or {"total": 0.0, "stable_usd": 0.0, "incomplete": False, "missing": []}
+    reentry = reentry or []
     o: list[str] = []
     W = o.append
 
-    total = book.get("balance_total") or sum(p["size_usd"] for p in book["positions"])
-    stable = book.get("stable_usd", 0.0)
+    total, stable = val["total"], val["stable_usd"]
     stable_pct = stable / total * 100 if total else 0
 
     W("=" * 66)
@@ -573,32 +617,29 @@ def build_report(book: dict, rows: list[dict], reg: dict | None,
           "نشد. تاریخچه پیشین در `book_state.json` زیر `archive` بایگانی شد.")
         W("")
 
-    # ── ۱ حرارت واقعی سبد
-    W("## ۱ — حرارت واقعی سبد")
-    W("")
-    W("قانون ۶.۰: پوزیشن اسپات **بدون سطح ابطال**، ریسکش ۱۰۰٪ اندازه آن پوزیشن است،")
-    W("نه صفر. این همان محاسبه‌ای است که ۵.۴ نداشت.")
-    W("")
-    heat_usd = 0.0
-    no_inval = []
-    for r in rows:
-        p = r["pos"]
-        if p.get("invalidation"):
-            d = abs(r["price"] - p["invalidation"]) / r["price"] if r["price"] else 1.0
-            risk = p["size_usd"] * min(d, 1.0)
-        else:
-            risk = p["size_usd"]
-            no_inval.append(p["symbol"])
-        r["risk_usd"] = risk
-        heat_usd += risk
+    live = [r for r in rows if not r.get("dust")]
+    no_inval = [r["pos"]["symbol"] for r in live if r["pos"].get("invalidation") is None]
+    pos_risk = 0.0
+    for r in live:
+        inv, v = r["pos"].get("invalidation"), r.get("value")
+        if v is None:
+            continue
+        # قانون ۶.۰: پوزیشن بی‌ابطال، ریسکش ۱۰۰٪ ارزش آن است، نه صفر
+        pos_risk += v if inv is None else r["qty"] * max(r["price"] - inv, 0.0)
 
-    n_alt = sum(1 for r in rows if r["pos"]["symbol"].upper() not in ("BTC", "XAUT", "PAXG"))
-    corr = {0: 1.0, 1: 1.00, 2: 1.20, 3: 1.40}.get(n_alt, 1.60)
-    heat_pct = heat_usd / total * 100 if total else 0
-
+    # ── ۱ سرمایه و ذخیره
+    W("## ۱ — سرمایه و ذخیره")
+    W("")
+    W("دو دفتر: سقف ریسک رژیم فقط روی دفتر معامله است. دفتر موقعیت با آن مقایسه")
+    W("نمی‌شود؛ هدف ذخیره رژیم روی کل سرمایه است.")
+    W("")
     W("| مورد | مقدار |")
     W("|---|---|")
-    W(f"| کل موجودی | {total:,.0f} دلار |")
+    cap_txt = f"{total:,.0f} دلار — ارزش زنده"
+    if val["incomplete"]:
+        cap_txt += f" — ⚠️ ناقص، بی‌قیمت: {'، '.join(val['missing'])}"
+    W(f"| کل سرمایه | {cap_txt} |")
+    W(f"| مقدارها از | {_stamp(h.get('updated'))} — {h.get('source', '—')} |")
     W(f"| ذخیره استیبل | {stable:,.0f} دلار ({stable_pct:.1f}٪) |")
     if reg is None:
         W(f"| رژیم | ⛔ {REGIME_STALE} |")
@@ -611,87 +652,119 @@ def build_report(book: dict, rows: list[dict], reg: dict | None,
         # خط عمودی داخل خانه جدول، جدول را می‌شکند
         cell = "؛ ".join(w.replace("|", "\\|") for w in regime_warnings)
         W(f"| هشدار رژیم | {cell} |")
-    W(f"| ریسک اسمی باز | {heat_usd:,.0f} دلار ({heat_pct:.1f}٪) |")
-    W(f"| ضریب همبستگی ({n_alt} آلت) | {corr:.2f} |")
-    if reg is None:
-        W(f"| **ریسک مؤثر** | **{heat_pct*corr:.1f}٪** — سقف: رژیم کهنه |")
+    W(f"| ریسک دفتر موقعیت تا ابطال | {pos_risk:,.0f} دلار — فقط گزارش؛ با سقف رژیم "
+      "مقایسه نمی‌شود. پوزیشن بی‌ابطال با ۱۰۰٪ ارزش |")
+    W(f"| پوزیشن بدون سطح ابطال | {len(no_inval)} از {len(live)} — ناچیز شمرده نمی‌شود |")
+    if heat is None:
+        W("| **ریسک مؤثر دفتر معامله** | — سقف: رژیم کهنه |")
     else:
-        W(f"| **ریسک مؤثر** | **{heat_pct*corr:.1f}٪ از سقف {reg['cap']}٪** |")
-    W(f"| پوزیشن بدون سطح ابطال | {len(no_inval)} از {len(rows)} |")
+        W(f"| **ریسک مؤثر دفتر معامله** | **{heat['effective']:,.0f} دلار از سقف "
+          f"{heat['cap_usd']:,.0f} دلار** ({reg['cap']}٪ کل سرمایه) |")
     W("")
     if reg is None:
         # حذف بی‌صدای این دو هشدار همان خطایی است که جلویش را می‌گیریم
-        W("⚠️ **مقایسه ممکن نیست — رژیم کهنه است.** حرارت با سقف رژیم سنجیده "
-          "نشد و کسری ذخیره استیبل حساب نشد.")
+        W("⚠️ **مقایسه ممکن نیست — رژیم کهنه است.** سقف دفتر معامله و کسری ذخیره "
+          "استیبل حساب نشد.")
         W("")
-    elif heat_pct * corr > reg["cap"]:
-        W(f"⛔ **حرارت سبد {heat_pct*corr:.1f}٪ است، بیش از سقف رژیم {reg['cap']}٪.**")
-        W("")
-        W("**این عدد را درست بخوان.** سقف رژیم بر «ریسک جدید خالص» حاکم است.")
-        W("پس معنی این هشدار سه چیز است، نه بیشتر:")
-        W("")
-        W("| هست | نیست |")
-        W("|---|---|")
-        W("| ورود جدید مجاز نیست | «همه را همین امروز بفروش» |")
-        W("| کاهش، چرخش و ساخت ذخیره مجازند | چرخش هم ممنوع است |")
-        W("| مسیر بازگشت به سقف، بخش ۴ و ۵ است | باید منتظر رژیم بهتر ماند |")
-        W("")
-        W("علت اصلی این عدد معمولاً پوزیشن اسپات بدون سطح ابطال است که با")
-        W("ریسک ۱۰۰٪ شمرده می‌شود. با نوشتن ابطال برای هر پوزیشن، عدد واقعی‌تر می‌شود.")
-        W("")
-    if reg is not None and stable_pct < reg["stable"]:
-        gap = (reg["stable"] - stable_pct) / 100 * total
-        W(f"⚠️ ذخیره استیبل {stable_pct:.1f}٪ است، هدف رژیم {reg['stable']}٪.")
-        W(f"**کسری: {gap:,.0f} دلار.** ترتیب فروش در بخش ۴.")
-        W("")
+    else:
+        gap = reg["stable"] / 100 * total - stable
+        if gap > 0:
+            W(f"⚠️ ذخیره استیبل {stable_pct:.1f}٪ است، هدف رژیم {reg['stable']}٪ کل سرمایه.")
+            W(f"**کسری: {gap:,.0f} دلار.** ترتیب فروش در بخش ۵.")
+            W("")
     if no_inval:
         W(f"⚠️ این پوزیشن‌ها سطح ابطال ندارند: {'، '.join(no_inval)}")
-        W("برای هرکدام یک سطح ساختاری روزانه یا هفتگی بنویس.")
-        W("پوزیشنی که نتوانی برایش ابطال بنویسی، تز ندارد — و باید بسته شود.")
+        W("برای هرکدام یک سطح ساختاری هفتگی یا روزانه با دست‌کم دو برخورد بنویس.")
         W("")
 
-    # ── ۲ جدول پوزیشن‌ها
-    W("## ۲ — چهار آزمون هر پوزیشن")
+    # ── ۲ دفتر موقعیت
+    W("## ۲ — دفتر موقعیت")
     W("")
-    W("| نماد | قیمت | امتیاز | ض | قدرت نسبی۳۰ | RSI | ابطال | حکم |")
-    W("|---|---|---|---|---|---|---|---|")
+    W("ابطال با **بسته هفتگی به وقت جهانی**: هفته دوشنبه تا یکشنبه، بسته در")
+    W("دوشنبه ۰۰:۰۰ UTC — اوکی‌اکس 1Wutc، گیت 7d. لنگر در دسترس نبود یعنی «داده ندارم».")
+    W("سود و زیان فقط وقتی قیمت خرید همه لات‌ها معلوم است.")
+    W("")
+    W("| نماد | مقدار | قیمت | ارزش | سود/زیان٪ | امتیاز | ض | قدرت نسبی۳۰ | RSI | "
+      "ابطال | بسته هفتگی | حکم |")
+    W("|---|---|---|---|---|---|---|---|---|---|---|---|")
     for r in rows:
         p = r["pos"]
-        inv = p.get("invalidation")
-        inv_txt = fmt(inv) if inv else "**ندارد**"
-        broken = False
-        if inv and r["price"]:
-            broken = (r["price"] < inv) if p.get("side", "long") == "long" else (r["price"] > inv)
-        if broken:
-            verdict = "⛔ خروج ۱۰۰٪"
-        elif r["strikes"] >= 4:
-            verdict = "⛔ خروج کامل (۴ ضربه)"
-        elif r["strikes"] == 3:
-            verdict = "🔻 کاهش ۵۰٪ اجباری"
-        elif r["strikes"] == 2:
-            verdict = "⚠️ آماده‌سازی کاهش"
-        elif r["swap_edge"] and r["swap_edge"] >= SWAP_MIN_EDGE:
-            verdict = f"🔄 چرخش به {r['swap_to']}"
-        elif r["score"] is None:
-            verdict = "داده ناکافی"
-        elif r["score"] < -0.5:
-            verdict = "⚠️ ضعیف — نامزد فروش"
-        else:
-            verdict = "نگه‌دار"
-        r["verdict"] = verdict
-        W(f"| {p['symbol']} | {fmt(r['price'])} | "
-          f"{r['score']:+.2f} | {r['strikes']} | "
-          f"{(r['rs30']*100):+.1f}٪ | {fmt(r['rsi'],1)} | {inv_txt} | {verdict} |"
-          if r["score"] is not None and r["rs30"] is not None else
-          f"| {p['symbol']} | {fmt(r['price'])} | "
-          f"{fmt(r['score'],2)} | {r['strikes']} | — | {fmt(r['rsi'],1)} | {inv_txt} | {verdict} |")
+        r["verdict"] = _verdict(r)
+        inv, wk = p.get("invalidation"), r.get("weekly")
+        rs = f"{r['rs30'] * 100:+.1f}٪" if r["rs30"] is not None else "—"
+        W(f"| {p['symbol']} | {fmt(r['qty'], 6)} | {fmt(r['price'])} | "
+          f"{fmt(r.get('value'), 2)} | {_pnl(r)} | {fmt(r['score'], 2)} | {r['strikes']} | "
+          f"{rs} | {fmt(r['rsi'], 1)} | "
+          f"{fmt(inv) if inv is not None else '**ندارد**'} | "
+          f"{fmt(wk['close']) if wk else '—'} | {r['verdict']} |")
     W("")
     W("ستون «ض» = تعداد ضربه‌های متوالی (بازبینی با امتیاز کاهشی).")
     W("سه ضربه ← کاهش ۵۰٪ اجباری. چهار ضربه ← خروج کامل. بدون استثنا.")
     W("")
+    if reentry:
+        W("### ورود دوباره — خارج‌شده با ابطال")
+        W("")
+        W("اگر بسته هفتگی دوباره بالای همان سطح رفت، ورود دوباره تا همان مقدار قبلی مجاز است.")
+        W("")
+        W("| نماد | سطح | سهمیه | مصرف‌شده | بسته هفتگی | حکم |")
+        W("|---|---|---|---|---|---|")
+        for e in reentry:
+            st, wk = e["state"], e.get("weekly")
+            left = st["max_qty"] - st["used"]
+            if wk is None:
+                v = "داده ندارم — بسته هفتگی"
+            elif wk["close"] > st["level"]:
+                v = f"✅ ورود دوباره مجاز — تا {fmt(left, 6)}"
+            else:
+                v = "هنوز زیر سطح"
+            W(f"| {e['symbol']} | {fmt(st['level'])} | {fmt(st['max_qty'], 6)} | "
+              f"{fmt(st['used'], 6)} | {fmt(wk['close']) if wk else '—'} | {v} |")
+        W("")
 
-    # ── ۳ جانشینی
-    W("## ۳ — آزمون جانشینی")
+    # ── ۳ دفتر معامله
+    W("## ۳ — دفتر معامله")
+    W("")
+    trades = [p for p in h["positions"] if p["book"] == "trade" and p["status"] == "open"]
+    if not trades:
+        W("دفتر معامله خالی است. هر معامله تازه اینجا ثبت می‌شود — واقعی یا فرضی، با "
+          "شناسه تصمیم و نام ستاپ در دفترچه.")
+    else:
+        W("| نماد | جهت | نوع | مقدار | ورود | حد ضرر | ریسک دلاری |")
+        W("|---|---|---|---|---|---|---|")
+        for p in trades:
+            s = 1 if p.get("side", "long") == "long" else -1
+            risk = sum(l["qty"] * s * (l["entry"] - p["stop"]) for l in p["lots"])
+            entry = p["lots"][0]["entry"] if len(p["lots"]) == 1 else None
+            qty = sum(l["qty"] for l in p["lots"])
+            W(f"| {p['symbol']} | {p.get('side', 'long')} | "
+              f"{'فرضی' if p.get('paper') else 'واقعی'} | {fmt(qty, 6)} | "
+              f"{fmt(entry)} | {fmt(p['stop'])} | {risk:,.2f} |")
+        W("")
+        if heat is None:
+            W("⚠️ سقف دفتر معامله معلوم نیست — رژیم کهنه است.")
+        else:
+            W("| مورد | مقدار |")
+            W("|---|---|")
+            W(f"| ریسک واقعی | {heat['risk_real']:,.2f} دلار |")
+            W(f"| ضریب همبستگی | {heat['corr']:.2f} — از سه لانگ آلت هم‌زمان به بالا، "
+              "بند ۸.۳ اسکیل |")
+            W(f"| ریسک مؤثر | {heat['effective']:,.2f} دلار |")
+            W(f"| سقف | {heat['cap_usd']:,.2f} دلار — {reg['cap']}٪ کل سرمایه |")
+            W(f"| پوزیشن هم‌جهت | لانگ {heat['long_count']} از {heat['maxpos']}، "
+              f"شورت {heat['short_count']} از {heat['maxpos']} |")
+            W(f"| ریسک فرضی — جدا، نه در سرمایه و نه در حرارت | {heat['risk_paper']:,.2f} دلار |")
+            W("")
+            if heat["over_cap"] or heat["over_maxpos"]:
+                why = []
+                if heat["over_cap"]:
+                    why.append("ریسک مؤثر بالای سقف")
+                if heat["over_maxpos"]:
+                    why.append("بیش از حداکثر پوزیشن هم‌جهت")
+                W(f"⛔ **ورود تازه در دفتر معامله مجاز نیست** — {'، '.join(why)}.")
+    W("")
+
+    # ── ۴ جانشینی
+    W("## ۴ — آزمون جانشینی")
     W("")
     if not candidates:
         W("نامزدی داده نشد. برای فعال‌کردن: `--candidates BTC,XAUT,HYPE`")
@@ -705,7 +778,7 @@ def build_report(book: dict, rows: list[dict], reg: dict | None,
         for c in candidates:
             if c["score"] is None:
                 continue
-            worst = min((r for r in rows if r["score"] is not None),
+            worst = min((r for r in live if r["score"] is not None),
                         key=lambda r: r["score"], default=None)
             if worst is None:
                 continue
@@ -727,61 +800,73 @@ def build_report(book: dict, rows: list[dict], reg: dict | None,
         W("نامزد باید آزمون پامپ کاذب را رد کند: `radar_rotate.py --deep`")
     W("")
 
-    # ── ۴ ترتیب فروش
-    W("## ۴ — ترتیب فروش هنگام ساخت ذخیره")
+    # ── ۵ ترتیب فروش
+    W("## ۵ — ترتیب فروش هنگام ساخت ذخیره")
     W("")
     W("**هرگز بر اساس میزان ضرر مرتب نکن.** میزان ضرر واقعیتی درباره گذشته است")
     W("و هیچ اطلاعاتی درباره آینده ندارد. **هرگز برنده را اول نفروش** (اثر تمایل).")
+    W("پوزیشن ناچیز در این فهرست نیست.")
     W("")
 
     def sell_key(r):
         p = r["pos"]
         return (
             0 if r["strikes"] >= 3 else 1,
-            0 if not p.get("invalidation") else 1,
+            0 if p.get("invalidation") is None else 1,
             r["score"] if r["score"] is not None else 0,
             r["rs30"] if r["rs30"] is not None else 0,
         )
 
-    order = sorted(rows, key=sell_key)
-    W("| اولویت | نماد | اندازه | دلیل |")
+    order = sorted(live, key=sell_key)
+    W("| اولویت | نماد | ارزش | دلیل |")
     W("|---|---|---|---|")
     for i, r in enumerate(order, 1):
         p = r["pos"]
         why = []
         if r["strikes"] >= 3:
             why.append(f"{r['strikes']} ضربه متوالی")
-        if not p.get("invalidation"):
+        if p.get("invalidation") is None:
             why.append("بدون سطح ابطال")
         if r["score"] is not None and r["score"] < 0:
             why.append(f"امتیاز {r['score']:+.2f}")
         if r["rs30"] is not None and r["rs30"] < 0:
             why.append(f"قدرت نسبی {r['rs30']*100:+.1f}٪")
-        W(f"| {i} | {p['symbol']} | {p['size_usd']:,.0f} دلار | "
-          f"{'، '.join(why) if why else ('سطح ابطال دارد — ریسک محدود' if p.get('invalidation') else 'هیچ نشانه ضعفی ندارد')} |")
+        if not why:
+            why.append("سطح ابطال دارد — ریسک محدود" if p.get("invalidation") is not None
+                       else "هیچ نشانه ضعفی ندارد")
+        W(f"| {i} | {p['symbol']} | {fmt(r.get('value'), 0)} دلار | {'، '.join(why)} |")
     W("")
 
-    # ── ۵ فهرست اقدام امروز
-    W("## ۵ — فهرست اقدام امروز")
+    # ── ۶ فهرست اقدام امروز
+    W("## ۶ — فهرست اقدام امروز")
     W("")
     actions: list[str] = []
-    for r in rows:
+    for r in live:
         p = r["pos"]
         if r["verdict"].startswith("⛔"):
-            actions.append(f"**{p['symbol']}** — خروج کامل. {r['verdict'][2:]}")
+            actions.append(f"**{p['symbol']}** — خروج کامل. {r['verdict'][2:]}. ثبت با "
+                           "`radar_positions.py exit`")
         elif r["verdict"].startswith("🔻"):
+            half = (r["value"] or 0) / 2
             actions.append(f"**{p['symbol']}** — کاهش حداقل ۵۰٪ "
-                           f"(حدود {p['size_usd']/2:,.0f} دلار). سه ضربه متوالی")
+                           f"(حدود {half:,.0f} دلار). سه ضربه متوالی")
         elif r["verdict"].startswith("🔄"):
             actions.append(f"**{p['symbol']}** — چرخش به {r['swap_to']}، "
                            f"مزیت {r['swap_edge']:+.2f}")
-    if reg is not None and stable_pct < reg["stable"]:
-        gap = (reg["stable"] - stable_pct) / 100 * total
-        actions.append(f"**ذخیره استیبل** — فروش {gap:,.0f} دلار به ترتیب بخش ۴")
-    for r in rows:
-        if not r["pos"].get("invalidation"):
-            actions.append(f"**{r['pos']['symbol']}** — نوشتن سطح ابطال ساختاری "
-                           f"(روزانه یا هفتگی) و ثبت آن")
+    for e in reentry:
+        wk = e.get("weekly")
+        if wk is not None and wk["close"] > e["state"]["level"]:
+            actions.append(f"**{e['symbol']}** — ورود دوباره مجاز است؛ ثبت با "
+                           "`radar_positions.py reenter`")
+    if reg is not None:
+        gap = reg["stable"] / 100 * total - stable
+        if gap > 0:
+            actions.append(f"**ذخیره استیبل** — فروش {gap:,.0f} دلار به ترتیب بخش ۵، "
+                           "ثبت با `radar_positions.py trim --reason reserve`")
+    if heat is not None and (heat["over_cap"] or heat["over_maxpos"]):
+        actions.append("**دفتر معامله** — ورود تازه مجاز نیست تا ریسک زیر سقف برگردد")
+    for s in no_inval:
+        actions.append(f"**{s}** — نوشتن سطح ابطال ساختاری (هفتگی یا روزانه) و ثبت آن")
 
     if actions:
         for i, a in enumerate(actions, 1):
@@ -800,32 +885,32 @@ def build_report(book: dict, rows: list[dict], reg: dict | None,
     W("")
     W("---")
     W("")
-    W("**ثبت اجباری:** هر اقدام انجام‌شده در `radar_journal.py` و هر اقدام")
-    W("**انجام‌نشده** در دفتر هزینه فرصت ثبت شود. بدون هر دو، نرخ اقدام")
-    W("قابل محاسبه نیست و نمی‌فهمیم چارچوب سخت‌گیر است یا شل.")
+    W("**ثبت اجباری:** هر تغییر مقدار فقط با `radar_positions.py` و یک ردیف دفتر کل.")
+    W("هر اقدام انجام‌شده در `radar_journal.py` و هر اقدام **انجام‌نشده** در دفتر هزینه")
+    W("فرصت ثبت شود. بدون هر دو، نرخ اقدام قابل محاسبه نیست.")
 
     return "\n".join(o)
 
 
 # ─────────────────────── اجرا ───────────────────────
 
-SAMPLE = {
-    "balance_total": 2500,
-    "stable_usd": 0,
-    "positions": [
-        {"symbol": "SOL",  "size_usd": 210, "entry": 0, "invalidation": None,
-         "side": "long", "spot": True},
-        {"symbol": "HYPE", "size_usd": 180, "entry": 0, "invalidation": None,
-         "side": "long", "spot": True},
-        {"symbol": "ONDO", "size_usd": 120, "entry": 0, "invalidation": None,
-         "side": "long", "spot": True},
-    ],
-}
+def sample_holdings() -> dict:
+    """نمونه قالب ۲ — بر پایه مقدار. با موجودی واقعی جایگزین کن."""
+    now = datetime.now(UTC)
+    return {"version": 2, "updated": now.isoformat(),
+            "source": "نمونه — با موجودی واقعی جایگزین کن",
+            "frozen": {"date": now.strftime("%Y-%m-%d"), "members": {"SOL": 1.0}},
+            "cash": [{"asset": "USDT", "qty": 0.0, "account": "صرافی"}],
+            "positions": [{"symbol": "SOL", "book": "position", "status": "open",
+                           "lots": [{"qty": 1.0, "account": "صرافی", "entry": None}],
+                           "invalidation": None}],
+            "ledger": []}
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=f"بازبینی سبد و موتور خروج — رادار {fa(VERSION)}")
     ap.add_argument("--holdings", default="holdings.json")
+    ap.add_argument("--journal", default=None, help="پیش‌فرض radar_journal.json")
     # پیش‌فرض خالی است، نه عدد: پیش از این 0.0 بود و اجرای بی‌کلید بی‌صدا
     # «سازنده» می‌گرفت
     ap.add_argument("--regime", type=float, default=None,
@@ -839,16 +924,17 @@ def main() -> int:
 
     if a.init:
         with open(a.holdings, "w", encoding="utf-8") as f:
-            json.dump(SAMPLE, f, ensure_ascii=False, indent=2)
+            json.dump(sample_holdings(), f, ensure_ascii=False, indent=2)
         print(f"فایل نمونه ساخته شد: {a.holdings}")
         print("آن را با موجودی واقعی پر کن، سپس دوباره اجرا کن.")
         return 0
 
-    if not os.path.exists(a.holdings):
-        print(f"فایل {a.holdings} پیدا نشد. برای ساخت نمونه: --init")
-        return 1
-    with open(a.holdings, encoding="utf-8") as f:
-        book = json.load(f)
+    # قالب ۲ و ناوردای دفتر کل — هر نقض خطای صریح، نه خواندن غلط
+    try:
+        h, _journal = P.load(a.holdings, a.journal)
+    except P.PositionsError as exc:
+        print(f"⛔ {exc}", file=sys.stderr)
+        return 2
 
     if requests is None or pd is None:
         print("کتابخانه requests یا pandas نصب نیست: pip install requests pandas")
@@ -873,25 +959,50 @@ def main() -> int:
     print("واکشی داده بیت‌کوین به‌عنوان مرجع قدرت نسبی...")
     btc = candles("BTC")
 
-    rows = []
-    for p in book["positions"]:
+    prices: dict = {}
+    frames: dict = {}
+    for p in h["positions"]:
+        if p["status"] != "open" or p["symbol"] in frames:
+            continue
         print(f"  واکشی {p['symbol']}...")
         df = candles(p["symbol"])
-        sc = score_position(df, btc)
+        frames[p["symbol"]] = df
+        prices[p["symbol"]] = _last_close(df) if df is not None else None
+    val = P.value(h, prices)
+    vrow = {r["symbol"]: r for r in val["rows"] if r["book"] == "position"}
+
+    rows = []
+    for p in h["positions"]:
+        if p["book"] != "position" or p["status"] != "open":
+            continue
+        sym = p["symbol"]
+        sc = score_position(frames.get(sym), btc)
         score = sc["score"] if sc else None
         # امتیاز خالی همان خالی می‌رود، نه صفر — صفر ضربه ساختگی می‌ساخت
-        strikes, _ = update_strikes(state, p["symbol"], score)
+        strikes, _ = update_strikes(state, sym, score)
+        # بسته هفتگی به لنگر وقت جهانی — فقط از radar_positions، یک منبع
+        wk, why = (P.weekly_close(sym) if p.get("invalidation") is not None
+                   else (None, []))
+        v = vrow.get(sym, {})
         rows.append({
-            "pos": p,
-            "price": sc["price"] if sc else None,
+            "pos": p, "qty": P.position_qty(p),
+            "price": prices.get(sym), "value": v.get("value"),
+            "dust": v.get("dust", False), "avg_entry": v.get("avg_entry"),
             "score": score,
             "rsi": sc["rsi"] if sc else None,
             "rs30": sc["rs30"] if sc else None,
-            "coverage": sc["coverage"] if sc else 0,
-            "strikes": strikes,
-            "swap_edge": None,
-            "swap_to": None,
+            "strikes": strikes, "weekly": wk, "weekly_why": why,
+            "swap_edge": None, "swap_to": None,
         })
+
+    reentry = []
+    for p in h["positions"]:
+        if p["book"] == "position" and p["status"] == "exited":
+            st = P.reentry_state(h, p["symbol"])
+            if st is None:
+                continue
+            wk, why = P.weekly_close(p["symbol"])
+            reentry.append({"symbol": p["symbol"], "state": st, "weekly": wk, "why": why})
 
     cands = []
     for s in [x.strip().upper() for x in a.candidates.split(",") if x.strip()]:
@@ -911,9 +1022,10 @@ def main() -> int:
                 r["swap_edge"] = round(edge, 3)
                 r["swap_to"] = best["symbol"]
 
+    heat = P.trade_heat(h, reg, val["total"]) if reg is not None else None
     save_state(state)
-    txt = build_report(book, rows, reg, cands, info.source, baseline,
-                       info.warnings)
+    txt = build_report(h, rows, reg, cands, info.source, baseline,
+                       info.warnings, val=val, heat=heat, reentry=reentry)
     if a.out:
         with open(a.out, "w", encoding="utf-8") as f:
             f.write(txt)
