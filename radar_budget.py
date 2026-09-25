@@ -45,3 +45,50 @@ def regime_band(score: float) -> dict:
             return {"name": name, "cap": cap, "mult": mult,
                     "maxpos": maxpos, "stable": stable}
     raise AssertionError("ردیف آخر جدول بودجه باید کف نداشته باشد")
+
+
+# ترتیب باندها از محافظه‌کارترین به بازترین
+BAND_ORDER = tuple(name for _, name, *_ in reversed(BANDS))
+
+
+def band_by_name(name: str) -> dict:
+    """ردیف بودجه از نام باند — عددها همیشه از همین جدول، نه از فایل."""
+    for _, n, cap, mult, maxpos, stable in BANDS:
+        if n == name:
+            return {"name": n, "cap": cap, "mult": mult, "maxpos": maxpos, "stable": stable}
+    raise ValueError(f"باند ناشناخته: {name!r}")
+
+
+# ── هیسترزیس اندازه‌گیری دفتر معامله — تصمیم ک۳۲، ۲۵ سپتامبر ۲۰۲۶ ──
+#
+# پایین‌آمدن باند فوری؛ بالا رفتن فقط پس از سه روز متوالی در باند تازه.
+# اجرا: بالا رفتن وقتی مجاز است که سه روز **تقویمی پیاپی** — امروز و دو روز
+# قبل — همه بالای باند مؤثر فعلی باشند؛ آن‌وقت به کمترین باند آن سه روز
+# می‌رود. روز جاافتاده یعنی «پیاپی نیست» — بالا رفتن ممنوع، محافظه‌کارانه.
+# فقط برای اندازه‌گیری دفتر معامله؛ هدف ذخیره دفتر موقعیت باند خام روز است.
+HYSTERESIS_UP_DAYS = 3
+
+
+def trade_band(days: list) -> str:
+    """
+    باند مؤثر دفتر معامله از توالی (تاریخ، باند خام) به ترتیب زمان؛ آخری
+    امروز است. روز نخست تاریخچه باند خام خودش را می‌گیرد.
+    """
+    if not days:
+        raise ValueError("تاریخچه باند خالی است")
+    rank = BAND_ORDER.index
+    eff = days[0][1]
+    rank(eff)                                         # نام ناشناخته: ValueError
+    for k in range(1, len(days)):
+        b = days[k][1]
+        if rank(b) <= rank(eff):
+            eff = b                                   # پایین‌آمدن یا ماندن: فوری
+            continue
+        win = days[k - HYSTERESIS_UP_DAYS + 1: k + 1] if k >= HYSTERESIS_UP_DAYS - 1 else []
+        consecutive = (len(win) == HYSTERESIS_UP_DAYS and
+                       all((win[i + 1][0] - win[i][0]).days == 1 for i in range(len(win) - 1)))
+        if consecutive:
+            low = min((w[1] for w in win), key=rank)
+            if rank(low) > rank(eff):
+                eff = low
+    return eff

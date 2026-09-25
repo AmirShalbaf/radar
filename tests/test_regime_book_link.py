@@ -44,7 +44,7 @@ def _doc(**extra) -> dict:
 def test_returns_named_tuple(tmp_path) -> None:
     r = B.load_regime(_write(tmp_path / "regime.json", _doc()), now=NOW)
     assert isinstance(r, B.RegimeInfo)
-    assert B.RegimeInfo._fields == ("score", "source", "warnings")
+    assert B.RegimeInfo._fields == ("score", "source", "warnings", "trade_band")
     assert r.score == -0.2
     assert r.warnings == []
 

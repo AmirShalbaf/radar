@@ -67,6 +67,7 @@ OKX = "https://www.okx.com"
 # ─────────── جدول رژیم — تنها منبع اصلی radar_budget.py، کپی محلی نگیر ───────────
 # پیش از نشست ۲ این جدول اینجا و در radar_size.py جدا نوشته شده بود.
 # روی مرز دقیق باند پایین‌تر انتخاب می‌شود؛ پیش از این `>=` بود.
+import radar_budget as BG
 from radar_budget import regime_band as regime_row
 
 # قاعده بلوغ ۳n: میانگین نمایی ۲۰۰ دست‌کم ۶۰۰ کندل **بسته** لازم دارد،
@@ -113,10 +114,13 @@ class RegimeInfo(NamedTuple):
     score     امتیاز رژیم، یا None یعنی «رژیم کهنه»
     source    در حالت سالم منبع رژیم، در حالت کهنه دلیل آن
     warnings  هشدارهایی که باید کنار رژیم دیده شوند: پوشش کم، خطای ساخت
+    trade_band  باند مؤثر دفتر معامله با هیسترزیس ک۳۲، ردیف کامل جدول بودجه؛
+                None یعنی در فایل نیست یا نامعتبر است
     """
     score: float | None
     source: str
     warnings: list
+    trade_band: dict | None = None
 
 
 def _stamp(raw) -> str:
@@ -206,7 +210,35 @@ def load_regime(path=REGIME_FILE, now: datetime | None = None) -> RegimeInfo:
         return RegimeInfo(None, f"{name} {age.total_seconds() / 86400:.1f} روز عمر دارد — "
                                 f"بیش از {fa(REGIME_MAX_AGE_DAYS)} روز", warns)
     stamp = ts.astimezone(UTC).strftime("%Y-%m-%d %H:%M UTC")
-    return RegimeInfo(float(score), f"{name}، تولید {stamp}", warns)
+    tb = None
+    raw_tb = doc.get("trade_band")
+    if raw_tb is not None:
+        try:
+            if not isinstance(raw_tb, dict):
+                raise ValueError(raw_tb)
+            tb = BG.band_by_name(raw_tb.get("name"))       # عددها از منبع واحد، نه از فایل
+        except ValueError:
+            warns.append(f"⚠️ میدان trade_band در {name} نامعتبر است — "
+                         "باند خام امروز جایش می‌نشیند")
+    return RegimeInfo(float(score), f"{name}، تولید {stamp}", warns, tb)
+
+
+def effective_trade_band(reg: dict | None, info: RegimeInfo) -> tuple[dict | None, str]:
+    """
+    باند اندازه‌گیری دفتر معامله و توضیحش. باند هیسترزیس هرگز بازتر از باند
+    خام امروز نیست — اگر فایل دستی چنین بگوید، محافظه‌کارانه‌تر برداشته می‌شود.
+    """
+    if reg is None:
+        return None, "رژیم کهنه"
+    tb = info.trade_band
+    if tb is None:
+        return reg, "هیسترزیس در دسترس نیست — باند خام امروز"
+    if BG.BAND_ORDER.index(tb["name"]) > BG.BAND_ORDER.index(reg["name"]):
+        return reg, f"هیسترزیس {tb['name']} بازتر از باند خام بود — باند خام امروز"
+    if tb["name"] == reg["name"]:
+        return tb, "هیسترزیس — همان باند خام امروز"
+    return tb, (f"هیسترزیس — باند خام امروز {reg['name']}؛ بالا رفتن پس از "
+                f"{fa(BG.HYSTERESIS_UP_DAYS)} روز پیاپی")
 
 
 # ─────────────────────── واکشی داده ───────────────────────
@@ -575,7 +607,8 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
                  baseline: bool = False,
                  regime_warnings: list[str] | None = None,
                  val: dict | None = None, heat: dict | None = None,
-                 reentry: list[dict] | None = None) -> str:
+                 reentry: list[dict] | None = None,
+                 tband: dict | None = None, tband_note: str = "") -> str:
     """
     گزارش دو دفتر — تصمیم کاربر، ۲۵ سپتامبر ۲۰۲۶.
 
@@ -587,9 +620,12 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     reg خالی یعنی رژیم کهنه یا غایب: هر سطر وابسته به رژیم برچسب «رژیم کهنه»
     می‌گیرد و هیچ باند جانشینی جا زده نمی‌شود. baseline یعنی این دور پس از
     تغییر مبنای امتیاز فقط خط پایه ثبت کرد. regime_warnings کنار رژیم دیده
-    می‌شوند: بالای گزارش و در سطر «هشدار رژیم».
+    می‌شوند: بالای گزارش و در سطر «هشدار رژیم». tband باند مؤثر دفتر
+    معامله با هیسترزیس ک۳۲ است؛ غایب باشد، باند خام امروز.
     """
     regime_warnings = regime_warnings or []
+    if tband is None:
+        tband = reg
     val = val or {"total": 0.0, "stable_usd": 0.0, "incomplete": False, "missing": []}
     reentry = reentry or []
     o: list[str] = []
@@ -645,7 +681,7 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
         W(f"| رژیم | ⛔ {REGIME_STALE} |")
         W("| **هدف ذخیره استیبل رژیم** | رژیم کهنه |")
     else:
-        W(f"| رژیم | {reg['name']} — سقف ریسک {reg['cap']}٪ |")
+        W(f"| رژیم | {reg['name']} — باند خام امروز |")
         W(f"| **هدف ذخیره استیبل رژیم** | **{reg['stable']}٪** |")
     W(f"| منبع رژیم | {regime_note or '—'} |")
     if regime_warnings:
@@ -659,7 +695,7 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
         W("| **ریسک مؤثر دفتر معامله** | — سقف: رژیم کهنه |")
     else:
         W(f"| **ریسک مؤثر دفتر معامله** | **{heat['effective']:,.0f} دلار از سقف "
-          f"{heat['cap_usd']:,.0f} دلار** ({reg['cap']}٪ کل سرمایه) |")
+          f"{heat['cap_usd']:,.0f} دلار** ({tband['cap']}٪ کل سرمایه، باند {tband['name']}) |")
     W("")
     if reg is None:
         # حذف بی‌صدای این دو هشدار همان خطایی است که جلویش را می‌گیریم
@@ -724,6 +760,11 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     # ── ۳ دفتر معامله
     W("## ۳ — دفتر معامله")
     W("")
+    if tband is not None:
+        W(f"باند اندازه‌گیری: **{tband['name']}** — سقف {tband['cap']}٪، ضریب اندازه "
+          f"{tband['mult']}، حداکثر {tband['maxpos']} پوزیشن هم‌جهت. "
+          f"{tband_note or 'باند خام امروز'}.")
+        W("")
     trades = [p for p in h["positions"] if p["book"] == "trade" and p["status"] == "open"]
     if not trades:
         W("دفتر معامله خالی است. هر معامله تازه اینجا ثبت می‌شود — واقعی یا فرضی، با "
@@ -749,7 +790,7 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
             W(f"| ضریب همبستگی | {heat['corr']:.2f} — از سه لانگ آلت هم‌زمان به بالا، "
               "بند ۸.۳ اسکیل |")
             W(f"| ریسک مؤثر | {heat['effective']:,.2f} دلار |")
-            W(f"| سقف | {heat['cap_usd']:,.2f} دلار — {reg['cap']}٪ کل سرمایه |")
+            W(f"| سقف | {heat['cap_usd']:,.2f} دلار — {tband['cap']}٪ کل سرمایه |")
             W(f"| پوزیشن هم‌جهت | لانگ {heat['long_count']} از {heat['maxpos']}، "
               f"شورت {heat['short_count']} از {heat['maxpos']} |")
             W(f"| ریسک فرضی — جدا، نه در سرمایه و نه در حرارت | {heat['risk_paper']:,.2f} دلار |")
@@ -946,6 +987,7 @@ def main() -> int:
     else:
         info = load_regime(a.regime_file)
     reg = regime_row(info.score) if info.score is not None else None
+    tband, tband_note = effective_trade_band(reg, info)
     if reg is None:
         print(f"⚠️ {REGIME_STALE}: {info.source}")
     for w in info.warnings:
@@ -1022,10 +1064,11 @@ def main() -> int:
                 r["swap_edge"] = round(edge, 3)
                 r["swap_to"] = best["symbol"]
 
-    heat = P.trade_heat(h, reg, val["total"]) if reg is not None else None
+    heat = P.trade_heat(h, tband, val["total"]) if tband is not None else None
     save_state(state)
     txt = build_report(h, rows, reg, cands, info.source, baseline,
-                       info.warnings, val=val, heat=heat, reentry=reentry)
+                       info.warnings, val=val, heat=heat, reentry=reentry,
+                       tband=tband, tband_note=tband_note)
     if a.out:
         with open(a.out, "w", encoding="utf-8") as f:
             f.write(txt)

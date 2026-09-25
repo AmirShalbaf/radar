@@ -47,6 +47,7 @@ import traceback
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 
+import radar_budget as BG
 from radar_budget import regime_band
 # تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
 from radar_text import fa
@@ -427,7 +428,21 @@ def _iso(ts: datetime | None) -> str | None:
     return ts.astimezone(UTC).isoformat() if ts else None
 
 
-def build_doc(res: dict, inp: dict[str, Input], now: datetime) -> dict:
+def trade_band_for(history: dict, today_band: str, now: datetime) -> str:
+    """
+    باند مؤثر دفتر معامله با هیسترزیس ک۳۲، از باند خام روزهای تاریخچه و
+    امروز. پایین فوری؛ بالا فقط پس از سه روز تقویمی پیاپی — radar_budget.
+    """
+    today = now.date()
+    days = sorted((datetime.strptime(d, "%Y-%m-%d").date(), rec["band"])
+                  for d, rec in (history.get("days") or {}).items()
+                  if isinstance(rec.get("band"), str)
+                  and datetime.strptime(d, "%Y-%m-%d").date() < today)
+    return BG.trade_band(days + [(today, today_band)])
+
+
+def build_doc(res: dict, inp: dict[str, Input], now: datetime,
+              trade_band: str | None = None) -> dict:
     """
     سند regime.json. قرارداد با radar_book.py دو میدان اجباری دارد —
     score (امتیاز نهایی محافظه‌کارانه) و generated_at (با منطقه زمانی) —
@@ -447,6 +462,7 @@ def build_doc(res: dict, inp: dict[str, Input], now: datetime) -> dict:
                    for i in inp.values()],
         "missing": res["missing"],
         "freshness_days": dict(FRESH_DAYS),
+        **({"trade_band": BG.band_by_name(trade_band)} if trade_band else {}),
         "version": VERSION,
         "note": f"نگاشت‌ها فرضیه‌اند، نه اندازه‌گیری — {REFERENCE}",
     }
@@ -474,7 +490,7 @@ def load_history(path) -> dict:
 
 
 def update_history(history: dict, res: dict, inp: dict[str, Input],
-                   now: datetime) -> dict:
+                   now: datetime, trade_band: str | None = None) -> dict:
     """
     روز امروز را می‌افزاید یا بازنویسی می‌کند؛ روزهای دیگر دست نمی‌خورند.
     امتیازها هم ثبت می‌شوند تا بعداً خود رژیم با radar_validate سنجیده شود.
@@ -484,6 +500,8 @@ def update_history(history: dict, res: dict, inp: dict[str, Input],
            "score": res["score"], "band": res["band"]["name"],
            "coverage": res["coverage"],
            "inputs": {k: i.score for k, i in inp.items()}}
+    if trade_band:
+        rec["trade_band"] = trade_band
     for i in inp.values():
         for name, v in i.obs.items():
             if name != "components":
@@ -563,6 +581,8 @@ def render_md(doc: dict) -> str:
           f"| امتیاز نرمال | {_num(doc['norm'], 3)} |",
           f"| **امتیاز نهایی** — کمینه دو | **{_num(doc['score'], 3)}** |",
           f"| **باند** | **{b['name']}** |",
+          f"| باند اندازه‌گیری دفتر معامله — هیسترزیس | "
+          f"{doc['trade_band']['name'] if doc.get('trade_band') else '—'} |",
           f"| سقف ریسک باز | {b['cap']}٪ |",
           f"| ضریب اندازه | {b['mult']:.2f} |",
           f"| حداکثر پوزیشن هم‌جهت | {b['maxpos']} |",
@@ -640,7 +660,8 @@ def main(argv: list[str] | None = None) -> int:
             print(record_build_error(a.json, msg, now), file=sys.stderr)
         return 2
 
-    doc = build_doc(res, inp, now)
+    tb = trade_band_for(history, res["band"]["name"], now)
+    doc = build_doc(res, inp, now, tb)
     md = render_md(doc)
     if a.stdout:
         print(md)
@@ -649,7 +670,7 @@ def main(argv: list[str] | None = None) -> int:
     os.makedirs(os.path.dirname(os.path.abspath(report)), exist_ok=True)
     with open(report, "w", encoding="utf-8") as f:
         f.write(md)
-    write_json(a.history, update_history(history, res, inp, now))
+    write_json(a.history, update_history(history, res, inp, now, tb))
     write_json(a.json, doc)
     print(f"رژیم: {res['band']['name']} — نهایی {res['score']:+.3f}، "
           f"پوشش {100 * res['coverage']:.0f}٪ → {a.json}")
