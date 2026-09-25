@@ -73,14 +73,25 @@ jobs:
         run: |
           D=$(date -u '+%Y-%m-%d %H:%M UTC')
           if [ -f watch.json ]; then
-            python radar_watch.py --once > /tmp/watch.log 2>&1 || true
+            # خطا بلند است ولی گام را نمی‌اندازد، تا watch_state.json ثبت شود.
+            # پیش از نشست ۳ کد خروج اینجا با «یا درست» بلعیده می‌شد و افتادن
+            # پایشگر بی‌صدا می‌ماند.
+            rc=0
+            python radar_watch.py --once > /tmp/watch.log 2>&1 || rc=$?
             {
               echo "# پایش زنده — $D"
               echo
+              if [ "$rc" -ne 0 ]; then
+                echo "⛔ پایشگر با خطا تمام شد — کد $rc"
+                echo
+              fi
               echo '```'
               tail -c 3000 /tmp/watch.log
               echo '```'
             } > reports/WATCH.md
+            if [ "$rc" -ne 0 ]; then
+              echo "::error::پایشگر خطا داد — کد $rc، reports/WATCH.md"
+            fi
           else
             echo "# پایش زنده — $D" > reports/WATCH.md
             echo >> reports/WATCH.md

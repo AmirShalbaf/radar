@@ -136,14 +136,25 @@ def last_closed_daily(symbol: str) -> tuple[float, str] | None:
 
 # ─────────────────────── وضعیت ───────────────────────
 
+class WatchError(Exception):
+    """فایل پایش یا وضعیت خوانا نیست — هرگز بی‌صدا به فهرست خالی تبدیل نمی‌شود."""
+
+
 def load_json(path: str, default: dict) -> dict:
-    if os.path.exists(path):
-        try:
-            with open(path, encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            pass
-    return default
+    """
+    فایل غایب همان پیش‌فرض است. فایل خراب خطای صریح: پیش از نشست ۳ اینجا
+    except Exception: pass بود و watch.json خراب یعنی پایش خاموش.
+    """
+    if not os.path.exists(path):
+        return default
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, ValueError) as exc:
+        raise WatchError(f"{os.path.basename(path)} خوانا نیست ({type(exc).__name__}: {exc})") from exc
+    if not isinstance(data, dict):
+        raise WatchError(f"{os.path.basename(path)} خوانا نیست — شیء JSON نیست")
+    return data
 
 
 def save_json(path: str, data: dict) -> None:
@@ -172,7 +183,12 @@ def watch_age_days(path: str, now: datetime | None = None) -> float | None:
         return None
 
     stamp = None
-    raw = load_json(path, {}).get("updated")
+    try:
+        raw = load_json(path, {}).get("updated")
+    except WatchError:
+        # فایل خراب: خطای بلندش را main پیش از پایش می‌دهد؛ اینجا فقط سن
+        # لازم است، پس به مهر زمانی برمی‌گردد — همان رفتار پیشین
+        raw = None
     if raw:
         try:
             d = datetime.fromisoformat(str(raw))
@@ -471,8 +487,18 @@ def main(argv: list[str] | None = None) -> int:
         print(f"فایل {a.watch} پیدا نشد. برای ساخت نمونه: --init")
         return 1
 
-    watch = load_json(a.watch, {"items": []})
-    state = load_json(STATE_FILE, {})
+    try:
+        watch = load_json(a.watch, {"items": []})
+    except WatchError as exc:
+        notify(f"⛔ {exc} — پایش انجام نشد. هیچ ابطال و هشداری سنجیده نشد.")
+        return 2
+    rc = 0
+    try:
+        state = load_json(STATE_FILE, {})
+    except WatchError as exc:
+        # هشدار تکراری بهتر از هشدار گم‌شده است: با وضعیت خالی ادامه، ولی بلند
+        notify(f"⚠️ {exc} — وضعیت از صفر ساخته شد؛ هشدارهای تکراری ممکن است.")
+        state, rc = {}, 3
 
     if a.loop:
         print(f"حلقه پایش هر {a.loop} ثانیه. برای توقف: Ctrl+C")
@@ -482,11 +508,24 @@ def main(argv: list[str] | None = None) -> int:
                 time.sleep(a.loop)
         except KeyboardInterrupt:
             print("\nمتوقف شد.")
-        return 0
+        return rc
 
     run_once(watch, state, a.quiet, path=a.watch)
-    return 0
+    return rc
+
+
+def run_cli(argv: list[str] | None = None) -> int:
+    """
+    نقطه ورود. افتادن پیش‌بینی‌نشده پیام تلگرام می‌دهد و همان خطا دوباره
+    بالا می‌رود — پیش از این گام نبض با `|| true` آن را می‌بلعید.
+    """
+    try:
+        return main(argv)
+    except Exception as exc:
+        notify(f"⛔ پایشگر رادار افتاد — {type(exc).__name__}: {str(exc)[:300]}\n"
+               "این اجرا هیچ ابطال و هشداری را نسنجید.")
+        raise
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(run_cli())
