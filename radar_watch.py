@@ -31,19 +31,37 @@ radar_watch.py — پایشگر زنده سطوح و هشدار، رادار ۶.
 این اسکریپت آن قانون را رعایت می‌کند: برای ابطال، کندل روزانه بسته‌شده
 را می‌خواند، نه قیمت لحظه‌ای. برای پله ورود و هدف، قیمت لحظه‌ای مبناست
 چون آن‌ها سفارش‌اند، نه حکم ساختاری.
+
+این قانون برای موردهای items است — ستاپ‌های دفتر معامله.
+
+دفتر موقعیت — نشست ۳ رادار ۷
+----------------------------
+بخش‌های positions، market و reserve_plan در watch.json نسخه ۲:
+    ابطال        بسته هفتگی وقت جهانی، یک بار برای هر هفته بسته‌شده.
+                 سهم خروج exit_fraction، پیش‌فرض ۱.۰.
+    سطح هشدار    فقط پیام، خروج نمی‌سازد.
+    ورود دوباره  بسته هفتگی بالای سطح، از سهمیه دفتر کل holdings.json.
+    هشدار بازار  بسته هفتگی BTC زیر میانگین ساده ۵۰ هفته — فقط اطلاع.
+    نقشه ذخیره   پله رسیده، و مهلت برای پله‌های پرنشده.
+سطح ابطال فقط در بازبینی هفتگی عوض می‌شود؛ این پایشگر watch.json را
+بازنویسی نمی‌کند. حد ضرر دفتر معامله باید سفارش روی خود صرافی باشد —
+پیام تلگرام حد ضرر نیست.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 # تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
 from radar_text import fa
+
+import radar_positions as P
 
 try:
     import requests
@@ -416,9 +434,287 @@ def check_item(it: dict, state: dict) -> list[str]:
     return fired
 
 
+# ─────────────────────── دفتر موقعیت — نشست ۳ رادار ۷ ───────────────────────
+#
+# ابطال دفتر موقعیت با بسته هفتگی وقت جهانی سنجیده می‌شود — تصمیم «دو دفتر»،
+# ۲۵ سپتامبر ۲۰۲۶. قانون بسته روزانه بالا فقط برای موردهای items است. سطح
+# فقط در بازبینی هفتگی عوض می‌شود؛ پایشگر watch.json را بازنویسی نمی‌کند.
+# هر هفته بسته‌شده یک بار سنجیده می‌شود: نخستین اجرای پس از دوشنبه ۰۰:۰۰.
+# اندازه‌گیری ۳۰ روز نبض: آن اجرا حدود ۰۴:۳۰ تا ۰۵:۳۰ وقت جهانی می‌رسد.
+
+# گزینه الف آزمون تکان‌خوردن. تصمیم کاربر، ۲۶ سپتامبر ۲۰۲۶: سهم خروج پارامتر
+# است تا تصمیم نهایی فقط یک عدد در watch.json باشد
+DEFAULT_EXIT_FRACTION = 1.0
+# سطح هشدار پس از بازگشت ۱٪ بالای خودش دوباره مسلح می‌شود — نوسان روی خط
+# پیام تکراری نسازد
+WARN_REARM = 1.01
+# پله ذخیره با پوشش ۹۹٪ مقدارش پرشده حساب می‌شود — گرد کردن صرافی
+STEP_TOL = 0.01
+
+
+def _num(x) -> bool:
+    return isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
+
+
+def _n(x: float) -> str:
+    """عدد بازار در پیام: رقم لاتین، بدون صفر و گرد کردن گمراه‌کننده."""
+    return f"{x:.10g}"
+
+
+def _aware(raw, what: str) -> datetime:
+    try:
+        d = datetime.fromisoformat(str(raw))
+    except ValueError as exc:
+        raise WatchError(f"{what} قابل‌خواندن نیست: {raw!r}") from exc
+    if d.tzinfo is None:
+        raise WatchError(f"{what} منطقه زمانی ندارد: {raw!r}")
+    return d
+
+
+def exit_fraction(w: dict) -> float:
+    return float(w.get("exit_fraction", DEFAULT_EXIT_FRACTION))
+
+
+def validate_watch(w: dict) -> None:
+    """شکل بخش‌های دفتر موقعیت در watch.json. فایل نیمه‌درست یعنی پایش خاموش — خطای صریح."""
+    if "exit_fraction" in w:
+        f = w["exit_fraction"]
+        if not _num(f) or not 0 < f <= 1:
+            raise WatchError(f"exit_fraction باید عددی بزرگ‌تر از 0 و حداکثر 1 باشد: {f!r}")
+    for i, p in enumerate(w.get("positions") or [], 1):
+        where = f"positions ردیف {i}"
+        if not isinstance(p, dict) or not isinstance(p.get("symbol"), str):
+            raise WatchError(f"{where}: نماد نیست")
+        if not _num(p.get("invalidation")) or p["invalidation"] <= 0:
+            raise WatchError(f"{where} ({p['symbol']}): سطح ابطال عدد مثبت نیست")
+        ws = p.get("warnings", [])
+        if not isinstance(ws, list) or not all(_num(x) and x > 0 for x in ws):
+            raise WatchError(f"{where} ({p['symbol']}): سطوح هشدار نامعتبر")
+    for i, m in enumerate(w.get("market") or [], 1):
+        if (not isinstance(m, dict) or not isinstance(m.get("symbol"), str)
+                or not _num(m.get("weekly_close_below"))):
+            raise WatchError(f"market ردیف {i}: نماد یا weekly_close_below نامعتبر")
+    rp = w.get("reserve_plan")
+    if rp is not None:
+        _aware(rp.get("created"), "reserve_plan.created")
+        _aware(rp.get("deadline"), "reserve_plan.deadline")
+        for i, s in enumerate(rp.get("steps") or [], 1):
+            price = s.get("price")
+            if (not isinstance(s.get("symbol"), str) or not _num(s.get("qty")) or s["qty"] <= 0
+                    or not (price is None or (_num(price) and price > 0))):
+                raise WatchError(f"reserve_plan پله {i}: نماد، مقدار یا قیمت نامعتبر")
+
+
+def unfilled_steps(rp: dict, h: dict) -> list[dict]:
+    """
+    پله‌های پرنشده نقشه ذخیره. پرشده یعنی پوشش‌داده با کاهش reserve دفتر کل
+    پس از ساخت نقشه. پله‌های هر نماد به ترتیب نقشه پر می‌شوند.
+    """
+    created = _aware(rp["created"], "reserve_plan.created")
+    done: dict[str, float] = {}
+    for r in h.get("ledger", []):
+        if r.get("action") == "trim" and r.get("reason") == "reserve":
+            if _aware(r.get("at"), "زمان ردیف دفتر کل") >= created:
+                done[r["symbol"]] = done.get(r["symbol"], 0.0) - float(r["delta"])
+    out, cum = [], {}
+    for s in rp.get("steps") or []:
+        sym = s["symbol"]
+        cum[sym] = cum.get(sym, 0.0) + s["qty"]
+        if cum[sym] - STEP_TOL * s["qty"] > done.get(sym, 0.0):
+            out.append({"symbol": sym, "qty": s["qty"], "price": s.get("price")})
+    return out
+
+
+def _once(state: dict, key: str, msgs: list, text: str) -> None:
+    if not state.get(key):
+        state[key] = True
+        msgs.append(text)
+
+
+def _week_of(now: datetime) -> str:
+    """دوشنبه ۰۰:۰۰ وقت جهانی هفته جاری — کلید «یک بار در هفته»."""
+    return (now - timedelta(days=now.weekday())).strftime("%Y-%m-%d")
+
+
+def check_positions(watch: dict, h: dict, state: dict, now: datetime,
+                    weekly=None, price=None) -> list[str]:
+    """
+    ابطال هفتگی، سطح هشدار، ورود دوباره، هشدار بازار و نقشه ذخیره. فقط state
+    عوض می‌شود؛ watch و h دست‌نخورده می‌مانند. weekly و price تزریق‌پذیرند.
+    """
+    weekly = weekly or (lambda s: P.weekly_close(s, now=now))
+    price = price or ticker
+    msgs: list[str] = []
+    day, week = now.strftime("%Y-%m-%d"), _week_of(now)
+    f = exit_fraction(watch)
+    pos = {p["symbol"]: p for p in h.get("positions", []) if p.get("book") == "position"}
+    wk_cache: dict = {}
+    px_cache: dict = {}
+
+    def wk(sym):
+        if sym not in wk_cache:
+            wk_cache[sym] = weekly(sym)
+        return wk_cache[sym]
+
+    def px(sym):
+        if sym not in px_cache:
+            px_cache[sym] = price(sym)
+            if px_cache[sym] is None:
+                _once(state, f"noprice_{sym}_{day}", msgs,
+                      f"⚠️ قیمت {sym} در دسترس نیست — سطح هشدار و پله ذخیره {sym} "
+                      "این اجرا سنجیده نشد.")
+        return px_cache[sym]
+
+    # ── ۱ ابطال هفتگی و سطح هشدار
+    for item in watch.get("positions") or []:
+        sym, lvl = item["symbol"].upper(), float(item["invalidation"])
+        tag = f" ({item['label']})" if item.get("label") else ""
+        p = pos.get(sym)
+        if p is None:
+            _once(state, f"missing_{sym}_{day}", msgs,
+                  f"⚠️ {sym} در watch.json هست ولی در دفتر موقعیت holdings.json نیست — "
+                  "ابطالش سنجیده نشد.")
+            continue
+        hinv = p.get("invalidation")
+        if not _num(hinv) or not math.isclose(float(hinv), lvl, rel_tol=1e-9):
+            _once(state, f"mismatch_{sym}_{day}", msgs,
+                  f"⚠️ ناهمخوانی سطح ابطال {sym}: watch.json {_n(lvl)}، holdings.json "
+                  f"{hinv}. پایشگر با watch.json می‌سنجد و سبد با holdings.json — "
+                  "در بازبینی هفتگی یکی شوند.")
+        if p.get("status") != "open" or P.position_qty(p) <= 0:
+            continue
+
+        w, why = wk(sym)
+        if w is None:
+            _once(state, f"nodata_{sym}_{week}", msgs,
+                  f"⚠️ داده ندارم — بسته هفتگی {sym} به لنگر وقت جهانی در دسترس نیست "
+                  f"({'؛ '.join(why) or 'بی‌دلیل'}). ابطال{tag} سنجیده نشد؛ اجرای بعد "
+                  "دوباره تلاش می‌کند.")
+        elif not state.get(f"wk_{sym}_{w['closed_at']}"):
+            state[f"wk_{sym}_{w['closed_at']}"] = True
+            close, qty = w["close"], P.position_qty(p)
+            bkey = f"breach_{sym}"
+            prev = state.get(bkey)
+            head = (f"⛔ ابطال هفتگی {sym}{tag} — بسته هفته تا {w['closed_at'][:10]}: "
+                    f"{_n(close)}، زیر سطح {_n(lvl)}.")
+            if close < lvl and (f >= 1.0 or prev):
+                state.pop(bkey, None)
+                second = "دومین بسته پیاپی زیر سطح. " if prev else ""
+                msgs.append(f"{head}\n{second}خروج کامل باقی‌مانده: {_n(qty)} {sym}.\n"
+                            f"ثبت: radar_positions.py exit --symbol {sym} "
+                            f"--price <قیمت اجرا> --level {_n(lvl)}")
+            elif close < lvl:
+                sell = qty * f
+                state[bkey] = w["closed_at"]
+                msgs.append(f"{head}\nفروش سهم {_n(f)}: {_n(sell)} {sym}. باقی فقط اگر "
+                            "بسته هفتگی بعد هم زیر سطح بود.\n"
+                            f"ثبت: radar_positions.py trim --reason invalidation "
+                            f"--level {_n(lvl)} --symbol {sym} --qty {_n(sell)} "
+                            "--price <قیمت اجرا>")
+            elif prev:
+                state.pop(bkey, None)
+                msgs.append(f"✅ {sym}{tag} — بسته هفتگی {_n(close)} بالای سطح {_n(lvl)}. "
+                            f"باقی‌مانده {_n(qty)} نگه داشته می‌شود. سهم فروخته‌شده: "
+                            "ورود دوباره مجاز — radar_positions.py reenter")
+
+        for wl in item.get("warnings") or []:
+            v = px(sym)
+            if v is None:
+                break
+            key = f"warn_{sym}_{_n(wl)}"
+            if v < wl and not state.get(key):
+                state[key] = True
+                msgs.append(f"⚠️ سطح هشدار {sym} شکسته شد — قیمت {_n(v)} زیر {_n(wl)}.\n"
+                            "فقط پیام؛ خروجی نمی‌سازد. ابطال همچنان بسته هفتگی زیر "
+                            f"{_n(lvl)} است.")
+            elif v > wl * WARN_REARM:
+                state.pop(key, None)
+
+    # ── ۲ ورود دوباره: سهمیه از دفتر کل، بسته هفتگی بالای سطح
+    for sym in pos:
+        st = P.reentry_state(h, sym)
+        if st is None or st["used"] >= st["max_qty"] - P.TOL:
+            continue
+        w, why = wk(sym)
+        if w is None:
+            _once(state, f"nodata_re_{sym}_{week}", msgs,
+                  f"⚠️ داده ندارم — بسته هفتگی {sym}؛ مجوز ورود دوباره سنجیده نشد.")
+            continue
+        key = f"re_{sym}_{w['closed_at']}"
+        if state.get(key):
+            continue
+        state[key] = True
+        if w["close"] > st["level"]:
+            msgs.append(f"🔁 ورود دوباره مجاز {sym} — بسته هفتگی {_n(w['close'])} بالای "
+                        f"سطح {_n(st['level'])}.\nسهمیه باقی: "
+                        f"{_n(st['max_qty'] - st['used'])} {sym}. ثبت: radar_positions.py "
+                        f"reenter --symbol {sym} --qty <مقدار> --price <قیمت> --account <حساب>")
+
+    # ── ۳ هشدار بازار: فقط اطلاع
+    for m in watch.get("market") or []:
+        sym, lvl = m["symbol"].upper(), float(m["weekly_close_below"])
+        w, why = wk(sym)
+        if w is None:
+            _once(state, f"nodata_mkt_{sym}_{week}", msgs,
+                  f"⚠️ داده ندارم — بسته هفتگی {sym}؛ هشدار بازار سنجیده نشد.")
+            continue
+        key = f"mkt_{sym}_{w['closed_at']}"
+        if state.get(key):
+            continue
+        state[key] = True
+        if w["close"] < lvl:
+            msgs.append(f"📉 هشدار بازار — بسته هفتگی {sym} {_n(w['close'])} زیر "
+                        f"{m.get('label') or 'سطح'} {_n(lvl)}.\nفقط اطلاع؛ خروج نمی‌سازد. "
+                        "سطح در بازبینی هفتگی به‌روز می‌شود.")
+
+    # ── ۴ نقشه ذخیره
+    rp = watch.get("reserve_plan")
+    if rp:
+        left = unfilled_steps(rp, h)
+        deadline = _aware(rp["deadline"], "reserve_plan.deadline")
+        acct = rp.get("account") or "حساب نقشه"
+
+        def label(s):
+            return "پله بازار" if s["price"] is None else f"پله {_n(s['price'])}"
+
+        if now >= deadline:
+            if left:
+                rows = "\n".join(f"- {s['symbol']} {_n(s['qty'])} — {label(s)}" for s in left)
+                _once(state, f"reserve_deadline_{rp['deadline']}", msgs,
+                      f"⏰ مهلت نقشه ذخیره گذشت ({deadline.astimezone(UTC):%Y-%m-%d %H:%M} "
+                      f"UTC). پله‌های پرنشده — فروش در قیمت بازار از {acct}:\n{rows}\n"
+                      "ثبت هر کدام: radar_positions.py trim --reason reserve")
+        else:
+            market = [s for s in left if s["price"] is None]
+            if market:
+                rows = "، ".join(f"{s['symbol']} {_n(s['qty'])}" for s in market)
+                _once(state, f"reserve_market_{day}", msgs,
+                      f"🧾 پله بازار نقشه ذخیره هنوز در دفتر کل ثبت نشده: {rows}. اجرا از "
+                      f"{acct} و ثبت با radar_positions.py trim --reason reserve.")
+            for s in left:
+                if s["price"] is None:
+                    continue
+                v = px(s["symbol"])
+                key = f"reserve_{s['symbol']}_{_n(s['price'])}"
+                if v is not None and v >= s["price"] and not state.get(key):
+                    state[key] = True
+                    msgs.append(f"🎯 پله ذخیره {s['symbol']} {_n(s['price'])} رسید — قیمت "
+                                f"{_n(v)}.\nفروش {_n(s['qty'])} {s['symbol']} از {acct}. "
+                                "اگر سفارش پر شد، ثبت: radar_positions.py trim --reason "
+                                f"reserve --symbol {s['symbol']} --qty {_n(s['qty'])} "
+                                "--price <قیمت اجرا>")
+    return msgs
+
+
 def run_once(watch: dict, state: dict, quiet: bool = False,
-             path: str = WATCH_FILE) -> int:
-    ts = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
+             path: str = WATCH_FILE, h: dict | None = None,
+             now: datetime | None = None) -> int:
+    """
+    h خالی یعنی holdings.json بار نشد — main پیش‌تر بلند گزارشش کرده. آن‌وقت
+    فقط هشدار بازار سنجیده می‌شود، که به دفتر موقعیت وابسته نیست.
+    """
+    now = now or datetime.now(UTC)
+    ts = now.strftime("%Y-%m-%d %H:%M UTC")
     if not quiet:
         print(f"پایش — {ts}")
 
@@ -442,6 +738,10 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
         for msg in check_item(it, state):
             notify(msg, quiet=False)
             n += 1
+    scope = watch if h is not None else {"market": watch.get("market")}
+    for msg in check_positions(scope, h or {"positions": [], "ledger": []}, state, now):
+        notify(msg, quiet=False)
+        n += 1
     if n == 0 and not quiet:
         print("  هیچ ماشه‌ای فعال نشد.")
     save_json(STATE_FILE, state)
@@ -489,10 +789,19 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         watch = load_json(a.watch, {"items": []})
+        validate_watch(watch)
     except WatchError as exc:
         notify(f"⛔ {exc} — پایش انجام نشد. هیچ ابطال و هشداری سنجیده نشد.")
         return 2
     rc = 0
+    h = None
+    if watch.get("positions") or watch.get("reserve_plan"):
+        try:
+            h, _ = P.load(a.holdings)
+        except P.PositionsError as exc:
+            notify(f"⛔ holdings.json نامعتبر — ابطال دفتر موقعیت و نقشه ذخیره سنجیده "
+                   f"نشد: {exc}")
+            rc = 2
     try:
         state = load_json(STATE_FILE, {})
     except WatchError as exc:
@@ -504,13 +813,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"حلقه پایش هر {a.loop} ثانیه. برای توقف: Ctrl+C")
         try:
             while True:
-                run_once(watch, state, a.quiet, path=a.watch)
+                run_once(watch, state, a.quiet, path=a.watch, h=h)
                 time.sleep(a.loop)
         except KeyboardInterrupt:
             print("\nمتوقف شد.")
         return rc
 
-    run_once(watch, state, a.quiet, path=a.watch)
+    run_once(watch, state, a.quiet, path=a.watch, h=h)
     return rc
 
 
