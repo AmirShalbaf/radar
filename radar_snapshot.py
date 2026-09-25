@@ -167,7 +167,8 @@ def fmt(v, d=4):
         return "—"
     if abs(v) >= 1000:
         return f"{v:,.0f}"
-    return f"{v:.{d}f}".rstrip("0").rstrip(".")
+    # بدون رقم اعشار نقطه‌ای نیست؛ rstrip صفر خود عدد صحیح را می‌برید
+    return f"{v:.{d}f}".rstrip("0").rstrip(".") if d else f"{v:.0f}"
 
 
 def freshness_note() -> list[str]:

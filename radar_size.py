@@ -24,10 +24,14 @@ radar_size.py — موتور اندازه مدرج رادار ۶.۱
 
 نمونه اجرا
 ----------
-    python radar_size.py --balance 2500 --regime -1.25 --score 1.35 \
+    python radar_size.py --balance 2500 --score 1.35 \
         --rr 4.66 --coverage 78 --flow 3 --entry 497.15 --stop 478.0 \
         --invalidation 480.43 --target 575 --win-prob 0.45 \
         --side long --open-risk 0.9 --structural
+
+رژیم از regime.json می‌آید: باند مؤثر دفتر معامله با هیسترزیس ک۳۲، با همان
+load_regime سبد. امتیاز دستی فقط با کلید صریح --regime و با هشدار. رژیم
+کهنه یا غایب بدون کلید دستی خطای صریح است — باند جانشین ساخته نمی‌شود.
 """
 
 from __future__ import annotations
@@ -162,16 +166,42 @@ def weighted_entry(ladder: list[tuple[float, float]]) -> float:
 def fmt(x, d=4):
     if x is None:
         return "—"
-    return f"{x:,.{d}f}".rstrip("0").rstrip(".") if isinstance(x, float) else str(x)
+    if not isinstance(x, float):
+        return str(x)
+    # بدون رقم اعشار نقطه‌ای نیست؛ rstrip صفر خود عدد صحیح را می‌برید
+    return f"{x:,.{d}f}".rstrip("0").rstrip(".") if d else f"{x:,.0f}"
+
+
+def resolve_band(a) -> dict:
+    """
+    باند اندازه‌گیری دفتر معامله. پیش‌فرض regime.json با هیسترزیس، از همان
+    توابع radar_book — یک منبع. کلید دستی --regime باند خام می‌سازد، با هشدار.
+    band خالی یعنی رژیم کهنه؛ فراخواننده خطای صریح می‌دهد.
+    """
+    if a.regime is not None:
+        return {"band": regime_row(a.regime), "score": a.regime,
+                "source": "دستی (کلید `--regime`)", "note": "باند خام امتیاز دستی",
+                "warnings": ["⚠️ امتیاز رژیم دستی — تازگی regime.json و هیسترزیس ک۳۲ "
+                             "دور زده شد. فقط وقتی regime.json در دسترس نیست."]}
+    import radar_book as B          # تنها منبع خواندن regime.json و باند هیسترزیس
+    info = B.load_regime(a.regime_file)
+    raw = regime_row(info.score) if info.score is not None else None
+    band, note = B.effective_trade_band(raw, info)
+    return {"band": band, "score": info.score, "source": info.source, "note": note,
+            "warnings": list(info.warnings),
+            "error": None if band else (f"{B.REGIME_STALE}: {info.source}. اندازه‌گیری "
+                                        "بدون رژیم معتبر ممکن نیست؛ regime.json را بساز یا "
+                                        "امتیاز را صریح با --regime بده")}
 
 
 # ─────────────────────── محاسبه اصلی ───────────────────────
 
-def compute(a) -> str:
+def compute(a, rb: dict | None = None) -> str:
     out: list[str] = []
     W = out.append
 
-    reg = regime_row(a.regime)
+    rb = rb or resolve_band(a)
+    reg = rb["band"]
 
     # ورود مؤثر: اگر نردبان داده شده، میانگین وزنی؛ وگرنه ورود تک‌نقطه‌ای
     ladder = None
@@ -230,12 +260,16 @@ def compute(a) -> str:
     W(f"موتور اندازه مدرج — رادار {fa(VERSION)}")
     W("=" * 66)
     W("")
+    for w in rb["warnings"]:
+        W(w)
+        W("")
     W("## ۱ — رژیم و بودجه")
     W("")
     W("| مورد | مقدار |")
     W("|---|---|")
-    W(f"| امتیاز رژیم | {a.regime:+.2f} |")
-    W(f"| نام رژیم | {reg['name']} |")
+    W(f"| امتیاز رژیم | {rb['score']:+.2f} |")
+    W(f"| منبع رژیم | {rb['source']} |")
+    W(f"| باند اندازه‌گیری دفتر معامله | {reg['name']} — {rb['note']} |")
     W(f"| سقف ریسک باز کل | {reg['cap']}٪ |")
     W(f"| ریسک باز فعلی | {a.open_risk}٪ |")
     W(f"| **ظرفیت آزاد** | **{max(free,0):.2f}٪** |")
@@ -417,11 +451,14 @@ def compute(a) -> str:
     return "\n".join(out)
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(
         description=f"موتور اندازه مدرج رادار {fa(VERSION)}")
     ap.add_argument("--balance", type=float, required=True, help="کل موجودی دلاری")
-    ap.add_argument("--regime", type=float, required=True, help="امتیاز رژیم، منفی۲ تا مثبت۲")
+    ap.add_argument("--regime", type=float, default=None,
+                    help="امتیاز رژیم دستی، منفی۲ تا مثبت۲ — فقط صریح، با هشدار. "
+                         "پیش‌فرض باند مؤثر از regime.json")
+    ap.add_argument("--regime-file", default="regime.json", dest="regime_file")
     ap.add_argument("--score", type=float, required=True,
                     help="امتیاز نهایی کوین. لانگ: منفی۲..مثبت۲ | شورت: ۰..۲ از موتور شورت مستقل")
     ap.add_argument("--rr", type=float, default=0.0, help="نسبت ریسک به ریوارد؛ اگر target داده شود بازمحاسبه می‌شود")
@@ -446,9 +483,13 @@ def main() -> int:
     ap.add_argument("--fee", type=float, default=0.10, help="کارمزد هر طرف درصد")
     ap.add_argument("--slip", type=float, default=0.10, help="لغزش درصد")
     ap.add_argument("--out", default=None, help="ذخیره خروجی در فایل")
-    a = ap.parse_args()
+    a = ap.parse_args(argv)
 
-    txt = compute(a)
+    rb = resolve_band(a)
+    if rb["band"] is None:
+        print(f"⛔ {rb['error']}", file=sys.stderr)
+        return 2
+    txt = compute(a, rb)
     if a.out:
         with open(a.out, "w", encoding="utf-8") as f:
             f.write(txt)
