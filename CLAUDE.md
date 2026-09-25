@@ -36,6 +36,8 @@
 | `radar_scan.py` | غربال واچ‌لیست. امتیاز لانگ و شورت |
 | `radar_rotate.py` | غربال کل بازار. شکار چرخش |
 | `radar_levels.py` | سطوح ساختاری. واکشی مستقل، فقط OKX |
+| `radar_regime.py` | امتیاز رژیم بازار. سه ستون، خروجی `regime.json` و `regime_history.json`. نگاشت‌ها فرضیه‌اند: `references/macro-liquidity.md` |
+| `radar_budget.py` | جدول بودجه رژیم، تنها منبع. فقط کتابخانه استاندارد؛ سبد، اندازه و رژیم از آن می‌خوانند |
 | `radar_journal.py` | دفترچه کالیبراسیون |
 | `radar_intake.py` / `radar_digest.py` | خط لوله محتوای تحلیل‌گران |
 | `radar_frames.py` | استخراج فریم نمودار از ویدئو |
