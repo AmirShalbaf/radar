@@ -565,8 +565,23 @@ def fmt(x, d=4):
     if x is None:
         return "—"
     if isinstance(x, float):
-        return f"{x:,.{d}f}".rstrip("0").rstrip(".")
+        # بدون رقم اعشار نقطه‌ای نیست؛ rstrip صفر خود عدد صحیح را می‌برید
+        return f"{x:,.{d}f}".rstrip("0").rstrip(".") if d else f"{x:,.0f}"
     return str(x)
+
+
+def sell_order(rows: list[dict]) -> list[dict]:
+    """
+    ترتیب فروش دفتر موقعیت — قاعده کاربر، ۲۵ سپتامبر ۲۰۲۶: اول بی‌ابطال،
+    سپس ضعیف‌ترین قدرت نسبی ۳۰ روزه. امتیاز و ضربه مرتب نمی‌کنند؛ ضربه
+    سوم اقدام جدای خودش را دارد. قدرت نسبی نامعلوم آخر گروه خودش — ضعفی
+    که اندازه‌گیری نشده ادعا نمی‌شود.
+    """
+    return sorted(rows, key=lambda r: (
+        0 if r["pos"].get("invalidation") is None else 1,
+        r["rs30"] is None,
+        r["rs30"] if r["rs30"] is not None else 0.0,
+    ))
 
 
 def _pnl(r: dict) -> str:
@@ -844,21 +859,14 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     # ── ۵ ترتیب فروش
     W("## ۵ — ترتیب فروش هنگام ساخت ذخیره")
     W("")
+    W("ترتیب: اول بی‌ابطال، سپس ضعیف‌ترین قدرت نسبی ۳۰ روزه. امتیاز و ضربه فقط")
+    W("در ستون دلیل می‌آیند. قدرت نسبی نامعلوم آخر گروه خودش است.")
     W("**هرگز بر اساس میزان ضرر مرتب نکن.** میزان ضرر واقعیتی درباره گذشته است")
     W("و هیچ اطلاعاتی درباره آینده ندارد. **هرگز برنده را اول نفروش** (اثر تمایل).")
     W("پوزیشن ناچیز در این فهرست نیست.")
     W("")
 
-    def sell_key(r):
-        p = r["pos"]
-        return (
-            0 if r["strikes"] >= 3 else 1,
-            0 if p.get("invalidation") is None else 1,
-            r["score"] if r["score"] is not None else 0,
-            r["rs30"] if r["rs30"] is not None else 0,
-        )
-
-    order = sorted(live, key=sell_key)
+    order = sell_order(live)
     W("| اولویت | نماد | ارزش | دلیل |")
     W("|---|---|---|---|")
     for i, r in enumerate(order, 1):
@@ -870,11 +878,10 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
             why.append("بدون سطح ابطال")
         if r["score"] is not None and r["score"] < 0:
             why.append(f"امتیاز {r['score']:+.2f}")
-        if r["rs30"] is not None and r["rs30"] < 0:
+        if r["rs30"] is None:
+            why.append("قدرت نسبی نامعلوم — آخر گروه")
+        else:
             why.append(f"قدرت نسبی {r['rs30']*100:+.1f}٪")
-        if not why:
-            why.append("سطح ابطال دارد — ریسک محدود" if p.get("invalidation") is not None
-                       else "هیچ نشانه ضعفی ندارد")
         W(f"| {i} | {p['symbol']} | {fmt(r.get('value'), 0)} دلار | {'، '.join(why)} |")
     W("")
 
