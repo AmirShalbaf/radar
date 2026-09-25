@@ -89,3 +89,19 @@ def test_cli_partial_invalidation_trim(files) -> None:
     assert h["positions"][0]["status"] == "open"
     oc = json.loads((files[0].parent / "optcost.json").read_text(encoding="utf-8"))
     assert oc["exits"][-1]["level"] == 96.7
+
+
+# ═══════════════ زمان اعتبار سطح ═══════════════
+
+def test_invalidation_since_is_parsed_and_validated() -> None:
+    h = _h()
+    h["positions"][0]["invalidation_since"] = "2026-09-25"
+    P.validate(h, {"version": 1, "trades": []})
+    assert P.level_since(h["positions"][0]) == datetime(2026, 9, 25, tzinfo=timezone.utc)
+    h["positions"][0]["invalidation_since"] = "دیروز"
+    with pytest.raises(P.PositionsError, match="invalidation_since"):
+        P.validate(h, {"version": 1, "trades": []})
+
+
+def test_level_since_absent_is_none() -> None:
+    assert P.level_since(_h()["positions"][0]) is None

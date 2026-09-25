@@ -141,6 +141,22 @@ def age_days(h: dict, now: datetime | None = None) -> float:
 
 # ═══════════════════════ اعتبارسنجی ═══════════════════════
 
+def level_since(p: dict) -> datetime | None:
+    """
+    زمان اعتبار سطح ابطال پوزیشن: میدان اختیاری invalidation_since. تاریخ خالی
+    یعنی ۰۰:۰۰ وقت جهانی. هفته‌ای که تا این لحظه بسته شده با این سطح داوری
+    نمی‌شود. غایب یعنی None: سطح از قبل معتبر بوده — رفتار پیشین.
+    """
+    raw = p.get("invalidation_since")
+    if raw is None:
+        return None
+    try:
+        d = datetime.fromisoformat(str(raw))
+    except ValueError as exc:
+        raise PositionsError(f"{p.get('symbol')}: invalidation_since نامعتبر {raw!r}") from exc
+    return d if d.tzinfo else d.replace(tzinfo=UTC)
+
+
 def _check_shape(h) -> None:
     if not isinstance(h, dict) or h.get("version") != FORMAT_VERSION:
         raise PositionsError(
@@ -176,6 +192,7 @@ def _check_shape(h) -> None:
             if sym in seen:
                 raise PositionsError(f"{sym} دو بار در دفتر موقعیت آمده است")
             seen.add(sym)
+        level_since(p)
         qty = position_qty(p)
         if p["status"] == "exited" and qty > TOL:
             raise PositionsError(f"{sym}: وضعیت exited ولی مقدار {qty} دارد")

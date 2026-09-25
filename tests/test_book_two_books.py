@@ -232,3 +232,15 @@ def test_reentry_watch_for_partial_invalidation_exit(run) -> None:
     line = next(l for l in rep.splitlines() if l.startswith("| SOL") and "95" in l
                 and "ورود دوباره" in l)
     assert "3" in line
+
+
+def test_week_closed_before_level_set_is_not_judged(run) -> None:
+    """
+    یافته پیش‌نمایش ۲۵ سپتامبر: بسته هفتگی ONDO تا ۲۱ سپتامبر زیر سطحی بود که
+    ۲۵ سپتامبر گذاشته شد. سبد نباید گذشته‌نگر حکم خروج بدهد.
+    """
+    p = _pos("SOL", 6.0, inv=95.0, invalidation_since="2026-09-25")
+    rc, rep = run(_holdings([p]), weekly={"SOL": 90.0})       # بسته 2026-09-21
+    row = _row(rep, "SOL")
+    assert "زیر ابطال" not in row and "سطح تازه" in row
+    assert "خروج کامل" not in rep.split("## ۶")[1]

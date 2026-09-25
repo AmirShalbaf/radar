@@ -596,7 +596,10 @@ def _verdict(r: dict) -> str:
     inv = p.get("invalidation")
     if r.get("dust"):
         return "ناچیز"
-    if inv is not None and wk is not None and wk["close"] < inv:
+    since = P.level_since(p)
+    fresh = (inv is not None and wk is not None and since is not None
+             and datetime.fromisoformat(wk["closed_at"]) <= since)
+    if inv is not None and wk is not None and not fresh and wk["close"] < inv:
         return "⛔ خروج ۱۰۰٪ — بسته هفتگی زیر ابطال"
     if r["strikes"] >= 4:
         v = "⛔ خروج کامل (۴ ضربه)"
@@ -614,6 +617,10 @@ def _verdict(r: dict) -> str:
         v = "نگه‌دار"
     if inv is not None and wk is None:
         v += " — ⚠️ بسته هفتگی: داده ندارم"
+    if fresh:
+        # یافته پیش‌نمایش ۲۵ سپتامبر: بسته ONDO پیش از تعیین سطح زیر آن بود
+        v += (f" — سطح تازه از {since:%Y-%m-%d}؛ بسته هفتگی {wk['closed_at'][:10]} "
+              "داوری نمی‌شود")
     return v
 
 
