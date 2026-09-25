@@ -45,12 +45,20 @@ DB = os.path.join(HERE, DB_NAME)
 # قانون سوگیری صفر: خالی نگذار، ولی هم برچسبش بزن که «نامشخص» است.
 UNKNOWN_SETUP = "نامشخص — پیش از کتابخانه ستاپ"
 
+# دو دفتر — تصمیم کاربر، ۲۵ سپتامبر ۲۰۲۶. هر معامله تازه در دفتر معامله
+# است. افزودن به دفتر موقعیت فقط با رکوردی که book = position دارد.
+# قاعده ضدبهانه: شناسه‌ای که اینجا trade است هرگز به دفتر موقعیت نمی‌رود —
+# radar_positions.py همین میدان را می‌خواند.
+BOOKS = ("trade", "position")
 
-def load() -> dict:
-    if not os.path.exists(DB):
+
+def load(path: str | None = None) -> dict:
+    """دفترچه از مسیر صریح، یا پیش‌فرض DB."""
+    path = path or DB
+    if not os.path.exists(path):
         return {"version": 1, "trades": []}
     try:
-        with open(DB, encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             d = json.load(f)
     except Exception as exc:
         print(f"خطا در خواندن ژورنال: {exc}", file=sys.stderr)
@@ -62,6 +70,8 @@ def load() -> dict:
         # پیش‌فرض نادرست یعنی همان معنا حفظ می‌شود و رکورد قدیمی
         # بدون دست‌خوردن معتبر می‌ماند.
         t.setdefault("paper", False)
+        # رکورد پیش از دو دفتر معامله بود — همان معنا حفظ می‌شود
+        t.setdefault("book", "trade")
     return d
 
 
@@ -121,6 +131,7 @@ def cmd_add(a) -> None:
         # لغزش اجرا، فشار روانی، خروج زودهنگام — پس این دو هرگز با هم
         # میانگین گرفته نمی‌شوند.
         "paper": bool(a.paper),
+        "book": a.book,
         "note": a.note, "status": "open",
         "exit": None, "closed": None, "exit_reason": None,
         "r_realized": None,
@@ -483,6 +494,8 @@ def main() -> int:
     p.add_argument("--regime", type=float, default=None, help="امتیاز رژیم")
     p.add_argument("--score", type=float, default=None, help="امتیاز کوین")
     p.add_argument("--note", default="")
+    p.add_argument("--book", choices=BOOKS, default="trade",
+                   help="دفتر: trade (پیش‌فرض) یا position — افزودن به دفتر موقعیت")
     p.add_argument("--paper", action="store_true",
                    help="معامله فرضی — بدون پول واقعی. جدا از واقعی شمرده می‌شود")
     p.set_defaults(func=cmd_add)
