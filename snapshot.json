@@ -1,94 +1,86 @@
 {
   "version": "7.0-p1",
-  "generated_utc": "2026-09-26 19:12 UTC",
+  "generated_utc": "2026-09-26 20:37 UTC",
   "stale_after_hours": 5.0,
   "symbols": {
     "AAVE": {
-      "price": 154.18,
-      "chg24_pct": -0.3490175801447725,
+      "price": 154.26,
+      "chg24_pct": 0.5409633057420218,
       "funding_8h_pct": 0.01,
-      "oi_usd": 18360027.298600003,
-      "oi_chg_pct_vs_prev": 1.1647133668415572,
+      "oi_usd": 18239438.6154,
+      "oi_chg_pct_vs_prev": -0.656800130189332,
       "source": "okx"
     },
     "BNB": {
-      "price": 771.3,
-      "chg24_pct": -0.5159293176834774,
-      "funding_8h_pct": 0.01,
-      "oi_usd": 52291224.486,
-      "oi_chg_pct_vs_prev": 0.5141596259166261,
+      "price": 770.4,
+      "chg24_pct": -0.6832538352455935,
+      "funding_8h_pct": 0.00766655139116,
+      "oi_usd": 52160694.696,
+      "oi_chg_pct_vs_prev": -0.2496208327172488,
       "source": "okx"
     },
     "BTC": {
-      "price": 84018.9,
-      "chg24_pct": -0.0055936665413189165,
-      "funding_8h_pct": -0.0008330693682,
-      "oi_usd": 2382482223.5142674,
-      "oi_chg_pct_vs_prev": -0.22096315733593275,
+      "price": 84086.7,
+      "chg24_pct": 0.019031600783626163,
+      "funding_8h_pct": 0.00058764800597,
+      "oi_usd": 2380382633.2803373,
+      "oi_chg_pct_vs_prev": -0.08812616577819085,
       "source": "okx"
     },
     "ETH": {
-      "price": 2685.82,
-      "chg24_pct": -0.32065794259331637,
-      "funding_8h_pct": 0.0018220131002199998,
-      "oi_usd": 1599009114.3860023,
-      "oi_chg_pct_vs_prev": -0.38701196970337365,
+      "price": 2684.09,
+      "chg24_pct": -0.32382529773730045,
+      "funding_8h_pct": 0.0018405131261400001,
+      "oi_usd": 1598820958.001432,
+      "oi_chg_pct_vs_prev": -0.011767061418071384,
       "source": "okx"
     },
-    "HYPE": {
-      "price": 91.755,
-      "chg24_pct": 0.034887650861830155,
-      "funding_8h_pct": 0.00279314048129,
-      "oi_usd": 103712988.726,
-      "oi_chg_pct_vs_prev": -0.23364536632381216,
+    "LINK": {
+      "price": 14.103,
+      "chg24_pct": 1.4385384449399359,
+      "funding_8h_pct": 0.00683184483002,
+      "oi_usd": 30149552.763899997,
+      "oi_chg_pct_vs_prev": null,
       "source": "okx"
     },
     "ONDO": {
-      "price": 0.539,
-      "chg24_pct": -0.14820303816226602,
+      "price": 0.5363,
+      "chg24_pct": -2.2776967930029075,
       "funding_8h_pct": 0.005,
-      "oi_usd": 24380662.46,
-      "oi_chg_pct_vs_prev": -3.7414471088001493,
+      "oi_usd": 24277668.166,
+      "oi_chg_pct_vs_prev": -0.422442557370936,
       "source": "okx"
     },
     "SOL": {
-      "price": 121.29,
-      "chg24_pct": -0.6308372931345207,
-      "funding_8h_pct": 0.007285017021629999,
-      "oi_usd": 382113465.41549987,
-      "oi_chg_pct_vs_prev": -0.28610842797241576,
+      "price": 121.28,
+      "chg24_pct": -0.955492037566355,
+      "funding_8h_pct": 0.0040178002107799995,
+      "oi_usd": 380899055.6031999,
+      "oi_chg_pct_vs_prev": -0.31781392759332633,
       "source": "okx"
     },
     "SUI": {
-      "price": 1.164,
-      "chg24_pct": 2.627402574501836,
+      "price": 1.155,
+      "chg24_pct": -2.300795127727956,
       "funding_8h_pct": 0.01,
-      "oi_usd": 43659625.116,
-      "oi_chg_pct_vs_prev": -3.192912841148854,
+      "oi_usd": 43280439.51,
+      "oi_chg_pct_vs_prev": -0.8685040354619036,
       "source": "okx"
     },
     "TAO": {
-      "price": 323.0,
-      "chg24_pct": 5.177466623249748,
+      "price": 317.7,
+      "chg24_pct": 0.47438330170777987,
       "funding_8h_pct": 0.01,
-      "oi_usd": 28559957.16,
-      "oi_chg_pct_vs_prev": -1.5575104534814517,
+      "oi_usd": 27881882.558999997,
+      "oi_chg_pct_vs_prev": -2.374214349136662,
       "source": "okx"
     },
-    "XRP": {
-      "price": 1.5254,
-      "chg24_pct": -2.8160040774719683,
-      "funding_8h_pct": 0.01,
-      "oi_usd": 110843978.10639998,
-      "oi_chg_pct_vs_prev": -1.2057676208062555,
-      "source": "okx"
-    },
-    "ZEC": {
-      "price": 1563.4,
-      "chg24_pct": 0.30153332905626773,
-      "funding_8h_pct": 0.006359070544510001,
-      "oi_usd": 172110250.31,
-      "oi_chg_pct_vs_prev": 0.17042756764076808,
+    "TRX": {
+      "price": 0.33543,
+      "chg24_pct": -0.6309989335229353,
+      "funding_8h_pct": -0.02460535643238,
+      "oi_usd": 14365182.203100007,
+      "oi_chg_pct_vs_prev": null,
       "source": "okx"
     }
   }
