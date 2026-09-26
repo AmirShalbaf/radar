@@ -71,5 +71,17 @@ def test_watch_marks_and_no_market_reminder() -> None:
         {k: v["order_id"] for k, v in SALES.items()}
     assert all(s["price"] is None for s in steps if s.get("executed"))
     assert W.unfilled_steps(w["reserve_plan"], h) == [
-        {"symbol": "ETH", "qty": 0.0472, "price": 2790}, {"symbol": "ETH", "qty": 0.0472, "price": 2940},
+        {"symbol": "ETH", "qty": 0.0472, "price": 2755}, {"symbol": "ETH", "qty": 0.0472, "price": 2940},
         {"symbol": "SOL", "qty": 0.749, "price": 125.5}, {"symbol": "SOL", "qty": 0.749, "price": 131.5}]
+
+
+def test_eth_step2_moved_below_utc_resistance() -> None:
+    """
+    نشست ۳ب، بند ۷: کاربر سفارش ETH 2790 را در LBank به 2755 برد — زیر مقاومت
+    2760.76 با لنگر جهانی. مقاومت 131.81 که دلیل پله سوم SOL بود، با لنگر
+    جهانی دیگر نیست. note نقشه هر دو را می‌گوید.
+    """
+    rp = _load("watch.json")["reserve_plan"]
+    assert [s["price"] for s in rp["steps"] if s["symbol"] == "ETH"] == [None, 2755, 2940]
+    assert "2760.76" in rp["note"] and "131.81" in rp["note"]
+    assert "2790" in rp["note"]                      # جابه‌جایی ثبت شده، نه پاک
