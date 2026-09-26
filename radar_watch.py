@@ -501,10 +501,12 @@ def validate_watch(w: dict) -> None:
         if not isinstance(ws, list) or not all(_num(x) and x > 0 for x in ws):
             raise WatchError(f"{where} ({p['symbol']}): سطوح هشدار نامعتبر")
     for i, m in enumerate(w.get("market") or [], 1):
-        if (not isinstance(m, dict) or not isinstance(m.get("symbol"), str)
-                or not _num(m.get("weekly_close_below"))):
-            raise WatchError(f"market ردیف {i}: نماد یا weekly_close_below نامعتبر")
-        _aware(m.get("since"), f"market ردیف {i}: since — {FULL}")
+        if not isinstance(m, dict) or not isinstance(m.get("symbol"), str):
+            raise WatchError(f"market ردیف {i}: نماد نیست")
+        if "weekly_close_below" in m:
+            # بند ۴ ایستگاه آخر نشست ۳: عدد ثابت از بسته هفته بعد کهنه می‌شد
+            raise WatchError(f"market ردیف {i}: عدد ثابت weekly_close_below مجاز نیست — "
+                             "میانگین از regime.json میدان btc_sma50w خوانده می‌شود")
     rp = w.get("reserve_plan")
     if rp is not None:
         _aware(rp.get("created"), "reserve_plan.created")
@@ -547,11 +549,41 @@ def _week_of(now: datetime) -> str:
     return (now - timedelta(days=now.weekday())).strftime("%Y-%m-%d")
 
 
+def regime_sma(regime: dict | None, now: datetime) -> tuple[dict | None, str | None]:
+    """
+    میانگین ساده ۵۰ هفته بیت‌کوین از regime.json — میدان btc_sma50w. خروجی
+    دوم هشدار صریح است: فایل غایب، کهنه یا بی‌میدان. آستانه کهنگی همان
+    آستانه سبد است، از radar_book.
+    """
+    if not isinstance(regime, dict):
+        return None, "regime.json نیست یا خوانا نیست"
+    try:
+        gen = _aware(regime.get("generated_at"), "regime.json generated_at")
+    except WatchError as exc:
+        return None, str(exc)
+    from radar_book import REGIME_MAX_AGE_DAYS      # تنها منبع آستانه کهنگی رژیم
+    age = (now - gen).total_seconds() / 86_400
+    if age > REGIME_MAX_AGE_DAYS:
+        return None, (f"regime.json کهنه است — {age:.1f} روز، آستانه "
+                      f"{fa(REGIME_MAX_AGE_DAYS)} روز")
+    s = regime.get("btc_sma50w")
+    if not isinstance(s, dict):
+        return None, "میدان btc_sma50w در regime.json نیست"
+    if not _num(s.get("value")):
+        return None, f"btc_sma50w در regime.json مقدار ندارد — {s.get('reason') or 'بی‌دلیل'}"
+    try:
+        _aware(s.get("week_closed_at"), "btc_sma50w.week_closed_at")
+    except WatchError as exc:
+        return None, str(exc)
+    return s, None
+
+
 def check_positions(watch: dict, h: dict, state: dict, now: datetime,
-                    weekly=None, price=None) -> list[str]:
+                    weekly=None, price=None, regime: dict | None = None) -> list[str]:
     """
     ابطال هفتگی، سطح هشدار، ورود دوباره، هشدار بازار و نقشه ذخیره. فقط state
     عوض می‌شود؛ watch و h دست‌نخورده می‌مانند. weekly و price تزریق‌پذیرند.
+    regime سند regime.json است — منبع میانگین هشدار بازار.
     """
     weekly = weekly or (lambda s: P.weekly_close(s, now=now))
     price = price or ticker
@@ -672,22 +704,36 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                         f"{_n(st['max_qty'] - st['used'])} {sym}. ثبت: radar_positions.py "
                         f"reenter --symbol {sym} --qty <مقدار> --price <قیمت> --account <حساب>")
 
-    # ── ۳ هشدار بازار: فقط اطلاع
+    # ── ۳ هشدار بازار: فقط اطلاع. میانگین از regime.json، فقط بسته همان هفته
     for m in watch.get("market") or []:
-        sym, lvl = m["symbol"].upper(), float(m["weekly_close_below"])
+        sym = m["symbol"].upper()
+        sma, warn = regime_sma(regime, now)
+        if warn:
+            _once(state, f"mkt_warn_{sym}_{day}", msgs,
+                  f"⚠️ {warn} — هشدار بازار {sym} سنجیده نشد.")
+            continue
         w, why = wk(sym)
         if w is None:
             _once(state, f"nodata_mkt_{sym}_{week}", msgs,
                   f"⚠️ داده ندارم — بسته هفتگی {sym}؛ هشدار بازار سنجیده نشد.")
             continue
+        closed = _aware(w["closed_at"], "زمان بسته هفتگی")
+        sma_week = _aware(sma["week_closed_at"], "btc_sma50w.week_closed_at")
+        if closed != sma_week:
+            # گذراست: رژیم روزانه پس از بسته دوشنبه ساخته می‌شود. کهنگی واقعی
+            # را هشدار بالا می‌گیرد
+            print(f"  هشدار بازار {sym}: بسته هفته تا {w['closed_at'][:10]}، میانگین "
+                  f"رژیم تا {sma['week_closed_at'][:10]} — در انتظار هفته یکسان")
+            continue
         key = f"mkt_{sym}_{w['closed_at']}"
         if state.get(key):
             continue
         state[key] = True
-        if w["close"] < lvl and P.judged(w["closed_at"], _aware(m["since"], f"{sym}: since")):
+        if w["close"] < sma["value"]:
             msgs.append(f"📉 هشدار بازار — بسته هفتگی {sym} {_n(w['close'])} زیر "
-                        f"{m.get('label') or 'سطح'} {_n(lvl)}.\nفقط اطلاع؛ خروج نمی‌سازد. "
-                        "سطح در بازبینی هفتگی به‌روز می‌شود.")
+                        f"{m.get('label') or 'میانگین'} {_n(round(sma['value'], 2))} — "
+                        f"هفته بسته در {w['closed_at'][:10]}، منبع regime.json.\n"
+                        "فقط اطلاع؛ خروج نمی‌سازد.")
 
     # ── ۴ نقشه ذخیره
     rp = watch.get("reserve_plan")
@@ -728,9 +774,22 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
     return msgs
 
 
+def _read_regime(path: str | None) -> dict | None:
+    """regime.json هر اجرا تازه خوانده می‌شود؛ غایب یا خراب یعنی None و هشدار صریح بعدی."""
+    if not path or not os.path.exists(path):
+        return None
+    try:
+        with open(path, encoding="utf-8") as f:
+            doc = json.load(f)
+    except (OSError, ValueError) as exc:
+        print(f"  ⚠️ {os.path.basename(path)} خوانا نیست ({type(exc).__name__})")
+        return None
+    return doc if isinstance(doc, dict) else None
+
+
 def run_once(watch: dict, state: dict, quiet: bool = False,
              path: str = WATCH_FILE, h: dict | None = None,
-             now: datetime | None = None) -> int:
+             now: datetime | None = None, regime_path: str | None = "regime.json") -> int:
     """
     h خالی یعنی holdings.json بار نشد — main پیش‌تر بلند گزارشش کرده. آن‌وقت
     فقط هشدار بازار سنجیده می‌شود، که به دفتر موقعیت وابسته نیست.
@@ -762,7 +821,9 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
             n += 1
     scope = watch if h is not None else {"market": watch.get("market"),
                                          "updated": watch.get("updated")}
-    for msg in check_positions(scope, h or {"positions": [], "ledger": []}, state, now):
+    regime = _read_regime(regime_path) if watch.get("market") else None
+    for msg in check_positions(scope, h or {"positions": [], "ledger": []}, state, now,
+                               regime=regime):
         notify(msg, quiet=False)
         n += 1
     if n == 0 and not quiet:
@@ -784,6 +845,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--staleness", action="store_true",
                     help="بخش تازگی holdings.json و watch.json برای گزارش روزانه و خروج")
     ap.add_argument("--holdings", default="holdings.json")
+    ap.add_argument("--regime-file", default="regime.json", dest="regime_file",
+                    help="منبع میانگین ساده ۵۰ هفته بیت‌کوین برای هشدار بازار")
     a = ap.parse_args(argv)
 
     if a.staleness:
@@ -840,13 +903,14 @@ def main(argv: list[str] | None = None) -> int:
         print(f"حلقه پایش هر {a.loop} ثانیه. برای توقف: Ctrl+C")
         try:
             while True:
-                run_once(watch, state, a.quiet, path=a.watch, h=h)
+                run_once(watch, state, a.quiet, path=a.watch, h=h,
+                         regime_path=a.regime_file)
                 time.sleep(a.loop)
         except KeyboardInterrupt:
             print("\nمتوقف شد.")
         return rc
 
-    run_once(watch, state, a.quiet, path=a.watch, h=h)
+    run_once(watch, state, a.quiet, path=a.watch, h=h, regime_path=a.regime_file)
     return rc
 
 

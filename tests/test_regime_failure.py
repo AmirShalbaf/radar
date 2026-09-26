@@ -150,5 +150,6 @@ def test_success_after_failure_clears_the_mark(monkeypatch, paths) -> None:
            for k, (c, l) in G.INPUTS.items()}
     monkeypatch.setattr(G, "gather", lambda order: {})
     monkeypatch.setattr(G, "measure", lambda src, history, now: inp)
+    monkeypatch.setattr(G.P, "sma_weekly", lambda *a, **k: (None, ["آزمون: بدون شبکه"]))
     assert G.main(_argv(paths)) == 0
     assert "last_build_error" not in _read(j)

@@ -440,6 +440,8 @@ def fake_net(monkeypatch):
         monkeypatch.setattr(R, "probe_venues", lambda order: (list(order), []))
         monkeypatch.setattr(R, "candles_first_ok", candles_first_ok)
         monkeypatch.setattr(R, "FAILURES", [])
+        # میانگین پنجاه‌هفته وقت جهانی — بند ۴ ایستگاه آخر نشست ۳؛ بدون شبکه
+        monkeypatch.setattr(G.P, "sma_weekly", lambda *a, **k: (None, ["آزمون: بدون شبکه"]))
     return install
 
 

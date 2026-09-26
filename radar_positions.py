@@ -476,9 +476,9 @@ def _is_monday_utc(t: datetime) -> bool:
     return t.weekday() == 0 and (t.hour, t.minute, t.second) == (0, 0, 0)
 
 
-def _okx_week(symbol: str, get) -> tuple[list, str]:
+def _okx_week(symbol: str, get, limit: int = 5) -> tuple[list, str]:
     r = get(OKX, params={"instId": f"{symbol.upper()}-USDT", "bar": OKX_WEEK_BAR,
-                         "limit": "5"}, timeout=20)
+                         "limit": str(limit)}, timeout=20)
     js = r.json()
     if r.status_code != 200 or str(js.get("code")) != "0" or not js.get("data"):
         return [], f"اوکی‌اکس {OKX_WEEK_BAR}: پاسخ نداد (کد {js.get('code')})"
@@ -487,9 +487,9 @@ def _okx_week(symbol: str, get) -> tuple[list, str]:
     return rows, ""
 
 
-def _gate_week(symbol: str, get) -> tuple[list, str]:
+def _gate_week(symbol: str, get, limit: int = 5) -> tuple[list, str]:
     r = get(GATE, params={"currency_pair": f"{symbol.upper()}_USDT",
-                          "interval": GATE_WEEK_INTERVAL, "limit": 5}, timeout=20)
+                          "interval": GATE_WEEK_INTERVAL, "limit": limit}, timeout=20)
     js = r.json()
     if r.status_code != 200 or not isinstance(js, list) or not js:
         return [], f"گیت {GATE_WEEK_INTERVAL}: پاسخ نداد"
@@ -535,6 +535,61 @@ def weekly_close(symbol: str, get=None, now: datetime | None = None
         return {"close": close, "week_open": op.isoformat(),
                 "closed_at": (op + WEEK).isoformat(), "venue": venue}, why
     return None, why
+
+
+def weekly_closes(symbol: str, n: int, get=None, now: datetime | None = None
+                  ) -> tuple[list[dict] | None, list[str]]:
+    """
+    آخرین n بسته هفتگی بسته‌شده به لنگر وقت جهانی، به ترتیب زمان. همان
+    واکشی weekly_close؛ اینجا لنگر **همه** ردیف‌ها سنجیده می‌شود، نه فقط آخری.
+    کمتر از n هفته بسته یعنی «نابالغ» — هیچ‌وقت میانگین با پنجره کوتاه‌تر.
+    """
+    now = now or datetime.now(UTC)
+    if get is None:
+        if requests is None:
+            return None, ["requests نصب نیست"]
+        get = requests.get
+    why: list[str] = []
+    for venue, fetch in (("okx", _okx_week), ("gate", _gate_week)):
+        try:
+            rows, err = fetch(symbol, get, limit=n + 2)
+        except (ValueError, KeyError, IndexError, TypeError) as exc:
+            why.append(f"{venue}: پاسخ نامعتبر ({type(exc).__name__})")
+            continue
+        except NET_ERRORS as exc:
+            why.append(f"{venue}: خطای شبکه ({type(exc).__name__})")
+            continue
+        if err:
+            why.append(err)
+            continue
+        closed = sorted((r for r in rows
+                         if (r[2] is True) or (r[2] is None and r[0] + WEEK <= now)),
+                        key=lambda r: r[0])
+        bad = [r[0] for r in closed if not _is_monday_utc(r[0])]
+        if bad:
+            why.append(f"{venue}: لنگر نادرست — باز شدن {bad[0].isoformat()} دوشنبه ۰۰:۰۰ UTC نیست")
+            continue
+        if len(closed) < n:
+            why.append(f"{venue}: نابالغ — {len(closed)} هفته بسته، {n} لازم")
+            continue
+        return [{"week_open": op.isoformat(), "closed_at": (op + WEEK).isoformat(),
+                 "close": c, "venue": venue} for op, c, _ in closed[-n:]], why
+    return None, why
+
+
+def sma_weekly(symbol: str, n: int = 50, get=None, now: datetime | None = None
+               ) -> tuple[dict | None, list[str]]:
+    """
+    میانگین ساده بسته n هفته بسته‌شده، وقت جهانی — با بسته و زمان همان هفته،
+    تا پایشگر فقط بسته همان هفته را با آن بسنجد.
+    """
+    rows, why = weekly_closes(symbol, n, get, now)
+    if rows is None:
+        return None, why
+    last = rows[-1]
+    return {"value": sum(r["close"] for r in rows) / n, "weeks": n, "close": last["close"],
+            "week_open": last["week_open"], "week_closed_at": last["closed_at"],
+            "venue": last["venue"]}, why
 
 
 # ═══════════════════════ فرمان‌ها ═══════════════════════

@@ -38,8 +38,8 @@ def _watch(**over) -> dict:
                         "touches": 4, "warnings": [119.53]},
                        {"symbol": "ONDO", "invalidation": 0.4457, "invalidation_since": SINCE,
                         "touches": 3, "label": "سطح ضعیف", "warnings": []}],
-         "market": [{"symbol": "BTC", "weekly_close_below": 78822.35, "since": SINCE,
-                     "label": "میانگین ساده ۵۰ هفته"}],
+         "market": [{"symbol": "BTC", "label": "میانگین ساده ۵۰ هفته",
+                     "source": "regime.json btc_sma50w"}],
          "reserve_plan": {"created": "2026-09-25T16:00:00+00:00",
                           "deadline": "2026-10-05T00:00:00+00:00", "account": "LBank",
                           "steps": [{"symbol": "SOL", "qty": 0.749, "price": None},
@@ -75,9 +75,16 @@ def _wk(closes: dict, closed_at=WEEK1):
 PX = {"SOL": 122.0, "ONDO": 0.55, "BTC": 84000.0}
 
 
-def _run(watch, h, state, weekly, price=None, now=MON) -> list[str]:
+def _regime(value=78822.35, week=WEEK1) -> dict:
+    """میانگین پنجاه‌هفته از regime.json — بند ۴ ایستگاه آخر نشست ۳."""
+    return {"score": 0.1, "generated_at": "2026-09-28T04:00:00+00:00",
+            "btc_sma50w": {"value": value, "week_closed_at": week, "close": 77000.0,
+                           "weeks": 50, "venue": "okx"}}
+
+
+def _run(watch, h, state, weekly, price=None, now=MON, regime=None) -> list[str]:
     return W.check_positions(watch, h, state, now, weekly=weekly,
-                             price=price or (lambda s: PX.get(s)))
+                             price=price or (lambda s: PX.get(s)), regime=regime)
 
 
 def _all_above():
@@ -205,9 +212,9 @@ def test_warning_level_message_only_once_and_rearms() -> None:
 def test_btc_weekly_close_below_sma_is_market_alert_once() -> None:
     st = {}
     wk = _wk({"SOL": 120.0, "ONDO": 0.5, "BTC": 77000.0})
-    m = next(x for x in _run(_watch(), _h(), st, wk) if "BTC" in x)
+    m = next(x for x in _run(_watch(), _h(), st, wk, regime=_regime()) if "BTC" in x)
     assert "هشدار بازار" in m and "میانگین ساده ۵۰ هفته" in m and "78822.35" in m
-    assert not [x for x in _run(_watch(), _h(), st, wk) if "BTC" in x]
+    assert not [x for x in _run(_watch(), _h(), st, wk, regime=_regime()) if "BTC" in x]
 
 
 # ═══════════════ نقشه ذخیره ═══════════════
@@ -317,16 +324,16 @@ def test_week_closed_before_level_was_set_is_not_judged() -> None:
     """
     یافته پیش‌نمایش ۲۵ سپتامبر: بسته هفتگی ONDO تا ۲۱ سپتامبر 0.4326 بود،
     زیر سطحی که ۲۵ سپتامبر گذاشته شد. سطح از مهر خودش معتبر است — بند ۳
-    ایستگاه آخر: مهر هر سکه، نه updated کل فایل.
+    ایستگاه آخر: مهر هر سکه، نه updated کل فایل. هشدار بازار مهر ندارد — بند ۴:
+    میانگین برای همان هفته از regime.json می‌آید؛ tests/test_btc_sma.py.
     """
     w, st = _watch(), {}
     old = _wk({"SOL": 90.0, "ONDO": 0.40, "BTC": 70000.0}, closed_at="2026-09-21T00:00:00+00:00")
     assert not [x for x in _run(w, _h(), st, old, now=datetime(2026, 9, 25, 22, tzinfo=UTC))
-                if "ابطال هفتگی" in x or "هشدار بازار" in x]
+                if "ابطال هفتگی" in x]
     new = _wk({"SOL": 90.0, "ONDO": 0.40, "BTC": 70000.0})
     msgs = _run(w, _h(), st, new)
     assert any("SOL" in x and "ابطال هفتگی" in x for x in msgs)
-    assert any("هشدار بازار" in x for x in msgs)
 
 
 def test_level_sections_need_valid_updated() -> None:

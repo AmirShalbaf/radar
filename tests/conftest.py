@@ -38,3 +38,27 @@ def _real_data_untouched():
         else:
             p.write_bytes(before[n])
     assert not changed, f"آزمون فایل داده واقعی را تغییر داد — برگردانده شد: {changed}"
+
+
+class NetworkInTest(RuntimeError):
+    """آزمون به شبکه رفت — قاعده ثابت نشست‌ها: آزمون بدون شبکه."""
+
+
+@pytest.fixture(autouse=True)
+def _no_network(monkeypatch, request):
+    """
+    نگهبان دوم، نشست ۳: هر درخواست requests خطای صریح می‌دهد. پیش از این
+    قاعده «آزمون بدون شبکه» فقط قرارداد بود؛ سیم‌کشی میانگین پنجاه‌هفته در
+    main رژیم دو آزمون را بی‌صدا به OKX و Gate می‌برد. خطای شبکه عادی نیست،
+    تا کدی که خطای شبکه را می‌گیرد آن را نبلعد.
+    """
+    try:
+        import requests
+    except ImportError:
+        yield
+        return
+
+    def boom(self, method, url, *a, **k):
+        raise NetworkInTest(f"{request.node.nodeid}: درخواست شبکه در آزمون — {method} {url}")
+    monkeypatch.setattr(requests.sessions.Session, "request", boom)
+    yield

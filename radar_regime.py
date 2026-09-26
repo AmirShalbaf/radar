@@ -48,6 +48,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 
 import radar_budget as BG
+# واکشی هفتگی وقت جهانی — همان لنگر بسته هفتگی دفتر موقعیت
+import radar_positions as P
 from radar_budget import regime_band
 # تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
 from radar_text import fa
@@ -441,14 +443,30 @@ def trade_band_for(history: dict, today_band: str, now: datetime) -> str:
     return BG.trade_band(days + [(today, today_band)])
 
 
+SMA_DEF = ("میانگین ساده بسته ۵۰ هفته بسته‌شده؛ هفته دوشنبه تا یکشنبه وقت جهانی، "
+           "OKX 1Wutc سپس Gate 7d؛ بسته همان هفته کنارش. با ورودی ma50w فرق دارد: آن "
+           "کندل هفتگی لنگر هنگ‌کنگ می‌خواند تا نشست ۳ب")
+
+
+def _sma_field(sma: dict | None, why: list[str] | None) -> dict:
+    """میدان btc_sma50w برای پایشگر — هشدار بازار. غایب هم دلیل صریح دارد."""
+    if sma:
+        return {**sma, "definition": SMA_DEF}
+    return {"value": None, "reason": "؛ ".join(why or ["محاسبه نشد"]), "definition": SMA_DEF}
+
+
 def build_doc(res: dict, inp: dict[str, Input], now: datetime,
-              trade_band: str | None = None) -> dict:
+              trade_band: str | None = None, btc_sma50w: dict | None = None,
+              btc_sma50w_why: list[str] | None = None) -> dict:
     """
     سند regime.json. قرارداد با radar_book.py دو میدان اجباری دارد —
     score (امتیاز نهایی محافظه‌کارانه) و generated_at (با منطقه زمانی) —
     و بقیه میدان‌ها اضافه‌اند. امتیاز با دقت کامل ذخیره می‌شود تا باند
-    سبد روی مرز همان باند رژیم باشد.
+    سبد روی مرز همان باند رژیم باشد. btc_sma50w را پایشگر برای هشدار بازار
+    می‌خواند — بند ۴ ایستگاه آخر نشست ۳.
     """
+    sma = ({"btc_sma50w": _sma_field(btc_sma50w, btc_sma50w_why)}
+           if btc_sma50w is not None or btc_sma50w_why is not None else {})
     return {
         "score": res["score"],
         "generated_at": _iso(now),
@@ -463,6 +481,7 @@ def build_doc(res: dict, inp: dict[str, Input], now: datetime,
         "missing": res["missing"],
         "freshness_days": dict(FRESH_DAYS),
         **({"trade_band": BG.band_by_name(trade_band)} if trade_band else {}),
+        **sma,
         "version": VERSION,
         "note": f"نگاشت‌ها فرضیه‌اند، نه اندازه‌گیری — {REFERENCE}",
     }
@@ -567,6 +586,15 @@ def _num(v, d: int = 2) -> str:
     return "—" if v is None else f"{v:+.{d}f}"
 
 
+def _sma_md(s: dict | None) -> str:
+    if not s:
+        return "—"
+    if s.get("value") is None:
+        return f"داده ندارم — {s.get('reason', '')}"
+    return (f"{s['value']:.2f} — هفته بسته در {s['week_closed_at'][:10]}، "
+            f"بسته همان هفته {s['close']:.2f}، {s['venue']}")
+
+
 def render_md(doc: dict) -> str:
     stamp = datetime.fromisoformat(doc["generated_at"]).strftime("%Y-%m-%d %H:%M UTC")
     b = doc["band"]
@@ -583,6 +611,7 @@ def render_md(doc: dict) -> str:
           f"| **باند** | **{b['name']}** |",
           f"| باند اندازه‌گیری دفتر معامله — هیسترزیس | "
           f"{doc['trade_band']['name'] if doc.get('trade_band') else '—'} |",
+          f"| میانگین ساده ۵۰ هفته بیت‌کوین، وقت جهانی | {_sma_md(doc.get('btc_sma50w'))} |",
           f"| سقف ریسک باز | {b['cap']}٪ |",
           f"| ضریب اندازه | {b['mult']:.2f} |",
           f"| حداکثر پوزیشن هم‌جهت | {b['maxpos']} |",
@@ -649,6 +678,8 @@ def main(argv: list[str] | None = None) -> int:
         history = load_history(a.history)
         inp = measure(gather(order), history, now)
         res = aggregate(inp)
+        # هشدار بازار پایشگر — تعریف وقت جهانی، جدا از ورودی ma50w
+        sma, sma_why = P.sma_weekly("BTC", 50, now=now)
     except Exception as exc:
         if isinstance(exc, RegimeError):
             msg = str(exc)
@@ -661,7 +692,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     tb = trade_band_for(history, res["band"]["name"], now)
-    doc = build_doc(res, inp, now, tb)
+    doc = build_doc(res, inp, now, tb, btc_sma50w=sma, btc_sma50w_why=sma_why)
     md = render_md(doc)
     if a.stdout:
         print(md)
