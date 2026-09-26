@@ -60,7 +60,7 @@ def synth_daily(n: int = 120, live_close: float = 150.0) -> pd.DataFrame:
 
 def fake_okx_response(n_closed: int = 99):
     """پاسخ ساختگی اوکی‌اکس: جدید به قدیم، جدیدترین کندل باز است (تأیید صفر)."""
-    base_ts = 1_700_000_000_000
+    base_ts = 1_699_920_000_000        # 2023-11-14 00:00 UTC — لنگر وقت جهانی، نشست ۳ب
     day = 86_400_000
     rows = []
     for i in range(n_closed + 1):

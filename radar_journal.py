@@ -34,6 +34,9 @@ from __future__ import annotations
 import argparse, json, os, sys
 from datetime import datetime, timezone
 
+# لنگر کندل وقت جهانی — کتابخانه استاندارد، نشست ۳ب
+import radar_anchor as A
+
 UTC = timezone.utc
 HERE = os.path.dirname(os.path.abspath(__file__))
 # نام فایل داده — تنها منبع اصلی. `radar_state.py` و گردش‌کار
@@ -391,14 +394,23 @@ def cmd_report(a) -> None:
 
 
 def daily_close(symbol: str) -> tuple[float, str] | None:
-    """آخرین کندل روزانه **بسته‌شده**. کندل باز شمرده نمی‌شود."""
+    """
+    آخرین کندل روزانه **بسته‌شده**. کندل باز شمرده نمی‌شود. لنگر وقت جهانی،
+    1Dutc — نشست ۳ب؛ کندل با لنگر دیگر رد و اعلام می‌شود.
+    """
     try:
         sys.path.insert(0, HERE)
         import radar_fetch3 as R
         d = R.okx_get("/api/v5/market/candles",
-                      {"instId": f"{symbol.upper()}-USDT", "bar": "1D", "limit": "3"},
+                      {"instId": f"{symbol.upper()}-USDT", "bar": A.BAR["okx"]["1D"],
+                       "limit": "3"},
                       label="کندل روزانه")
         if not d:
+            return None
+        why = A.check([int(row[0]) for row in d], "1D",
+                      f"{symbol.upper()}: اوکی‌اکس {A.BAR['okx']['1D']}")
+        if why:
+            print(f"⚠️ {why}", file=sys.stderr)
             return None
         for row in d:                       # از جدید به قدیم
             if str(row[8]) == "1":          # confirm == 1

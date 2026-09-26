@@ -58,6 +58,7 @@ import sys
 import tempfile
 from datetime import datetime, timedelta, timezone
 
+import radar_anchor as A
 import radar_journal as RJ
 import radar_optcost as RO
 
@@ -89,9 +90,9 @@ TOL = 1e-9
 WEEK = timedelta(days=7)
 OKX = "https://www.okx.com/api/v5/market/candles"
 GATE = "https://api.gateio.ws/api/v4/spot/candlesticks"
-# لنگرهای وقت جهانی — تنها لنگرهای مجاز بسته هفتگی
-OKX_WEEK_BAR = "1Wutc"
-GATE_WEEK_INTERVAL = "7d"
+# لنگرهای وقت جهانی — تنها لنگرهای مجاز بسته هفتگی؛ منبع radar_anchor
+OKX_WEEK_BAR = A.BAR["okx"]["1W"]
+GATE_WEEK_INTERVAL = A.BAR["gate"]["1W"]
 
 
 class PositionsError(Exception):
@@ -510,7 +511,8 @@ def trade_heat(h: dict, band: dict, total: float) -> dict:
 # ═══════════════════════ بسته هفتگی — لنگر وقت جهانی ═══════════════════════
 
 def _is_monday_utc(t: datetime) -> bool:
-    return t.weekday() == 0 and (t.hour, t.minute, t.second) == (0, 0, 0)
+    # نگهبان مشترک همه مسیرهای کندل — نشست ۳ب
+    return A.anchor_ok(t, "1W")
 
 
 def _okx_week(symbol: str, get, limit: int = 5) -> tuple[list, str]:

@@ -229,7 +229,8 @@ class _Resp:
 
 def _gate_rows(n: int, open_close: float | None = None) -> list:
     """قالب گیت: [زمان به ثانیه، حجم مظنه، بسته، بالا، پایین، باز، حجم پایه]."""
-    open_ts = pd.Timestamp.now(tz="UTC") - pd.Timedelta(hours=2)
+    # لنگر وقت جهانی — نشست ۳ب: کندل جاری ۰۰:۰۰ امروز باز شده و هنوز باز است
+    open_ts = pd.Timestamp.now(tz="UTC").floor("D")
     out = []
     for i in range(n):
         ts = open_ts - pd.Timedelta(days=n - 1 - i)
@@ -250,7 +251,7 @@ def _gate_requests(open_close: float | None = None):
 
 def _okx_requests(n_total: int):
     """اوکی‌اکس ساختگی: صفحه‌های ۱۰۰تایی، جدید به قدیم، پرچم تأیید در اندیس ۸."""
-    open_ts = pd.Timestamp.now(tz="UTC") - pd.Timedelta(hours=2)
+    open_ts = pd.Timestamp.now(tz="UTC").floor("D")        # لنگر وقت جهانی
     rows = []
     for i in range(n_total - 1, -1, -1):
         ts = open_ts - pd.Timedelta(days=n_total - 1 - i)

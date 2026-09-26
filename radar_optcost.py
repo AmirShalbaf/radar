@@ -44,6 +44,8 @@ from datetime import datetime, timedelta, timezone
 
 # تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
 from radar_text import fa
+# لنگر کندل وقت جهانی — کتابخانه استاندارد، نشست ۳ب
+import radar_anchor as A
 
 try:
     import requests
@@ -144,16 +146,25 @@ def now() -> str:
 
 
 def candles_since(symbol: str, days: int) -> list[dict] | None:
-    """کندل روزانه برای بازخوانی مسیر قیمت پس از رد."""
+    """
+    کندل روزانه برای بازخوانی مسیر قیمت پس از رد. لنگر وقت جهانی، 1Dutc —
+    نشست ۳ب؛ کندل با لنگر دیگر رد و اعلام می‌شود.
+    """
     if requests is None:
         return None
     try:
         r = requests.get(f"{OKX}/api/v5/market/candles",
                          params={"instId": f"{symbol.upper()}-USDT",
-                                 "bar": "1D", "limit": str(min(days + 5, 300))},
+                                 "bar": A.BAR["okx"]["1D"],
+                                 "limit": str(min(days + 5, 300))},
                          timeout=20)
         j = r.json()
         if j.get("code") != "0":
+            return None
+        why = A.check([int(row[0]) for row in j["data"]], "1D",
+                      f"{symbol.upper()}: اوکی‌اکس {A.BAR['okx']['1D']}")
+        if why:
+            print(f"⚠️ {why}", file=sys.stderr)
             return None
         out = []
         for row in j["data"]:

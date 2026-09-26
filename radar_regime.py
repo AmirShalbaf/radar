@@ -47,6 +47,7 @@ import traceback
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 
+import radar_anchor as A
 import radar_budget as BG
 # واکشی هفتگی وقت جهانی — همان لنگر بسته هفتگی دفتر موقعیت
 import radar_positions as P
@@ -599,7 +600,7 @@ def render_md(doc: dict) -> str:
     stamp = datetime.fromisoformat(doc["generated_at"]).strftime("%Y-%m-%d %H:%M UTC")
     b = doc["band"]
     L = [f"# رژیم بازار — رادار ۷، نسخه {fa(VERSION)}", "",
-         f"تولید: **{stamp}**", "",
+         f"تولید: **{stamp}**", "", A.ANCHOR_LINE, "",
          "> **فرضیه، نه اندازه‌گیری.** نگاشت ورودی به امتیاز حدسی است با "
          f"دلیل سازوکاری و هنوز با داده سنجیده نشده. آستانه‌ها: `{REFERENCE}`.", ""]
     if doc["low_coverage"]:

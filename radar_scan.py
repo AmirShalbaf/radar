@@ -391,6 +391,8 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
     A(f"تولید: **{now.strftime('%Y-%m-%d %H:%M UTC')}** | "
       f"نسخه اسکریپت: **{R.VERSION}** | صرافی‌های فعال: {', '.join(order)}")
     A("")
+    A(R.ANCHOR.ANCHOR_LINE)
+    A("")
     if dead:
         A("**در دسترس نبودند:** " + "، ".join(f"{v} ({w})" for v, w in dead))
         A("")

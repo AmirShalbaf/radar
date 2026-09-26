@@ -324,6 +324,8 @@ def build_report(rows: list[dict], uni_n: int, pool_n: int,
     A(f"تولید: **{now.strftime('%Y-%m-%d %H:%M UTC')}** | نسخه {R.VERSION} | "
       f"صرافی: {', '.join(order)}")
     A("")
+    A(R.ANCHOR.ANCHOR_LINE)
+    A("")
     # هشدار داده ناقص بالای گزارش — بی‌صدا نه، ولی توقف هم نه
     for w in warnings or []:
         A(f"> ⚠️ {w}")

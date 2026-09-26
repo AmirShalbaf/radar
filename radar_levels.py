@@ -63,6 +63,8 @@ import requests
 from radar_text import fa
 # قاعده لنگر سطح ابطال — تنها منبع radar_positions
 import radar_positions as P
+# لنگر کندل وقت جهانی — کتابخانه استاندارد، استقلال این فایل نمی‌شکند
+import radar_anchor as A
 
 VERSION = "1.1"
 UTC = timezone.utc
@@ -83,6 +85,10 @@ PRESETS = {
 DAILY_WANT = 3 * 200 + 1
 
 
+class CandleError(Exception):
+    """کندل نیامد یا رد شد — دلیل صریح در گزارش، هرگز کوتاه‌شدن یا لنگر بی‌صدا."""
+
+
 def okx_candles(inst: str, bar: str = "1D", want: int = DAILY_WANT) -> pd.DataFrame | None:
     """
     کندل از OKX با صفحه‌بندی. ترتیب صعودی، همراه کندل باز آخر.
@@ -91,11 +97,14 @@ def okx_candles(inst: str, bar: str = "1D", want: int = DAILY_WANT) -> pd.DataFr
     و «قیمت» تا ۲۸ ساعت کهنه می‌شد — ۶۵۳.۹۹ به‌جای ۸۰۲.۳۱ در روز ۴۵ درصدی.
     جداسازی بسته از باز کار ارزیابی است، نه واکشی: قیمت از کندل زنده،
     ساختار فقط از کندل بسته.
+
+    bar نام داخلی است؛ نام درخواستی از radar_anchor می‌آید — 1Dutc، نه 1D لنگر
+    هنگ‌کنگ. کندل خارج از لنگر وقت جهانی CandleError می‌دهد — نشست ۳ب.
     """
     rows, cursor, guard = [], None, 0
     while len(rows) < want and guard < 20:
         guard += 1
-        params = {"instId": inst, "bar": bar, "limit": "100"}
+        params = {"instId": inst, "bar": A.BAR["okx"][bar], "limit": "100"}
         path = "/api/v5/market/candles"
         if cursor:
             params["after"] = cursor
@@ -120,6 +129,9 @@ def okx_candles(inst: str, bar: str = "1D", want: int = DAILY_WANT) -> pd.DataFr
         df[c] = pd.to_numeric(df[c], errors="coerce")
     df["confirm"] = pd.to_numeric(df["confirm"], errors="coerce")
     df["ts"] = pd.to_datetime(pd.to_numeric(df["ts"]), unit="ms", utc=True)
+    why = A.check(df["ts"], bar, f"اوکی‌اکس {A.BAR['okx'][bar]} {inst}")
+    if why:
+        raise CandleError(why)
     return df.drop_duplicates(subset="ts").sort_values("ts").reset_index(drop=True)
 
 
@@ -434,10 +446,11 @@ def fmt(x, d=4):
 
 
 def report(rows: list[Assessment], min_rr: float,
-           now: datetime | None = None) -> str:
+           now: datetime | None = None, notes: list[str] | None = None) -> str:
     """
     now تزریق‌پذیر است تا آزمون به ساعت سیستم وابسته نباشد. زمان با هر
-    منطقه زمانی به وقت جهانی برگردانده می‌شود.
+    منطقه زمانی به وقت جهانی برگردانده می‌شود. notes هشدارهای کندل است —
+    رد لنگر یا کوتاه‌شدن — که بالای جدول می‌آید.
     """
     ok = [a for a in rows if math.isfinite(a.rr)]
     ok.sort(key=lambda a: (-a.rr))
@@ -450,6 +463,10 @@ def report(rows: list[Assessment], min_rr: float,
         # هم‌قالب اسکن، چرخش و نبض
         f"تولید: **{stamp}**",
         "",
+        A.ANCHOR_LINE,
+        "",
+        *[f"⚠️ {n}" for n in notes or []],
+        *([""] if notes else []),
         # قاعده کاربر، ۲۶ سپتامبر ۲۰۲۶: انتخاب سطح به لحظه قیمت وابسته است
         "> **فقط اطلاع.** سطح ابطال دفتر موقعیت فقط در بازبینی هفتگی عوض می‌شود.",
         "> این گزارش `watch.json` را تغییر نمی‌دهد.",
@@ -560,16 +577,27 @@ def main() -> int:
 
     print(f"اسکنر سطوح v{VERSION} — {len(syms)} نماد\n", file=sys.stderr)
     rows = []
+    notes: list[str] = []        # هشدار کندل — در خود گزارش، نه فقط در لاگ
     for s in syms:
         print(f"  {s} ...", end="", flush=True, file=sys.stderr)
-        df = okx_candles(f"{s}-USDT", "1D", args.bars)
-        df4 = okx_candles(f"{s}-USDT", "4H", 200) if df is not None else None
+        # کندل ردشده یا نیامده «داده ندارم» با دلیل صریح است — در جدول بدون نسبت
+        try:
+            df = okx_candles(f"{s}-USDT", "1D", args.bars)
+        except CandleError as exc:
+            rows.append(Assessment(symbol=s, verdict="داده ندارم", note=str(exc)))
+            print(f" داده ندارم — {exc}", file=sys.stderr)
+            continue
+        try:
+            df4 = okx_candles(f"{s}-USDT", "4H", 200) if df is not None else None
+        except CandleError as exc:
+            df4 = None                  # نسبت چهارساعته خالی می‌ماند، ساختار روزانه نه
+            notes.append(f"{s} چهارساعته — {exc}")
         a = (assess(s, df, tol_atr=args.tol_atr, df_4h=df4) if df is not None
              else Assessment(symbol=s, verdict="بدون داده"))
         rows.append(a)
         print(f" {a.verdict}  نسبت={fmt(a.rr,2)}", file=sys.stderr)
 
-    txt = report(rows, args.min_rr)
+    txt = report(rows, args.min_rr, notes=notes)
     if args.out:
         with open(args.out, "w", encoding="utf-8") as f:
             f.write(txt)

@@ -457,8 +457,20 @@ def test_no_venue_means_no_data() -> None:
 
 
 def test_never_requests_hong_kong_weekly_bar() -> None:
-    src = (Path(P.__file__)).read_text(encoding="utf-8")
-    assert '"1W"' not in src and "'1W'" not in src
+    """
+    درخواستی که واقعاً فرستاده می‌شود سنجیده می‌شود، نه متن فایل. تا نشست ۳ب
+    این آزمون متن radar_positions.py را برای "1W" می‌گشت؛ ولی "1W" نام داخلی
+    تایم‌فریم است و نام درخواستی حالا از radar_anchor می‌آید — تصمیم کاربر،
+    ایستگاه ۱ نشست ۳ب: آزمون متنی شکننده است.
+    """
+    seen = []
+
+    def get(url, params=None, timeout=None):
+        seen.append(dict(params or {}))
+        return _Resp({"code": "0", "data": _okx_rows([(MON2, 120.0), (MON1, 110.0)])})
+    P.weekly_close("SOL", get=get, now=NOW)
+    P.weekly_closes("SOL", 1, get=get, now=NOW)
+    assert seen and {p["bar"] for p in seen} == {"1Wutc"}
 
 
 # ═══════════════ فرمان‌ها ═══════════════

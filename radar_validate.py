@@ -41,6 +41,8 @@ from datetime import datetime, timezone
 
 # تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
 from radar_text import fa
+# لنگر کندل وقت جهانی — کتابخانه استاندارد، نشست ۳ب
+import radar_anchor as A
 
 try:
     import requests
@@ -60,10 +62,12 @@ MIN_BUCKET_N = 20      # کمتر از این، سطل قضاوت نمی‌شو�
 
 
 def candles(symbol: str, want: int = 900) -> pd.DataFrame | None:
+    """کندل روزانه وقت جهانی، 1Dutc — نشست ۳ب. لنگر دیگر رد و اعلام می‌شود."""
     rows, after = [], None
     try:
         while len(rows) < want:
-            p = {"instId": f"{symbol.upper()}-USDT", "bar": "1D", "limit": "100"}
+            p = {"instId": f"{symbol.upper()}-USDT", "bar": A.BAR["okx"]["1D"],
+                 "limit": "100"}
             if after:
                 p["after"] = after
             j = requests.get(f"{OKX}/api/v5/market/candles",
@@ -77,6 +81,11 @@ def candles(symbol: str, want: int = 900) -> pd.DataFrame | None:
     except Exception:
         return None
     if len(rows) < 250:
+        return None
+    why = A.check([int(r[0]) for r in rows], "1D",
+                  f"{symbol.upper()}: اوکی‌اکس {A.BAR['okx']['1D']}")
+    if why:
+        print(f"⚠️ {why}", file=sys.stderr)
         return None
     df = pd.DataFrame([{"ts": int(r[0]), "o": float(r[1]), "h": float(r[2]),
                         "l": float(r[3]), "c": float(r[4]), "v": float(r[5])}

@@ -48,6 +48,8 @@ from typing import NamedTuple
 from radar_text import fa
 # دو دفتر و دفتر کل — کتابخانه استاندارد، استقلال این فایل نمی‌شکند
 import radar_positions as P
+# لنگر کندل وقت جهانی — کتابخانه استاندارد، نشست ۳ب
+import radar_anchor as A
 
 try:
     import requests
@@ -261,15 +263,32 @@ def _mark_confirm(df):
     return df
 
 
+# هشدار کندل این اجرا — رد لنگر، افتادن به گیت، کوتاه‌شدن. بالای گزارش می‌آید؛
+# پیش از نشست ۳ب هر شکست اوکی‌اکس بی‌صدا به گیت می‌افتاد.
+CANDLE_NOTES: list[str] = []
+
+
+def _anchor_ok(df, bar: str, where: str) -> bool:
+    """نگهبان لنگر وقت جهانی — رد با پیام در CANDLE_NOTES."""
+    why = A.check(df["ts"], bar, where)
+    if why:
+        CANDLE_NOTES.append(f"⚠️ {why}")
+        return False
+    return True
+
+
 def okx_candles(symbol: str, bar: str = "1D", want: int = DAILY_WANT):
-    """کندل روزانه از اوکی‌اکس. صرافی‌های دیگر از کولب مسدودند."""
+    """
+    کندل روزانه از اوکی‌اکس. صرافی‌های دیگر از کولب مسدودند. bar نام داخلی
+    است؛ نام درخواستی از radar_anchor — 1Dutc، نه 1D لنگر هنگ‌کنگ.
+    """
     if requests is None or pd is None:
         return None
     inst = f"{symbol.upper()}-USDT"
     rows, after = [], None
     try:
         while len(rows) < want:
-            p = {"instId": inst, "bar": bar, "limit": "100"}
+            p = {"instId": inst, "bar": A.BAR["okx"][bar], "limit": "100"}
             if after:
                 p["after"] = after
             r = requests.get(f"{OKX}/api/v5/market/candles",
@@ -293,6 +312,8 @@ def okx_candles(symbol: str, bar: str = "1D", want: int = DAILY_WANT):
             df[col] = pd.to_numeric(df[col], errors="coerce")
     df["ts"] = pd.to_datetime(pd.to_numeric(df["ts"]), unit="ms", utc=True)
     df = df.sort_values("ts").reset_index(drop=True)
+    if not _anchor_ok(df, bar, f"{symbol.upper()}: اوکی‌اکس {A.BAR['okx'][bar]}"):
+        return None
     return _mark_confirm(df)
 
 
@@ -313,7 +334,7 @@ def gate_candles(symbol: str, want: int = DAILY_WANT):
     try:
         r = requests.get("https://api.gateio.ws/api/v4/spot/candlesticks",
                          params={"currency_pair": f"{symbol.upper()}_USDT",
-                                 "interval": "1d",
+                                 "interval": A.BAR["gate"]["1D"],
                                  "limit": str(min(want, 1000))}, timeout=20)
         if r.status_code != 200:
             return None
@@ -335,11 +356,14 @@ def gate_candles(symbol: str, want: int = DAILY_WANT):
         return None
     df = pd.DataFrame(out)
     df["ts"] = pd.to_datetime(df["ts"], unit="ms", utc=True)
-    return _mark_confirm(df.sort_values("ts").reset_index(drop=True))
+    df = df.sort_values("ts").reset_index(drop=True)
+    if not _anchor_ok(df, "1D", f"{symbol.upper()}: گیت {A.BAR['gate']['1D']}"):
+        return None
+    return _mark_confirm(df)
 
 
 def candles(symbol: str, bar: str = "1D", want: int = DAILY_WANT):
-    """اوکی‌اکس اول، گیت به‌عنوان جایگزین."""
+    """اوکی‌اکس اول، گیت به‌عنوان جایگزین — هر دو وقت جهانی."""
     df = okx_candles(symbol, bar, want)
     if df is not None and len(df) >= 60:
         return df
@@ -631,7 +655,8 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
                  val: dict | None = None, heat: dict | None = None,
                  reentry: list[dict] | None = None,
                  tband: dict | None = None, tband_note: str = "",
-                 level_notes: list[str] | None = None) -> str:
+                 level_notes: list[str] | None = None,
+                 candle_notes: list[str] | None = None) -> str:
     """
     گزارش دو دفتر — تصمیم کاربر، ۲۵ سپتامبر ۲۰۲۶.
 
@@ -645,10 +670,11 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     تغییر مبنای امتیاز فقط خط پایه ثبت کرد. regime_warnings کنار رژیم دیده
     می‌شوند: بالای گزارش و در سطر «هشدار رژیم». tband باند مؤثر دفتر
     معامله با هیسترزیس ک۳۲ است؛ غایب باشد، باند خام امروز. level_notes
-    سطرهای هم‌خوانی سطح ابطال با watch.json است، بالای گزارش.
+    سطرهای هم‌خوانی سطح ابطال با watch.json است، بالای گزارش. candle_notes
+    هشدار کندل این اجراست — رد لنگر، افتادن به گیت، کوتاه‌شدن — بالای گزارش.
     """
     regime_warnings = regime_warnings or []
-    level_notes = level_notes or []
+    level_notes = (level_notes or []) + (candle_notes or [])
     if tband is None:
         tband = reg
     val = val or {"total": 0.0, "stable_usd": 0.0, "incomplete": False, "missing": []}
@@ -747,6 +773,7 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     W("")
     W("ابطال با **بسته هفتگی به وقت جهانی**: هفته دوشنبه تا یکشنبه، بسته در")
     W("دوشنبه ۰۰:۰۰ UTC — اوکی‌اکس 1Wutc، گیت 7d. لنگر در دسترس نبود یعنی «داده ندارم».")
+    W("امتیاز، RSI و قدرت نسبی از کندل روزانه وقت جهانی: اوکی‌اکس 1Dutc، گیت 1d.")
     W("سود و زیان فقط وقتی قیمت خرید همه لات‌ها معلوم است.")
     W("")
     W("| نماد | مقدار | قیمت | ارزش | سود/زیان٪ | امتیاز | ض | قدرت نسبی۳۰ | RSI | "
@@ -1126,7 +1153,8 @@ def main() -> int:
     save_state(state)
     txt = build_report(h, rows, reg, cands, info.source, baseline,
                        info.warnings, val=val, heat=heat, reentry=reentry,
-                       tband=tband, tband_note=tband_note, level_notes=level_notes)
+                       tband=tband, tband_note=tband_note, level_notes=level_notes,
+                       candle_notes=CANDLE_NOTES)
     if a.out:
         with open(a.out, "w", encoding="utf-8") as f:
             f.write(txt)

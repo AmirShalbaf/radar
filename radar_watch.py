@@ -62,6 +62,8 @@ from datetime import datetime, timedelta, timezone
 from radar_text import fa
 
 import radar_positions as P
+# لنگر کندل وقت جهانی — کتابخانه استاندارد، نشست ۳ب
+import radar_anchor as A
 
 try:
     import requests
@@ -132,15 +134,22 @@ def last_closed_daily(symbol: str) -> tuple[float, str] | None:
 
     اوکی‌اکس کندل جاری ناتمام را هم برمی‌گرداند. آن را کنار می‌گذاریم،
     چون قانون رادار می‌گوید سایه شکست نیست — فقط بسته معتبر است.
+
+    لنگر وقت جهانی، 1Dutc — نشست ۳ب. کندل با لنگر دیگر رد و اعلام می‌شود.
     """
     try:
         r = requests.get(f"{OKX}/api/v5/market/candles",
                          params={"instId": f"{symbol.upper()}-USDT",
-                                 "bar": "1D", "limit": "3"}, timeout=15)
+                                 "bar": A.BAR["okx"]["1D"], "limit": "3"}, timeout=15)
         j = r.json()
         if j.get("code") != "0" or len(j.get("data", [])) < 2:
             return None
         rows = sorted(j["data"], key=lambda x: int(x[0]))
+        why = A.check([int(x[0]) for x in rows], "1D",
+                      f"{symbol.upper()}: اوکی‌اکس {A.BAR['okx']['1D']}")
+        if why:
+            print(f"⚠️ {why}", file=sys.stderr)
+            return None
         now_ms = int(time.time() * 1000)
         for row in reversed(rows):
             start = int(row[0])

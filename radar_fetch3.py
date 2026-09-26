@@ -43,6 +43,10 @@ import numpy as np
 import pandas as pd
 import requests
 
+# لنگر کندل وقت جهانی — تنها منبع، نشست ۳ب. نام مستعار A نیست، چون تابع‌های
+# گزارش این فایل و اسکن و چرخش A را محلی برای L.append به کار می‌برند.
+import radar_anchor as ANCHOR
+
 UTC = timezone.utc
 VERSION = "3.6"
 FRAMEWORK = "۵.۴"   # نسخه چارچوب رادار — تیترها از اینجا می‌خوانند
@@ -180,53 +184,12 @@ class Bundle:
 
 
 # ═══════════════════════════════════════════════════════════════════
-#  لایه ۲ — OKX: کندل با صفحه‌بندی
+#  لایه ۲ — کندل: فقط از آداپتورهای صرافی پایین‌تر
 # ═══════════════════════════════════════════════════════════════════
-
-BAR_MAP = {"1D": "1D", "4H": "4H", "1W": "1W"}
-
-
-def okx_candles(inst_id: str, bar: str, want: int = 1000) -> pd.DataFrame | None:
-    """
-    کندل‌های OKX.
-
-    راستی‌آزمایی ۲ (ترتیب کندل): OKX همیشه از جدید به قدیم می‌دهد.
-    اینجا صریحاً بر اساس مهر زمانی صعودی مرتب می‌شود و در تست‌ها بررسی می‌گردد.
-    ستون confirm==1 یعنی کندل بسته شده. کندل باز آخر جدا نگه داشته می‌شود.
-    """
-    rows: list[list] = []
-    cursor: str | None = None
-    guard = 0
-
-    while len(rows) < want and guard < 20:
-        guard += 1
-        params = {"instId": inst_id, "bar": bar, "limit": "100"}
-        if cursor:
-            params["after"] = cursor          # after در OKX یعنی «قدیمی‌تر از این»
-            path = "/api/v5/market/history-candles"
-        else:
-            path = "/api/v5/market/candles"
-        batch = okx_get(path, params, label=f"کندل {inst_id} {bar}")
-        if not batch:
-            break
-        rows.extend(batch)
-        cursor = batch[-1][0]
-        time.sleep(0.15)
-
-    if not rows:
-        return None
-
-    df = pd.DataFrame(rows, columns=[
-        "ts", "open", "high", "low", "close", "vol", "volCcy", "volCcyQuote", "confirm"
-    ])
-    for c in ["open", "high", "low", "close", "vol", "volCcy", "volCcyQuote"]:
-        df[c] = pd.to_numeric(df[c], errors="coerce")
-    df["confirm"] = pd.to_numeric(df["confirm"], errors="coerce")
-    df["ts"] = pd.to_datetime(pd.to_numeric(df["ts"]), unit="ms", utc=True)
-
-    # ─── ترتیب صعودی + حذف تکراری. این خط قلب راستی‌آزمایی ۲ است.
-    df = df.drop_duplicates(subset="ts").sort_values("ts").reset_index(drop=True)
-    return df
+#
+# تابع okx_candles و نگاشت BAR_MAP این لایه تا نشست ۳ب اینجا بودند و هیچ
+# صدازننده‌ای نداشتند؛ سقف ۲۰ صفحه‌شان هم هرگز اجرا نمی‌شد. مسیر زنده کندل
+# اوکی‌اکس OKX.candles است. آزمون tests/test_utc_anchor.py نبودشان را قفل می‌کند.
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -654,16 +617,28 @@ class Venue:
     def positioning(self, base, http): return None
 
 
-BAR = {  # نگاشت تایم‌فریم برای هر صرافی
-    "okx":     {"1D": "1D",  "4H": "4H",  "1W": "1W"},
-    "binance": {"1D": "1d",  "4H": "4h",  "1W": "1w"},
-    "bybit":   {"1D": "D",   "4H": "240", "1W": "W"},
-    "gate":    {"1D": "1d",  "4H": "4h",  "1W": "7d"},
-    "kucoin":  {"1D": "1day","4H": "4hour","1W": "1week"},
-}
+# نگاشت تایم‌فریم برای هر صرافی — تنها منبع radar_anchor، فقط لنگر وقت جهانی.
+# پیش از نشست ۳ب اوکی‌اکس اینجا 1D و 1W لنگر هنگ‌کنگ داشت، و ردیف کوکوین بی‌کلاس
+# بود — هفتگی کوکوین پنجشنبه ۰۰:۰۰ است.
+BAR = ANCHOR.BAR
 
 
 BAR_SECONDS = {"1D": 86_400, "4H": 14_400, "1W": 604_800}
+
+
+def _anchored(df, bar: str, venue: str, inst: str):
+    """
+    نگهبان لنگر هر آداپتور: قاب با حتی یک کندل خارج از لنگر وقت جهانی رد و در
+    FAILURES اعلام می‌شود. None یعنی candles_first_ok صرافی بعد را امتحان کند —
+    هرگز بازگشت بی‌صدا به لنگر هنگ‌کنگ.
+    """
+    if df is None or len(df) == 0:
+        return df
+    why = ANCHOR.check(df["ts"], bar, f"[{venue}] کندل {bar} {inst}")
+    if why:
+        FAILURES.append(why)
+        return None
+    return df
 
 # قاعده بلوغ ۳n: میانگین نمایی ۲۰۰ دست‌کم ۶۰۰ کندل **بسته** لازم دارد.
 EMA200_MATURE_BARS = 3 * 200
@@ -786,7 +761,7 @@ class OKX(Venue):
         has_flag = all(f is not None for f in flags)
         df = _df([r[:6] for r in rows], ["ts","open","high","low","close","vol"],
                  bar=bar, confirm=flags if has_flag else None)
-        return df
+        return _anchored(df, bar, self.name, self.spot(base))
 
     def funding(self, base, http):
         d = self._g(http, "/api/v5/public/funding-rate", {"instId": self.perp(base)}, "فاندینگ")
@@ -856,8 +831,9 @@ class Binance(Venue):
             if len(rows) >= want or len(d) < p["limit"]: break
             time.sleep(.15)
         if not rows: return None
-        return _df([[r[0],r[1],r[2],r[3],r[4],r[5]] for r in rows],
-                   ["ts","open","high","low","close","vol"], bar=bar)
+        df = _df([[r[0],r[1],r[2],r[3],r[4],r[5]] for r in rows],
+                 ["ts","open","high","low","close","vol"], bar=bar)
+        return _anchored(df, bar, self.name, self.spot(base))
 
     def funding(self, base, http):
         d = http(f"{self.F}/fapi/v1/premiumIndex", {"symbol": self.perp(base)},
@@ -921,8 +897,9 @@ class Bybit(Venue):
                     {"category":"spot","symbol":self.spot(base),
                      "interval":BAR["bybit"][bar],"limit":1000}, f"کندل {bar}")
         if not r or not r.get("list"): return None
-        return _df([x[:6] for x in r["list"]], ["ts","open","high","low","close","vol"],
-                   bar=bar)
+        df = _df([x[:6] for x in r["list"]], ["ts","open","high","low","close","vol"],
+                 bar=bar)
+        return _anchored(df, bar, self.name, self.spot(base))
 
     def funding(self, base, http):
         r = self._g(http, "/v5/market/tickers",
@@ -977,7 +954,8 @@ class Gate(Venue):
         if not isinstance(d, list) or not d: return None
         # قالب گیت: [ts(s), quoteVol, close, high, low, open, baseVol, ...]
         rows = [[x[0], x[5], x[3], x[4], x[2], x[6] if len(x) > 6 else x[1]] for x in d]
-        return _df(rows, ["ts","open","high","low","close","vol"], ms=False, bar=bar)
+        df = _df(rows, ["ts","open","high","low","close","vol"], ms=False, bar=bar)
+        return _anchored(df, bar, self.name, self.spot(base))
 
     def funding(self, base, http):
         d = http(f"{self.B}/futures/usdt/contracts/{self.perp(base)}",
@@ -1819,6 +1797,8 @@ def report3(b: Bundle) -> str:
     A(f"تولید: **{b.generated.strftime('%Y-%m-%d %H:%M UTC')}** | نسخه {VERSION} | "
       f"پروفایل: **{'معامله' if b.profile=='trade' else 'موقعیت'}** | "
       f"منبع کندل: **{b.candle_venue or 'هیچ‌کدام'}**")
+    A("")
+    A(ANCHOR.ANCHOR_LINE)
     A("")
     A(f"وضعیت کلیدها: کوین‌گکو {'✅ فعال' if CG_KEY else '⬜ بدون کلید'} | "
       f"کوین‌گلس {'✅ فعال' if os.environ.get('COINGLASS_API_KEY') else '⬜ بدون کلید'}")
