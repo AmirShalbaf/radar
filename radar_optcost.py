@@ -93,12 +93,20 @@ EXIT_HORIZONS = (14, 30)
 
 
 def add_exit(d: dict, *, symbol: str, action: str, qty: float, price: float,
-             reason: str, level: float | None = None) -> dict:
-    """رکورد خروج یا کاهش؛ radar_positions.py پس از ثبت دفتر کل صدایش می‌زند."""
+             reason: str, level: float | None = None, at: str | None = None,
+             order_id: str | None = None) -> dict:
+    """
+    رکورد خروج یا کاهش؛ radar_positions.py پس از ثبت دفتر کل صدایش می‌زند.
+    at زمان رسید است — پیگیری ۱۴ و ۳۰ روزه از روز فروش شمرده می‌شود، نه از
+    روز ثبت. غایب یعنی اکنون.
+    """
     rid = max([r["id"] for r in d["exits"]], default=0) + 1
-    rec = {"id": rid, "date": now(), "at": datetime.now(UTC).isoformat(),
+    t = datetime.fromisoformat(at).astimezone(UTC) if at else datetime.now(UTC)
+    rec = {"id": rid, "date": t.strftime("%Y-%m-%d"), "at": t.isoformat(),
            "book": "position", "symbol": symbol.upper(), "action": action,
            "reason": reason, "qty": qty, "price": price, "level": level}
+    if order_id:
+        rec["order_id"] = order_id
     for h in EXIT_HORIZONS:
         rec.update({f"p{h}": None, f"chg{h}": None, f"saved{h}": None})
     d["exits"].append(rec)

@@ -640,7 +640,46 @@ def _find(h: dict, sym: str, book: str = "position") -> dict | None:
                  if p["symbol"] == sym and p["book"] == book), None)
 
 
-def _take(p: dict, qty: float, account: str | None) -> None:
+def _receipt_at(raw: str, h: dict) -> str:
+    """
+    زمان رسید صرافی: مهر کامل با منطقه زمانی، نه در آینده، نه پیش از تاریخ
+    منجمد — فروش پیش از آن در مقدار منجمد نشسته است.
+    """
+    t = _ts(raw, "--at — مهر کامل با منطقه زمانی لازم است")
+    if t > datetime.now(UTC) + timedelta(minutes=10):
+        raise PositionsError(f"--at در آینده است: {raw}")
+    day = datetime.strptime(h["frozen"]["date"], "%Y-%m-%d").replace(tzinfo=UTC)
+    if t < day:
+        raise PositionsError(f"--at پیش از تاریخ منجمد {h['frozen']['date']} است — آن فروش "
+                             "در مقدار منجمد نشسته")
+    return t.astimezone(UTC).isoformat()
+
+
+def _receipt(h: dict, a, row: dict, qty: float, account: str) -> None:
+    """
+    رسید فروش: مجموع باید با مقدار × قیمت بخواند؛ خالص پس از کارمزد به تتر همان
+    حساب اضافه می‌شود. بدون --gross و --fee نقد دست نمی‌خورد — رفتار پیشین.
+    """
+    if a.gross is None and a.fee is None:
+        return
+    expect = qty * a.price
+    gross = expect if a.gross is None else a.gross
+    if not math.isclose(gross, expect, rel_tol=1e-6):
+        raise PositionsError(f"مجموع رسید {gross} با مقدار × قیمت {expect} نمی‌خواند")
+    fee = a.fee or 0.0
+    if not (_num(fee) and 0 <= fee < gross):
+        raise PositionsError(f"کارمزد نامعتبر: {fee}")
+    net = round(gross - fee, 10)
+    row.update(gross=gross, fee=fee, net=net)
+    c = next((c for c in h["cash"] if c.get("asset") == "USDT" and c.get("account") == account),
+             None)
+    if c is None:
+        c = {"asset": "USDT", "qty": 0.0, "account": account}
+        h["cash"].append(c)
+    c["qty"] = round(c["qty"] + net, 10)
+
+
+def _take(p: dict, qty: float, account: str | None) -> str:
     """کاهش از لات‌های یک حساب، قدیمی‌ترین اول. چند حساب یعنی --account اجباری."""
     accts = {l["account"] for l in p["lots"]}
     if account is None:
@@ -659,11 +698,17 @@ def _take(p: dict, qty: float, account: str | None) -> None:
         if left <= TOL:
             break
     p["lots"] = [l for l in p["lots"] if l["qty"] > TOL]
+    return account
 
 
 def _apply(h: dict, a, journal: dict) -> dict:
     sym = a.symbol.upper()
     row = {"at": _now(), "action": a.cmd, "symbol": sym}
+    if a.cmd in ("trim", "exit"):
+        if a.at is not None:
+            row["at"] = _receipt_at(a.at, h)
+        if a.order_id:
+            row["order_id"] = a.order_id
     p = _find(h, sym)
     if a.cmd == "trim":
         if p is None or p["status"] != "open":
@@ -671,16 +716,24 @@ def _apply(h: dict, a, journal: dict) -> dict:
         if a.reason == "invalidation" and a.level is None:
             raise PositionsError("خروج جزئی با ابطال: --level لازم است — سطحی که بسته "
                                  "هفتگی زیرش بسته شد")
-        _take(p, a.qty, a.account)
-        row.update(delta=-a.qty, price=a.price, reason=a.reason)
+        acct = _take(p, a.qty, a.account)
+        row.update(delta=-a.qty, price=a.price, reason=a.reason, account=acct)
         if a.reason == "invalidation":
             row["level"] = a.level
+        _receipt(h, a, row, a.qty, acct)
     elif a.cmd == "exit":
         if p is None or p["status"] != "open":
             raise PositionsError(f"{sym} در دفتر موقعیت باز نیست")
         q = position_qty(p)
+        accts = sorted({l["account"] for l in p["lots"]})
+        if (a.gross is not None or a.fee is not None) and len(accts) != 1:
+            raise PositionsError(f"{sym} در چند حساب است ({accts}) — رسید هر حساب جداست؛ "
+                                 "با trim جدا ثبت کن")
         p["lots"], p["status"] = [], "exited"
         row.update(delta=-q, price=a.price, level=a.level, reason="invalidation")
+        if len(accts) == 1:
+            row["account"] = accts[0]
+            _receipt(h, a, row, q, accts[0])
     elif a.cmd == "reenter":
         if p is None:
             raise PositionsError(f"{sym} در دفتر موقعیت نیست")
@@ -743,6 +796,14 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--qty", type=float, required=True)
         if name != "adjust":
             p.add_argument("--price", type=float, required=True)
+        if name in ("trim", "exit"):
+            # رسید صرافی — نشست ۳: زمان فروش، نه زمان ثبت؛ نقد خالص به تتر همان حساب
+            p.add_argument("--at", default=None,
+                           help="زمان رسید، مهر کامل با منطقه زمانی؛ پیش‌فرض اکنون")
+            p.add_argument("--gross", type=float, default=None,
+                           help="مجموع رسید به تتر؛ باید با مقدار × قیمت بخواند")
+            p.add_argument("--fee", type=float, default=None, help="کارمزد به تتر")
+            p.add_argument("--order-id", dest="order_id", default=None)
         if name == "trim":
             p.add_argument("--reason", choices=TRIM_REASONS, required=True)
             p.add_argument("--level", type=float, default=None,
@@ -784,7 +845,8 @@ def main(argv: list[str] | None = None) -> int:
             d = RO.load(a.optcost)
             rec = RO.add_exit(d, symbol=row["symbol"], action=a.cmd, qty=-row["delta"],
                               price=row["price"], reason=row["reason"],
-                              level=row.get("level"))
+                              level=row.get("level"), at=row["at"],
+                              order_id=row.get("order_id"))
             RO.save(d, a.optcost)
         except (OSError, ValueError) as exc:
             print(f"⛔ ردیف دفتر کل ثبت شد، ولی دفتر هزینه فرصت نه ({type(exc).__name__}: "

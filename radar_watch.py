@@ -516,12 +516,27 @@ def validate_watch(w: dict) -> None:
             if (not isinstance(s.get("symbol"), str) or not _num(s.get("qty")) or s["qty"] <= 0
                     or not (price is None or (_num(price) and price > 0))):
                 raise WatchError(f"reserve_plan پله {i}: نماد، مقدار یا قیمت نامعتبر")
+            ex = s.get("executed")
+            if ex is not None:
+                if not isinstance(ex, dict) or not isinstance(ex.get("order_id"), str) \
+                        or not ex["order_id"]:
+                    raise WatchError(f"reserve_plan پله {i}: executed باید زمان و order_id داشته باشد")
+                _aware(ex.get("at"), f"reserve_plan پله {i}: executed.at — {FULL}")
 
 
 def unfilled_steps(rp: dict, h: dict) -> list[dict]:
     """
     پله‌های پرنشده نقشه ذخیره. پرشده یعنی پوشش‌داده با کاهش reserve دفتر کل
     پس از ساخت نقشه. پله‌های هر نماد به ترتیب نقشه پر می‌شوند.
+    """
+    return [{"symbol": s["symbol"], "qty": s["qty"], "price": s.get("price")}
+            for s, filled in zip(rp.get("steps") or [], step_filled(rp, h)) if not filled]
+
+
+def step_filled(rp: dict, h: dict) -> list[bool]:
+    """
+    پرشدن هر پله، به ترتیب نقشه، فقط از کاهش reserve دفتر کل پس از ساخت نقشه.
+    علامت executed در watch.json اینجا نقشی ندارد — منبع حقیقت دفتر کل است.
     """
     created = _aware(rp["created"], "reserve_plan.created")
     done: dict[str, float] = {}
@@ -533,8 +548,7 @@ def unfilled_steps(rp: dict, h: dict) -> list[dict]:
     for s in rp.get("steps") or []:
         sym = s["symbol"]
         cum[sym] = cum.get(sym, 0.0) + s["qty"]
-        if cum[sym] - STEP_TOL * s["qty"] > done.get(sym, 0.0):
-            out.append({"symbol": sym, "qty": s["qty"], "price": s.get("price")})
+        out.append(cum[sym] - STEP_TOL * s["qty"] <= done.get(sym, 0.0))
     return out
 
 
@@ -751,6 +765,17 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
 
         def label(s):
             return "پله بازار" if s["price"] is None else f"پله {_n(s['price'])}"
+
+        # علامت اجراشده‌ای که دفتر کل پوشش نمی‌دهد: پله پر حساب نمی‌شود، بلند است
+        stray = [s for s, filled in zip(rp.get("steps") or [], step_filled(rp, h))
+                 if s.get("executed") and not filled]
+        if stray:
+            rows = "\n".join(f"- {s['symbol']} {_n(s['qty'])} — {label(s)}، سفارش "
+                             f"{s['executed']['order_id']}" for s in stray)
+            _once(state, f"reserve_stray_{day}", msgs,
+                  "⚠️ پله‌هایی در watch.json علامت اجراشده دارند ولی دفتر کل پوششان "
+                  f"نمی‌دهد — پر حساب نشدند:\n{rows}\n"
+                  "ثبت با radar_positions.py trim --reason reserve --at <زمان رسید>")
 
         if now >= deadline:
             if left:
