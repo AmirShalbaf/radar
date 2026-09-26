@@ -153,6 +153,43 @@ def level_since(p: dict) -> datetime | None:
     return _ts(raw, f"{p.get('symbol')}: invalidation_since — مهر کامل با منطقه زمانی لازم است")
 
 
+# ── قاعده لنگر سطح ابطال — تصمیم کاربر، ۲۶ سپتامبر ۲۰۲۶ ──
+# سطح ابطال دست‌کم ۱ دامنه واقعی هفتگی زیر min(قیمت فعلی، آخرین بسته هفتگی
+# بسته‌شده). دلیل: سطح‌های ایستگاه دو نسبت به قیمت زنده وسط هفته‌ای صعودی
+# انتخاب شدند ولی با بسته هفتگی داوری می‌شوند؛ سطح ONDO از روز اول بالای
+# آخرین بسته بود. تنها منبع: radar_levels هنگام انتخاب، پایشگر و سبد هنگام
+# بارگذاری.
+ANCHOR_ATR = 1.0
+ANCHOR_REL_TOL = 1e-9          # دقیقاً ۱ ATR پذیرفته است، حتی با خطای ممیز شناور
+
+
+def invalidation_anchor(price: float, weekly_close: float) -> float:
+    return min(price, weekly_close)
+
+
+def anchor_ok(level: float, anchor: float, atr_w: float) -> bool:
+    gap, need = anchor - level, ANCHOR_ATR * atr_w
+    return gap >= need or math.isclose(gap, need, rel_tol=ANCHOR_REL_TOL)
+
+
+def anchor_violations(watch: dict) -> list[str]:
+    """
+    قاعده لنگر روی سطح‌های watch.json، از لنگر ثبت‌شده هنگام انتخاب —
+    anchor و anchor_atr_w. قیمت امروز معیار نیست: نزدیک شدن قیمت به سطح پس
+    از انتخاب، نقض قاعده انتخاب نیست. لنگر غایب هم بی‌صدا نمی‌ماند.
+    """
+    out: list[str] = []
+    for it in watch.get("positions") or []:
+        sym, lvl = it.get("symbol"), it.get("invalidation")
+        a, atr = it.get("anchor"), it.get("anchor_atr_w")
+        if not (_num(a) and _num(atr) and atr > 0 and _num(lvl)):
+            out.append(f"{sym}: لنگر سطح ثبت نشده — قاعده لنگر سنجیده نشد")
+        elif not anchor_ok(lvl, a, atr):
+            out.append(f"{sym}: سطح {lvl} فقط {(a - lvl) / atr:.2f} دامنه واقعی هفتگی (ATR) "
+                       f"زیر لنگر {a} است؛ دست‌کم ۱ لازم است")
+    return out
+
+
 def judged(closed_at, since: datetime | None) -> bool:
     """
     آیا بسته هفتگی با سطحی که از since معتبر است داوری می‌شود؟ فقط اگر زمان

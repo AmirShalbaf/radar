@@ -598,6 +598,13 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                   "⛔ ناهمخوانی سطح ابطال میان watch.json و holdings.json:\n"
                   + "\n".join(f"- {b}" for b in bad)
                   + "\nتا یکی شوند، پایشگر با محافظه‌کارانه‌تر می‌سنجد: سطح بالاتر و مهر زودتر.")
+        av = P.anchor_violations(watch)
+        if av:
+            # هشدار صریح، نه خطا: پایش با سطح فعلی ادامه دارد تا بازبینی
+            _once(state, f"anchor_{day}_{'|'.join(av)}", msgs,
+                  "⚠️ قاعده لنگر سطح ابطال — سطح باید دست‌کم ۱ دامنه واقعی هفتگی زیر "
+                  "min(قیمت، آخرین بسته هفتگی) باشد:\n" + "\n".join(f"- {a}" for a in av)
+                  + "\nپایش با سطح فعلی ادامه دارد تا بازبینی.")
     wk_cache: dict = {}
     px_cache: dict = {}
 

@@ -986,12 +986,18 @@ def level_check(h: dict, watch_path: str) -> tuple[list[str], bool]:
     except (OSError, ValueError) as exc:
         return [f"⛔ {os.path.basename(watch_path)} خوانا نیست ({type(exc).__name__}) — "
                 "هم‌خوانی سطح ابطال سنجیده نشد."], True
+    notes: list[str] = []
     bad = P.level_mismatches(h, watch)
-    if not bad:
-        return [], False
-    return (["⛔ **ناهمخوانی سطح ابطال میان holdings.json و watch.json.** سبد با "
-             "holdings.json داوری می‌کند و پایشگر با محافظه‌کارانه‌تر؛ تا یکی شوند، هر دو "
-             "خطا می‌دهند:"] + [f"- {b}" for b in bad]), True
+    if bad:
+        notes += (["⛔ **ناهمخوانی سطح ابطال میان holdings.json و watch.json.** سبد با "
+                   "holdings.json داوری می‌کند و پایشگر با محافظه‌کارانه‌تر؛ تا یکی شوند، "
+                   "هر دو خطا می‌دهند:"] + [f"- {b}" for b in bad])
+    av = P.anchor_violations(watch)
+    if av:
+        # هشدار صریح، نه خطا — تصمیم کاربر: خطا یا هشدار صریح هنگام بارگذاری
+        notes += (["⚠️ **قاعده لنگر سطح ابطال:** سطح باید دست‌کم ۱ دامنه واقعی هفتگی زیر "
+                   "min(قیمت، آخرین بسته هفتگی) باشد:"] + [f"- قاعده لنگر — {a}" for a in av])
+    return notes, bool(bad)
 
 
 def main() -> int:

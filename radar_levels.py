@@ -61,6 +61,8 @@ import requests
 
 # تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
 from radar_text import fa
+# قاعده لنگر سطح ابطال — تنها منبع radar_positions
+import radar_positions as P
 
 VERSION = "1.1"
 UTC = timezone.utc
@@ -229,6 +231,37 @@ def cluster_levels(pivots: list, tol: float, n_bars: int,
         out.append(Level(price=price, touches=len(c),
                          last_idx=max(i for i, _ in c), kind="", members=c))
     return out
+
+
+def pick_invalidation(daily: pd.DataFrame, weekly: pd.DataFrame, price: float) -> dict:
+    """
+    سطح ابطال دفتر موقعیت — روش ایستگاه دو نشست ۳، با قاعده لنگر.
+
+    daily و weekly فقط کندل بسته، هر دو وقت جهانی. نامزدها: خوشه‌های محدود
+    کف‌های چرخشی هفتگی (۲ و ۲) و روزانه (۳ و ۳) با روادار ۱ ATR روزانه و
+    دست‌کم دو برخورد. لنگر = min(قیمت فعلی، آخرین بسته هفتگی بسته‌شده)؛ بالاترین
+    نامزدی که دست‌کم ۱ ATR هفتگی زیر لنگر است انتخاب می‌شود. نبود نامزد یعنی
+    level خالی با دلیل صریح — هرگز سطح نزدیک‌تر جانشین نمی‌شود.
+    """
+    week_close = float(weekly["close"].iloc[-1])
+    anchor = P.invalidation_anchor(price, week_close)
+    atr_w = float(atr_wilder(weekly).iloc[-1])
+    atr_d = float(atr_wilder(daily).iloc[-1])
+    base = {"anchor": anchor, "price": price, "week_close": week_close,
+            "atr_w": atr_w, "atr_d": atr_d}
+    cands = []
+    for tf, df, lr in (("هفتگی", weekly, 2), ("روزانه", daily, 3)):
+        _, lows = find_pivots(df, lr, lr)
+        cands += [(tf, lv) for lv in cluster_levels(lows, atr_d, len(df)) if lv.price < anchor]
+    ok = [(tf, lv) for tf, lv in cands if P.anchor_ok(lv.price, anchor, atr_w)]
+    if not ok:
+        return {**base, "level": None,
+                "reason": "سطح معتبری نیست — هیچ حمایت ساختاری دست‌کم ۱ ATR هفتگی زیر لنگر نیست"}
+    tf, lv = max(ok, key=lambda x: x[1].price)
+    ps = [v for _, v in lv.members]
+    return {**base, "level": lv.price, "touches": lv.touches, "tf": tf,
+            "width_pct": 100 * (max(ps) - min(ps)) / lv.price,
+            "distance_atr": (anchor - lv.price) / atr_w}
 
 
 # ═══════════════════════ ارزیابی ═══════════════════════

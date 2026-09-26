@@ -34,9 +34,12 @@ SINCE = "2026-09-26T00:00:00+00:00"      # مهر کامل — بند ۳ ایس�
 
 def _watch(**over) -> dict:
     w = {"version": 2, "updated": SINCE, "exit_fraction": 1.0,
+         # لنگرهایی که قاعده لنگر را می‌گذرانند — بند ۲ ایستگاه آخر
          "positions": [{"symbol": "SOL", "invalidation": 96.71, "invalidation_since": SINCE,
+                        "anchor": 120.0, "anchor_atr_w": 15.0,
                         "touches": 4, "warnings": [119.53]},
                        {"symbol": "ONDO", "invalidation": 0.4457, "invalidation_since": SINCE,
+                        "anchor": 0.55, "anchor_atr_w": 0.05,
                         "touches": 3, "label": "سطح ضعیف", "warnings": []}],
          "market": [{"symbol": "BTC", "label": "میانگین ساده ۵۰ هفته",
                      "source": "regime.json btc_sma50w"}],
