@@ -216,6 +216,7 @@ def test_real_files_consistent_with_full_stamps() -> None:
     h = json.loads((ROOT / "holdings.json").read_text(encoding="utf-8"))
     W.validate_watch(w)
     assert P.level_mismatches(h, w) == []
+    # مقدار مهر هر سکه را tests/test_approved_levels.py قفل می‌کند؛ اینجا قالب
     for it in w["positions"]:
-        assert it["invalidation_since"] == STAMP
+        assert datetime.fromisoformat(it["invalidation_since"]).tzinfo is not None
     assert datetime.fromisoformat(w["updated"]).tzinfo is not None
