@@ -255,7 +255,11 @@ def _candles(now: datetime = NOW) -> tuple[dict, pd.DataFrame]:
 
 def _src(**over) -> dict:
     btc, pair = _candles()
-    src = {"fred": _fred(), "macro": _macro(), "btc": btc, "ethbtc": pair}
+    # میانگین پنجاه‌هفته از sma_weekly — نشست ۳ب؛ همان ۱۰۰ کندل هفتگی بالا
+    sma = {"value": 100.0, "weeks": 50, "close": 100.0, "venue": "okx",
+           "week_closed_at": (NOW - timedelta(days=3)).isoformat()}
+    src = {"fred": _fred(), "macro": _macro(), "btc": btc, "ethbtc": pair,
+           "sma50w": sma, "sma50w_why": []}
     src.update(over)
     return src
 

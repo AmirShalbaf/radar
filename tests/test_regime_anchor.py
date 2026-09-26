@@ -111,7 +111,7 @@ def test_main_writes_boundary_and_report_line(tmp_path, monkeypatch) -> None:
     hp = tmp_path / "hist.json"
     hp.write_text(json.dumps(_legacy(), ensure_ascii=False), encoding="utf-8")
     inp = _inp()
-    monkeypatch.setattr(G, "gather", lambda order: {})
+    monkeypatch.setattr(G, "gather", lambda order, now=None: {})
     monkeypatch.setattr(G, "measure", lambda src, history, now: inp)
     monkeypatch.setattr(G.P, "sma_weekly", lambda *a, **k: (None, ["آزمون"]))
     rep = tmp_path / "r.md"

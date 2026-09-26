@@ -99,6 +99,8 @@ def empty_net(monkeypatch):
     monkeypatch.setattr(R, "fetch_macro", lambda out: None)
     monkeypatch.setattr(R, "probe_venues", lambda order: (list(order), []))
     monkeypatch.setattr(R, "candles_first_ok", lambda *a, **k: ({}, None, None))
+    # میانگین پنجاه‌هفته از نشست ۳ب داخل gather واکشی می‌شود — آن هم پاسخ نمی‌دهد
+    monkeypatch.setattr(G.P, "sma_weekly", lambda *a, **k: (None, ["آزمون: بدون شبکه"]))
     monkeypatch.setattr(R, "FAILURES", [])
 
 
@@ -127,7 +129,7 @@ def test_main_failure_without_valid_file_writes_error_doc(empty_net, paths) -> N
 
 def test_main_unexpected_exception_is_recorded(monkeypatch, paths, capsys) -> None:
     """خطای پیش‌بینی‌نشده هم ثبت می‌شود و ردش چاپ می‌شود — بی‌صدا نه."""
-    def boom(order):
+    def boom(order, now=None):
         raise RuntimeError("انفجار آزمایشی")
     monkeypatch.setattr(G, "gather", boom)
     j = paths[0]
@@ -148,7 +150,7 @@ def test_success_after_failure_clears_the_mark(monkeypatch, paths) -> None:
     _write(j, _valid(last_build_error={"at": NOW.isoformat(), "error": "دیروز"}))
     inp = {k: G.Input(key=k, column=c, label=l, weight=G.weights()[k], score=0.1)
            for k, (c, l) in G.INPUTS.items()}
-    monkeypatch.setattr(G, "gather", lambda order: {})
+    monkeypatch.setattr(G, "gather", lambda order, now=None: {})
     monkeypatch.setattr(G, "measure", lambda src, history, now: inp)
     monkeypatch.setattr(G.P, "sma_weekly", lambda *a, **k: (None, ["آزمون: بدون شبکه"]))
     assert G.main(_argv(paths)) == 0

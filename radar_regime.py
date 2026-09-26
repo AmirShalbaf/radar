@@ -314,31 +314,35 @@ def measure(src: dict, history: dict, now: datetime) -> dict[str, Input]:
         if not why:
             i.score = score_input(key, v)
 
-    # ── چرخه: میانگین ساده پنجاه‌هفته — قیمت زنده، میانگین از هفته‌های بسته
+    # ── چرخه: میانگین ساده پنجاه‌هفته — قیمت زنده، میانگین از sma_weekly
+    # یک تعریف با میدان btc_sma50w — نشست ۳ب، بند ۵. پیش از آن اینجا کندل
+    # هفتگی candles_first_ok با لنگر هنگ‌کنگ خوانده می‌شد: برای هفته بسته
+    # 2026-09-21 میانگین 78822.00 در برابر 78822.346 میدان btc_sma50w.
     i = inp["ma50w"]
     i.max_age_days = FRESH_DAYS["candle_1W"]
     btc = src.get("btc") or {}
-    wk, dl = btc.get("1W"), btc.get("1D")
-    if wk is None or dl is None or len(wk) == 0 or len(dl) == 0:
-        i.reason = "کندل هفتگی یا روزانه بیت‌کوین نیامد"
+    dl, sma = btc.get("1D"), src.get("sma50w")
+    if sma is None:
+        i.reason = ("میانگین پنجاه‌هفته وقت جهانی نیامد — "
+                    + ("؛ ".join(src.get("sma50w_why") or []) or "بی‌دلیل"))
+    elif dl is None or len(dl) == 0:
+        i.reason = "کندل روزانه بیت‌کوین نیامد — قیمت زنده نیست"
     else:
         import radar_fetch3 as R
-        wc = _closed(wk)
         live = R.last_close(dl)
-        if len(wc) < 50:
-            i.reason = f"نابالغ: {len(wc)} هفته بسته، ۵۰ لازم"
-        elif live is None:
+        if live is None:
             i.reason = "قیمت زنده بیت‌کوین پوچ است"
         else:
-            sma = float(wc["close"].tail(50).mean())
-            i.ts = min(_close_time(wc["ts"].iloc[-1], "1W"), now)
+            mean = float(sma["value"])
+            i.ts = min(datetime.fromisoformat(sma["week_closed_at"]), now)
+            i.obs["btc_sma50w"] = mean
             why = _fresh(i.ts, i.max_age_days, now)
             if why:
                 i.reason = why
             else:
-                i.value = 100 * (live / sma - 1)
+                i.value = 100 * (live / mean - 1)
                 i.score = score_input("ma50w", i.value)
-                i.detail = f"قیمت {live:,.2f}، میانگین {sma:,.2f}"
+                i.detail = f"قیمت {live:,.2f}، میانگین {mean:,.2f} — همان btc_sma50w"
 
     # ── چرخه: اتر به بیت‌کوین، تغییر ۳۰ روزه روی کندل روزانه بسته
     i = inp["ethbtc"]
@@ -445,8 +449,8 @@ def trade_band_for(history: dict, today_band: str, now: datetime) -> str:
 
 
 SMA_DEF = ("میانگین ساده بسته ۵۰ هفته بسته‌شده؛ هفته دوشنبه تا یکشنبه وقت جهانی، "
-           "OKX 1Wutc سپس Gate 7d؛ بسته همان هفته کنارش. با ورودی ma50w فرق دارد: آن "
-           "کندل هفتگی لنگر هنگ‌کنگ می‌خواند تا نشست ۳ب")
+           "OKX 1Wutc سپس Gate 7d؛ بسته همان هفته کنارش. ورودی ma50w همین عدد را "
+           "می‌خواند — یک تعریف از نشست ۳ب")
 
 
 def _sma_field(sma: dict | None, why: list[str] | None) -> dict:
@@ -479,7 +483,8 @@ def build_doc(res: dict, inp: dict[str, Input], now: datetime,
         "inputs": [{"key": i.key, "column": i.column, "label": i.label,
                     "weight": i.weight, "value": i.value, "score": i.score,
                     "ts": _iso(i.ts), "max_age_days": i.max_age_days,
-                    "reason": i.reason, "detail": i.detail}
+                    "reason": i.reason, "detail": i.detail,
+                    "obs": {k: v for k, v in i.obs.items() if k != "components"}}
                    for i in inp.values()],
         "missing": res["missing"],
         "freshness_days": dict(FRESH_DAYS),
@@ -693,8 +698,12 @@ def render_md(doc: dict) -> str:
 
 # ═══════════════════════ واکشی — فقط از توابع radar_fetch3.py ═══════════════════════
 
-def gather(order: list[str]) -> dict:
-    """داده را از توابع موجود می‌گیرد، کپی نمی‌کند. هیچ عددی از جست‌وجوی وب."""
+def gather(order: list[str], now: datetime | None = None) -> dict:
+    """
+    داده را از توابع موجود می‌گیرد، کپی نمی‌کند. هیچ عددی از جست‌وجوی وب.
+    میانگین پنجاه‌هفته یک بار از sma_weekly — هم ورودی ma50w و هم میدان
+    btc_sma50w از همین یک واکشی، نشست ۳ب.
+    """
     import radar_fetch3 as R
     fred = R.fetch_fred(R.http_text)
     macro: dict = {}
@@ -703,7 +712,9 @@ def gather(order: list[str]) -> dict:
     order = live or order
     btc, _, _ = R.candles_first_ok("BTC", order, R.DAILY_WANT, [])
     _, _, pair = R.candles_first_ok("ETH", order, R.DAILY_WANT, [])
-    return {"fred": fred, "macro": macro, "btc": btc, "ethbtc": pair}
+    sma, sma_why = P.sma_weekly("BTC", 50, now=now)
+    return {"fred": fred, "macro": macro, "btc": btc, "ethbtc": pair,
+            "sma50w": sma, "sma50w_why": sma_why}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -723,10 +734,11 @@ def main(argv: list[str] | None = None) -> int:
     # می‌دهد. بلعیده نمی‌شود: خطای پیش‌بینی‌نشده ردش را هم چاپ می‌کند.
     try:
         history = load_history(a.history)
-        inp = measure(gather(order), history, now)
+        src = gather(order, now)
+        inp = measure(src, history, now)
         res = aggregate(inp)
-        # هشدار بازار پایشگر — تعریف وقت جهانی، جدا از ورودی ma50w
-        sma, sma_why = P.sma_weekly("BTC", 50, now=now)
+        # هشدار بازار پایشگر و ورودی ma50w — یک واکشی، یک عدد؛ نشست ۳ب
+        sma, sma_why = src.get("sma50w"), src.get("sma50w_why") or []
     except Exception as exc:
         if isinstance(exc, RegimeError):
             msg = str(exc)
