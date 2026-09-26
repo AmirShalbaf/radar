@@ -557,10 +557,16 @@ def update_history(history: dict, res: dict, inp: dict[str, Input],
     h["version"] = history.get("version", 1)
     h["days"] = dict(history.get("days") or {})
     today = now.strftime("%Y-%m-%d")
-    legacy = [d for d, r in h["days"].items() if d != today and "anchor" not in r]
+    # رکورد امروز با لنگر هنگ‌کنگ — اجرای ربات پیش از پوش — بازنویسی نمی‌شود؛
+    # مرز از فردا است. یافته پیش‌نمایش ایستگاه ۲ نشست ۳ب
+    keep_today = today in h["days"] and "anchor" not in h["days"][today]
+    legacy = [d for d, r in h["days"].items() if "anchor" not in r]
     if legacy and "anchor_boundary" not in h:
-        h["anchor_boundary"] = {"date": today, **ANCHOR_BOUNDARY,
+        first = (now + timedelta(days=1)).strftime("%Y-%m-%d") if keep_today else today
+        h["anchor_boundary"] = {"date": first, **ANCHOR_BOUNDARY,
                                 "inputs": list(ANCHOR_BOUNDARY["inputs"])}
+    if keep_today:
+        return h
     rec = {"generated_at": _iso(now), "raw": res["raw"], "norm": res["norm"],
            "score": res["score"], "band": res["band"]["name"],
            "coverage": res["coverage"], "anchor": CANDLE_ANCHOR,

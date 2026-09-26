@@ -73,6 +73,22 @@ def test_existing_days_untouched() -> None:
     assert old["days"] == before                  # ورودی هم دست نخورد
 
 
+def test_same_day_legacy_record_is_not_overwritten() -> None:
+    """
+    یافته پیش‌نمایش ایستگاه ۲: اجرای وقت جهانی در روزی که رکورد لنگر هنگ‌کنگ
+    دارد — مثلاً اگر اجرای ربات ۲۸ سپتامبر پیش از پوش باشد — رکورد آن روز را
+    بازنویسی می‌کرد. روز قدیم می‌ماند و مرز از فردا است.
+    """
+    old = _legacy()
+    before = copy.deepcopy(old["days"]["2026-09-26"])
+    h = _update(old, datetime(2026, 9, 26, 21, 54, tzinfo=UTC))
+    assert h["days"]["2026-09-26"] == before
+    assert h["anchor_boundary"]["date"] == "2026-09-27"
+    h2 = _update(h, datetime(2026, 9, 27, 12, tzinfo=UTC))
+    assert h2["days"]["2026-09-27"]["anchor"] == "utc"
+    assert h2["anchor_boundary"] == h["anchor_boundary"]
+
+
 def test_boundary_written_once() -> None:
     h1 = _update(_legacy())
     h2 = _update(h1, datetime(2026, 9, 30, 12, tzinfo=UTC))
