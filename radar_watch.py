@@ -115,6 +115,16 @@ SAMPLE = {
 
 # ─────────────────────── داده ───────────────────────
 
+# خطای شبکه و پاسخ نامعتبر — صریح، نه `except Exception: pass`. پیش از نشست ۳ب
+# هر دو تابع پایین هر خطا را می‌بلعیدند و علت در گزارش پایش نمی‌آمد. None
+# همچنان یعنی «داده ندارم»، ولی علتش در stderr و از آنجا در reports/WATCH.md است.
+_BAD_REPLY = (ValueError, KeyError, IndexError, TypeError)
+
+
+def _say(symbol: str, what: str, why: str) -> None:
+    print(f"⚠️ {symbol.upper()}: {what} — {why}", file=sys.stderr)
+
+
 def ticker(symbol: str) -> float | None:
     """قیمت لحظه‌ای. برای پله ورود، هدف و هشدار قیمتی."""
     try:
@@ -123,8 +133,9 @@ def ticker(symbol: str) -> float | None:
         j = r.json()
         if j.get("code") == "0" and j.get("data"):
             return float(j["data"][0]["last"])
-    except Exception:
-        pass
+        _say(symbol, "قیمت لحظه‌ای", f"کد {j.get('code')} {j.get('msg') or ''}")
+    except (requests.RequestException, *_BAD_REPLY) as exc:
+        _say(symbol, "قیمت لحظه‌ای", f"{type(exc).__name__}: {exc}")
     return None
 
 
@@ -137,12 +148,15 @@ def last_closed_daily(symbol: str) -> tuple[float, str] | None:
 
     لنگر وقت جهانی، 1Dutc — نشست ۳ب. کندل با لنگر دیگر رد و اعلام می‌شود.
     """
+    what = f"بسته روزانه {A.BAR['okx']['1D']}"
     try:
         r = requests.get(f"{OKX}/api/v5/market/candles",
                          params={"instId": f"{symbol.upper()}-USDT",
                                  "bar": A.BAR["okx"]["1D"], "limit": "3"}, timeout=15)
         j = r.json()
-        if j.get("code") != "0" or len(j.get("data", [])) < 2:
+        if j.get("code") != "0" or len(j.get("data") or []) < 2:
+            _say(symbol, what, f"کد {j.get('code')} {j.get('msg') or ''}، "
+                               f"{len(j.get('data') or [])} کندل")
             return None
         rows = sorted(j["data"], key=lambda x: int(x[0]))
         why = A.check([int(x[0]) for x in rows], "1D",
@@ -156,8 +170,9 @@ def last_closed_daily(symbol: str) -> tuple[float, str] | None:
             if now_ms - start >= 86_400_000:      # کندل تمام شده
                 day = datetime.fromtimestamp(start / 1000, UTC).strftime("%Y-%m-%d")
                 return float(row[4]), day
-    except Exception:
-        pass
+        _say(symbol, what, "کندل تمام‌شده‌ای در پاسخ نبود")
+    except (requests.RequestException, *_BAD_REPLY) as exc:
+        _say(symbol, what, f"{type(exc).__name__}: {exc}")
     return None
 
 
@@ -373,6 +388,12 @@ def check_item(it: dict, state: dict) -> list[str]:
     inv = it.get("invalidation")
     if inv:
         cl = last_closed_daily(sym)
+        nk = "noclose_" + datetime.now(UTC).strftime("%Y-%m-%d")
+        if cl is None and not st.get(nk):
+            # پیش از نشست ۳ب ابطال این مورد بی‌صدا سنجیده نمی‌شد. روزی یک پیام
+            st[nk] = True
+            fired.append(f"⚠️ {sym} — بسته روزانه در دسترس نیست؛ ابطال {inv:,.4f} "
+                         "سنجیده نشد — علت در گزارش پایش")
         if cl:
             close, day = cl
             broken = (close < inv) if side == "long" else (close > inv)

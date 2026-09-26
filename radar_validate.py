@@ -62,25 +62,42 @@ MIN_BUCKET_N = 20      # کمتر از این، سطل قضاوت نمی‌شو�
 
 
 def candles(symbol: str, want: int = 900) -> pd.DataFrame | None:
-    """کندل روزانه وقت جهانی، 1Dutc — نشست ۳ب. لنگر دیگر رد و اعلام می‌شود."""
+    """
+    کندل روزانه وقت جهانی، 1Dutc — نشست ۳ب. لنگر دیگر رد و اعلام می‌شود.
+
+    صفحه اول /market/candles، بقیه history-candles: /market/candles در صفحه‌بندی
+    در 1440 کندل می‌ایستد — سنجش زنده ایستگاه ۱ نشست ۳ب. هر شکست با شمار واقعی
+    اعلام می‌شود؛ پیش از این except Exception بی‌صدا None می‌داد.
+    """
+    where = f"{symbol.upper()}: اوکی‌اکس {A.BAR['okx']['1D']}"
     rows, after = [], None
-    try:
-        while len(rows) < want:
-            p = {"instId": f"{symbol.upper()}-USDT", "bar": A.BAR["okx"]["1D"],
-                 "limit": "100"}
-            if after:
-                p["after"] = after
-            j = requests.get(f"{OKX}/api/v5/market/candles",
-                             params=p, timeout=20).json()
-            if j.get("code") != "0" or not j.get("data"):
-                break
-            rows.extend(j["data"])
-            after = j["data"][-1][0]
-            if len(j["data"]) < 100:
-                break
-    except Exception:
-        return None
+    for _ in range(-(-want // 100) + 1):          # سقف صفحه از خود درخواست
+        if len(rows) >= want:
+            break
+        p = {"instId": f"{symbol.upper()}-USDT", "bar": A.BAR["okx"]["1D"],
+             "limit": "100"}
+        path = "/api/v5/market/candles"
+        if after:
+            p["after"] = after
+            path = "/api/v5/market/history-candles"
+        try:
+            j = requests.get(f"{OKX}{path}", params=p, timeout=20).json()
+        except (requests.RequestException, ValueError) as exc:
+            print(f"⚠️ {where}: {type(exc).__name__} — {len(rows)} کندل از {want} "
+                  "درخواستی", file=sys.stderr)
+            return None
+        if str(j.get("code")) != "0":
+            print(f"⚠️ {where}: کد {j.get('code')} — {len(rows)} کندل از {want} "
+                  "درخواستی", file=sys.stderr)
+            return None
+        if not j.get("data"):
+            break                                 # تاریخچه صرافی تمام شد
+        rows.extend(j["data"])
+        after = j["data"][-1][0]
+        if len(j["data"]) < 100:
+            break
     if len(rows) < 250:
+        print(f"⚠️ {where}: {len(rows)} کندل — کمتر از {fa(250)}، کنار رفت", file=sys.stderr)
         return None
     why = A.check([int(r[0]) for r in rows], "1D",
                   f"{symbol.upper()}: اوکی‌اکس {A.BAR['okx']['1D']}")

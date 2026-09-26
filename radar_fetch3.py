@@ -731,6 +731,10 @@ def _df(rows, cols, ms=True, bar: str | None = None,
     return df.drop_duplicates("ts").sort_values("ts").reset_index(drop=True)
 
 
+OKX_PAGE = 100          # سقف هر صفحه history-candles اوکی‌اکس
+ONE_REQUEST_CAP = 1000  # سقف یک درخواست گیت و بای‌بیت
+
+
 class OKX(Venue):
     name = "okx"
     B = "https://www.okx.com"
@@ -744,17 +748,33 @@ class OKX(Venue):
         return js.get("data") or []
 
     def candles(self, base, bar, want, http):
-        rows, cur, guard = [], None, 0
-        while len(rows) < want and guard < 15:
+        # سقف صفحه از خود درخواست ساخته می‌شود. پیش از نشست ۳ب ثابت ۱۵ بود:
+        # حالت عمیق 1501 کندل می‌خواست و 1500 می‌گرفت، بی‌صدا.
+        pages = -(-want // OKX_PAGE) + 1
+        rows, cur, guard, done = [], None, 0, False
+        while len(rows) < want and guard < pages:
             guard += 1
-            p = {"instId": self.spot(base), "bar": BAR["okx"][bar], "limit": "100"}
+            p = {"instId": self.spot(base), "bar": BAR["okx"][bar], "limit": str(OKX_PAGE)}
             path = "/api/v5/market/candles"
             if cur:
                 p["after"] = cur; path = "/api/v5/market/history-candles"
             d = self._g(http, path, p, f"کندل {bar}")
-            if not d: break
+            if d is None:
+                # خطا در میانه صفحه‌بندی: کوتاه‌شدن به دست ما — خطای صریح
+                if rows:
+                    FAILURES.append(f"[okx] کندل {bar} {self.spot(base)}: صفحه‌بندی قطع "
+                                    f"شد — {len(rows)} کندل از {want} درخواستی")
+                    return None
+                break
+            if not d:
+                done = True                     # تاریخچه خود صرافی تمام شد — خطا نیست
+                break
             rows += d; cur = d[-1][0]; time.sleep(.12)
         if not rows: return None
+        if len(rows) < want and not done:
+            FAILURES.append(f"[okx] کندل {bar} {self.spot(base)}: سقف {pages} صفحه — "
+                            f"{len(rows)} کندل از {want} درخواستی")
+            return None
         # اوکی‌اکس پرچم تأیید را در اندیس ۸ می‌دهد. پیش از این بریدن r[:6]
         # آن را دور می‌ریخت و بعد همه یک گذاشته می‌شدند.
         flags = [r[8] if len(r) > 8 else None for r in rows]
@@ -825,6 +845,11 @@ class Binance(Venue):
             if not d:
                 d = http(f"{self.S_ALT}/api/v3/klines", p,
                          label="[binance] کندل (دامنه جایگزین)")
+            if d is None and rows:
+                # همان الگوی بلعیدن OKX.candles — نشست ۳ب
+                FAILURES.append(f"[binance] کندل {bar} {self.spot(base)}: صفحه‌بندی قطع "
+                                f"شد — {len(rows)} کندل از {want} درخواستی")
+                return None
             if not d: break
             rows = d + rows
             end = int(d[0][0]) - 1
@@ -893,9 +918,15 @@ class Bybit(Venue):
         return js.get("result") or {}
 
     def candles(self, base, bar, want, http):
+        # یک درخواست، بدون صفحه‌بندی: بیش از سقف یعنی کوتاه‌شدن به دست ما —
+        # خطای صریح، نه کمتر گرفتن بی‌صدا. نشست ۳ب
+        if want > ONE_REQUEST_CAP:
+            FAILURES.append(f"[bybit] کندل {bar} {self.spot(base)}: سقف {ONE_REQUEST_CAP} "
+                            f"کندل یک درخواست — {want} درخواستی ممکن نیست")
+            return None
         r = self._g(http, "/v5/market/kline",
                     {"category":"spot","symbol":self.spot(base),
-                     "interval":BAR["bybit"][bar],"limit":1000}, f"کندل {bar}")
+                     "interval":BAR["bybit"][bar],"limit":ONE_REQUEST_CAP}, f"کندل {bar}")
         if not r or not r.get("list"): return None
         df = _df([x[:6] for x in r["list"]], ["ts","open","high","low","close","vol"],
                  bar=bar)
@@ -950,8 +981,12 @@ class Gate(Venue):
     def candles(self, base, bar, want, http):
         d = http(f"{self.B}/spot/candlesticks",
                  {"currency_pair": self.spot(base), "interval": BAR["gate"][bar],
-                  "limit": min(1000, want)}, label=f"[gate] کندل {bar}")
+                  "limit": min(ONE_REQUEST_CAP, want)}, label=f"[gate] کندل {bar}")
         if not isinstance(d, list) or not d: return None
+        if want > ONE_REQUEST_CAP:
+            # ک۲۲: گیت صفحه‌بندی ندارد. شمار واقعی اعلام می‌شود، نه کمتر بی‌صدا
+            FAILURES.append(f"[gate] کندل {bar} {self.spot(base)}: سقف {ONE_REQUEST_CAP} "
+                            f"کندل گیت — {len(d)} کندل از {want} درخواستی")
         # قالب گیت: [ts(s), quoteVol, close, high, low, open, baseVol, ...]
         rows = [[x[0], x[5], x[3], x[4], x[2], x[6] if len(x) > 6 else x[1]] for x in d]
         df = _df(rows, ["ts","open","high","low","close","vol"], ms=False, bar=bar)

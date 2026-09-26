@@ -281,28 +281,44 @@ def okx_candles(symbol: str, bar: str = "1D", want: int = DAILY_WANT):
     """
     کندل روزانه از اوکی‌اکس. صرافی‌های دیگر از کولب مسدودند. bar نام داخلی
     است؛ نام درخواستی از radar_anchor — 1Dutc، نه 1D لنگر هنگ‌کنگ.
+
+    صفحه اول /market/candles، بقیه history-candles: سنجش زنده ایستگاه ۱ نشست
+    ۳ب نشان داد /market/candles در صفحه‌بندی در 1440 کندل می‌ایستد. هر شکست —
+    شبکه، کد خطا، قطع در میانه — در CANDLE_NOTES با شمار واقعی می‌آید؛ پیش از
+    این except Exception بی‌صدا None می‌داد و سبد بی‌صدا به گیت می‌افتاد. تمام
+    شدن تاریخچه خود صرافی خطا نیست: کوین تازه نابالغ است.
     """
     if requests is None or pd is None:
         return None
     inst = f"{symbol.upper()}-USDT"
+    name = A.BAR["okx"][bar]
+    where = f"{symbol.upper()}: اوکی‌اکس {name}"
     rows, after = [], None
-    try:
-        while len(rows) < want:
-            p = {"instId": inst, "bar": A.BAR["okx"][bar], "limit": "100"}
-            if after:
-                p["after"] = after
-            r = requests.get(f"{OKX}/api/v5/market/candles",
-                             params=p, timeout=20)
-            j = r.json()
-            if j.get("code") != "0" or not j.get("data"):
-                break
-            batch = j["data"]
-            rows.extend(batch)
-            after = batch[-1][0]
-            if len(batch) < 100:
-                break
-    except Exception:
-        return None
+    for _ in range(-(-want // 100) + 1):          # سقف صفحه از خود درخواست
+        if len(rows) >= want:
+            break
+        p = {"instId": inst, "bar": name, "limit": "100"}
+        path = "/api/v5/market/candles"
+        if after:
+            p["after"] = after
+            path = "/api/v5/market/history-candles"
+        try:
+            j = requests.get(f"{OKX}{path}", params=p, timeout=20).json()
+        except (requests.RequestException, ValueError) as exc:
+            CANDLE_NOTES.append(f"⚠️ {where}: {type(exc).__name__} — {len(rows)} کندل از "
+                                f"{want} درخواستی")
+            return None
+        if str(j.get("code")) != "0":
+            CANDLE_NOTES.append(f"⚠️ {where}: کد {j.get('code')} {j.get('msg') or ''} — "
+                                f"{len(rows)} کندل از {want} درخواستی")
+            return None
+        batch = j.get("data") or []
+        if not batch:
+            break                                 # تاریخچه صرافی تمام شد
+        rows.extend(batch)
+        after = batch[-1][0]
+        if len(batch) < 100:
+            break
     if not rows:
         return None
     df = pd.DataFrame(rows, columns=["ts", "o", "h", "l", "c", "v",
@@ -331,18 +347,27 @@ def gate_candles(symbol: str, want: int = DAILY_WANT):
     """
     if requests is None or pd is None:
         return None
+    where = f"{symbol.upper()}: گیت {A.BAR['gate']['1D']}"
     try:
         r = requests.get("https://api.gateio.ws/api/v4/spot/candlesticks",
                          params={"currency_pair": f"{symbol.upper()}_USDT",
                                  "interval": A.BAR["gate"]["1D"],
                                  "limit": str(min(want, 1000))}, timeout=20)
         if r.status_code != 200:
+            CANDLE_NOTES.append(f"⚠️ {where}: پاسخ {r.status_code}")
             return None
         rows = r.json()
-    except Exception:
+    except (requests.RequestException, ValueError) as exc:
+        CANDLE_NOTES.append(f"⚠️ {where}: {type(exc).__name__}")
         return None
-    if not rows or len(rows) < 60:
+    if not isinstance(rows, list) or len(rows) < 60:
+        CANDLE_NOTES.append(f"⚠️ {where}: {len(rows) if isinstance(rows, list) else 0} "
+                            f"کندل — کمتر از {fa(60)}، امتیاز ساخته نشد")
         return None
+    if want > 1000:
+        # ک۲۲: گیت صفحه‌بندی ندارد — شمار واقعی اعلام می‌شود
+        CANDLE_NOTES.append(f"⚠️ {where}: سقف ۱۰۰۰ کندل گیت — {len(rows)} کندل از "
+                            f"{want} درخواستی")
     out = []
     for x in rows:
         try:
@@ -363,11 +388,15 @@ def gate_candles(symbol: str, want: int = DAILY_WANT):
 
 
 def candles(symbol: str, bar: str = "1D", want: int = DAILY_WANT):
-    """اوکی‌اکس اول، گیت به‌عنوان جایگزین — هر دو وقت جهانی."""
+    """اوکی‌اکس اول، گیت به‌عنوان جایگزین — هر دو وقت جهانی؛ افتادن اعلام می‌شود."""
     df = okx_candles(symbol, bar, want)
     if df is not None and len(df) >= 60:
         return df
-    return gate_candles(symbol, want)
+    g = gate_candles(symbol, want)
+    if g is not None:
+        CANDLE_NOTES.append(f"ℹ️ {symbol.upper()}: کندل روزانه از گیت {A.BAR['gate']['1D']} "
+                            f"— {len(g)} کندل؛ اوکی‌اکس نیامد یا کمتر از {fa(60)} کندل داشت")
+    return g
 
 
 def _last_close(df) -> float | None:

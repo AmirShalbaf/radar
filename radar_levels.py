@@ -100,11 +100,19 @@ def okx_candles(inst: str, bar: str = "1D", want: int = DAILY_WANT) -> pd.DataFr
 
     bar نام داخلی است؛ نام درخواستی از radar_anchor می‌آید — 1Dutc، نه 1D لنگر
     هنگ‌کنگ. کندل خارج از لنگر وقت جهانی CandleError می‌دهد — نشست ۳ب.
+
+    کوتاه‌شدن به دست ما — خطای شبکه یا صرافی در میانه، یا سقف صفحه — هم
+    CandleError با شمار واقعی است. پیش از نشست ۳ب اینجا except Exception: break
+    بود و سقف ثابت ۲۰ صفحه: داده بی‌صدا کوتاه می‌شد. تمام شدن تاریخچه خود
+    صرافی خطا نیست — کوین تازه نابالغ است، نه «داده ندارم».
     """
-    rows, cursor, guard = [], None, 0
-    while len(rows) < want and guard < 20:
+    name = A.BAR["okx"][bar]
+    where = f"اوکی‌اکس {name} {inst}"
+    pages = -(-want // 100) + 1         # سقف صفحه از خود درخواست
+    rows, cursor, guard, done = [], None, 0, False
+    while len(rows) < want and guard < pages:
         guard += 1
-        params = {"instId": inst, "bar": A.BAR["okx"][bar], "limit": "100"}
+        params = {"instId": inst, "bar": name, "limit": "100"}
         path = "/api/v5/market/candles"
         if cursor:
             params["after"] = cursor
@@ -112,10 +120,15 @@ def okx_candles(inst: str, bar: str = "1D", want: int = DAILY_WANT) -> pd.DataFr
         try:
             r = requests.get(f"https://www.okx.com{path}", params=params, timeout=20)
             js = r.json()
-            batch = js.get("data") or []
-        except Exception:
-            break
+        except (requests.RequestException, ValueError) as exc:
+            raise CandleError(f"{where}: {type(exc).__name__} — {len(rows)} کندل از "
+                              f"{want} درخواستی") from exc
+        if str(js.get("code")) != "0":
+            raise CandleError(f"{where}: کد {js.get('code')} {js.get('msg') or ''} — "
+                              f"{len(rows)} کندل از {want} درخواستی")
+        batch = js.get("data") or []
         if not batch:
+            done = True                 # تاریخچه صرافی تمام شد
             break
         rows.extend(batch)
         cursor = batch[-1][0]
@@ -123,6 +136,8 @@ def okx_candles(inst: str, bar: str = "1D", want: int = DAILY_WANT) -> pd.DataFr
 
     if not rows:
         return None
+    if len(rows) < want and not done:
+        raise CandleError(f"{where}: سقف {pages} صفحه — {len(rows)} کندل از {want} درخواستی")
     df = pd.DataFrame(rows, columns=["ts", "open", "high", "low", "close",
                                      "vol", "volCcy", "volCcyQuote", "confirm"])
     for c in ["open", "high", "low", "close", "vol"]:
@@ -474,8 +489,10 @@ def report(rows: list[Assessment], min_rr: float,
         "> **اصل:** نسبت ریسک به پاداش با تنگ‌کردن استاپ ساخته نمی‌شود،",
         "> با نزدیک‌بودن ورود به سطح ابطال ساخته می‌شود.",
         "",
-        "| نماد | قیمت | روند | وضعیت | فاصله | حمایت | مقاومت | نسبت | نسبت ۴س |",
-        "|---|---|---|---|---|---|---|---|---|",
+        # ستون کندل: شمار واقعی کندل روزانه بسته — بند ۴ نشست ۳ب. کوتاه‌شدن
+        # دیگر بی‌صدا نیست؛ تاریخچه کوتاه کوین تازه هم همین‌جا دیده می‌شود
+        "| نماد | قیمت | روند | وضعیت | فاصله | حمایت | مقاومت | نسبت | نسبت ۴س | کندل |",
+        "|---|---|---|---|---|---|---|---|---|---|",
     ]
     for a in ok:
         sup = f"{fmt(a.support.price)} ({a.support.tag})" if a.support else "—"
@@ -483,7 +500,8 @@ def report(rows: list[Assessment], min_rr: float,
         rrt = f"**{fmt(a.rr_tactical, 2)}**" if math.isfinite(a.rr_tactical) else "—"
         L.append(
             f"| {a.symbol} | {fmt(a.price)} | {a.trend} | {a.verdict} | "
-            f"{fmt(a.dist_sup_atr, 2)}× | {sup} | {res} | {fmt(a.rr, 2)} | {rrt} |"
+            f"{fmt(a.dist_sup_atr, 2)}× | {sup} | {res} | {fmt(a.rr, 2)} | {rrt} | "
+            f"{a.n_bars} |"
         )
 
     # قانون مادر داده: نماد بدون نسبت «داده ندارم» است — گزارش‌شدنی، نه حذف‌شدنی.
@@ -496,14 +514,14 @@ def report(rows: list[Assessment], min_rr: float,
             "",
             "نبود نسبت یعنی «داده ندارم»، نه صفر و نه حذف.",
             "",
-            "| نماد | قیمت | روند | وضعیت | یادداشت |",
-            "|---|---|---|---|---|",
+            "| نماد | قیمت | روند | وضعیت | کندل | یادداشت |",
+            "|---|---|---|---|---|---|",
         ]
         for a in rest:
             # جداکننده «|» داخل یادداشت، ستون جدول مارک‌داون را می‌شکند
             note = (a.note or "—").replace(" | ", "؛ ")
             L.append(f"| {a.symbol} | {fmt(a.price)} | {a.trend} | "
-                     f"{a.verdict} | {note} |")
+                     f"{a.verdict} | {a.n_bars} | {note} |")
 
     # فقط «صعودی» خالص — «بی‌ساختار» و «صعودی*» با ستاره هم رد می‌شوند
     def _best(a):
@@ -552,6 +570,7 @@ def report(rows: list[Assessment], min_rr: float,
         "| برچسب `*` روی روند | میانگین ۲۰۰ هنوز بالغ نشده — با تریدینگ‌ویو تأیید کن |",
         "| علامت ⚡ کنار سطح | تازه از مقاومت به حمایت برگشته، هنوز آزمون نشده |",
         "| نسبت ۴س | استاپ از کف نوسان چهارساعته — برای تز شکست کوتاه‌مدت |",
+        "| کندل | شمار کندل روزانه بسته‌ای که سطح از آن ساخته شد |",
         "| **مهم** | اسکنر فقط ساختار قیمت را می‌بیند. موضع‌گیری، جریان و بهره باز را نمی‌بیند |",
         "",
         "> این خروجی **نامزد** می‌دهد، نه **حکم**. هر نامزد باید با",
