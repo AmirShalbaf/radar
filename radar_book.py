@@ -654,22 +654,42 @@ def reserve_view(rp: dict | None, h: dict, prices: dict, val: dict,
 
     پرشدن و قیمت و زمانش فقط از دفتر کل، از radar_watch.reserve_progress —
     یک تعریف با پایشگر. «اگر همه پر شوند» روش ک۴۲ است: هر پله مانده در قیمت
-    محدود خودش — پله بازار در قیمت زنده — کارمزد RESERVE_FEE، و بقیه قیمت‌ها
-    مثل امروز. قیمت زنده نیامده یعنی آن عدد «داده ندارم»، نه تخمین.
+    محدود خودش — پله بازار در قیمت زنده — با کارمزد RESERVE_FEE. اگر همه پر
+    شوند قیمت به آنجا رسیده، پس مقدار مانده هر نماد نقشه با بالاترین قیمت پله
+    مانده همان نماد ارزش‌گذاری می‌شود؛ بقیه نمادها با قیمت امروز. روش را
+    کاربر پس از ایستگاه ۲ نشست ۳ب روشن کرد: با 2631.20 و قیمت‌های 05:01، کل
+    2768.82 و ذخیره 24.67٪ — همان ک۴۲. قیمت زنده نیامده، یا مقدار نگه‌داشته
+    کمتر از پله‌های مانده، یعنی آن عدد «داده ندارم» با دلیل — نه تخمین.
     """
     if not rp:
         return None
     import radar_watch as RW      # دیر: radar_watch بی requests بیرون می‌رود
     steps = RW.reserve_progress(rp, h)
     left = [s for s in steps if not s["filled"]]
-    missing = sorted({s["symbol"] for s in left if prices.get(s["symbol"]) is None})
-    after = None
-    if not missing:
-        proceeds = sum(s["qty"] * (s["price"] if s["price"] is not None
-                                   else prices[s["symbol"]]) for s in left) * (1 - RESERVE_FEE)
-        sold_now = sum(s["qty"] * prices[s["symbol"]] for s in left)
-        st, tot = val["stable_usd"] + proceeds, val["total"] - sold_now + proceeds
-        after = {"stable": st, "total": tot, "pct": 100 * st / tot if tot else 0.0}
+    syms = sorted({s["symbol"] for s in left})
+    missing = [s for s in syms if prices.get(s) is None]
+    # مقدار نگه‌داشته هر نماد — همان صافی P.value: باز و غیرفرضی
+    held = {s: sum(P.position_qty(p) for p in h.get("positions", [])
+                   if p["symbol"] == s and p["status"] == "open" and not p.get("paper"))
+            for s in syms}
+    after, why = None, ""
+    if missing:
+        why = f"قیمت زنده نیامد: {'، '.join(missing)}"
+    else:
+        px = {id(s): s["price"] if s["price"] is not None else prices[s["symbol"]]
+              for s in left}
+        leftq = {s: sum(x["qty"] for x in left if x["symbol"] == s) for s in syms}
+        short = [s for s in syms if held[s] < leftq[s] - P.TOL]
+        if short:
+            why = f"مقدار نگه‌داشته کمتر از پله‌های مانده: {'، '.join(short)}"
+        else:
+            top = {s: max(px[id(x)] for x in left if x["symbol"] == s) for s in syms}
+            proceeds = sum(s["qty"] * px[id(s)] for s in left) * (1 - RESERVE_FEE)
+            now_val = sum(held[s] * prices[s] for s in syms)
+            up_val = sum((held[s] - leftq[s]) * top[s] for s in syms)
+            st = val["stable_usd"] + proceeds
+            tot = val["total"] - now_val + up_val + proceeds
+            after = {"stable": st, "total": tot, "pct": 100 * st / tot if tot else 0.0}
     deadline = datetime.fromisoformat(rp["deadline"])
     total = val["total"]
     return {"steps": steps, "left": left,
@@ -677,7 +697,7 @@ def reserve_view(rp: dict | None, h: dict, prices: dict, val: dict,
             "deadline": deadline, "now": now, "expired": now >= deadline,
             "account": rp.get("account") or "حساب نقشه",
             "stable": val["stable_usd"], "pct": 100 * val["stable_usd"] / total if total else 0.0,
-            "after": after, "missing": missing}
+            "after": after, "after_why": why, "missing": missing}
 
 
 def _n(x) -> str:
@@ -715,13 +735,13 @@ def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
           f"| ذخیره امروز | {rv['stable']:,.0f} دلار ({rv['pct']:.1f}٪) |"]
     if rv["left"]:
         if rv["after"] is None:
-            o.append(f"| ذخیره اگر همه پر شوند | داده ندارم — قیمت زنده نیامد: "
-                     f"{'، '.join(rv['missing'])} |")
+            o.append(f"| ذخیره اگر همه پر شوند | داده ندارم — {rv['after_why']} |")
         else:
             a = rv["after"]
             o.append(f"| ذخیره اگر همه پر شوند | {a['stable']:,.0f} دلار از {a['total']:,.0f} — "
-                     f"{a['pct']:.1f}٪؛ روش ک۴۲: هر پله در قیمت خودش، کارمزد "
-                     f"{100 * RESERVE_FEE:.1f}٪، بقیه قیمت‌ها مثل امروز |")
+                     f"{a['pct']:.1f}٪؛ روش ک۴۲: هر پله در قیمت خودش با کارمزد "
+                     f"{100 * RESERVE_FEE:.1f}٪؛ مانده هر نماد نقشه با بالاترین قیمت پله "
+                     "مانده همان نماد، بقیه نمادها با قیمت امروز |")
     if reg is not None:
         o.append(f"| هدف رژیم | {reg['stable']}٪ کل سرمایه |")
     o.append("")

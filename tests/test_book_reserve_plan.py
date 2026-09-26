@@ -47,8 +47,13 @@ LEDGER = [
     {"at": "2026-09-25T22:10:21+00:00", "action": "trim", "symbol": "ETH", "delta": -0.0472,
      "price": 2685.33, "reason": "reserve"},
 ]
-H = {"positions": [], "ledger": LEDGER, "updated": "2026-09-26T05:10:00+00:00",
-     "source": "آزمون"}
+ETH_HELD, SOL_HELD = 0.354381, 5.631054       # پس از پله اول — holdings.json
+H = {"positions": [
+        {"symbol": "ETH", "book": "position", "status": "open",
+         "lots": [{"qty": ETH_HELD, "account": "LBank", "entry": None}]},
+        {"symbol": "SOL", "book": "position", "status": "open",
+         "lots": [{"qty": SOL_HELD, "account": "LBank", "entry": None}]}],
+     "ledger": LEDGER, "updated": "2026-09-26T05:10:00+00:00", "source": "آزمون"}
 PRICES = {"ETH": 2684.18, "SOL": 121.35}
 VAL = {"total": 2633.0, "stable_usd": 221.0, "incomplete": False, "missing": []}
 REG = {"name": "محتاط", "cap": 4.0, "mult": 0.5, "maxpos": 3, "stable": 25}
@@ -86,21 +91,62 @@ def test_progress_agrees_with_step_filled() -> None:
 
 # ═══════════════ عدد ذخیره اگر همه پر شوند — روش ک۴۲ ═══════════════
 
+# روش ک۴۲، اصلاح کاربر پس از ایستگاه ۲: اگر هر چهار پله پر شوند، قیمت به
+# آنجا رسیده — مقدار مانده هر نماد نقشه با بالاترین قیمت پله مانده همان نماد
+# ارزش‌گذاری می‌شود، نه با قیمت امروز. بقیه نمادها با قیمت امروز.
+
 def test_if_all_filled_k42_method() -> None:
     v = _view()
     fee = B.RESERVE_FEE
     assert fee == pytest.approx(0.001)
     proceeds = (0.0472 * 2790 + 0.0472 * 2940 + 0.749 * 125.5 + 0.749 * 131.5) * (1 - fee)
-    sold_now = 0.0944 * 2684.18 + 1.498 * 121.35
+    held_now = ETH_HELD * 2684.18 + SOL_HELD * 121.35
+    rest_up = (ETH_HELD - 0.0944) * 2940 + (SOL_HELD - 1.498) * 131.5
+    total = 2633.0 - held_now + rest_up + proceeds
     assert v["after"]["stable"] == pytest.approx(221.0 + proceeds)
-    assert v["after"]["total"] == pytest.approx(2633.0 - sold_now + proceeds)
-    assert v["after"]["pct"] == pytest.approx(100 * (221.0 + proceeds)
-                                              / (2633.0 - sold_now + proceeds))
+    assert v["after"]["total"] == pytest.approx(total)
+    assert v["after"]["pct"] == pytest.approx(100 * (221.0 + proceeds) / total)
+
+
+def test_k42_number_reproduced() -> None:
+    """
+    بازسازی کاربر، محاسبه‌شده: سرمایه 2631.20 رویداد ۴۲ و قیمت‌های 05:01 در
+    watch.json — کل 2768.82، ذخیره 683.17، یعنی 24.67٪. ک۴۲ 24.66٪ داد؛ اختلاف
+    حدود 1.3 دلار از فاصله 05:01 تا 05:12 است.
+    """
+    val = {"total": 2631.20, "stable_usd": 220.68, "incomplete": False, "missing": []}
+    v = B.reserve_view(PLAN, H, {"ETH": 2689.63, "SOL": 120.68}, val, NOW)
+    assert v["after"]["stable"] == pytest.approx(683.17, abs=0.01)
+    assert v["after"]["total"] == pytest.approx(2768.82, abs=0.01)
+    assert v["after"]["pct"] == pytest.approx(24.67, abs=0.005)
+
+
+def test_market_step_left_uses_live_for_top_price() -> None:
+    """پله بازار مانده در قیمت زنده فروخته می‌شود و در «بالاترین قیمت» هم همان."""
+    plan = dict(PLAN, steps=[{"symbol": "ETH", "qty": 0.0472, "price": None}])
+    h = dict(H, ledger=[])
+    v = B.reserve_view(plan, h, PRICES, VAL, NOW)
+    proceeds = 0.0472 * 2684.18 * (1 - B.RESERVE_FEE)
+    total = (2633.0 - ETH_HELD * 2684.18 - SOL_HELD * 121.35
+             + (ETH_HELD - 0.0472) * 2684.18 + SOL_HELD * 121.35 + proceeds)
+    assert v["after"]["total"] == pytest.approx(total)
+
+
+def test_left_more_than_held_is_no_number() -> None:
+    """مقدار نگه‌داشته کمتر از پله‌های مانده: عدد ساخته نمی‌شود، دلیل صریح."""
+    v = B.reserve_view(PLAN, dict(H, positions=[]), PRICES, VAL, NOW)
+    assert v["after"] is None and "کمتر" in v["after_why"]
 
 
 def test_if_all_filled_needs_live_price() -> None:
     v = B.reserve_view(PLAN, H, {"ETH": 2684.18}, VAL, NOW)
     assert v["after"] is None and v["missing"] == ["SOL"]
+    assert "SOL" in v["after_why"]
+
+
+def test_section6_names_the_valuation() -> None:
+    s6 = _section(_report(_view()), "۶")
+    assert "بالاترین قیمت پله مانده" in s6
 
 
 # ═══════════════ گزارش ═══════════════
