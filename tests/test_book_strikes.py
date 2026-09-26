@@ -195,3 +195,41 @@ def test_main_same_basis_still_counts(run_book) -> None:
     assert len(saved["reviews"]["AAA"]) == 3
     assert "آماده‌سازی کاهش" in rep
     assert "خط پایه تازه" not in rep
+
+
+# ═══════════════ مبنای ۲ — لنگر وقت جهانی، نشست ۳ب ═══════════════
+#
+# کندل روزانه سبد از لنگر هنگ‌کنگ (1D، بسته 16:00 UTC) به وقت جهانی رفت.
+# میانگین‌ها، RSI و قدرت نسبی ۸ ساعت جابه‌جا شدند؛ پیش‌نمایش ایستگاه ۱:
+# قدرت نسبی ۳۰ روزه SOL از +7.39٪ به +5.85٪. امتیاز دو لنگر مقایسه‌پذیر
+# نیست. ضربه‌های مبنای ۱ در ۲۶ سپتامبر: SOL، ETH و BNB هر کدام یکی.
+
+V1 = "closed-candle-v1"
+
+
+def test_basis_changed_for_utc_anchor() -> None:
+    assert B.SCORE_BASIS != V1
+    assert "utc" in B.SCORE_BASIS
+
+
+def test_v1_history_with_strike_becomes_baseline() -> None:
+    """الگوی book_state.json ۲۶ سپتامبر: SOL 1.8 ← 1.8 ← 1.45، یک ضربه."""
+    st = {"reviews": {"SOL": [{"date": _day(-3), "score": 1.8},
+                              {"date": _day(-2), "score": 1.8},
+                              {"date": _day(-1), "score": 1.45}]},
+          "swaps": [], "score_basis": V1}
+    old = json.loads(json.dumps(st["reviews"]))
+    assert B.begin_round(st) is True
+    assert st["reviews"] == {}
+    assert st["archive"][-1]["basis"] == V1
+    assert st["archive"][-1]["reviews"] == old
+    strikes, _ = B.update_strikes(st, "SOL", 1.0)          # کاهش، ولی خط پایه
+    assert strikes == 0
+
+
+def test_baseline_message_says_why(run_book) -> None:
+    st = _state(2.0, 1.5)
+    st["score_basis"] = V1
+    _, rep = run_book(st)
+    assert "خط پایه تازه" in rep
+    assert B.SCORE_BASIS_WHY in rep and "لنگر" in B.SCORE_BASIS_WHY
