@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "updated": "2026-09-25T05:15:00+00:00",
+  "updated": "2026-09-26T05:10:20.393943+00:00",
   "source": "اسکرین‌شات‌های ۲۵ سپتامبر ۲۰۲۶، حدود ۰۵:۱۵ UTC — LBank و صرافی دوم",
   "frozen": {
     "date": "2026-09-25",
@@ -17,29 +17,175 @@
     }
   },
   "cash": [
-    {"asset": "USDT", "qty": 0.1010102, "account": "LBank"},
-    {"asset": "USDT", "qty": 3.17443595, "account": "صرافی دوم"}
+    {
+      "asset": "USDT",
+      "qty": 217.5071322,
+      "account": "LBank"
+    },
+    {
+      "asset": "USDT",
+      "qty": 3.17443595,
+      "account": "صرافی دوم"
+    }
   ],
   "positions": [
-    {"symbol": "SOL", "book": "position", "status": "open", "invalidation": 96.7108, "invalidation_since": "2026-09-25T21:34:47+00:00",
-     "lots": [{"qty": 6.38005369, "account": "LBank", "entry": null}]},
-    {"symbol": "ETH", "book": "position", "status": "open", "invalidation": 2380.5606, "invalidation_since": "2026-09-25T21:34:47+00:00",
-     "lots": [{"qty": 0.242657, "account": "LBank", "entry": null},
-              {"qty": 0.15892356, "account": "صرافی دوم", "entry": 2641.83}]},
-    {"symbol": "BNB", "book": "position", "status": "open", "invalidation": 702.3872, "invalidation_since": "2026-09-25T21:34:47+00:00",
-     "lots": [{"qty": 0.3296489, "account": "LBank", "entry": null}]},
-    {"symbol": "AAVE", "book": "position", "status": "open", "invalidation": 106.8920, "invalidation_since": "2026-09-26T05:04:16+00:00",
-     "lots": [{"qty": 1.04895, "account": "LBank", "entry": null}]},
-    {"symbol": "LINK", "book": "position", "status": "open", "invalidation": 10.3366, "invalidation_since": "2026-09-26T05:04:16+00:00",
-     "lots": [{"qty": 11.09889, "account": "LBank", "entry": null}]},
-    {"symbol": "SUI", "book": "position", "status": "open", "invalidation": 0.6843, "invalidation_since": "2026-09-26T05:04:16+00:00",
-     "lots": [{"qty": 81.6183, "account": "LBank", "entry": null}]},
-    {"symbol": "ONDO", "book": "position", "status": "open", "invalidation": 0.3478, "invalidation_since": "2026-09-26T05:04:16+00:00",
-     "lots": [{"qty": 115.43866, "account": "LBank", "entry": null}]},
-    {"symbol": "TAO", "book": "position", "status": "open", "invalidation": 202.5065, "invalidation_since": "2026-09-26T05:04:16+00:00",
-     "lots": [{"qty": 0.153892, "account": "LBank", "entry": null}]},
-    {"symbol": "TRX", "book": "position", "status": "open", "invalidation": null,
-     "lots": [{"qty": 0.6704, "account": "LBank", "entry": null}]}
+    {
+      "symbol": "SOL",
+      "book": "position",
+      "status": "open",
+      "invalidation": 96.7108,
+      "invalidation_since": "2026-09-25T21:34:47+00:00",
+      "lots": [
+        {
+          "qty": 5.631053690000001,
+          "account": "LBank",
+          "entry": null
+        }
+      ]
+    },
+    {
+      "symbol": "ETH",
+      "book": "position",
+      "status": "open",
+      "invalidation": 2380.5606,
+      "invalidation_since": "2026-09-25T21:34:47+00:00",
+      "lots": [
+        {
+          "qty": 0.19545700000000002,
+          "account": "LBank",
+          "entry": null
+        },
+        {
+          "qty": 0.15892356,
+          "account": "صرافی دوم",
+          "entry": 2641.83
+        }
+      ]
+    },
+    {
+      "symbol": "BNB",
+      "book": "position",
+      "status": "open",
+      "invalidation": 702.3872,
+      "invalidation_since": "2026-09-25T21:34:47+00:00",
+      "lots": [
+        {
+          "qty": 0.3296489,
+          "account": "LBank",
+          "entry": null
+        }
+      ]
+    },
+    {
+      "symbol": "AAVE",
+      "book": "position",
+      "status": "open",
+      "invalidation": 106.892,
+      "invalidation_since": "2026-09-26T05:04:16+00:00",
+      "lots": [
+        {
+          "qty": 1.04895,
+          "account": "LBank",
+          "entry": null
+        }
+      ]
+    },
+    {
+      "symbol": "LINK",
+      "book": "position",
+      "status": "open",
+      "invalidation": 10.3366,
+      "invalidation_since": "2026-09-26T05:04:16+00:00",
+      "lots": [
+        {
+          "qty": 11.09889,
+          "account": "LBank",
+          "entry": null
+        }
+      ]
+    },
+    {
+      "symbol": "SUI",
+      "book": "position",
+      "status": "open",
+      "invalidation": 0.6843,
+      "invalidation_since": "2026-09-26T05:04:16+00:00",
+      "lots": [
+        {
+          "qty": 81.6183,
+          "account": "LBank",
+          "entry": null
+        }
+      ]
+    },
+    {
+      "symbol": "ONDO",
+      "book": "position",
+      "status": "open",
+      "invalidation": 0.3478,
+      "invalidation_since": "2026-09-26T05:04:16+00:00",
+      "lots": [
+        {
+          "qty": 115.43866,
+          "account": "LBank",
+          "entry": null
+        }
+      ]
+    },
+    {
+      "symbol": "TAO",
+      "book": "position",
+      "status": "open",
+      "invalidation": 202.5065,
+      "invalidation_since": "2026-09-26T05:04:16+00:00",
+      "lots": [
+        {
+          "qty": 0.153892,
+          "account": "LBank",
+          "entry": null
+        }
+      ]
+    },
+    {
+      "symbol": "TRX",
+      "book": "position",
+      "status": "open",
+      "invalidation": null,
+      "lots": [
+        {
+          "qty": 0.6704,
+          "account": "LBank",
+          "entry": null
+        }
+      ]
+    }
   ],
-  "ledger": []
+  "ledger": [
+    {
+      "at": "2026-09-25T22:09:00+00:00",
+      "action": "trim",
+      "symbol": "SOL",
+      "order_id": "6663fe17-13ce-44a7-927a-fee8784cd6c0",
+      "delta": -0.749,
+      "price": 121.33,
+      "reason": "reserve",
+      "account": "LBank",
+      "gross": 90.87617,
+      "fee": 0.090876,
+      "net": 90.785294
+    },
+    {
+      "at": "2026-09-25T22:10:21+00:00",
+      "action": "trim",
+      "symbol": "ETH",
+      "order_id": "e6c70733-5c87-4de6-bad7-3166860aeb96",
+      "delta": -0.0472,
+      "price": 2685.33,
+      "reason": "reserve",
+      "account": "LBank",
+      "gross": 126.747576,
+      "fee": 0.126748,
+      "net": 126.620828
+    }
+  ]
 }
