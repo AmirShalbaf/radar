@@ -582,6 +582,47 @@ def step_filled(rp: dict, h: dict) -> list[bool]:
     return out
 
 
+def reserve_progress(rp: dict, h: dict) -> list[dict]:
+    """
+    پیشرفت هر پله نقشه ذخیره برای گزارش سبد — نشست ۳ب، بند ۶. «پرشده» فقط از
+    step_filled می‌آید، تا پایشگر و سبد یک تعریف داشته باشند. قیمت و زمان
+    پرشدن از ردیف‌های reserve دفتر کل، به ترتیب زمان رسید و ترتیب پله‌های هر
+    نماد: میانگین وزنی قیمت و زمان آخرین ردیف پوشش‌دهنده.
+    """
+    created = _aware(rp["created"], "reserve_plan.created")
+    pool: dict[str, list] = {}
+    for r in h.get("ledger", []):
+        if r.get("action") == "trim" and r.get("reason") == "reserve":
+            at = _aware(r.get("at"), "زمان ردیف دفتر کل")
+            if at >= created:
+                pool.setdefault(r["symbol"], []).append(
+                    [-float(r["delta"]), r.get("price"), at])
+    for rows in pool.values():
+        rows.sort(key=lambda x: x[2])
+    out = []
+    for s, filled in zip(rp.get("steps") or [], step_filled(rp, h)):
+        rec = {"symbol": s["symbol"], "qty": s["qty"], "price": s.get("price"),
+               "filled": filled, "fill_price": None, "fill_at": None,
+               "executed": s.get("executed")}
+        if filled:
+            need, took, rows = s["qty"], [], pool.get(s["symbol"], [])
+            while rows and need > 1e-12:
+                q = min(need, rows[0][0])
+                took.append((q, rows[0][1], rows[0][2]))
+                rows[0][0] -= q
+                need -= q
+                if rows[0][0] <= 1e-12:
+                    rows.pop(0)
+            got = sum(q for q, _, _ in took)
+            if len(took) == 1 and _num(took[0][1]):
+                rec["fill_price"] = took[0][1]          # یک رسید: همان قیمت، بی‌گرد کردن
+            elif got > 0 and all(_num(p) for _, p, _ in took):
+                rec["fill_price"] = sum(q * p for q, p, _ in took) / got
+            rec["fill_at"] = max((t for _, _, t in took), default=None)
+        out.append(rec)
+    return out
+
+
 def _once(state: dict, key: str, msgs: list, text: str) -> None:
     if not state.get(key):
         state[key] = True
