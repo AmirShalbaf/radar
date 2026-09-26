@@ -458,13 +458,15 @@ def _sma_field(sma: dict | None, why: list[str] | None) -> dict:
 
 def build_doc(res: dict, inp: dict[str, Input], now: datetime,
               trade_band: str | None = None, btc_sma50w: dict | None = None,
-              btc_sma50w_why: list[str] | None = None) -> dict:
+              btc_sma50w_why: list[str] | None = None,
+              anchor_boundary: dict | None = None) -> dict:
     """
     سند regime.json. قرارداد با radar_book.py دو میدان اجباری دارد —
     score (امتیاز نهایی محافظه‌کارانه) و generated_at (با منطقه زمانی) —
     و بقیه میدان‌ها اضافه‌اند. امتیاز با دقت کامل ذخیره می‌شود تا باند
     سبد روی مرز همان باند رژیم باشد. btc_sma50w را پایشگر برای هشدار بازار
-    می‌خواند — بند ۴ ایستگاه آخر نشست ۳.
+    می‌خواند — بند ۴ ایستگاه آخر نشست ۳. candle_anchor و anchor_boundary
+    لنگر کندل امروز و مرز تاریخچه‌اند — نشست ۳ب.
     """
     sma = ({"btc_sma50w": _sma_field(btc_sma50w, btc_sma50w_why)}
            if btc_sma50w is not None or btc_sma50w_why is not None else {})
@@ -483,9 +485,31 @@ def build_doc(res: dict, inp: dict[str, Input], now: datetime,
         "freshness_days": dict(FRESH_DAYS),
         **({"trade_band": BG.band_by_name(trade_band)} if trade_band else {}),
         **sma,
+        "candle_anchor": CANDLE_ANCHOR,
+        **({"anchor_boundary": anchor_boundary} if anchor_boundary else {}),
         "version": VERSION,
         "note": f"نگاشت‌ها فرضیه‌اند، نه اندازه‌گیری — {REFERENCE}",
     }
+
+
+# ── مرز لنگر کندل — نشست ۳ب ──
+# دو ورودی از کندل می‌آیند: میانگین پنجاه‌هفته و جفت اتر به بیت‌کوین. لنگرشان
+# تا نشست ۳ب هنگ‌کنگ بود. هر روز تازه میدان anchor می‌گیرد؛ نخستین اجرای وقت
+# جهانی روی تاریخچه‌ای با روز بی‌لنگر یک رکورد مرز در سطح بالا می‌نویسد. خود
+# کد می‌نویسد، نه دست: تاریخ واقعی نخستین روز جهانی را فقط اجرا می‌داند.
+CANDLE_ANCHOR = "utc"
+ANCHOR_BOUNDARY = {
+    "from": "hk",
+    "to": CANDLE_ANCHOR,
+    "inputs": ["ma50w", "ethbtc"],
+    "reason": ("لنگر کندل از وقت هنگ‌کنگ — اوکی‌اکس 1D و 1W، بسته 16:00 UTC — به وقت "
+               "جهانی رفت: روزانه ۰۰:۰۰ UTC، هفتگی دوشنبه ۰۰:۰۰ UTC. پیش‌نمایش ۲۶ "
+               "سپتامبر: تغییر ۳۰ روزه اتر به بیت‌کوین +1.976٪ در برابر +0.978٪ و "
+               "امتیاز نهایی -0.055 در برابر -0.084 — نشست ۳ب"),
+    "rule": ("روز بدون میدان anchor پیش از date یعنی لنگر هنگ‌کنگ اوکی‌اکس — یا گیت "
+             "وقت جهانی اگر اوکی‌اکس نیامده بود، که ثبت نشده. سنجش اعتبار رژیم دو سوی "
+             "مرز را یک سری نشمارد"),
+}
 
 
 def load_history(path) -> dict:
@@ -506,6 +530,14 @@ def load_history(path) -> dict:
             raise RegimeError(f"تاریخچه {path}: کلید روز نامعتبر {day!r}") from exc
         if not isinstance(rec, dict):
             raise RegimeError(f"تاریخچه {path}: رکورد روز {day} شیء نیست")
+    b = h.get("anchor_boundary")
+    if b is not None:
+        try:
+            if not isinstance(b, dict):
+                raise ValueError(b)
+            datetime.strptime(b["date"], "%Y-%m-%d")
+        except (KeyError, TypeError, ValueError) as exc:
+            raise RegimeError(f"تاریخچه {path}: رکورد anchor_boundary نامعتبر") from exc
     return h
 
 
@@ -514,11 +546,19 @@ def update_history(history: dict, res: dict, inp: dict[str, Input],
     """
     روز امروز را می‌افزاید یا بازنویسی می‌کند؛ روزهای دیگر دست نمی‌خورند.
     امتیازها هم ثبت می‌شوند تا بعداً خود رژیم با radar_validate سنجیده شود.
+    هر روز میدان anchor دارد؛ مرز لنگر یک بار، در نخستین اجرای وقت جهانی.
     """
-    h = {"version": history.get("version", 1), "days": dict(history.get("days") or {})}
+    h = {k: v for k, v in history.items() if k != "days"}
+    h["version"] = history.get("version", 1)
+    h["days"] = dict(history.get("days") or {})
+    today = now.strftime("%Y-%m-%d")
+    legacy = [d for d, r in h["days"].items() if d != today and "anchor" not in r]
+    if legacy and "anchor_boundary" not in h:
+        h["anchor_boundary"] = {"date": today, **ANCHOR_BOUNDARY,
+                                "inputs": list(ANCHOR_BOUNDARY["inputs"])}
     rec = {"generated_at": _iso(now), "raw": res["raw"], "norm": res["norm"],
            "score": res["score"], "band": res["band"]["name"],
-           "coverage": res["coverage"],
+           "coverage": res["coverage"], "anchor": CANDLE_ANCHOR,
            "inputs": {k: i.score for k, i in inp.items()}}
     if trade_band:
         rec["trade_band"] = trade_band
@@ -526,7 +566,7 @@ def update_history(history: dict, res: dict, inp: dict[str, Input],
         for name, v in i.obs.items():
             if name != "components":
                 rec[name] = v
-    h["days"][now.strftime("%Y-%m-%d")] = rec
+    h["days"][today] = rec
     return h
 
 
@@ -603,6 +643,12 @@ def render_md(doc: dict) -> str:
          f"تولید: **{stamp}**", "", A.ANCHOR_LINE, "",
          "> **فرضیه، نه اندازه‌گیری.** نگاشت ورودی به امتیاز حدسی است با "
          f"دلیل سازوکاری و هنوز با داده سنجیده نشده. آستانه‌ها: `{REFERENCE}`.", ""]
+    ab = doc.get("anchor_boundary")
+    if ab:
+        L += [f"> ℹ️ **مرز لنگر در تاریخچه: {ab['date']}.** از این روز میانگین پنجاه‌هفته "
+              "و جفت اتر به بیت‌کوین با لنگر وقت جهانی حساب می‌شوند؛ امتیاز دو سوی مرز "
+              "یک سری نیست. رکورد ماشین‌خوان: `regime_history.json` میدان `anchor_boundary`.",
+              ""]
     if doc["low_coverage"]:
         L += [f"> ⚠️ **پوشش کم:** فقط {100 * doc['coverage']:.0f}٪ وزن ورودی‌ها موجود است.", ""]
     L += ["| سنجه | مقدار |", "|---|---|",
@@ -693,7 +739,9 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     tb = trade_band_for(history, res["band"]["name"], now)
-    doc = build_doc(res, inp, now, tb, btc_sma50w=sma, btc_sma50w_why=sma_why)
+    new_hist = update_history(history, res, inp, now, tb)
+    doc = build_doc(res, inp, now, tb, btc_sma50w=sma, btc_sma50w_why=sma_why,
+                    anchor_boundary=new_hist.get("anchor_boundary"))
     md = render_md(doc)
     if a.stdout:
         print(md)
@@ -702,7 +750,7 @@ def main(argv: list[str] | None = None) -> int:
     os.makedirs(os.path.dirname(os.path.abspath(report)), exist_ok=True)
     with open(report, "w", encoding="utf-8") as f:
         f.write(md)
-    write_json(a.history, update_history(history, res, inp, now, tb))
+    write_json(a.history, new_hist)
     write_json(a.json, doc)
     print(f"رژیم: {res['band']['name']} — نهایی {res['score']:+.3f}، "
           f"پوشش {100 * res['coverage']:.0f}٪ → {a.json}")
