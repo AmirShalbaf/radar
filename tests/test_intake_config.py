@@ -1,5 +1,5 @@
 """
-آزمون قفل analysts.yml — نشست ۴، بند ۲، تصمیم‌های کاربر ۳۰ سپتامبر ۲۰۲۶.
+آزمون قفل analysts.yml — نشست ۴، بند ۲، تصمیم‌های کاربر ۲۹ سپتامبر ۲۰۲۶.
 
 یافته ایستگاه ۱: سه هندل از چهار هندل بی‌شناسه ۴۰۴ می‌داد — کوون، سالووی،
 پال — و منبع بی‌صدا «هیچ آیتمی» برمی‌گرداند. شناسه‌ها از جست‌وجوی یوتیوب،
@@ -31,7 +31,7 @@ def test_meta_version_and_framework() -> None:
     meta = _raw()["meta"]
     assert meta["version"] == "1.6"
     assert meta["framework"] == "Radar 7"
-    assert meta["updated"] == "2026-09-30"
+    assert meta["updated"] == "2026-09-29"      # وقت جهانی، مثل بقیه مخزن
 
 
 def test_confirmed_channel_ids_and_handles() -> None:
