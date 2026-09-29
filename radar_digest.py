@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-radar_digest.py  —  نسخه ۱.۰
-لایه تحلیل روی خروجی radar_intake
+radar_digest.py  —  نسخه ۱.۲
+لایه تحلیل روی خروجی radar_intake — فقط لپ‌تاپ، چون متن کامل فقط آنجاست
 
 سه گزارش می‌سازد:
   ۱. واچ‌لیست  — چه کوین‌هایی بررسی می‌کنند، چند بار، با چه جهتی
@@ -43,7 +43,7 @@ except ImportError:  # اجرای مستقل
     def is_boilerplate(t):  # type: ignore
         return False
 
-VERSION = "1.1"
+VERSION = "1.2"
 UTC = timezone.utc
 
 # اجبار خروجی یونیکد روی ویندوز فارسی — همان دلیل radar_intake
@@ -199,34 +199,69 @@ class Doc:
         return self.meta.get("عنوان", "")
 
 
-def load_docs(intake: Path, days: int | None) -> list[Doc]:
+LOCAL_DIR = "_local"          # همان radar_intake.LOCAL_DIR — آزمون برابری قفلش می‌کند
+FULL_TEXT = "## متن کامل"
+
+
+@dataclass
+class LoadReport:
+    """چه چیزی شمرده نشد و چرا — در سرخط DIGEST صریح می‌آید."""
+    no_local: list[str] = field(default_factory=list)     # شناسنامه بی‌متن محلی
+    unreadable: list[str] = field(default_factory=list)   # «مسیر — نوع خطا»
+
+
+def _split(txt: str) -> tuple[dict, str]:
+    meta, body = {}, txt
+    if txt.startswith("---"):
+        parts = txt.split("---", 2)
+        if len(parts) >= 3:
+            for line in parts[1].strip().splitlines():
+                if ":" in line:
+                    k, v = line.split(":", 1)
+                    meta[k.strip()] = v.strip()
+            body = parts[2]
+    return meta, body
+
+
+def load_docs(intake: Path, days: int | None) -> tuple[list[Doc], LoadReport]:
+    """
+    اسناد با متن کامل.
+
+    نشست ۴، چیدمان «متن کامل فقط محلی»: سند عمومی فقط شناسنامه و نامزدها
+    دارد و متن کامل در intake/_local/ است. بی‌جفت‌کردن، جدول نامزدها جای
+    متن خوانده می‌شد و گزارش بی‌صدا عوض می‌شد. سند بی‌متن محلی — مثلاً روی
+    کلونی دیگر — شمرده نمی‌شود و شمارش صریح می‌آید. سند پیشین دوره ارشیا
+    متن کامل را در خود دارد و همان‌طور خوانده می‌شود.
+
+    پیش از این سند ناخوانا با except Exception: continue بی‌صدا می‌افتاد.
+    """
     cutoff = None
     if days:
         cutoff = (datetime.now(UTC) - timedelta(days=days)).strftime("%Y-%m-%d")
-    docs = []
+    docs, rep = [], LoadReport()
     for f in sorted(intake.rglob("*.md")):
-        if f.name == "INDEX.md":
+        rel = f.relative_to(intake).as_posix()
+        if rel in ("INDEX.md", "DIGEST.md") or rel.startswith(LOCAL_DIR + "/"):
             continue
         try:
             txt = f.read_text(encoding="utf-8")
-        except Exception:
+            meta, body = _split(txt)
+            if FULL_TEXT not in body:
+                local = intake / LOCAL_DIR / rel
+                if not local.exists():
+                    rep.no_local.append(rel)
+                    continue
+                _, body = _split(local.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError) as e:
+            rep.unreadable.append(f"{rel} — {type(e).__name__}")
             continue
-        meta, body = {}, txt
-        if txt.startswith("---"):
-            parts = txt.split("---", 2)
-            if len(parts) >= 3:
-                for line in parts[1].strip().splitlines():
-                    if ":" in line:
-                        k, v = line.split(":", 1)
-                        meta[k.strip()] = v.strip()
-                body = parts[2]
-        if "## متن کامل" in body:
-            body = body.split("## متن کامل", 1)[1]
+        if FULL_TEXT in body:
+            body = body.split(FULL_TEXT, 1)[1]
         d = Doc(path=f, meta=meta, body=body)
         if cutoff and d.date and d.date < cutoff:
             continue
         docs.append(d)
-    return docs
+    return docs, rep
 
 
 def sentences(body: str) -> list[str]:
@@ -441,7 +476,7 @@ def report_overlap(docs: list[Doc]) -> str:
 # ۷ — اجرا
 # ===========================================================================
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="لایه تحلیل خروجی جمع‌آوری رادار")
     ap.add_argument("--intake", default="intake")
     ap.add_argument("--out", default="intake/DIGEST.md")
@@ -450,34 +485,46 @@ def main() -> int:
                     default="all")
     ap.add_argument("--all-roles", action="store_true", dest="all_roles",
                     help="استخراج قاعده از همه منابع، نه فقط کتابخانه روش")
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
 
     intake = Path(args.intake)
     if not intake.exists():
         print(f"پوشه {intake} نیست. اول radar_intake.py را اجرا کن.")
         return 1
 
-    docs = load_docs(intake, args.days)
+    docs, rep = load_docs(intake, args.days)
     if not docs:
-        print("هیچ سندی پیدا نشد.")
+        print("هیچ سندی با متن پیدا نشد.")
+        if rep.no_local:
+            print(f"  {len(rep.no_local)} شناسنامه بی‌متن محلی — متن کامل فقط روی لپ‌تاپ است.")
+        for u in rep.unreadable:
+            print(f"  ناخوانا: {u}")
         return 1
 
     srcs = sorted({d.source for d in docs})
+    days_label = "همه" if not args.days else f"{args.days} روز اخیر"
     header = [
         "# چکیده منابع رادار",
         "",
         f"ساخته‌شده: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')} | "
         f"radar_digest {VERSION}",
-        f"اسناد: {len(docs)} | منابع: {len(srcs)}",
-        f"بازه: {'همه' if not args.days else f'{args.days} روز اخیر'}",
+        f"اسناد شمرده‌شده: {len(docs)} | منابع: {len(srcs)} | "
+        f"بی‌متن محلی، شمرده نشد: {len(rep.no_local)} | ناخوانا: {len(rep.unreadable)}",
+        f"بازه: {days_label}",
         "",
         f"منابع: {'، '.join(srcs)}",
         "",
         "> **برچسب معرفتی: نقل‌شده.** هیچ عددی از این گزارش وارد امتیازدهی نمی‌شود.",
         "",
-        "---",
-        "",
     ]
+    if rep.no_local:
+        header += ["### بی‌متن محلی — شمرده نشد", "",
+                   "متن کامل این اسناد فقط روی لپ‌تاپی است که جمعشان کرد.", ""]
+        header += [f"- `{p}`" for p in rep.no_local] + [""]
+    if rep.unreadable:
+        header += ["### ناخوانا — شمرده نشد", ""]
+        header += [f"- `{u}`" for u in rep.unreadable] + [""]
+    header += ["---", ""]
 
     parts = []
     if args.report in ("watchlist", "all"):
@@ -493,6 +540,12 @@ def main() -> int:
     out.write_text(text, encoding="utf-8")
 
     print(f"✓ {len(docs)} سند از {len(srcs)} منبع → {out}")
+    if rep.no_local:
+        print(f"  {len(rep.no_local)} شناسنامه بی‌متن محلی شمرده نشد — فهرست در سرخط DIGEST")
+    if rep.unreadable:
+        for u in rep.unreadable:
+            print(f"  ! ناخوانا: {u}")
+        return 3
     return 0
 
 

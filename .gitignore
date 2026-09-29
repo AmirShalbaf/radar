@@ -11,3 +11,7 @@ btc.txt
 !radar_journal.json
 !radar_optcost.json
 !book_state.json
+
+# متن کامل مقاله و زیرنویس دیگران فقط محلی — مخزن عمومی است. نشست ۴.
+# به مخزن فقط شناسنامه، پیوند و نامزدهای سقف‌دار می‌رود: intake/<منبع>/
+intake/_local/

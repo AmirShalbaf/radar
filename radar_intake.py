@@ -314,14 +314,14 @@ class ClaimCandidate:
     numbers: list[str]
     strength: int              # ۰ تا ۵
 
-    def to_row(self) -> str:
+    def to_row(self, maxlen: int = 220) -> str:
         ts = self.timestamp or "—"
         nums = "، ".join(self.numbers[:4]) if self.numbers else "—"
         cats = "، ".join(self.categories)
         stars = "★" * self.strength + "☆" * (5 - self.strength)
         safe = self.text.replace("|", "/").replace("\n", " ").strip()
-        if len(safe) > 220:
-            safe = safe[:217] + "..."
+        if len(safe) > maxlen:
+            safe = safe[: maxlen - 3] + "..."
         return f"| {self.index} | {ts} | {stars} | {cats} | {nums} | {safe} |"
 
 
@@ -1061,14 +1061,36 @@ def slugify(text: str, maxlen: int = 40) -> str:
     return text[:maxlen].strip("-") or "untitled"
 
 
-def build_document(
+# ---------------------------------------------------------------------------
+# چیدمان «متن کامل فقط محلی» — نشست ۴، بند «ز»، تصمیم کاربر ۳۰ سپتامبر ۲۰۲۶
+#
+# مخزن عمومی است. متن کامل مقاله و زیرنویس دیگران نباید در آن برود.
+#   عمومی:  intake/<src>/<name>.md         شناسنامه، پیوند، نامزدهای سقف‌دار
+#   محلی:   intake/_local/<src>/<name>.md  سند کامل — در .gitignore
+# یک قاعده برای همه منابع. ۹ فایل پیشین دوره ارشیا همان‌طور می‌مانند.
+# ---------------------------------------------------------------------------
+LOCAL_DIR = "_local"
+PUBLIC_MAX_CANDIDATES = 10
+PUBLIC_MAX_CHARS = 200
+
+
+def _public_candidates(cands: list[ClaimCandidate]) -> list[ClaimCandidate]:
+    """قوی‌ترها، و به ترتیب زمان برای خواندن. شماره هر ردیف همان شماره نسخه محلی است."""
+    top = sorted(cands, key=lambda c: (-c.strength, c.index))[:PUBLIC_MAX_CANDIDATES]
+    return sorted(top, key=lambda c: c.index)
+
+
+def build_documents(
     src: Source,
     item: dict,
     segments: list[dict],
     method: str,
     candidates: list[ClaimCandidate],
     gap: str | None = None,
-) -> str:
+    *,
+    local_rel: str,
+) -> tuple[str, str]:
+    """برمی‌گرداند (سند عمومی، سند کامل محلی). local_rel نسبت به پوشه intake است."""
     body_lines = []
     has_ts = any(s.get("start") is not None for s in segments)
     for s in segments:
@@ -1106,6 +1128,7 @@ def build_document(
         f"تعارض منافع: {src.conflict or 'ثبت‌نشده'}",
         f"هم‌خطی با: {src.collinear_with or '—'}",
         f"ساخته‌شده با: radar_intake {VERSION}",
+        f"متن محلی: {local_rel}",
         "---",
         "",
         "> **هشدار اجباری رادار:** این متن *داده* نیست، *نقل‌شده* است.",
@@ -1115,25 +1138,42 @@ def build_document(
         "",
     ]
 
-    mid = ["## نامزدهای ادعا (خودکار — تأییدنشده)", ""]
-    if candidates:
-        mid += [
+    def candidates_block(rows: list[ClaimCandidate], maxlen: int, note: list[str]) -> list[str]:
+        out = ["## نامزدهای ادعا (خودکار — تأییدنشده)", ""]
+        if not candidates:
+            return out + [
+                "هیچ نامزدی با آستانه فعلی پیدا نشد.",
+                "",
+                "**این خودش یک داده است:** منبعی که ادعای عددی و تاریخ‌دار نمی‌دهد،",
+                "قابل تسویه نیست و نمی‌تواند وارد دفتر کالیبراسیون شود.",
+            ]
+        return out + [
             "قدرت = چقدر شبیه ادعای قابل‌تسویه است. سه جزء لازم: جهت، آستانه عددی، مهلت.",
+            *note,
             "",
             "| # | زمان | قدرت | دسته | اعداد | متن |",
             "|---|---|---|---|---|---|",
+            *[c.to_row(maxlen) for c in rows],
         ]
-        mid += [c.to_row() for c in candidates]
-    else:
-        mid += [
-            "هیچ نامزدی با آستانه فعلی پیدا نشد.",
-            "",
-            "**این خودش یک داده است:** منبعی که ادعای عددی و تاریخ‌دار نمی‌دهد،",
-            "قابل تسویه نیست و نمی‌تواند وارد دفتر کالیبراسیون شود.",
-        ]
-    mid += ["", "---", "", "## متن کامل", ""]
 
-    return "\n".join(head + mid) + "\n" + body + "\n"
+    full = (
+        "\n".join(head + candidates_block(candidates, 220, [])
+                  + ["", "---", "", "## متن کامل", ""])
+        + "\n" + body + "\n"
+    )
+
+    shown = _public_candidates(candidates)
+    note = [f"نمایش {len(shown)} از {len(candidates)} نامزد — قوی‌ترها، هر خط حداکثر "
+            f"{fa(PUBLIC_MAX_CHARS)} نویسه. همه نامزدها در نسخه محلی."]
+    public = "\n".join(head + candidates_block(shown, PUBLIC_MAX_CHARS, note) + [
+        "",
+        "---",
+        "",
+        "> **متن کامل در مخزن عمومی نیست.** مخزن عمومی است و متن کامل مقاله و",
+        "> زیرنویس دیگران در آن نمی‌رود — نشست ۴. نسخه کامل فقط روی لپ‌تاپ:",
+        f"> `intake/{local_rel}`",
+    ]) + "\n"
+    return public, full
 
 
 # ===========================================================================
@@ -1259,8 +1299,8 @@ def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
     rows, problems = [], []
     for f in sorted(outdir.rglob("*.md")):
         rel = f.relative_to(outdir).as_posix()
-        if rel in ("INDEX.md", "DIGEST.md"):
-            continue
+        if rel in ("INDEX.md", "DIGEST.md") or rel.startswith(LOCAL_DIR + "/"):
+            continue      # نسخه محلی جفت همان شناسنامه است، سند دوم نیست
         try:
             txt = f.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError) as e:
@@ -1401,13 +1441,16 @@ def process_source(
                 log(f"      ⚠ متن ناقص — {gap}")
 
         cands = extract_claim_candidates(segs, min_strength=args.min_strength)
-        doc = build_document(src, item, segs, method, cands, gap)
 
-        sub = outdir / src.key
-        sub.mkdir(parents=True, exist_ok=True)
         date = (item.get("published") or "")[:10] or datetime.now(UTC).strftime("%Y-%m-%d")
         fname = f"{date}_{slugify(item['title'])}_{item['id'][:6]}.md"
-        (sub / fname).write_text(doc, encoding="utf-8")
+        local_rel = f"{LOCAL_DIR}/{src.key}/{fname}"
+        public, full = build_documents(src, item, segs, method, cands, gap, local_rel=local_rel)
+        # نسخه محلی اول: اگر نوشتنش شکست، شناسنامه عمومیِ بی‌متن نمی‌ماند
+        (outdir / LOCAL_DIR / src.key).mkdir(parents=True, exist_ok=True)
+        (outdir / local_rel).write_text(full, encoding="utf-8")
+        (outdir / src.key).mkdir(parents=True, exist_ok=True)
+        (outdir / src.key / fname).write_text(public, encoding="utf-8")
 
         seen[item["id"]] = {"title": item["title"], "file": fname, "at": date}
         run.made += 1
