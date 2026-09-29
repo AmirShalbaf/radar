@@ -438,6 +438,7 @@ class Source:
     link_pattern: str = ""            # فقط برای kind=index
     playlist_id: str = ""             # فقط برای kind=playlist
     collinear_with: str = ""          # هم‌خانواده با کدام منبع (یک رأی، نه دو)
+    disabled_reason: str = ""         # چرا خاموش است — در خروجی و INDEX می‌آید
 
     @classmethod
     def from_dict(cls, key: str, d: dict) -> "Source":
