@@ -72,7 +72,23 @@ def test_watch_marks_and_no_market_reminder() -> None:
     assert all(s["price"] is None for s in steps if s.get("executed"))
     assert W.unfilled_steps(w["reserve_plan"], h) == [
         {"symbol": "ETH", "qty": 0.0472, "price": 2755}, {"symbol": "ETH", "qty": 0.0472, "price": 2940},
-        {"symbol": "SOL", "qty": 0.749, "price": 125.5}, {"symbol": "SOL", "qty": 0.749, "price": 131.5}]
+        {"symbol": "SOL", "qty": 0.749, "price": 125.5}]
+
+
+def test_sol_131_5_cancelled_with_reason() -> None:
+    """
+    تصمیم کاربر، ۲۹ سپتامبر ۲۰۲۶: پله SOL 0.749 در 131.5 هرگز در LBank گذاشته نشد
+    و لغو است. پله پاک نشد؛ میدان cancelled با زمان کامل و دلیل دارد.
+    """
+    from datetime import datetime
+    rp = _load("watch.json")["reserve_plan"]
+    sol = [s for s in rp["steps"] if s["symbol"] == "SOL"]
+    assert [s["price"] for s in sol] == [None, 125.5, 131.5]
+    c = sol[2]["cancelled"]
+    assert datetime.fromisoformat(c["at"]).tzinfo is not None and c["at"].startswith("2026-09-29")
+    assert "withdraw" in c["reason"] and "ETH" in c["reason"]
+    assert all("cancelled" not in s for s in rp["steps"] if s is not sol[2])
+    assert "لغو" in rp["note"] and "سه پله" in rp["note"]
 
 
 def test_eth_step2_moved_below_utc_resistance() -> None:

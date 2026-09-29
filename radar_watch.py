@@ -552,21 +552,36 @@ def validate_watch(w: dict) -> None:
                         or not ex["order_id"]:
                     raise WatchError(f"reserve_plan پله {i}: executed باید زمان و order_id داشته باشد")
                 _aware(ex.get("at"), f"reserve_plan پله {i}: executed.at — {FULL}")
+            # لغو پله — تصمیم کاربر، ۲۹ سپتامبر ۲۰۲۶: پله پاک نمی‌شود، زمان و دلیل می‌گیرد
+            cx = s.get("cancelled")
+            if cx is not None:
+                if not isinstance(cx, dict) or not isinstance(cx.get("reason"), str) \
+                        or not cx["reason"].strip():
+                    raise WatchError(f"reserve_plan پله {i}: cancelled باید زمان و دلیل داشته باشد")
+                _aware(cx.get("at"), f"reserve_plan پله {i}: cancelled.at — {FULL}")
+                if ex is not None:
+                    raise WatchError(f"reserve_plan پله {i}: هم اجراشده هم لغوشده — پله لغوشده "
+                                     "اجرا نمی‌شود")
 
 
 def unfilled_steps(rp: dict, h: dict) -> list[dict]:
     """
     پله‌های پرنشده نقشه ذخیره. پرشده یعنی پوشش‌داده با کاهش reserve دفتر کل
-    پس از ساخت نقشه. پله‌های هر نماد به ترتیب نقشه پر می‌شوند.
+    پس از ساخت نقشه. پله‌های هر نماد به ترتیب نقشه پر می‌شوند. پله لغوشده
+    مانده نیست — نه در یادآوری، نه در هشدار مهلت و رسیدن قیمت.
     """
     return [{"symbol": s["symbol"], "qty": s["qty"], "price": s.get("price")}
-            for s, filled in zip(rp.get("steps") or [], step_filled(rp, h)) if not filled]
+            for s, filled in zip(rp.get("steps") or [], step_filled(rp, h))
+            if not filled and not s.get("cancelled")]
 
 
 def step_filled(rp: dict, h: dict) -> list[bool]:
     """
     پرشدن هر پله، به ترتیب نقشه، فقط از کاهش reserve دفتر کل پس از ساخت نقشه.
     علامت executed در watch.json اینجا نقشی ندارد — منبع حقیقت دفتر کل است.
+
+    پله لغوشده هرگز پرشده نیست و مقدارش در زنجیره پله‌های نماد شمرده نمی‌شود:
+    فروش همان مقدار در آینده پله بعدی را پر می‌کند، نه پله لغوشده را.
     """
     created = _aware(rp["created"], "reserve_plan.created")
     done: dict[str, float] = {}
@@ -576,6 +591,9 @@ def step_filled(rp: dict, h: dict) -> list[bool]:
                 done[r["symbol"]] = done.get(r["symbol"], 0.0) - float(r["delta"])
     out, cum = [], {}
     for s in rp.get("steps") or []:
+        if s.get("cancelled"):
+            out.append(False)
+            continue
         sym = s["symbol"]
         cum[sym] = cum.get(sym, 0.0) + s["qty"]
         out.append(cum[sym] - STEP_TOL * s["qty"] <= done.get(sym, 0.0))
@@ -603,7 +621,7 @@ def reserve_progress(rp: dict, h: dict) -> list[dict]:
     for s, filled in zip(rp.get("steps") or [], step_filled(rp, h)):
         rec = {"symbol": s["symbol"], "qty": s["qty"], "price": s.get("price"),
                "filled": filled, "fill_price": None, "fill_at": None,
-               "executed": s.get("executed")}
+               "executed": s.get("executed"), "cancelled": s.get("cancelled")}
         if filled:
             need, took, rows = s["qty"], [], pool.get(s["symbol"], [])
             while rows and need > 1e-12:

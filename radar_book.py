@@ -665,7 +665,8 @@ def reserve_view(rp: dict | None, h: dict, prices: dict, val: dict,
         return None
     import radar_watch as RW      # دیر: radar_watch بی requests بیرون می‌رود
     steps = RW.reserve_progress(rp, h)
-    left = [s for s in steps if not s["filled"]]
+    # پله لغوشده مانده نیست: نه در «اگر همه پر شوند»، نه در بالاترین قیمت ک۴۲
+    left = [s for s in steps if not s["filled"] and not s.get("cancelled")]
     syms = sorted({s["symbol"] for s in left})
     missing = [s for s in syms if prices.get(s) is None]
     # مقدار نگه‌داشته هر نماد — همان صافی P.value: باز و غیرفرضی
@@ -693,6 +694,7 @@ def reserve_view(rp: dict | None, h: dict, prices: dict, val: dict,
     deadline = datetime.fromisoformat(rp["deadline"])
     total = val["total"]
     return {"steps": steps, "left": left,
+            "cancelled": [s for s in steps if s.get("cancelled")],
             "stray": [s for s in steps if s.get("executed") and not s["filled"]],
             "deadline": deadline, "now": now, "expired": now >= deadline,
             "account": rp.get("account") or "حساب نقشه",
@@ -727,6 +729,12 @@ def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
             o.append(f"| {s['symbol']} | {_n(s['qty'])} | "
                      f"{'بازار' if s['price'] is None else _n(s['price'])} |")
         o.append("")
+    for s in rv.get("cancelled") or []:
+        c = s["cancelled"]
+        at = datetime.fromisoformat(c["at"]).astimezone(UTC)
+        o += [f"**لغوشده:** {s['symbol']} {_n(s['qty'])} در "
+              f"{'بازار' if s['price'] is None else _n(s['price'])} — {c['reason']} "
+              f"({at:%Y-%m-%d %H:%M} UTC)", ""]
     dl = f"{rv['deadline'].astimezone(UTC):%Y-%m-%d %H:%M} UTC"
     rest = rv["deadline"] - rv["now"]
     dl += (f" — {rest.total_seconds() / 86400:.1f} روز مانده" if not rv["expired"]
