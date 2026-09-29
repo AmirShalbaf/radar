@@ -1348,14 +1348,41 @@ def _front_matter(txt: str) -> dict:
     return meta
 
 
+_RUN_HEAD = "## آخرین اجرا"
+_ISO_DAY = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")
+
+
+def _previous_run_section(index: Path) -> list[str]:
+    """
+    کارنامه آخرین اجرا از INDEX موجود. بازسازی بی‌اجرا — مثلاً پس از رفع
+    ترتیب در ایستگاه ۲ نشست ۴ — نباید رد اجرای واقعی را پاک کند.
+    """
+    if not index.exists():
+        return []
+    lines = index.read_text(encoding="utf-8").splitlines()
+    start = next((i for i, l in enumerate(lines) if l.startswith(_RUN_HEAD)), None)
+    if start is None:
+        return []
+    end = next((i for i in range(start + 1, len(lines))
+                if lines[i].startswith("## ") or lines[i].startswith("### سند ناخوانا")),
+               len(lines))
+    return lines[start:end]
+
+
 def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
     """
     فهرست خوانا از همه فایل‌های جمع‌آوری‌شده. این همان چیزی است که اول می‌خوانم.
 
     برمی‌گرداند فهرست سندهای ناخوانا. نشست ۴: پیش از این سند ناخوانا بی‌صدا
     از فهرست می‌افتاد؛ حالا ردیفش با «ناخوانا» می‌ماند و در سرخط می‌آید.
+
+    ترتیب: تاریخ‌دارها نزولی، سپس بی‌تاریخ و ناخوانا به ترتیب نام فایل.
+    پیش از این مرتب‌سازی رشته‌ای «—» را بالای رقم‌ها می‌گذاشت.
+    بی run، کارنامه آخرین اجرا از INDEX موجود نگه داشته می‌شود.
     """
-    rows, problems = [], []
+    kept_run = [] if run is not None else _previous_run_section(outdir / "INDEX.md")
+    rows: list[tuple[str, str, str]] = []      # (تاریخ ISO یا تهی، مسیر، ردیف)
+    problems = []
     for f in sorted(outdir.rglob("*.md")):
         rel = f.relative_to(outdir).as_posix()
         if rel in ("INDEX.md", "DIGEST.md") or rel.startswith(LOCAL_DIR + "/"):
@@ -1364,16 +1391,18 @@ def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
             txt = f.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError) as e:
             problems.append(f"`{rel}` — {type(e).__name__}")
-            rows.append(f"| — | — | — | — | ⚠ ناخوانا | — | ⚠ ناخوانا | `{rel}` |")
+            rows.append(("", rel, f"| — | — | — | — | ⚠ ناخوانا | — | ⚠ ناخوانا | `{rel}` |"))
             continue
         meta = _front_matter(txt)
         text = meta.get("متن", "")
         text_col = "ناقص" if text.startswith("ناقص") else ("کامل" if text else "—")
         dur = meta.get("مدت", "") or "—"
         dur_col = "مدت نامعلوم" if dur.startswith("نامعلوم") else dur
-        rows.append(
+        day = (meta.get("تاریخ انتشار") or "")[:10]
+        day = day if _ISO_DAY.fullmatch(day) else ""
+        rows.append((day, rel,
             "| {} | {} | {} | {} | {} | {} | {} | `{}` |".format(
-                _cell((meta.get("تاریخ انتشار") or "—")[:10]),
+                day or "—",
                 _cell(meta.get("منبع", "—")),
                 _cell(meta.get("جایگاه در رادار", "—")),
                 _cell(meta.get("نامزد ادعا", "—")),
@@ -1381,8 +1410,10 @@ def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
                 _cell(dur_col),
                 _cell(meta.get("عنوان", "—") or "—")[:60],
                 rel,
-            )
-        )
+            ),
+        ))
+    dated = sorted((r for r in rows if r[0]), key=lambda r: (r[0], r[1]), reverse=True)
+    undated = sorted((r for r in rows if not r[0]), key=lambda r: r[1])
     header = [
         "# فهرست جمع‌آوری رادار",
         "",
@@ -1392,6 +1423,8 @@ def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
     ]
     if run is not None:
         header += run_summary(run)
+    elif kept_run:
+        header += kept_run
     if problems:
         header += ["### سند ناخوانا", ""] + [f"- {p}" for p in problems] + [""]
     header += [
@@ -1401,7 +1434,7 @@ def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
         "|---|---|---|---|---|---|---|---|",
     ]
     (outdir / "INDEX.md").write_text(
-        "\n".join(header + sorted(rows, reverse=True)) + "\n", encoding="utf-8"
+        "\n".join(header + [r[2] for r in dated + undated]) + "\n", encoding="utf-8"
     )
     return problems
 
