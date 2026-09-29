@@ -47,11 +47,11 @@ def test_cash_and_quantities() -> None:
     h, j = P.load(str(ROOT / "holdings.json"), str(ROOT / "radar_journal.json"))
     cash = {c["account"]: c["qty"] for c in h["cash"]}
     assert cash["LBank"] == pytest.approx(0.1010102 + 217.406122, abs=1e-9)
-    assert cash["صرافی دوم"] == 3.17443595
     lots = {p["symbol"]: {l["account"]: l["qty"] for l in p["lots"]} for p in h["positions"]}
     assert lots["SOL"]["LBank"] == pytest.approx(6.38005369 - 0.749, abs=1e-12)
     assert lots["ETH"]["LBank"] == pytest.approx(0.242657 - 0.0472, abs=1e-12)
-    assert lots["ETH"]["صرافی دوم"] == 0.15892356
+    # «صرافی دوم» ۲۹ سپتامبر با withdraw از رادار رفت — ETH رادار فقط LBank است
+    assert "صرافی دوم" not in cash and "صرافی دوم" not in lots["ETH"]
 
 
 def test_optcost_followup_from_sale_day() -> None:

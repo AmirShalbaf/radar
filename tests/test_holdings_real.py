@@ -67,25 +67,58 @@ def test_quantities_match_screenshots(h) -> None:
         lb = [l for l in pos[sym]["lots"] if l["account"] == "LBank"]
         assert len(lb) == 1 and lb[0]["qty"] == pytest.approx(q + moved.get((sym, "LBank"), 0.0),
                                                            abs=1e-12), sym
+    # لات صرافی دوم ۲۹ سپتامبر با withdraw از رادار برداشته شد — پول خرج شخصی
     eth2 = [l for l in pos["ETH"]["lots"] if l["account"] == "صرافی دوم"]
-    assert len(eth2) == 1
-    assert (eth2[0]["qty"], eth2[0]["entry"]) == SECOND["ETH"]
+    left = SECOND["ETH"][0] + moved.get(("ETH", "صرافی دوم"), 0.0)
+    assert left == pytest.approx(0.0, abs=1e-12) and eth2 == []
 
 
 def test_no_invented_entry_price(h) -> None:
-    """قیمت خرید فقط جایی که واقعاً معلوم است."""
+    """قیمت خرید فقط جایی که واقعاً معلوم است — تنها لات معلوم برداشته شد."""
     known = [(p["symbol"], l["account"]) for p in h["positions"] for l in p["lots"]
              if l["entry"] is not None]
-    assert known == [("ETH", "صرافی دوم")]
+    assert known == []
+
+
+def _withdrawn_cash(h) -> dict:
+    out: dict = {}
+    for r in h["ledger"]:
+        c = r.get("cash") if r.get("action") == "withdraw" else None
+        if c:
+            out[c["account"]] = out.get(c["account"], 0.0) + c["qty"]
+    return out
 
 
 def test_cash_is_stable_only(h) -> None:
     assert {c["asset"] for c in h["cash"]} == {"USDT"}
     got = {c["account"]: c["qty"] for c in h["cash"]}
-    net = _ledger_by_account(h, "net")
-    assert set(got) == set(CASH)
-    for acct, q in CASH.items():
-        assert got[acct] == pytest.approx(q + net.get(acct, 0.0), abs=1e-9), acct
+    net, gone = _ledger_by_account(h, "net"), _withdrawn_cash(h)
+    want = {a: q + net.get(a, 0.0) - gone.get(a, 0.0) for a, q in CASH.items()}
+    assert set(got) == {a for a, q in want.items() if q > 1e-9}
+    for acct, q in got.items():
+        assert q == pytest.approx(want[acct], abs=1e-9), acct
+
+
+def test_second_exchange_withdrawn_once() -> None:
+    """
+    تصمیم کاربر، ۲۹ سپتامبر ۲۰۲۶: ETH و USDT «صرافی دوم» پول خرج شخصی است.
+    یک ردیف withdraw، بی‌پیگیری هزینه فرصت و بی‌رکورد دفترچه — الگوی ONDO ک۱۰.
+    عددهای پیش از ۲۹ سپتامبر، مثل 2631.20 رویداد ۴۲، این مقدار را هم داشتند.
+    """
+    h = json.loads((ROOT / "holdings.json").read_text(encoding="utf-8"))
+    rows = [r for r in h["ledger"] if r["action"] == "withdraw"]
+    assert len(rows) == 1
+    r = rows[0]
+    assert (r["symbol"], r["delta"], r["account"]) == ("ETH", -0.15892356, "صرافی دوم")
+    assert r["reason"] == "پول خرج شخصی — از رادار حذف شد"
+    assert r["cash"] == {"asset": "USDT", "qty": 3.17443595, "account": "صرافی دوم"}
+    assert r["at"].startswith("2026-09-29")
+    text = json.dumps({k: h[k] for k in ("positions", "cash", "source")}, ensure_ascii=False)
+    assert "صرافی دوم" not in text                        # فقط در ردیف دفتر کل
+    oc = json.loads((ROOT / "radar_optcost.json").read_text(encoding="utf-8"))
+    assert not [x for x in oc.get("exits", []) if abs(x.get("qty", 0) - 0.15892356) < 1e-9]
+    jr = (ROOT / "radar_journal.json").read_text(encoding="utf-8")
+    assert "0.15892356" not in jr
 
 
 def test_all_in_position_book_trade_book_empty(h) -> None:

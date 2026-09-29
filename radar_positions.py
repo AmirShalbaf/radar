@@ -31,6 +31,9 @@ holdings.json نسخه ۲ بر پایه **مقدار** است، نه دلار. �
     add      افزایش، فقط با شناسه تصمیم و ستاپ ثبت‌شده در دفترچه با
              book = position
     adjust   پاداش سهام‌گذاری یا کارمزد، حداکثر ۱٪ مقدار نماد در هر ردیف
+    withdraw برداشت از رادار — پولی که دیگر جزو سبد نیست، مثل خرج شخصی. فقط
+             کاهش، با دلیل و حساب؛ نقد همان حساب در همان ردیف. نه پیگیری
+             هزینه فرصت، نه سهمیه ورود دوباره، نه آمار نتیجه — الگوی ONDO ک۱۰
 
 بسته هفتگی = بسته کندل هفته دوشنبه تا یکشنبه به وقت جهانی، یعنی لحظه
 **دوشنبه ۰۰:۰۰ UTC**. اوکی‌اکس با 1Wutc، گیت با 7d. لنگر پیش‌فرض اوکی‌اکس
@@ -76,7 +79,9 @@ FORMAT_VERSION = 2
 HOLDINGS_STALE_DAYS = 7
 HOLDINGS_FILE = "holdings.json"
 BOOKS = RJ.BOOKS
-ACTIONS = ("trim", "exit", "reenter", "add", "adjust")
+# withdraw تصمیم کاربر، ۲۹ سپتامبر ۲۰۲۶. نوع جدا، نه adjust: سقف ۱٪ adjust
+# برای پاداش و کارمزد است و شل‌کردنش ناوردا را برای همه ردیف‌ها سست می‌کرد
+ACTIONS = ("trim", "exit", "reenter", "add", "adjust", "withdraw")
 # invalidation: خروج جزئی با ابطال — سهم خروج در watch.json پارامتر است
 TRIM_REASONS = ("reserve", "rebalance", "invalidation")
 ADJUST_MAX = 0.01             # سقف هر ردیف adjust: ۱٪ مقدار نماد
@@ -388,6 +393,12 @@ def _replay(h: dict, jidx: dict, check_journal: bool = True) -> dict:
                 raise PositionsError(f"{where}: دلیل لازم است")
             if cur <= TOL or abs(d) > ADJUST_MAX * cur + TOL:
                 raise PositionsError(f"{where}: بیش از ۱٪ مقدار نماد ({cur})")
+        elif act == "withdraw":
+            if not r.get("reason") or not r.get("account"):
+                raise PositionsError(f"{where}: دلیل و حساب لازم است")
+            if not (d < 0 and -d <= cur + TOL):
+                raise PositionsError(f"{where}: برداشت فقط کاهش است و بیش از مقدار نماد "
+                                     f"({cur}) نه")
         run[sym] = cur + d
     return {"expected": run, "reentry": reentry}
 
@@ -777,6 +788,22 @@ def _apply(h: dict, a, journal: dict) -> dict:
         else:
             _take(p, -a.qty, a.account)
         row.update(delta=a.qty, reason=a.reason)
+    elif a.cmd == "withdraw":
+        if p is None or p["status"] != "open":
+            raise PositionsError(f"{sym} در دفتر موقعیت باز نیست")
+        acct = _take(p, a.qty, a.account)
+        row.update(delta=-a.qty, reason=a.reason, account=acct)
+        if a.cash is not None:
+            c = next((c for c in h["cash"]
+                      if c.get("asset") == "USDT" and c.get("account") == acct), None)
+            if c is None or not (_num(a.cash) and 0 < a.cash <= c["qty"] + TOL):
+                raise PositionsError(f"نقد تتر حساب {acct} این مقدار را ندارد: {a.cash}")
+            c["qty"] = round(c["qty"] - a.cash, 10)
+            if c["qty"] <= TOL:
+                h["cash"].remove(c)             # حساب خالی از فهرست نقد هم می‌رود
+            row["cash"] = {"asset": "USDT", "qty": a.cash, "account": acct}
+        if position_qty(p) <= TOL:
+            p["status"] = "exited"              # بی‌سهمیه ورود دوباره — ابطال نبود
     h["ledger"].append(row)
     h["updated"] = _now()
     return row
@@ -790,13 +817,13 @@ def main(argv: list[str] | None = None) -> int:
     sp = ap.add_subparsers(dest="cmd", required=True)
     sp.add_parser("validate", help="اعتبارسنجی بدون تغییر")
     sp.add_parser("symbols", help="نمادهای پوزیشن باز هر دو دفتر، جدا با کاما")
-    for name in ("trim", "exit", "reenter", "add", "adjust"):
+    for name in ("trim", "exit", "reenter", "add", "adjust", "withdraw"):
         p = sp.add_parser(name)
         p.add_argument("--symbol", required=True)
-        p.add_argument("--account", default=None)
+        p.add_argument("--account", default=None, required=name == "withdraw")
         if name != "exit":
             p.add_argument("--qty", type=float, required=True)
-        if name != "adjust":
+        if name not in ("adjust", "withdraw"):
             p.add_argument("--price", type=float, required=True)
         if name in ("trim", "exit"):
             # رسید صرافی — نشست ۳: زمان فروش، نه زمان ثبت؛ نقد خالص به تتر همان حساب
@@ -818,6 +845,10 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--setup-name", dest="setup_name", required=True)
         if name == "adjust":
             p.add_argument("--reason", required=True)
+        if name == "withdraw":
+            p.add_argument("--reason", required=True)
+            p.add_argument("--cash", type=float, default=None,
+                           help="تتر همان حساب که با همین ردیف از رادار برداشته می‌شود")
     a = ap.parse_args(argv)
 
     try:
@@ -829,7 +860,7 @@ def main(argv: list[str] | None = None) -> int:
             syms = [p["symbol"] for p in h["positions"] if p["status"] == "open"]
             print(",".join(dict.fromkeys(syms)))
             return 0
-        if a.cmd in ("trim", "reenter", "add") and a.qty <= 0:
+        if a.cmd in ("trim", "reenter", "add", "withdraw") and a.qty <= 0:
             raise PositionsError("مقدار باید مثبت باشد")
         if a.cmd in ("reenter", "add") and not a.account:
             raise PositionsError("--account برای افزایش لازم است")
