@@ -984,6 +984,20 @@ def fetch_index_items(src: Source, session) -> list[dict]:
     return items
 
 
+def _entry_date(e) -> str:
+    """
+    تاریخ ISO جهانی از تاریخ تجزیه‌شده feedparser؛ خالی اگر نبود.
+
+    نشست ۴: رشته خام RSS مثل «Tue, 29 Sep 2026 12:34:56 GMT» است، ولی نام
+    فایل، شناسه، INDEX، --since و digest ده نویسه اول را تاریخ ISO می‌گیرند.
+    """
+    for key in ("published_parsed", "updated_parsed"):
+        t = e.get(key)
+        if t:
+            return time.strftime("%Y-%m-%dT%H:%M:%SZ", t)
+    return ""
+
+
 def fetch_rss_items(src: Source, session) -> list[dict]:
     if feedparser is None:
         raise SourceFailure("feedparser نصب نیست")
@@ -1010,7 +1024,7 @@ def fetch_rss_items(src: Source, session) -> list[dict]:
                 "id": hashlib.sha1(link.encode()).hexdigest()[:12],
                 "title": getattr(e, "title", ""),
                 "url": link,
-                "published": getattr(e, "published", getattr(e, "updated", "")),
+                "published": _entry_date(e),
                 "author": getattr(e, "author", src.name_en or src.name_fa),
             }
         )
