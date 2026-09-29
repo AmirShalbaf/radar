@@ -11,6 +11,7 @@
 | `radar_colab.ipynb` | اجرا از موبایل، بدون نصب |
 | `requirements.txt` | کتابخانه‌های اجرا |
 | `requirements-dev.txt` | کتابخانه‌های آزمون |
+| `requirements-intake.txt` | کتابخانه‌های جمع‌آوری متن تحلیل‌گران — فقط لپ‌تاپ |
 
 ## اجرا
 
@@ -33,6 +34,29 @@ python radar_scan.py --preset all --venues okx,gate
 # تحلیل عمیق
 python radar_fetch3.py XLM --balance 800 --profile trade --venues okx,gate --macro-event 2026-07-29
 ```
+
+## جمع‌آوری متن تحلیل‌گران — فقط محلی
+
+`radar_intake.py` و `radar_digest.py` **فقط روی لپ‌تاپ** اجرا می‌شوند.
+یوتیوب آی‌پی مرکز داده را می‌بندد، پس این مسیر روی گیت‌هاب اجرا نمی‌شود و
+گردش‌کارها `requirements-intake.txt` را نصب نمی‌کنند.
+
+```bash
+pip install -r requirements-intake.txt
+python radar_intake.py --dry-run --limit 2     # فقط فهرست، بی‌نوشتن
+python radar_intake.py --limit 3               # اجرای واقعی
+python radar_digest.py --all-roles
+```
+
+اگر یکی از کتابخانه‌ها نصب نباشد، اجرا از همان اول با نام بسته و کد خروج
+۲ می‌ایستد — نه اینکه «۰ سند» بدهد.
+
+**ffmpeg** فقط برای `--whisper` لازم است. برنامه جداست، نه بسته پایتون، و
+روی لپ‌تاپ نصب نیست. ویسپر روی پردازنده لپ‌تاپ کند است؛ پیش‌فرض خاموش.
+
+**`radar_intake_colab.ipynb` منسوخ است.** سلول دومش `git reset --hard` می‌زند
+و هر خروجی ارسال‌نشده را پاک می‌کند، و سلول جمع‌آوری‌اش پیش‌فرض فقط یک منبع
+دارد. حذفش تصمیم بعدی است — `STATE.md` بخش ۶.
 
 ## ویندوز — کدپیج کنسول
 

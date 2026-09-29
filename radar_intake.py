@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-radar_intake.py  —  نسخه ۱.۰
-موتور جمع‌آوری منابع تحلیلی برای چارچوب رادار ۵.۳
+radar_intake.py  —  نسخه ۱.۵
+موتور جمع‌آوری منابع تحلیلی برای چارچوب رادار
 
 فلسفه:
     این اسکریپت «تحلیل» نمی‌کند. فقط متن خام را می‌آورد، شناسنامه می‌زند،
@@ -13,8 +13,10 @@ radar_intake.py  —  نسخه ۱.۰
     فقط اعدادی را که در متن اصلی آمده‌اند نقل می‌کند.
 
 محیط اجرا:
-    گوگل کولب (دسترسی آزاد به اینترنت). خروجی در پوشه intake/ و سپس
-    ارسال به مخزن گیت‌هاب تا موتور تحلیل بتواند آن را بخواند.
+    فقط لپ‌تاپ — یوتیوب آی‌پی مرکز داده را می‌بندد، پس روی گیت‌هاب اجرا
+    نمی‌شود. وابستگی‌ها در requirements-intake.txt؛ اگر یکی نبود، اجرا از
+    همان اول با نام بسته می‌ایستد. خروجی در پوشه intake/ و سپس پوش به مخزن
+    تا موتور تحلیل بتواند آن را بخواند. دفترچه کولب قدیمی منسوخ است.
 
 اجرا:
     python radar_intake.py                       # همه منابع فعال
@@ -29,10 +31,13 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 import re
+import shutil
 import sys
+import tempfile
 import time
 import unicodedata
 from dataclasses import dataclass, field
@@ -44,7 +49,9 @@ from typing import Any, Iterable
 from radar_text import EN_DIGITS
 
 # ---------------------------------------------------------------------------
-# وابستگی‌های اختیاری — نبودشان اسکریپت را نمی‌کشد، فقط قابلیت را خاموش می‌کند
+# وابستگی‌ها — ایمپورت محافظت‌شده می‌ماند تا radar_one، radar_digest و آزمون‌ها
+# بی‌کتابخانه هم این پیمانه را بخوانند. ولی اجرا اختیاری نیست: main در آغاز
+# هر اجرا `missing_deps` را می‌سنجد و با نام بسته می‌ایستد — نشست ۴.
 # ---------------------------------------------------------------------------
 
 try:
@@ -79,9 +86,45 @@ except ImportError:
     NoTranscriptFound = TranscriptsDisabled = VideoUnavailable = Exception
 
 
-VERSION = "1.4"
+VERSION = "1.5"
 UTC = timezone.utc
 USER_AGENT = "radar-intake/1.0 (research; contact via github.com/AmirShalbaf/radar)"
+
+# نام ایمپورت ← نام بسته در requirements-intake.txt. آزمون برابری این دو را قفل
+# می‌کند تا فهرست سنجش و فهرست نصب از هم جدا نیفتند.
+REQUIRED = {
+    "yaml": "pyyaml",
+    "requests": "requests",
+    "feedparser": "feedparser",
+    "trafilatura": "trafilatura",
+    "youtube_transcript_api": "youtube-transcript-api",
+    "yt_dlp": "yt-dlp",
+}
+WHISPER_ONLY = {"faster_whisper": "faster-whisper"}
+
+
+def _has_module(name: str) -> bool:
+    return importlib.util.find_spec(name) is not None
+
+
+def _which(program: str) -> str | None:
+    return shutil.which(program)
+
+
+def missing_deps(whisper: bool) -> list[str]:
+    """
+    چیزهایی که اجرا بی‌آن‌ها نتیجه غلط می‌دهد، نه نتیجه کمتر.
+
+    درس ایستگاه ۱ نشست ۴: روی لپ‌تاپ هیچ‌کدام از شش کتابخانه نصب نبود و
+    اجرا با «۰ سند» و کد خروج صفر تمام می‌شد — شکستی که شبیه روز خلوت بود.
+    """
+    need = dict(REQUIRED)
+    if whisper:
+        need.update(WHISPER_ONLY)
+    out = [pkg for mod, pkg in need.items() if not _has_module(mod)]
+    if whisper and _which("ffmpeg") is None:
+        out.append("ffmpeg")
+    return out
 
 # ---------------------------------------------------------------------------
 # اجبار خروجی یونیکد
@@ -652,15 +695,20 @@ def fetch_transcript(video_id: str, langs: list[str]) -> tuple[list[dict], str]:
 def whisper_fallback(video_url: str, model_size: str = "small") -> tuple[list[dict], str]:
     """
     پشتیبان: اگر زیرنویس نبود، صدا را بگیر و رونویسی کن.
-    فقط در کولب با پردازنده گرافیکی معنا دارد. کند و پرهزینه است، پس پیش‌فرض خاموش.
+    روی پردازنده لپ‌تاپ کند است، پس پیش‌فرض خاموش.
+
+    ffmpeg پیش از هر چیز سنجیده می‌شود: بدون آن yt-dlp صدا را استخراج
+    نمی‌کند و پیامش «دانلود صدا ناموفق» بود — علت واقعی گفته نمی‌شد.
     """
+    if _which("ffmpeg") is None:
+        return [], "ffmpeg نصب نیست — فقط برای --whisper لازم است"
     try:
         import yt_dlp
         from faster_whisper import WhisperModel
     except ImportError:
         return [], "ویسپر نصب نیست"
 
-    tmp = Path("/tmp/radar_audio")
+    tmp = Path(tempfile.gettempdir()) / "radar_audio"
     tmp.mkdir(parents=True, exist_ok=True)
     out = tmp / "audio.%(ext)s"
     opts = {
@@ -1116,8 +1164,8 @@ def process_source(
     return made
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description="موتور جمع‌آوری منابع رادار ۵.۳")
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description="موتور جمع‌آوری منابع رادار")
     ap.add_argument("--config", default="analysts.yml")
     ap.add_argument("--out", default="intake")
     ap.add_argument("--state", default="intake/.state.json")
@@ -1131,7 +1179,18 @@ def main() -> int:
     ap.add_argument("--sleep", type=float, default=1.5)
     ap.add_argument("--force", action="store_true", help="دوباره‌سازی موارد دیده‌شده")
     ap.add_argument("--dry-run", action="store_true")
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
+
+    missing = missing_deps(args.whisper)
+    if missing:
+        log("! اجرا متوقف شد — وابستگی نصب نیست:")
+        for m in missing:
+            if m == "ffmpeg":
+                log("    • ffmpeg نصب نیست — برنامه جدا، نه بسته پایتون؛ فقط برای --whisper لازم است")
+            else:
+                log(f"    • {m}")
+        log("  نصب:  pip install -r requirements-intake.txt")
+        return 2
 
     outdir = Path(args.out)
     outdir.mkdir(parents=True, exist_ok=True)

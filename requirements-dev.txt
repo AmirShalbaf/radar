@@ -3,7 +3,10 @@
 # هم فقط requirements.txt را نصب می‌کنند.
 #
 #   pip install -r requirements-dev.txt
+#
+# آزمون‌های جمع‌آوری متن کتابخانه‌های همان مسیر را می‌خواهند — نشست ۴.
+# requirements-intake.txt خودش requirements.txt را هم می‌آورد.
 
--r requirements.txt
+-r requirements-intake.txt
 
 pytest>=8.0,<10.0
