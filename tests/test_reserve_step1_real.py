@@ -77,11 +77,15 @@ def test_watch_marks_and_no_market_reminder() -> None:
 
 def test_eth_step2_moved_below_utc_resistance() -> None:
     """
-    نشست ۳ب، بند ۷: کاربر سفارش ETH 2790 را در LBank به 2755 برد — زیر مقاومت
+    نشست ۳ب، بند ۷: قیمت پله دوم ETH در نقشه از 2790 به 2755 رفت — زیر مقاومت
     2760.76 با لنگر جهانی. مقاومت 131.81 که دلیل پله سوم SOL بود، با لنگر
     جهانی دیگر نیست. note نقشه هر دو را می‌گوید.
+
+    اصلاح ۲۹ سپتامبر: شب ۲۷ سپتامبر سفارشی در LBank نبود؛ 2755 قیمت نقشه بود،
+    نه جابه‌جایی سفارش. note نباید جابه‌جایی سفارش ادعا کند.
     """
     rp = _load("watch.json")["reserve_plan"]
     assert [s["price"] for s in rp["steps"] if s["symbol"] == "ETH"] == [None, 2755, 2940]
     assert "2760.76" in rp["note"] and "131.81" in rp["note"]
-    assert "2790" in rp["note"]                      # جابه‌جایی ثبت شده، نه پاک
+    assert "2790" in rp["note"]                      # قیمت پیشین نقشه ثبت شده، نه پاک
+    assert "جابه‌جا کرد" not in rp["note"] and "قیمت نقشه" in rp["note"]
