@@ -60,6 +60,7 @@ def env(tmp_path, monkeypatch):
     out = tmp_path / "intake"
     monkeypatch.setattr(I, "_has_module", lambda m: True)
     monkeypatch.setattr(I, "make_session", lambda: object())
+    monkeypatch.setattr(I, "video_duration", lambda vid, s: (600, "آزمون"))
     feeds: dict = {}
 
     def yt(src, session):

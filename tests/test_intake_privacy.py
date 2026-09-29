@@ -93,6 +93,7 @@ def env(tmp_path, monkeypatch):
     out = tmp_path / "intake"
     monkeypatch.setattr(I, "_has_module", lambda m: True)
     monkeypatch.setattr(I, "make_session", lambda: object())
+    monkeypatch.setattr(I, "video_duration", lambda vid, s: (600, "آزمون"))
     monkeypatch.setattr(I, "fetch_youtube_items", lambda s, ss: [_item()])
     # جمله محرمانه نامزد ادعا نیست؛ نامزد — با سقف — عمداً در سند عمومی می‌آید
     segs = [{"text": SECRET, "start": 5.0},

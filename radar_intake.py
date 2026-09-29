@@ -648,6 +648,43 @@ def fetch_youtube_items(src: Source, session) -> list[dict]:
     return items
 
 
+# ویدیوی ۳ دقیقه یا کمتر رد می‌شود — تصمیم ۱ کاربر، ۳۰ سپتامبر ۲۰۲۶.
+# ایستگاه ۱: ۱۱ از ۱۵ آیتم خوراک رایول پال ویدیوی کوتاه بود، حدود ۲۷ ثانیه.
+SHORT_MAX_SECONDS = 180
+
+_ISO_DURATION = re.compile(r"PT(?:([0-9]+)H)?(?:([0-9]+)M)?(?:([0-9]+)S)?")
+
+
+def video_duration(video_id: str, session) -> tuple[int | None, str]:
+    """
+    (ثانیه، منشأ). None یعنی «مدت نامعلوم» — ویدیو رد نمی‌شود، برچسب می‌گیرد.
+
+    فقط فراداده خود صفحه ویدیو، به ترتیب اعتبار:
+      ۱ — <meta itemprop="duration" content="PT98M34S">
+      ۲ — lengthSeconds داخل بلوک videoDetails همان شناسه
+    نه نخستین lengthSeconds صفحه — همان درس resolve_channel_id: وقتی الگو در
+    سند تکرار می‌شود، اولین تطبیق انتخاب دلبخواه است. سنجش ۳۰ سپتامبر ۲۰۲۶
+    روی چهار ویدیو، ۲۵ ثانیه تا ۹۸ دقیقه: هر دو منشأ یکی بودند.
+    """
+    try:
+        r = session.get(f"https://www.youtube.com/watch?v={video_id}", timeout=25)
+        r.raise_for_status()
+    except Exception as e:
+        return None, f"صفحه ویدیو — {type(e).__name__}"
+    html = r.text
+    m = re.search(r'<meta itemprop="duration" content="(PT[0-9HMS]+)"', html)
+    if m:
+        d = _ISO_DURATION.fullmatch(m.group(1))
+        if d and any(d.groups()):
+            h, mi, s = (int(x or 0) for x in d.groups())
+            return h * 3600 + mi * 60 + s, "itemprop"
+    m = re.search(r'"videoDetails":\{"videoId":"' + re.escape(video_id)
+                  + r'".{0,3000}?"lengthSeconds":"([0-9]+)"', html)
+    if m:
+        return int(m.group(1)), "videoDetails"
+    return None, "فراداده مدت در صفحه نبود"
+
+
 def _snippets_to_dicts(fetched) -> list[dict]:
     """
     خروجی هر دو نسل کتابخانه را به یک شکل درمی‌آورد.
@@ -1089,6 +1126,7 @@ def build_documents(
     gap: str | None = None,
     *,
     local_rel: str,
+    duration: str = "—",
 ) -> tuple[str, str]:
     """برمی‌گرداند (سند عمومی، سند کامل محلی). local_rel نسبت به پوشه intake است."""
     body_lines = []
@@ -1122,6 +1160,7 @@ def build_documents(
         f"روش استخراج: {method}",
         # نشست ۴: نشست ۵ از متن بریده ادعا برنمی‌دارد
         f"متن: {'ناقص — ' + gap if gap else 'کامل'}",
+        f"مدت: {duration}",
         "برچسب معرفتی: نقل‌شده (Reported)",
         f"تعداد کلمه: {words}",
         f"نامزد ادعا: {len(candidates)}",
@@ -1214,6 +1253,8 @@ class SourceRun:
     key: str
     name: str
     made: int = 0
+    short: int = 0                                         # ۳ دقیقه یا کمتر — رد، نه شکست
+    unknown_duration: int = 0                              # رد نشد، برچسب خورد
     incomplete: int = 0
     no_text: list[str] = field(default_factory=list)       # ویژگی ویدیو — فقط گزارش
     item_errors: list[str] = field(default_factory=list)   # شکست آیتم
@@ -1253,11 +1294,15 @@ def run_summary(run: RunReport) -> list[str]:
     out = [
         f"## آخرین اجرا — {run.started} — {kind}",
         "",
-        "| منبع | سند تازه | متن ناقص | بی‌زیرنویس | وضعیت |",
-        "|---|---|---|---|---|",
+        f"«کوتاه ردشده» یعنی ویدیوی {fa(SHORT_MAX_SECONDS // 60)} دقیقه یا کمتر — رد، نه شکست. "
+        "«مدت نامعلوم» رد نشد و در سند برچسب دارد.",
+        "",
+        "| منبع | سند تازه | کوتاه ردشده | مدت نامعلوم | متن ناقص | بی‌زیرنویس | وضعیت |",
+        "|---|---|---|---|---|---|---|",
     ]
     for s in run.sources:
-        out.append(f"| {_cell(s.name)} | {s.made} | {s.incomplete} | {len(s.no_text)} | {s.status()} |")
+        out.append(f"| {_cell(s.name)} | {s.made} | {s.short} | {s.unknown_duration} | "
+                   f"{s.incomplete} | {len(s.no_text)} | {s.status()} |")
     out += ["", "### منابع ناموفق", ""]
     bad = [s for s in run.sources if s.failed]
     if not bad:
@@ -1305,18 +1350,21 @@ def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
             txt = f.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError) as e:
             problems.append(f"`{rel}` — {type(e).__name__}")
-            rows.append(f"| — | — | — | — | ⚠ ناخوانا | ⚠ ناخوانا | `{rel}` |")
+            rows.append(f"| — | — | — | — | ⚠ ناخوانا | — | ⚠ ناخوانا | `{rel}` |")
             continue
         meta = _front_matter(txt)
         text = meta.get("متن", "")
         text_col = "ناقص" if text.startswith("ناقص") else ("کامل" if text else "—")
+        dur = meta.get("مدت", "") or "—"
+        dur_col = "مدت نامعلوم" if dur.startswith("نامعلوم") else dur
         rows.append(
-            "| {} | {} | {} | {} | {} | {} | `{}` |".format(
+            "| {} | {} | {} | {} | {} | {} | {} | `{}` |".format(
                 _cell((meta.get("تاریخ انتشار") or "—")[:10]),
                 _cell(meta.get("منبع", "—")),
                 _cell(meta.get("جایگاه در رادار", "—")),
                 _cell(meta.get("نامزد ادعا", "—")),
                 text_col,
+                _cell(dur_col),
                 _cell(meta.get("عنوان", "—") or "—")[:60],
                 rel,
             )
@@ -1335,8 +1383,8 @@ def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
     header += [
         "## اسناد",
         "",
-        "| تاریخ | منبع | جایگاه | نامزد | متن | عنوان | فایل |",
-        "|---|---|---|---|---|---|---|",
+        "| تاریخ | منبع | جایگاه | نامزد | متن | مدت | عنوان | فایل |",
+        "|---|---|---|---|---|---|---|---|",
     ]
     (outdir / "INDEX.md").write_text(
         "\n".join(header + sorted(rows, reverse=True)) + "\n", encoding="utf-8"
@@ -1403,6 +1451,26 @@ def process_source(
 
         title = item["title"][:70]
         log(f"    • {title}")
+
+        # ویدیوی کوتاه — پیش از اجرای خشک هم، تا پیش‌نمایش همان اجرای واقعی باشد
+        duration = "—"
+        if src.kind in ("youtube", "playlist"):
+            secs, why = video_duration(item["id"], session)
+            if secs is not None and secs <= SHORT_MAX_SECONDS:
+                run.short += 1
+                log(f"      — رد شد: کوتاه، {fmt_ts(secs)}")
+                if not args.dry_run:
+                    seen[item["id"]] = {"title": item["title"], "rejected": "کوتاه",
+                                        "seconds": secs,
+                                        "at": datetime.now(UTC).strftime("%Y-%m-%d")}
+                continue
+            if secs is None:
+                run.unknown_duration += 1
+                duration = f"نامعلوم — {why}"
+                log(f"      ⚠ مدت نامعلوم — {why}؛ رد نشد")
+            else:
+                duration = fmt_ts(secs)
+
         if args.dry_run:
             run.made += 1
             continue
@@ -1445,7 +1513,8 @@ def process_source(
         date = (item.get("published") or "")[:10] or datetime.now(UTC).strftime("%Y-%m-%d")
         fname = f"{date}_{slugify(item['title'])}_{item['id'][:6]}.md"
         local_rel = f"{LOCAL_DIR}/{src.key}/{fname}"
-        public, full = build_documents(src, item, segs, method, cands, gap, local_rel=local_rel)
+        public, full = build_documents(src, item, segs, method, cands, gap,
+                                       local_rel=local_rel, duration=duration)
         # نسخه محلی اول: اگر نوشتنش شکست، شناسنامه عمومیِ بی‌متن نمی‌ماند
         (outdir / LOCAL_DIR / src.key).mkdir(parents=True, exist_ok=True)
         (outdir / local_rel).write_text(full, encoding="utf-8")
