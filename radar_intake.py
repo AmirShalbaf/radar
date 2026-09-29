@@ -46,7 +46,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 # تنها منبع اصلی نگاشت رقم — کپی محلی نگیر
-from radar_text import EN_DIGITS
+from radar_text import EN_DIGITS, fa
 
 # ---------------------------------------------------------------------------
 # وابستگی‌ها — ایمپورت محافظت‌شده می‌ماند تا radar_one، radar_digest و آزمون‌ها
@@ -470,6 +470,32 @@ def load_sources(path: Path) -> list[Source]:
     return [Source.from_dict(k, v or {}) for k, v in srcs.items()]
 
 
+class SourceFailure(Exception):
+    """
+    منبع هیچ آیتمی نیاورد و دلیلش معلوم است. با نام منبع در خروجی و سرخط
+    INDEX می‌آید و کد خروج را ۳ می‌کند.
+
+    درس ایستگاه ۱ نشست ۴: هر شکست منبع «هیچ آیتمی برنگشت» و کد صفر بود.
+    سه هندل ۴۰۴ و انتقال کایکو این‌طور پنهان ماندند.
+    """
+
+
+class IntakeError(Exception):
+    """خرابی‌ای که اجرا را از آغاز می‌ایستاند — مثل .state.json خراب."""
+
+
+def _feed_why(feed) -> str:
+    """چرا خوراک خالی آمد — feedparser خطای شبکه را هم به‌جای پرتاب، ضمیمه می‌کند."""
+    status = getattr(feed, "status", None)
+    exc = getattr(feed, "bozo_exception", None)
+    parts = []
+    if status is not None:
+        parts.append(f"وضعیت {status}")
+    if exc is not None:
+        parts.append(f"{type(exc).__name__}: {str(exc)[:120]}")
+    return "، ".join(parts) or "بی‌آیتم"
+
+
 # ===========================================================================
 # ۴ — واکشی: یوتیوب
 # ===========================================================================
@@ -499,8 +525,8 @@ def resolve_channel_id(handle_or_url: str, session) -> str | None:
         r = session.get(url, timeout=25)
         r.raise_for_status()
     except Exception as e:
-        log(f"    ! دریافت صفحه کانال ناموفق: {e}")
-        return None
+        # نشست ۴: پیش از این فقط لاگ و None — منبع بی‌صدا خالی می‌ماند
+        raise SourceFailure(f"صفحه کانال {url} — {type(e).__name__}: {e}") from e
 
     html = r.text
 
@@ -585,8 +611,7 @@ def discover_feed(site_url: str, session) -> str | None:
 def fetch_youtube_items(src: Source, session) -> list[dict]:
     """آخرین ویدئوهای کانال از خوراک رسمی. رایگان، بدون کلید، حداکثر ۱۵ مورد."""
     if feedparser is None:
-        log("    ! feedparser نصب نیست")
-        return []
+        raise SourceFailure("feedparser نصب نیست")
 
     cid = src.channel_id
     if not cid:
@@ -598,10 +623,11 @@ def fetch_youtube_items(src: Source, session) -> list[dict]:
                 log(f"    نام واقعی کانال: «{title}»  ← با «{src.name_fa}» تطبیق بده")
             log("    (پس از تأیید، در analysts.yml ذخیره کن تا دفعه بعد سریع‌تر شود)")
     if not cid:
-        log("    ! شناسه کانال پیدا نشد")
-        return []
+        raise SourceFailure(f"شناسه کانال از «{src.handle or src.url}» پیدا نشد")
 
     feed = feedparser.parse(YT_FEED.format(cid=cid))
+    if not feed.entries:
+        raise SourceFailure(f"خوراک کانال {cid} خالی یا در دسترس نیست — {_feed_why(feed)}")
     items = []
     for e in feed.entries:
         vid = getattr(e, "yt_videoid", None) or ""
@@ -814,10 +840,10 @@ def fetch_playlist_items(src: Source, session) -> list[dict]:
     """
     pid = extract_playlist_id(src.playlist_id or src.url)
     if not pid:
-        log("    ! شناسه پلی‌لیست خالی است")
-        return []
+        raise SourceFailure("شناسه پلی‌لیست خالی است")
 
     # مسیر ۱ — شمارش کامل
+    first = "yt-dlp هیچ ویدیویی برنگرداند"
     try:
         import yt_dlp
 
@@ -841,14 +867,18 @@ def fetch_playlist_items(src: Source, session) -> list[dict]:
                 for i, e in enumerate(entries, 1)
             ]
     except ImportError:
+        first = "yt-dlp نصب نیست"
         log("    yt-dlp نصب نیست → پشتیبان خوراک (سقف ۱۵ مورد)")
     except Exception as e:
-        log(f"    شمارش کامل ناموفق ({e.__class__.__name__}) → پشتیبان خوراک")
+        first = f"شمارش کامل ناموفق ({e.__class__.__name__})"
+        log(f"    {first} → پشتیبان خوراک (سقف ۱۵ مورد)")
 
     # مسیر ۲ — خوراک
     if feedparser is None:
-        return []
+        raise SourceFailure(f"{first}؛ feedparser هم نصب نیست")
     feed = feedparser.parse(f"https://www.youtube.com/feeds/videos.xml?playlist_id={pid}")
+    if not feed.entries:
+        raise SourceFailure(f"{first}؛ خوراک پلی‌لیست هم خالی — {_feed_why(feed)}")
     out = []
     for e in feed.entries:
         vid = getattr(e, "yt_videoid", "")
@@ -879,8 +909,7 @@ def fetch_index_items(src: Source, session) -> list[dict]:
         r = session.get(src.url, timeout=30)
         r.raise_for_status()
     except Exception as e:
-        log(f"    ! دریافت صفحه فهرست ناموفق: {e.__class__.__name__}")
-        return []
+        raise SourceFailure(f"صفحه فهرست {src.url} — {type(e).__name__}: {e}") from e
 
     base_m = re.match(r"(https?://[^/]+)", src.url)
     base = base_m.group(1) if base_m else ""
@@ -913,14 +942,14 @@ def fetch_index_items(src: Source, session) -> list[dict]:
             break
 
     if not items:
-        log("    ! هیچ پیوند مقاله‌ای با الگوی فعلی پیدا نشد")
+        # نشانی نهایی گفته می‌شود: کایکو با ۳۰۱ به برنامه دیگری رفته بود
+        raise SourceFailure(f"هیچ پیوند مقاله‌ای با الگوی فعلی — نشانی نهایی {getattr(r, 'url', src.url)}")
     return items
 
 
 def fetch_rss_items(src: Source, session) -> list[dict]:
     if feedparser is None:
-        log("    ! feedparser نصب نیست")
-        return []
+        raise SourceFailure("feedparser نصب نیست")
     feed = feedparser.parse(src.url)
 
     # اگر خوراک خالی بود، شاید نشانی غلط است. از خود سایت بپرس.
@@ -932,6 +961,8 @@ def fetch_rss_items(src: Source, session) -> list[dict]:
                 log(f"    خوراک تازه کشف شد: {found}")
                 log("    (در analysts.yml جایگزین کن)")
                 feed = feedparser.parse(found)
+    if not feed.entries:
+        raise SourceFailure(f"خوراک {src.url} خالی یا در دسترس نیست — {_feed_why(feed)}")
     items = []
     for e in feed.entries:
         link = getattr(e, "link", "")
@@ -950,7 +981,13 @@ def fetch_rss_items(src: Source, session) -> list[dict]:
 
 
 def fetch_article_text(url: str, session) -> tuple[str, str]:
-    """متن تمیز مقاله. اول trafilatura، بعد پشتیبان ساده."""
+    """
+    متن تمیز مقاله. اول trafilatura، بعد پشتیبان ساده.
+
+    نشست ۴: افتادن به پشتیبان پیش از این بی‌صدا بود — شکست trafilatura
+    بلعیده می‌شد. حالا دلیل افت در برچسب «روش» شناسنامه می‌آید.
+    """
+    why = "trafilatura نصب نیست"
     if trafilatura is not None:
         try:
             downloaded = trafilatura.fetch_url(url)
@@ -963,8 +1000,11 @@ def fetch_article_text(url: str, session) -> tuple[str, str]:
                 )
                 if txt and len(txt) > 300:
                     return txt, "trafilatura"
-        except Exception:
-            pass
+                why = "trafilatura متن کوتاه یا تهی داد"
+            else:
+                why = "trafilatura صفحه را نگرفت"
+        except Exception as e:
+            why = f"trafilatura: {type(e).__name__}"
     try:
         r = session.get(url, timeout=30)
         r.raise_for_status()
@@ -973,9 +1013,40 @@ def fetch_article_text(url: str, session) -> tuple[str, str]:
         txt = re.sub(r"(?s)<[^>]+>", " ", html)
         txt = re.sub(r"&nbsp;?", " ", txt)
         txt = collapse_ws(txt)
-        return txt, "استخراج ساده HTML"
+        return txt, f"استخراج ساده HTML — {why}"
     except Exception as e:
-        return "", f"ناموفق ({e.__class__.__name__})"
+        return "", f"ناموفق ({e.__class__.__name__}) — {why}"
+
+
+# نشانه‌های متن بریده. فقط در انتهای متن جست‌وجو می‌شوند، چون بریدگی آنجاست.
+# نمونه‌های واقعی ایستگاه ۱ نشست ۴: خلاصه ۷۶ کلمه‌ای وانگ با «[…]»، و
+# پیش‌نمایش سابستک الیوت با «Continue reading this post for free».
+_TRUNCATION = [
+    (re.compile(r"(\[…\]|\[\.\.\.\]|…)\s*$"), "پایان با «…»"),
+    (re.compile(r"(?i)continue reading"), "«Continue reading» — پیش‌نمایش"),
+    (re.compile(r"(?i)keep reading with"), "«Keep reading» — پیش‌نمایش"),
+    (re.compile(r"(?i)this post is for (paid )?subscribers"), "فقط برای مشترک"),
+    (re.compile(r"(?i)subscribe to (continue|keep) reading"), "فقط برای مشترک"),
+    (re.compile(r"(?i)requires javascript"), "صفحه جاوااسکریپت می‌خواهد — متن نیامد"),
+]
+MIN_ARTICLE_WORDS = 150
+
+
+def text_gap(txt: str) -> str | None:
+    """
+    چرا متن مقاله ناقص است، یا None اگر نشانه‌ای نیست.
+
+    تصمیم ۵ کاربر، ۳۰ سپتامبر ۲۰۲۶: سند ناقص برچسب «متن ناقص» می‌گیرد تا
+    نشست ۵ از متن بریده ادعا برندارد. کف طول هم نشانه است، نه اثبات؛ دلیل
+    کنار برچسب می‌آید تا خواننده خودش ببیند.
+    """
+    tail = (txt or "").strip()[-400:]
+    reasons = [why for rx, why in _TRUNCATION if rx.search(tail)]
+    words = len((txt or "").split())
+    if words < MIN_ARTICLE_WORDS:
+        reasons.append(f"کوتاه: {words} کلمه، کف {fa(MIN_ARTICLE_WORDS)}")
+    # یکتا با حفظ ترتیب
+    return "؛ ".join(dict.fromkeys(reasons)) or None
 
 
 # ===========================================================================
@@ -996,6 +1067,7 @@ def build_document(
     segments: list[dict],
     method: str,
     candidates: list[ClaimCandidate],
+    gap: str | None = None,
 ) -> str:
     body_lines = []
     has_ts = any(s.get("start") is not None for s in segments)
@@ -1023,9 +1095,11 @@ def build_document(
         f"حق امتیازدهی: {'دارد' if src.scores else 'ندارد — فقط زمینه'}",
         f"عنوان: {item.get('title','').replace(':', ' -')}",
         f"نشانی: {item.get('url','')}",
-        f"تاریخ انتشار: {item.get('published','—')}",
+        f"تاریخ انتشار: {item.get('published') or '—'}",
         f"تاریخ جمع‌آوری: {collected}",
         f"روش استخراج: {method}",
+        # نشست ۴: نشست ۵ از متن بریده ادعا برنمی‌دارد
+        f"متن: {'ناقص — ' + gap if gap else 'کامل'}",
         "برچسب معرفتی: نقل‌شده (Reported)",
         f"تعداد کلمه: {words}",
         f"نامزد ادعا: {len(candidates)}",
@@ -1067,12 +1141,26 @@ def build_document(
 # ===========================================================================
 
 def load_state(path: Path) -> dict:
-    if path.exists():
-        try:
-            return json.loads(path.read_text(encoding="utf-8"))
-        except Exception:
-            pass
-    return {"seen": {}}
+    """
+    حافظه «دیده‌شده‌ها». نبودش یعنی حافظه خالی؛ خرابی‌اش خطای صریح.
+
+    نشست ۴: پیش از این فایل خراب بی‌صدا حافظه صفر می‌شد و آخر اجرا روی
+    همان فایل بازنویسی می‌شد — همان الگوی load_state سبد (ک۲۵) و load_json
+    پایشگر (رویداد ۳۹).
+    """
+    if not path.exists():
+        return {"seen": {}}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as e:
+        raise IntakeError(
+            f"{path} خوانا نیست — {type(e).__name__}: {e}. این حافظه «دیده‌شده‌ها» است؛ "
+            f"بازنویسی‌اش یعنی جمع‌آوری دوباره همه‌چیز. از گیت برگردان یا دستی درست کن."
+        ) from e
+    if not isinstance(data, dict) or not isinstance(data.get("seen", {}), dict):
+        raise IntakeError(f"{path} ساختار نادرست دارد — انتظار شیء با کلید seen")
+    data.setdefault("seen", {})
+    return data
 
 
 def save_state(path: Path, state: dict) -> None:
@@ -1080,31 +1168,117 @@ def save_state(path: Path, state: dict) -> None:
     path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def rebuild_index(outdir: Path) -> None:
-    """فهرست خوانا از همه فایل‌های جمع‌آوری‌شده. این همان چیزی است که اول می‌خوانم."""
-    rows = []
+@dataclass
+class SourceRun:
+    """کارنامه یک منبع در همین اجرا — برای خروجی و سرخط INDEX."""
+    key: str
+    name: str
+    made: int = 0
+    incomplete: int = 0
+    no_text: list[str] = field(default_factory=list)       # ویژگی ویدیو — فقط گزارش
+    item_errors: list[str] = field(default_factory=list)   # شکست آیتم
+    failure: str = ""                                      # شکست کل منبع
+
+    @property
+    def failed(self) -> bool:
+        return bool(self.failure or self.item_errors)
+
+    def status(self) -> str:
+        if self.failure:
+            return "ناموفق"
+        if self.item_errors:
+            return f"خطای آیتم: {len(self.item_errors)}"
+        return "سالم"
+
+
+@dataclass
+class RunReport:
+    started: str
+    dry_run: bool = False
+    sources: list[SourceRun] = field(default_factory=list)
+    disabled: list[Source] = field(default_factory=list)
+
+    @property
+    def failed(self) -> bool:
+        return any(s.failed for s in self.sources)
+
+
+def _cell(x) -> str:
+    """یک خانه جدول مارک‌داون. عنوان «پارت 7 | هر چی…» جدول INDEX را شکسته بود."""
+    return str(x).replace("|", "/").replace("\n", " ").strip()
+
+
+def run_summary(run: RunReport) -> list[str]:
+    kind = "اجرای خشک — هیچ فایلی نوشته نشد" if run.dry_run else "اجرای واقعی"
+    out = [
+        f"## آخرین اجرا — {run.started} — {kind}",
+        "",
+        "| منبع | سند تازه | متن ناقص | بی‌زیرنویس | وضعیت |",
+        "|---|---|---|---|---|",
+    ]
+    for s in run.sources:
+        out.append(f"| {_cell(s.name)} | {s.made} | {s.incomplete} | {len(s.no_text)} | {s.status()} |")
+    out += ["", "### منابع ناموفق", ""]
+    bad = [s for s in run.sources if s.failed]
+    if not bad:
+        out.append("هیچ منبعی شکست نخورد.")
+    for s in bad:
+        if s.failure:
+            out.append(f"- **{_cell(s.name)}** (`{s.key}`) — {_cell(s.failure)}")
+        for e in s.item_errors:
+            out.append(f"- **{_cell(s.name)}** (`{s.key}`) — آیتم: {_cell(e)}")
+    no_text = [(s, t) for s in run.sources for t in s.no_text]
+    if no_text:
+        out += ["", "### بی‌زیرنویس — ویژگی ویدیو، نه شکست", ""]
+        out += [f"- {_cell(s.name)}: {_cell(t)}" for s, t in no_text]
+    if run.disabled:
+        out += ["", "### منابع خاموش", ""]
+        out += [f"- **{_cell(s.name_fa)}** (`{s.key}`) — {_cell(s.disabled_reason or 'دلیل ثبت نشده')}"
+                for s in run.disabled]
+    return out + [""]
+
+
+def _front_matter(txt: str) -> dict:
+    meta = {}
+    if txt.startswith("---"):
+        block = txt.split("---", 2)[1]
+        for line in block.strip().splitlines():
+            if ":" in line:
+                k, v = line.split(":", 1)
+                meta[k.strip()] = v.strip()
+    return meta
+
+
+def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
+    """
+    فهرست خوانا از همه فایل‌های جمع‌آوری‌شده. این همان چیزی است که اول می‌خوانم.
+
+    برمی‌گرداند فهرست سندهای ناخوانا. نشست ۴: پیش از این سند ناخوانا بی‌صدا
+    از فهرست می‌افتاد؛ حالا ردیفش با «ناخوانا» می‌ماند و در سرخط می‌آید.
+    """
+    rows, problems = [], []
     for f in sorted(outdir.rglob("*.md")):
-        if f.name == "INDEX.md":
+        rel = f.relative_to(outdir).as_posix()
+        if rel in ("INDEX.md", "DIGEST.md"):
             continue
-        meta = {}
         try:
             txt = f.read_text(encoding="utf-8")
-            if txt.startswith("---"):
-                block = txt.split("---", 2)[1]
-                for line in block.strip().splitlines():
-                    if ":" in line:
-                        k, v = line.split(":", 1)
-                        meta[k.strip()] = v.strip()
-        except Exception:
+        except (OSError, UnicodeDecodeError) as e:
+            problems.append(f"`{rel}` — {type(e).__name__}")
+            rows.append(f"| — | — | — | — | ⚠ ناخوانا | ⚠ ناخوانا | `{rel}` |")
             continue
+        meta = _front_matter(txt)
+        text = meta.get("متن", "")
+        text_col = "ناقص" if text.startswith("ناقص") else ("کامل" if text else "—")
         rows.append(
-            "| {} | {} | {} | {} | {} | `{}` |".format(
-                meta.get("تاریخ انتشار", "—")[:10],
-                meta.get("منبع", "—"),
-                meta.get("جایگاه در رادار", "—"),
-                meta.get("نامزد ادعا", "۰"),
-                (meta.get("عنوان", "—") or "—")[:60],
-                f.relative_to(outdir).as_posix(),
+            "| {} | {} | {} | {} | {} | {} | `{}` |".format(
+                _cell((meta.get("تاریخ انتشار") or "—")[:10]),
+                _cell(meta.get("منبع", "—")),
+                _cell(meta.get("جایگاه در رادار", "—")),
+                _cell(meta.get("نامزد ادعا", "—")),
+                text_col,
+                _cell(meta.get("عنوان", "—") or "—")[:60],
+                rel,
             )
         )
     header = [
@@ -1113,12 +1287,21 @@ def rebuild_index(outdir: Path) -> None:
         f"آخرین به‌روزرسانی: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}",
         f"تعداد سند: {len(rows)}",
         "",
-        "| تاریخ | منبع | جایگاه | نامزد | عنوان | فایل |",
-        "|---|---|---|---|---|---|",
+    ]
+    if run is not None:
+        header += run_summary(run)
+    if problems:
+        header += ["### سند ناخوانا", ""] + [f"- {p}" for p in problems] + [""]
+    header += [
+        "## اسناد",
+        "",
+        "| تاریخ | منبع | جایگاه | نامزد | متن | عنوان | فایل |",
+        "|---|---|---|---|---|---|---|",
     ]
     (outdir / "INDEX.md").write_text(
         "\n".join(header + sorted(rows, reverse=True)) + "\n", encoding="utf-8"
     )
+    return problems
 
 
 # ===========================================================================
@@ -1137,54 +1320,88 @@ def make_session():
     return s
 
 
+def fetch_items(src: Source, session) -> list[dict]:
+    if src.kind == "youtube":
+        return fetch_youtube_items(src, session)
+    if src.kind == "playlist":
+        return fetch_playlist_items(src, session)
+    if src.kind == "index":
+        return fetch_index_items(src, session)
+    return fetch_rss_items(src, session)
+
+
 def process_source(
     src: Source, session, outdir: Path, state: dict, args
-) -> int:
+) -> SourceRun:
+    """
+    یک منبع. شکست منبع — SourceFailure — در کارنامه ثبت می‌شود و بقیه منابع
+    ادامه می‌دهند. خطای یک آیتم با نوعش ثبت می‌شود و آیتم بعدی امتحان می‌شود.
+    مسدودی یوتیوب بقیه ویدیوهای همین منبع را متوقف می‌کند.
+    """
+    run = SourceRun(src.key, src.name_fa)
     log(f"\n▶ {src.name_fa}  [{src.role}]")
-    if src.kind == "youtube":
-        items = fetch_youtube_items(src, session)
-    elif src.kind == "playlist":
-        items = fetch_playlist_items(src, session)
-    elif src.kind == "index":
-        items = fetch_index_items(src, session)
-    else:
-        items = fetch_rss_items(src, session)
+    try:
+        items = fetch_items(src, session)
+    except SourceFailure as e:
+        run.failure = str(e)
+        log(f"    ! شکست منبع: {e}")
+        return run
 
     if not items:
-        log("    هیچ آیتمی برنگشت")
-        return 0
+        log("    هیچ آیتمی نیامد")
+        return run
 
     seen: dict = state.setdefault("seen", {}).setdefault(src.key, {})
-    made = 0
 
     for item in items:
-        if made >= args.limit:
+        if run.made >= args.limit:
             break
         if item["id"] in seen and not args.force:
             continue
         if args.since and item.get("published", "")[:10] < args.since:
             continue
 
-        log(f"    • {item['title'][:70]}")
+        title = item["title"][:70]
+        log(f"    • {title}")
         if args.dry_run:
-            made += 1
+            run.made += 1
             continue
 
+        gap = None
         if src.kind in ("youtube", "playlist"):
-            segs, method = fetch_transcript(item["id"], src.lang)
+            try:
+                segs, method = fetch_transcript(item["id"], src.lang)
+            except TranscriptBlocked as e:
+                run.failure = f"یوتیوب مسدود کرد — {e}؛ ویدیوهای بعدی این منبع امتحان نشد"
+                log(f"      ! {run.failure}")
+                break
+            except Exception as e:
+                msg = f"{title} — {type(e).__name__}: {e}"
+                run.item_errors.append(msg)
+                log(f"      ! خطا: {msg}")
+                continue
             if not segs and args.whisper:
                 log("      زیرنویس نبود → ویسپر")
                 segs, method = whisper_fallback(item["url"], args.whisper_model)
+            if not segs:
+                run.no_text.append(f"{title} — {method}")
+                log(f"      — رد شد: {method}")
+                continue
         else:   # rss یا index — هر دو مقاله‌اند
             txt, method = fetch_article_text(item["url"], session)
+            if not txt.strip():
+                msg = f"{title} — {method}"
+                run.item_errors.append(msg)
+                log(f"      ! خطا: {msg}")
+                continue
             segs = [{"text": p, "start": None} for p in txt.split("\n") if p.strip()]
-
-        if not segs:
-            log(f"      ! رد شد: {method}")
-            continue
+            gap = text_gap(txt)
+            if gap:
+                run.incomplete += 1
+                log(f"      ⚠ متن ناقص — {gap}")
 
         cands = extract_claim_candidates(segs, min_strength=args.min_strength)
-        doc = build_document(src, item, segs, method, cands)
+        doc = build_document(src, item, segs, method, cands, gap)
 
         sub = outdir / src.key
         sub.mkdir(parents=True, exist_ok=True)
@@ -1193,11 +1410,11 @@ def process_source(
         (sub / fname).write_text(doc, encoding="utf-8")
 
         seen[item["id"]] = {"title": item["title"], "file": fname, "at": date}
-        made += 1
+        run.made += 1
         log(f"      ✓ {method} — {len(cands)} نامزد → {fname}")
         time.sleep(args.sleep)
 
-    return made
+    return run
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -1229,48 +1446,63 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     outdir = Path(args.out)
-    outdir.mkdir(parents=True, exist_ok=True)
     statepath = Path(args.state)
-    state = load_state(statepath)
+    try:
+        state = load_state(statepath)
+    except IntakeError as e:
+        log(f"! اجرا متوقف شد — {e}")
+        log("  هیچ چیز نوشته نشد.")
+        return 2
+    outdir.mkdir(parents=True, exist_ok=True)
 
-    sources = load_sources(Path(args.config))
+    chosen = load_sources(Path(args.config))
     if args.source:
-        sources = [s for s in sources if s.key in args.source]
+        chosen = [s for s in chosen if s.key in args.source]
     if args.role:
-        sources = [s for s in sources if s.role == args.role]
-    sources = [s for s in sources if s.enabled or args.source]
+        chosen = [s for s in chosen if s.role == args.role]
+    sources = [s for s in chosen if s.enabled or args.source]
 
     if not sources:
         log("هیچ منبع فعالی انتخاب نشد.")
         return 1
 
+    started = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
+    report = RunReport(started=started, dry_run=args.dry_run,
+                       disabled=[s for s in chosen if not s.enabled and not args.source])
+
     log("=" * 62)
     log(f"  رادار — موتور جمع‌آوری  v{VERSION}")
-    log(f"  {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')} | {len(sources)} منبع")
+    log(f"  {started} | {len(sources)} منبع")
     log("=" * 62)
 
-    total = 0
     for src in sources:
         try:
-            total += process_source(src, make_session(), outdir, state, args)
+            report.sources.append(process_source(src, make_session(), outdir, state, args))
         except KeyboardInterrupt:
             log("\nمتوقف شد.")
             break
         except Exception as e:
-            log(f"    ! خطای منبع {src.key}: {e.__class__.__name__}: {e}")
+            # خطای پیش‌بینی‌نشده هم بقیه را متوقف نمی‌کند، ولی با نوعش ثبت می‌شود
+            r = SourceRun(src.key, src.name_fa,
+                          failure=f"خطای پیش‌بینی‌نشده — {type(e).__name__}: {e}")
+            report.sources.append(r)
+            log(f"    ! {r.failure}")
 
+    problems: list[str] = []
     if not args.dry_run:
         save_state(statepath, state)
-        rebuild_index(outdir)
+        problems = rebuild_index(outdir, report)
 
-    log("\n" + "=" * 62)
-    if args.dry_run:
-        log(f"  اجرای خشک — {total} مورد *ساخته می‌شد*. هیچ فایلی نوشته نشد.")
-        log("  برای اجرای واقعی، --dry-run را بردار.")
-    else:
-        log(f"  {total} سند تازه ساخته شد → {outdir}/")
-        log(f"  فهرست: {outdir}/INDEX.md")
-    log("=" * 62)
+    log("")
+    log("\n".join(run_summary(report)))
+    if problems:
+        log("### سند ناخوانا\n")
+        log("\n".join(f"- {p}" for p in problems))
+    if not args.dry_run:
+        log(f"\nفهرست: {outdir}/INDEX.md")
+    if report.failed or problems:
+        log("\n! کد خروج ۳ — دست‌کم یک منبع یا سند شکست خورد؛ فهرست بالا.")
+        return 3
     return 0
 
 
