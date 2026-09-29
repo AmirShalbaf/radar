@@ -77,13 +77,26 @@ except ImportError:
 try:
     from youtube_transcript_api import YouTubeTranscriptApi
     from youtube_transcript_api._errors import (
+        AgeRestricted,
         NoTranscriptFound,
+        NotTranslatable,
+        PoTokenRequired,
+        RequestBlocked,          # IpBlocked زیرکلاس همین است
         TranscriptsDisabled,
+        TranslationLanguageNotAvailable,
         VideoUnavailable,
+        VideoUnplayable,
     )
 except ImportError:
     YouTubeTranscriptApi = None
-    NoTranscriptFound = TranscriptsDisabled = VideoUnavailable = Exception
+
+    class _Absent(Exception):
+        """کتابخانه نیست. هیچ خطای واقعی با این تطبیق نمی‌کند — پیش از این
+        جانشین `Exception` بود و هر except رویش همه‌چیز را می‌بلعید."""
+
+    AgeRestricted = NoTranscriptFound = NotTranslatable = PoTokenRequired = _Absent
+    RequestBlocked = TranscriptsDisabled = TranslationLanguageNotAvailable = _Absent
+    VideoUnavailable = VideoUnplayable = _Absent
 
 
 VERSION = "1.5"
@@ -644,53 +657,75 @@ def _get_transcript_list(video_id: str):
     return YouTubeTranscriptApi().list(video_id)                  # ≥ ۱.۰
 
 
+class TranscriptBlocked(Exception):
+    """یوتیوب درخواست را بست — آی‌پی یا توکن. با «زیرنویس ندارد» فرق دارد."""
+
+
+_BLOCKED = (RequestBlocked, PoTokenRequired)
+_UNAVAILABLE = (VideoUnavailable, VideoUnplayable, AgeRestricted)
+_NOT_TRANSLATABLE = (NotTranslatable, TranslationLanguageNotAvailable)
+
+
+def _fetch_one(t, label: str) -> tuple[list[dict], str]:
+    try:
+        return _snippets_to_dicts(t.fetch()), label
+    except _BLOCKED as e:
+        raise TranscriptBlocked(f"مسدود ({type(e).__name__})") from e
+
+
 def fetch_transcript(video_id: str, langs: list[str]) -> tuple[list[dict], str]:
     """
     برمی‌گرداند (قطعات، روش).
-    ترتیب اولویت: زیرنویس دستی → زیرنویس خودکار → ترجمه‌شده.
+    ترتیب اولویت: زیرنویس دستی → زیرنویس خودکار → ترجمه‌شده → هر زبان.
     زیرنویس دستی کیفیت به‌مراتب بالاتری دارد و در شناسنامه ثبت می‌شود.
+
+    قطعات خالی یعنی «زیرنویس ندارد» — ویژگی ویدیو، نه خطا. مسدودی
+    TranscriptBlocked است. هر خطای دیگر بالا می‌رود تا صدازننده با نوعش
+    ثبتش کند.
+
+    درس ایستگاه ۱ نشست ۴: شش `except Exception` پشت هم هر خطای واکشی —
+    مسدودی آی‌پی، خطای شبکه — را «زیرنویس یافت نشد» می‌کرد. از پشت وی‌پی‌ان
+    مسدودی دقیقاً شکل «این ویدیو زیرنویس ندارد» می‌گرفت. تنها چیزی که اینجا
+    بلعیده می‌شود «این گام پیدا نکرد» است: NoTranscriptFound و ترجمه‌ناپذیری.
     """
     if YouTubeTranscriptApi is None:
-        return [], "کتابخانه نصب نیست"
+        raise RuntimeError("youtube-transcript-api نصب نیست")
     try:
         listing = _get_transcript_list(video_id)
-    except (TranscriptsDisabled, VideoUnavailable) as e:
-        return [], f"در دسترس نیست ({type(e).__name__})"
-    except Exception as e:
-        return [], f"خطا ({e.__class__.__name__}: {e})"
+    except _BLOCKED as e:
+        raise TranscriptBlocked(f"مسدود ({type(e).__name__})") from e
+    except TranscriptsDisabled:
+        return [], "زیرنویس ندارد (TranscriptsDisabled)"
+    except _UNAVAILABLE as e:
+        return [], f"ویدیو در دسترس نیست ({type(e).__name__})"
 
     # ۱ — دستی
     try:
         t = listing.find_manually_created_transcript(langs)
-        return _snippets_to_dicts(t.fetch()), f"زیرنویس دستی [{t.language_code}]"
-    except Exception:
-        pass
+    except NoTranscriptFound:
+        t = None
+    if t is not None:
+        return _fetch_one(t, f"زیرنویس دستی [{t.language_code}]")
     # ۲ — خودکار
     try:
         t = listing.find_generated_transcript(langs)
-        return _snippets_to_dicts(t.fetch()), f"زیرنویس خودکار [{t.language_code}]"
-    except Exception:
-        pass
+    except NoTranscriptFound:
+        t = None
+    if t is not None:
+        return _fetch_one(t, f"زیرنویس خودکار [{t.language_code}]")
+
+    available = list(listing)
     # ۳ — هر زبانی که هست، ترجمه‌شده
-    try:
-        for t in listing:
-            try:
-                tr = t.translate(langs[0])
-                return _snippets_to_dicts(tr.fetch()), f"ترجمه ماشینی از [{t.language_code}]"
-            except Exception:
-                continue
-    except Exception:
-        pass
+    for t in available:
+        try:
+            tr = t.translate(langs[0])
+        except _NOT_TRANSLATABLE:
+            continue
+        return _fetch_one(tr, f"ترجمه ماشینی از [{t.language_code}]")
     # ۴ — هر زبانی، بدون ترجمه (بهتر از هیچ)
-    try:
-        for t in listing:
-            try:
-                return _snippets_to_dicts(t.fetch()), f"زیرنویس [{t.language_code}] — زبان درخواستی نبود"
-            except Exception:
-                continue
-    except Exception:
-        pass
-    return [], "زیرنویس یافت نشد"
+    for t in available:
+        return _fetch_one(t, f"زیرنویس [{t.language_code}] — زبان درخواستی نبود")
+    return [], "زیرنویس ندارد"
 
 
 def whisper_fallback(video_url: str, model_size: str = "small") -> tuple[list[dict], str]:

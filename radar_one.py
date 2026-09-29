@@ -32,8 +32,8 @@ if sys.platform == "win32":
 
 sys.path.insert(0, ".")
 try:
-    from radar_intake import (extract_claim_candidates, fetch_transcript,
-                              fmt_ts, is_boilerplate)
+    from radar_intake import (TranscriptBlocked, extract_claim_candidates,
+                              fetch_transcript, fmt_ts, is_boilerplate)
 except ImportError:
     print("radar_intake.py باید کنار این فایل باشد.", file=sys.stderr)
     raise
@@ -53,13 +53,13 @@ def video_id(raw: str) -> str:
     return raw if re.fullmatch(r"[A-Za-z0-9_-]{11}", raw) else ""
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="متن یک ویدئو یا شورت مشخص")
     ap.add_argument("url", help="نشانی کامل یا شناسه ۱۱ کاراکتری")
     ap.add_argument("--lang", default="fa,en", help="ترتیب زبان، جدا با کاما")
     ap.add_argument("--out", help="ذخیره در فایل به‌جای چاپ")
     ap.add_argument("--min-strength", type=int, default=2, dest="min_strength")
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
 
     vid = video_id(args.url)
     if not vid:
@@ -69,7 +69,14 @@ def main() -> int:
     langs = [x.strip() for x in args.lang.split(",") if x.strip()]
     print(f"شناسه: {vid} | زبان: {langs}", file=sys.stderr)
 
-    segs, method = fetch_transcript(vid, langs)
+    try:
+        segs, method = fetch_transcript(vid, langs)
+    except TranscriptBlocked as e:
+        # نشست ۴: پیش از این مسدودی «زیرنویس یافت نشد» چاپ می‌شد
+        print(f"متن گرفته نشد: یوتیوب درخواست را بست — {e}. "
+              f"این با «زیرنویس ندارد» فرق دارد؛ وی‌پی‌ان را عوض کن یا بعداً بزن.",
+              file=sys.stderr)
+        return 3
     if not segs:
         print(f"متن گرفته نشد: {method}", file=sys.stderr)
         return 2
