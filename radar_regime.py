@@ -723,7 +723,12 @@ def gather(order: list[str], now: datetime | None = None) -> dict:
             "sma50w": sma, "sma50w_why": sma_why}
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: list[str] | None = None, now: datetime | None = None) -> int:
+    """
+    now فقط برای آزمون است — ساعت تزریقی. خط فرمان همیشه ساعت واقعی را
+    می‌گیرد. بی‌آن، آزمونی که فایل را با تاریخ ثابت می‌سازد پس از هفت روز
+    خودبه‌خود کهنه و قرمز می‌شد — نشست ۶.
+    """
     ap = argparse.ArgumentParser(description="امتیاز رژیم بازار — رادار ۷")
     ap.add_argument("--json", default="regime.json")
     ap.add_argument("--history", default="regime_history.json")
@@ -733,7 +738,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--stdout", action="store_true",
                     help="فقط چاپ گزارش — هیچ فایلی نوشته نمی‌شود")
     a = ap.parse_args(argv)
-    now = datetime.now(UTC)
+    now = now or datetime.now(UTC)
     order = [v.strip().lower() for v in a.venues.split(",") if v.strip()]
 
     # هر خطای ساخت — پیش‌بینی‌شده یا نه — ثبت می‌شود و کد خروج غیرصفر

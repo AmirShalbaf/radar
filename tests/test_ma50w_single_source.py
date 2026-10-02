@@ -70,8 +70,10 @@ def test_regime_json_two_fields_equal(tmp_path, monkeypatch) -> None:
     """قفل برابری در خود سند: میانگین ورودی ma50w همان btc_sma50w است."""
     monkeypatch.setattr(G, "gather", lambda order, now=None: _src())
     j = tmp_path / "regime.json"
+    # ساعت تزریقی — نشست ۶. با ساعت واقعی، هفته بسته WEEK از 2026-10-12
+    # کهنه می‌شد و main با پوشش صفر برمی‌گشت: بمب ساعتی، یافته اسکن ساعت جابه‌جا.
     assert G.main(["--json", str(j), "--history", str(tmp_path / "h.json"),
-                   "--report", str(tmp_path / "r.md")]) == 0
+                   "--report", str(tmp_path / "r.md")], now=NOW) == 0
     doc = json.loads(j.read_text(encoding="utf-8"))
     ma = next(x for x in doc["inputs"] if x["key"] == "ma50w")
     assert ma["obs"]["btc_sma50w"] == doc["btc_sma50w"]["value"] == 80.0

@@ -105,16 +105,20 @@ def empty_net(monkeypatch):
 
 
 def test_main_failure_keeps_previous_valid_regime(empty_net, paths) -> None:
+    # ساعت تزریقی — نشست ۶. پیش از این، فایل با NOW ثابت ساخته می‌شد ولی
+    # main و load_regime ساعت واقعی را می‌خواندند؛ از ۱ اکتبر ۲۰۲۶ فایل
+    # بالای هفت روز شد و آزمون بی‌هیچ تغییر کدی قرمز شد.
     j, h, _ = paths
     _write(j, _valid(age_days=0.5))
     _write(h, {"version": 1, "days": {"2026-09-24": {"score": -0.2}}})
     hist_before = h.read_text(encoding="utf-8")
-    assert G.main(_argv(paths)) != 0
+    assert G.main(_argv(paths), now=NOW) != 0
     doc = _read(j)
     assert doc["score"] == -0.2
     assert "پوشش صفر" in doc["last_build_error"]["error"]
+    assert doc["last_build_error"]["at"] == NOW.isoformat()
     assert h.read_text(encoding="utf-8") == hist_before     # تاریخچه دست نخورد
-    info = B.load_regime(j)
+    info = B.load_regime(j, now=NOW)
     assert info.score == -0.2
     assert any("آخرین ساخت رژیم خطا داد" in w for w in info.warnings)
 
@@ -134,7 +138,7 @@ def test_main_unexpected_exception_is_recorded(monkeypatch, paths, capsys) -> No
     monkeypatch.setattr(G, "gather", boom)
     j = paths[0]
     _write(j, _valid(age_days=0.5))
-    assert G.main(_argv(paths)) != 0
+    assert G.main(_argv(paths), now=NOW) != 0
     assert "RuntimeError" in _read(j)["last_build_error"]["error"]
     assert "Traceback" in capsys.readouterr().err
 
