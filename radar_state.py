@@ -73,7 +73,7 @@ def opening_questions() -> str:
 
 SCRIPTS = [
     "radar_fetch3.py", "radar_scan.py", "radar_rotate.py", "radar_levels.py",
-    "radar_journal.py", "radar_intake.py", "radar_digest.py",
+    "radar_journal.py", "radar_intake.py", "radar_digest.py", "radar_frames.py",
     "radar_size.py", "radar_book.py", "radar_optcost.py",
     "radar_watch.py", "radar_validate.py", "radar_state.py",
 ]

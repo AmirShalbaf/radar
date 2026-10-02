@@ -88,8 +88,29 @@ python radar_digest.py --all-roles
 دارند و همان‌طور می‌مانند. خروجی `radar_one.py --out` را داخل
 `intake/_local/` یا بیرون از مخزن بگذار.
 
-**ffmpeg** فقط برای `--whisper` لازم است. برنامه جداست، نه بسته پایتون، و
-روی لپ‌تاپ نصب نیست. ویسپر روی پردازنده لپ‌تاپ کند است؛ پیش‌فرض خاموش.
+**ffmpeg** برای `--whisper` و `radar_frames.py` لازم است. برنامه جداست، نه
+بسته پایتون. روی لپ‌تاپ در `C:\ffmpeg\bin` نصب است، نسخه 9.0.2 — نشست ۶.
+ویسپر روی پردازنده لپ‌تاپ کند است؛ پیش‌فرض خاموش.
+
+## فریم نمودار ویدیو — فقط محلی
+
+`radar_frames.py` از ویدیوی تحلیل‌گر فریم نمودار می‌گیرد و هر فریم را کنار
+متن همان لحظه می‌گذارد. ورودی سند `radar_intake.py` است؛ نسخه محلی‌اش لازم
+است. پیش‌نیاز: yt-dlp، numpy، و برنامه‌های ffmpeg و ffprobe.
+
+```bash
+python radar_frames.py intake/<منبع>/<سند>.md --card-template
+python radar_frames.py --validate intake/charts/<منبع>/<video_id>.json
+```
+
+| خروجی | مسیر | عمومی؟ |
+|---|---|---|
+| فریم‌ها و فهرست | `frames/<video_id>/` | نه — `.gitignore` |
+| فریم کنار متن | `frames/<video_id>/FRAMES.md` | نه — `.gitignore` |
+| کارت نمودار | `intake/charts/<منبع>/<video_id>.json` | بله — خوانده ماست، نه تصویر |
+
+خواندن فریم کار مدل است، نه کد؛ پیش از آن `references/chart-reading.md`.
+سقف پیش‌فرض ۲۵ فریم، با `--max-frames`. سوئیچ `--out` پوشه است، نه فایل.
 
 **`radar_intake_colab.ipynb` منسوخ است.** سلول دومش `git reset --hard` می‌زند
 و هر خروجی ارسال‌نشده را پاک می‌کند، و سلول جمع‌آوری‌اش پیش‌فرض فقط یک منبع
