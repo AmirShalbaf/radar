@@ -121,7 +121,9 @@ CANDIDATE_HEAD = "| # | زمان | قدرت | دسته | اعداد | متن |"
 # دامنه ورودی اسکی است: زمان ویدیو، سال، شناسه. \d رقم فارسی را هم می‌گیرد.
 _TS_RE = re.compile(r"^(?:([0-9]+):)?([0-9]{1,2}):([0-9]{2})$")
 _LINE_RE = re.compile(r"^\[((?:[0-9]+:)?[0-9]{1,2}:[0-9]{2})\]\s?(.*)$")
-_YEAR_RE = re.compile(r"^(?:19|20)[0-9]{2}$")
+_YEAR_RE = re.compile(r"^[0-9]{4}$")
+YEAR_MIN = 2009           # نخستین سال بیت‌کوین؛ سقف: سال انتشار به‌علاوه YEAR_AHEAD
+YEAR_AHEAD = 5
 
 REQUIRED_MODULES = {"yt_dlp": "yt-dlp"}
 REQUIRED_PROGRAMS = ("ffmpeg", "ffprobe")
@@ -180,14 +182,25 @@ class Candidate:
     categories: list[str]
     numbers: list[str]
     text: str
+    ref_year: int | None = None   # سال انتشار سند؛ None یعنی سال جاری وقت جهانی
+
+    def is_year(self, n: str) -> bool:
+        """
+        سال فقط YEAR_MIN تا سال مرجع به‌علاوه YEAR_AHEAD — تأیید کاربر، ایستگاه ۲.
+        پیش از این هر 19xx و 20xx سال بود و قیمت ARB «۲۰۹۰» سال خوانده شد.
+        محدودیت، ک۵۵: قیمتی مثل ۲۰۲۰ برای اتر هنوز سال است؛ رفع کامل با بافت
+        جمله در نشست ۵. سال شمسی شناخته نمی‌شود.
+        """
+        ref = self.ref_year or datetime.now(UTC).year
+        return bool(_YEAR_RE.match(n)) and YEAR_MIN <= int(n) <= ref + YEAR_AHEAD
 
     @property
     def year_only(self) -> bool:
-        """تنها عددش سال است — ک۵۵. فقط سال میلادی؛ سال شمسی شناخته نمی‌شود."""
-        return bool(self.numbers) and all(_YEAR_RE.match(n) for n in self.numbers)
+        """تنها عددش سال است — ک۵۵."""
+        return bool(self.numbers) and all(self.is_year(n) for n in self.numbers)
 
 
-def parse_candidates(text: str) -> list[Candidate]:
+def parse_candidates(text: str, ref_year: int | None = None) -> list[Candidate]:
     """جدول نامزد ادعای radar_intake. ستون متن «|» ندارد — to_row آن را «/» می‌کند."""
     lines = text.splitlines()
     try:
@@ -209,7 +222,7 @@ def parse_candidates(text: str) -> list[Candidate]:
             strength=stars.count("★"),
             categories=[c for c in cats.split("، ") if c],
             numbers=[] if nums == "—" else [n for n in nums.split("، ") if n],
-            text=body))
+            text=body, ref_year=ref_year))
     return out
 
 
@@ -280,11 +293,13 @@ def load_doc(path: Path, url: str | None = None) -> VideoDoc:
     transcript = parse_transcript(full)
     if not transcript:
         raise DocError(f"متن کامل {local} زمان [MM:SS] ندارد")
+    published = meta.get("تاریخ انتشار", "")
+    ref_year = int(published[:4]) if re.match(r"[0-9]{4}-", published) else None
     return VideoDoc(
         public_rel=("intake/" + rel.as_posix()), meta=meta,
         doc_id=meta.get("شناسه", ""), source=rel.parts[0] if len(rel.parts) > 1 else "",
         video_id=vid, url=url, title=meta.get("عنوان", ""),
-        candidates=parse_candidates(head), transcript=transcript)
+        candidates=parse_candidates(head, ref_year), transcript=transcript)
 
 
 # ═══════════════ ۲ — تحلیل حالت ساکن روی نسخه کم‌کیفیت ═══════════════

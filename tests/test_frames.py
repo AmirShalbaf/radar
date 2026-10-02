@@ -111,6 +111,30 @@ def test_year_only_candidates() -> None:
     assert not c(["40%", "2023"]).year_only
 
 
+def test_year_range_is_2009_to_publish_year_plus_5() -> None:
+    """
+    تأیید کاربر، ایستگاه ۲: سال فقط ۲۰۰۹ تا سال انتشار به‌علاوه ۵. سال مرجع
+    از تاریخ انتشار سند است، نه ساعت — وگرنه آزمون خودش بمب ساعتی می‌شد.
+    """
+    def c(nums, ref=2026):
+        return F.Candidate(1, "00:01", 1, 3, ["زمان"], nums, "x", ref_year=ref)
+    assert c(["2018", "2022"]).year_only
+    assert c(["2009"]).year_only and c(["2031"]).year_only
+    assert not c(["2090"]).year_only            # قیمت ARB 0.2090 — کریپتوسیتی ۲ اکتبر
+    assert not c(["2008"]).year_only and not c(["2032"]).year_only
+    assert c(["2035"], ref=2030).year_only
+    # محدودیت ثبت‌شده در ک۵۵: قیمتی مثل ۲۰۲۰ برای اتر هنوز سال خوانده می‌شود؛
+    # رفع کامل با بافت جمله در نشست ۵
+    assert c(["2020"]).year_only
+
+
+def test_load_doc_reference_year_is_publish_year(tmp_path) -> None:
+    pub = make_doc(tmp_path, [("00:10", ["2031"], 3), ("00:20", ["2032"], 3)])
+    d = F.load_doc(pub)                          # انتشار 2026-10-01
+    assert [c.ref_year for c in d.candidates] == [2026, 2026]
+    assert d.candidates[0].year_only and not d.candidates[1].year_only
+
+
 def test_load_doc_reads_local_with_all_candidates(tmp_path) -> None:
     # ۱۲ نامزد: نسخه عمومی فقط ۱۰ تا دارد؛ فریم باید همه را ببیند
     cands = [(f"00:{10 + 5 * i:02d}", ["62000"], 3) for i in range(12)]
