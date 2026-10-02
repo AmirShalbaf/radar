@@ -1,0 +1,3221 @@
+{
+ "schema": 1,
+ "kind": "radar-chart-cards",
+ "video_id": "2C70_Ms3V9A",
+ "doc_id": "2026-09-28_benjamin_cowen_2C70_Ms3",
+ "doc": "intake/benjamin_cowen/2026-09-28_Bitcoin-Holds-Slightly-Above-the-May-Hig_2C70_M.md",
+ "source": "benjamin_cowen",
+ "url": "https://www.youtube.com/watch?v=2C70_Ms3V9A",
+ "title": "Bitcoin Holds Slightly Above the May High",
+ "read_by": "مدل — نشست ۶ رادار",
+ "read_at": "2026-10-03",
+ "guide": "references/chart-reading.md",
+ "frames_tool": "radar_frames 1.0",
+ "cards": [
+  {
+   "frame_id": "2C70_Ms3V9A_00m28.5s",
+   "t": 28.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:17:32+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:17:32 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 128000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 12110,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "83,444.26 · 6d 20h — قیمت زنده روی محور",
+     "confidence": "high"
+    },
+    {
+     "text": "34,058.36 · Mon 29 Sep '25 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "…515.47 +11,290.85 (+10.06%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "BTCUSD 83,442.71 −1,014.18 — پنل کناری",
+     "confidence": "high"
+    },
+    {
+     "text": "News · 2 hours ago — Bitcoin Falls Amid Concerns About Iran Conflic…",
+     "confidence": "high"
+    }
+   ],
+   "speech": "مقدمه و تبلیغ کنفرانس. بیت‌کوین حدود ۸۳ هزار؛ سقف مه به گفته او حدود ۸۲.۸ هزار.",
+   "method_notes": [
+    "نمای هفتگی لگاریتمی چندساله با یک میانگین؛ پیش از هر ترسیم، بافت کلان را نشان می‌دهد"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2021-07",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2026-07",
+     "confidence": "high",
+     "from": "image"
+    }
+   }
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_01m09.0s",
+   "t": 69.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:18:13+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:18:13 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 144000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 39050,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 82111.82,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی خط برگزیده"
+     },
+     "kind": "horizontal",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "medium",
+      "from": "image",
+      "how": "خط از بالای بدنه شمع‌های مه می‌گذرد"
+     },
+     "label": "سقف مه — خط خاکستری",
+     "start": {
+      "value": "2026-02-23",
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی Mon 23 Feb '26"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "83,803.79 · Mon 28 Dec '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "−978.58 (−1.16%) — آخرین شمع",
+     "confidence": "high"
+    },
+    {
+     "text": "83,478.31 −978.58 — پنل کناری",
+     "confidence": "high"
+    },
+    {
+     "text": "6d 20h — شمارش",
+     "confidence": "high"
+    }
+   ],
+   "speech": "سقف مه را برد و بالایش بسته شد؛ به گفته او بار اثبات حالا با خرسی‌هاست.",
+   "method_notes": [
+    "خط افقی سقف مه از بدنه شمع‌های فوریه تا مه کشیده و به آینده امتداد داده شد",
+    "تأیید را بسته هفتگی می‌داند، نه سایه — از حرف"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2024-01",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2027-03",
+     "confidence": "medium",
+     "from": "image"
+    }
+   },
+   "marks": [
+    "فلش زرد رو به پایین به شمع شکست سپتامبر ۲۰۲۶"
+   ]
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_01m33.5s",
+   "t": 93.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:18:37+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:18:37 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 144000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 39050,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 82111.82,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی همین خط در فریم 01m09.0s که برگزیده بود"
+     },
+     "kind": "horizontal",
+     "label": "سقف مه — خط خاکستری"
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2025-09-15",
+       "confidence": "high",
+       "from": "image",
+       "how": "برچسب آبی Mon 15 Sep '25"
+      },
+      "price": {
+       "value": 123916.46,
+       "confidence": "high",
+       "from": "image",
+       "how": "برچسب آبی محور، فریم 01m33.5s"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-07-06",
+       "confidence": "medium",
+       "from": "image",
+       "how": "روز Mon 06 چاپ‌شده، ماه از جای افقی؛ 6 ژوئیه 2026 دوشنبه است"
+      },
+      "price": {
+       "value": 60614.66,
+       "confidence": "high",
+       "from": "image",
+       "how": "برچسب آبی محور، فریم 01m33.5s"
+      }
+     },
+     "label": "خط زرد از سقف چرخه تا کف ۲۰۲۶"
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "123,916.46 و 60,614.66 — لنگرهای آبی خط زرد برگزیده",
+     "confidence": "high"
+    },
+    {
+     "text": "66,881.27 · Mon 17 Aug '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "…3 +14,882.22 (+23.68%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,483.99 · 6d 20h",
+     "confidence": "high"
+    },
+    {
+     "text": "4px — ابزار ترسیم",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او نُه ماه بار اثبات با گاوها بود، چون همه رالی‌ها به سقف پایین‌تر ختم شدند.",
+   "method_notes": [
+    "خط مستقیم از سقف چرخه تا کف ۲۰۲۶ افت را نشان می‌دهد — محاسبه‌شده از دو لنگر: ‎−51.08٪"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2024-01",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2027-03",
+     "confidence": "medium",
+     "from": "image"
+    }
+   },
+   "marks": [
+    "فلش زرد رو به پایین به شمع شکست سپتامبر ۲۰۲۶",
+    "فلش کوچک زرد به کف ژوئیه ۲۰۲۶"
+   ]
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_03m18.0s",
+   "t": 198.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:20:22+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:20:22 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 144000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 39050,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 82111.82,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی همین خط در فریم 01m09.0s که برگزیده بود"
+     },
+     "kind": "horizontal",
+     "label": "سقف مه — خط خاکستری"
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2025-09-15",
+       "confidence": "high",
+       "from": "image",
+       "how": "برچسب آبی Mon 15 Sep '25"
+      },
+      "price": {
+       "value": 123916.46,
+       "confidence": "high",
+       "from": "image",
+       "how": "برچسب آبی محور، فریم 01m33.5s"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-07-06",
+       "confidence": "medium",
+       "from": "image",
+       "how": "روز Mon 06 چاپ‌شده، ماه از جای افقی؛ 6 ژوئیه 2026 دوشنبه است"
+      },
+      "price": {
+       "value": 60614.66,
+       "confidence": "high",
+       "from": "image",
+       "how": "برچسب آبی محور، فریم 01m33.5s"
+      }
+     },
+     "label": "خط زرد از سقف چرخه تا کف — لنگرها از فریم 01m33.5s"
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "102,764.65 و 83,202.68 — لنگرهای فلش برگزیده، 11 May '26 تا 13 Jul '26 — سطح نیست",
+     "confidence": "high"
+    },
+    {
+     "text": "104,630.82 · Mon 14 Dec '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "83,514.69 · 6d 20h",
+     "confidence": "high"
+    },
+    {
+     "text": "−942.20 (−1.12%)",
+     "confidence": "high"
+    }
+   ],
+   "speech": "گوینده می‌گوید درباره گستره این رالی اشتباه کرده و در کف‌ها کمی بیت‌کوین گرفته است.",
+   "method_notes": [
+    "توالی سقف‌ها با فلش: سقف چرخه، سقف پایین‌تر زیر میانگین، سقف مه، شکست فعلی یعنی سقف بالاتر",
+    "فلش سقف مه روی سایه هفته 11 May '26 لنگر خورده — 83,202.68؛ خط افقی روی بدنه"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2024-01",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2027-03",
+     "confidence": "medium",
+     "from": "image"
+    }
+   },
+   "marks": [
+    "پنج فلش زرد: سقف چرخه اکتبر ۲۰۲۵، سقف پایین‌تر زیر میانگین، سقف مه ۲۰۲۶، شکست فعلی، کف ۲۰۲۶"
+   ]
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_05m30.0s",
+   "t": 330.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:22:34+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:22:34 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 144000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 39050,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "40,021.30 · Mon 28 Sep '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "83,477.54 · 6d 20h",
+     "confidence": "high"
+    },
+    {
+     "text": "−979.35 (−1.16%) — شمع جاری",
+     "confidence": "high"
+    }
+   ],
+   "speech": "سرمایه‌گذار بلندمدت است؛ افت گاه‌به‌گاه را می‌پذیرد و معمولاً بر پایه آن نمی‌فروشد.",
+   "method_notes": [
+    "همه ترسیم‌ها پاک شد؛ نمای خام هنگام بحث فلسفه سرمایه‌گذاری"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2024-01",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2027-03",
+     "confidence": "medium",
+     "from": "image"
+    }
+   }
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_06m19.5s",
+   "t": 379.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:23:23+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:23:23 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 144000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 39050,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "82,210.39 · Mon 05 Jan '26 — نشانگر موس روی نوار سقف مه",
+     "confidence": "high"
+    },
+    {
+     "text": "−595.05 (−0.65%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,486.73 −970.16 — پنل کناری",
+     "confidence": "high"
+    }
+   ],
+   "speech": "برای ربع چهارم برنامه لازم است: اگر بالای سقف مه بماند چه، اگر زیرش برگردد چه.",
+   "method_notes": [
+    "پیش از کشیدن خط، با نشانگر موس روی سطح سقف مه ایستاد — همان قیمتی که در فریم بعد خط شد"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2024-01",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2027-05",
+     "confidence": "medium",
+     "from": "image"
+    }
+   }
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_06m50.0s",
+   "t": 410.0,
+   "refs": [
+    {
+     "doc": "2026-09-28_benjamin_cowen_2C70_Ms3",
+     "row": 1,
+     "time": "06:45",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:23:54+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:23:54 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 144000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 39050,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 82210.39,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی خط برگزیده"
+     },
+     "kind": "horizontal",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "سقف مه — خط دوم، سفید 1px",
+     "start": {
+      "value": "2026-01-05",
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی Mon 05 Jan '26"
+     },
+     "end": {
+      "value": "2027-02-15",
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی Mon 15 Feb '27"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "95,512.26 · Mon 14 Oct '24 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "…4 +6,141.54 (+9.77%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,491.23 · 6d 20h",
+     "confidence": "high"
+    },
+    {
+     "text": "1px — ابزار ترسیم",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اگر رویدادی ناگهانی قیمت را زیر سقف مه برگرداند هم برنامه داشته باش؛ در ۲۰۱۸ و ۲۰۲۲ افت پایان سال دید.",
+   "method_notes": [
+    "سطح سقف مه را دوباره کشید: 82,210.39 در برابر خط پیشین 82,111.82 — اختلاف محاسبه‌شده 0.12٪",
+    "خط را تا فوریه ۲۰۲۷ امتداد داد: سطح مرجع پذیرش بالا یا زیر"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2024-01",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2027-02",
+     "confidence": "medium",
+     "from": "image"
+    }
+   }
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_07m22.0s",
+   "t": 442.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:24:26+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:24:26 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 100000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 306,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "93,663.84 — برچسب قرمز قاب‌دار، معنا نامعلوم",
+     "confidence": "high"
+    },
+    {
+     "text": "12,079.08 · Mon 24 Oct '22 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "…2 +1,056.24 (+5.40%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,512.54 · 6d 20h",
+     "confidence": "high"
+    },
+    {
+     "text": "2px — قلم دستی",
+     "confidence": "high"
+    }
+   ],
+   "speech": "افت ربع چهارم در سال‌های میان‌دوره‌ای ۲۰۱۴، ۲۰۱۸ و ۲۰۲۲ را دیده و ارزیابی ۲۰۲۲ را بر همین گذاشت.",
+   "method_notes": [
+    "همانندیابی فصلی: افت‌های ربع چهارم سال‌های میان‌دوره‌ای را با دایره دستی علامت زد"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2016-07",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2024-07",
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "marks": [
+    "دایره زرد دستی دور افت ربع چهارم ۲۰۱۸",
+    "دایره زرد دستی دور افت ربع چهارم ۲۰۲۲",
+    "دو فلش زرد به هر دو"
+   ]
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_07m37.0s",
+   "t": 457.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:24:41+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:24:41 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 104000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 3295,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "98,344.63 — برچسب سبز قاب‌دار، معنا نامعلوم",
+     "confidence": "high"
+    },
+    {
+     "text": "18,923.27 · Mon 31 Oct '22 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "…4 +286.12 (+1.39%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,518.69 · شمارش نیمه‌خوانا",
+     "confidence": "low"
+    }
+   ],
+   "speech": "افت ربع چهارم رخ می‌دهد ولی اگر تغییر جهت ندهی جا می‌مانی؛ خرید پله‌ای نیمه دوم سال میان‌دوره‌ای را منطقی می‌داند.",
+   "method_notes": [
+    "بزرگ‌نمایی روی همانند ۲۰۲۲: ناحیه خرید تابستان در برابر کف ربع چهارم"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2020-03",
+     "confidence": "medium",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2024-11",
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "marks": [
+    "دایره زرد دور کف ربع چهارم ۲۰۲۲",
+    "فلش زرد به محدوده تابستان ۲۰۲۲"
+   ]
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_08m29.5s",
+   "t": 509.5,
+   "refs": [
+    {
+     "doc": "2026-09-28_benjamin_cowen_2C70_Ms3",
+     "row": 5,
+     "time": "08:34",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:25:33+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:25:33 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 120000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 502,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "77,414.15 — برچسب قاب‌دار، معنا نامعلوم",
+     "confidence": "high"
+    },
+    {
+     "text": "7,316.93 · Mon 10 Jun '19 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "…340.51 (+17.55%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,494.16 · 6d 20h",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اگر افتی به ربع چهارم بیاید چطور از آن استفاده می‌کنی؛ مردم مطمئن‌اند پایین‌تر می‌رود و نمی‌خرند.",
+   "method_notes": [
+    "پیش از نقل خاطره ۲۰۱۸، همانند ۲۰۲۲ را با چهارگوش و دو فلش نشان می‌دهد"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2017-07",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2026-01",
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "marks": [
+    "چهارگوش دستی زرد دور محدوده تابستان ۲۰۲۲",
+    "فلش زرد به کف نوامبر ۲۰۲۲",
+    "فلش زرد به سقف بهار ۲۰۲۳"
+   ]
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_08m34.0s",
+   "t": 514.0,
+   "refs": [
+    {
+     "doc": "2026-09-28_benjamin_cowen_2C70_Ms3",
+     "row": 5,
+     "time": "08:34",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:25:38+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:25:38 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 120000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 502,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "6,604.68 · Mon 21 Jan '19 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "…43 (−0.07%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,488.38 · 6d 20h",
+     "confidence": "high"
+    },
+    {
+     "text": "77,414.15 — معنا نامعلوم",
+     "confidence": "high"
+    },
+    {
+     "text": "2px — قلم دستی",
+     "confidence": "high"
+    }
+   ],
+   "speech": "در ۲۰۱۸ در شش هزار دلار بیت‌کوین می‌خرید و با افت بیشتر باز خرید.",
+   "method_notes": [
+    "ادعای ردیف ۵ همان لحظه بیضی ۲۰۱۸ را می‌کشد: تصویر و حرف هم‌زمان‌اند"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2017-07",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2026-01",
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "marks": [
+    "بیضی زرد در حال ترسیم دور افت ربع چهارم ۲۰۱۸ — برگزیده؛ نوار آبی محور بازه قیمت آن است",
+    "چهارگوش و دو فلش ۲۰۲۲ از فریم پیش"
+   ]
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_08m52.0s",
+   "t": 532.0,
+   "refs": [
+    {
+     "doc": "2026-09-28_benjamin_cowen_2C70_Ms3",
+     "row": 5,
+     "time": "08:34",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-09-28_benjamin_cowen_2C70_Ms3",
+     "row": 6,
+     "time": "08:59",
+     "role": "before",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:25:56+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:25:56 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 120000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 502,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "11,780.05 · Mon 16 Sep '19 — نشانگر موس نزدیک سقف ۲۰۱۹",
+     "confidence": "high"
+    },
+    {
+     "text": "−282.10 (−2.74%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,498.96 · 6d 20h",
+     "confidence": "high"
+    },
+    {
+     "text": "77,414.15 — معنا نامعلوم",
+     "confidence": "high"
+    }
+   ],
+   "speech": "کسانی که نخریدند وقتی به ۱۴ هزار رسید حسرت خریدن در ۶ هزار را خوردند.",
+   "method_notes": [
+    "ترسیم‌ها پاک شد؛ با نشانگر موس سقف ۲۰۱۹ را نشان می‌دهد"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2017-07",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2026-01",
+     "confidence": "high",
+     "from": "image"
+    }
+   }
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_08m59.0s",
+   "t": 539.0,
+   "refs": [
+    {
+     "doc": "2026-09-28_benjamin_cowen_2C70_Ms3",
+     "row": 6,
+     "time": "08:59",
+     "role": "claim",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:26:03+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:26:03 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 120000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 502,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "5,606.46 · Mon 20 Aug '18 — نشانگر موس",
+     "confidence": "medium"
+    },
+    {
+     "text": "…22.16 (+3.43%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,500.81 · 6d 20h",
+     "confidence": "high"
+    }
+   ],
+   "speech": "با نزدیک‌شدن ربع چهارم برنامه‌ات را از پیش بنویس؛ سخت‌ترین بخش سرمایه‌گذاری نداشتن برنامه است.",
+   "method_notes": [
+    "دو دایره: ناحیه خرید ۲۰۱۸ و سقف ۲۰۱۹ — نمایش «از ۶ به ۱۴ هزار» روی نمودار"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2017-07",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2026-01",
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "marks": [
+    "دایره زرد دور محدوده میانه ۲۰۱۸ — ناحیه خرید",
+    "دایره زرد دور سقف میانه ۲۰۱۹"
+   ]
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_09m12.0s",
+   "t": 552.0,
+   "refs": [
+    {
+     "doc": "2026-09-28_benjamin_cowen_2C70_Ms3",
+     "row": 6,
+     "time": "08:59",
+     "role": "after",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:26:16+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:26:16 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 128000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 14450,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "21,332.72 · Mon 05 Oct '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "−954.68 (−1.13%) — آخرین شمع",
+     "confidence": "high"
+    },
+    {
+     "text": "83,502.21 · 6d 20h",
+     "confidence": "high"
+    }
+   ],
+   "speech": "داشتن برنامه و ماندن روی آن بیشترین فشار روانی را کم می‌کند.",
+   "method_notes": [
+    "نمای خام چندساله هنگام بحث برنامه"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2022-01",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2027-07",
+     "confidence": "high",
+     "from": "image"
+    }
+   }
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_10m47.0s",
+   "t": 647.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:27:51+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:27:51 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 128000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 21000,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 81500,
+      "confidence": "low",
+      "from": "image",
+      "how": "خط دستی شیب‌دار؛ درون‌یابی لگاریتمی میان برچسب 85,000 و 79,000 — چپ حدود 82,000، میانه حدود 80,900"
+     },
+     "kind": "freehand",
+     "drawn_at": {
+      "value": "نامعلوم",
+      "confidence": "low",
+      "from": "image"
+     },
+     "label": "خط دستی زرد در نوار سقف مه"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "28,147.16 · Mon 26 Apr '27 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "−969.20 (−1.15%) — آخرین شمع",
+     "confidence": "high"
+    },
+    {
+     "text": "83,487.69 · 6d 20h",
+     "confidence": "high"
+    }
+   ],
+   "speech": "برای ربع چهارم برنامه بساز؛ به گفته او پس از عبور از میانگین ۵۰ هفته، در ۲۰۱۹ ظرف حدود دو هفته حدود ۴۰٪ بالاتر رفتیم.",
+   "method_notes": [
+    "سقف مه را این بار با قلم دستی و شیب‌دار کشید — دقیق نیست",
+    "کف ژوئن را با دایره نشان داد"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2023-07",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2027-11",
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "marks": [
+    "دایره زرد دور کف ژوئن ۲۰۲۶"
+   ]
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_10m56.5s",
+   "t": 656.5,
+   "refs": [
+    {
+     "doc": "2026-09-28_benjamin_cowen_2C70_Ms3",
+     "row": 8,
+     "time": "10:59",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:28:00+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:28:00 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا",
+     "how": "برچسب بالای محور زیر برچسب قیمت زنده پنهان است"
+    },
+    "bottom": {
+     "value": 132,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "−969.20 (−1.15%) — آخرین شمع",
+     "confidence": "high"
+    },
+    {
+     "text": "83,487.69 · 6d 20h",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اگر افت آمد چه می‌کنی و اگر نیامد چه؛ سپس سراغ نمونه‌های عبور از میانگین ۵۰ هفته می‌رود.",
+   "method_notes": [
+    "پیش از همانندیابی، کل تاریخچه را تا ۲۰۱۵ کوچک کرد"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2015-07",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2024-01",
+     "confidence": "high",
+     "from": "image"
+    }
+   }
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_10m58.5s",
+   "t": 658.5,
+   "refs": [
+    {
+     "doc": "2026-09-28_benjamin_cowen_2C70_Ms3",
+     "row": 8,
+     "time": "10:59",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:28:02+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:28:02 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 58500,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 453,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "5,311.40 · Mon 15 Apr '19 — نشانگر موس روی نقطه عبور ۲۰۱۹ از میانگین",
+     "confidence": "high"
+    },
+    {
+     "text": "…34.91 (+2.61%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,489.38 −967.51 — پنل کناری",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او در ۲۰۱۹ پس از عبور از میانگین ۵۰ هفته، ظرف حدود دو هفته حدود ۴۰٪ بالاتر بودیم.",
+   "method_notes": [
+    "نقطه شروع اندازه‌گیری را روی عبور قیمت از میانگین در آوریل ۲۰۱۹ گذاشت"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2017-01",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2024-01",
+     "confidence": "high",
+     "from": "image"
+    }
+   }
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_11m03.5s",
+   "t": 663.5,
+   "refs": [
+    {
+     "doc": "2026-09-28_benjamin_cowen_2C70_Ms3",
+     "row": 8,
+     "time": "10:59",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:28:07+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:28:07 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 58500,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 453,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "2,045.83 (37.62%) 204,583 — ابزار اندازه‌گیری",
+     "confidence": "high"
+    },
+    {
+     "text": "53,160.27 · Mon 08 May '17 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "…23.78 (+14.27%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "2px — ابزار ترسیم",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او در ۲۰۲۳ پس از عبور، ظرف حدود دو هفته حدود ۲۴٪ بالاتر بودیم.",
+   "method_notes": [
+    "اندازه‌گیری از نقطه عبور 5,438.07 تا 7,483.90 در هفته 13 May '19: ‎+37.62٪ — حرفش «حدود ۴۰٪ ظرف حدود دو هفته»؛ برای نشست ۷"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2017-01",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2024-01",
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "measurements": [
+    {
+     "from": {
+      "value": 5438.07,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "to": {
+      "value": 7483.9,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "change": {
+      "value": 2045.83,
+      "confidence": "high",
+      "from": "image",
+      "how": "رقم چهارم تار بود؛ با 204,583 × 0.01 و تفاضل دو برچسب تأیید شد"
+     },
+     "pct": {
+      "value": 37.62,
+      "confidence": "high",
+      "from": "image"
+     },
+     "end": {
+      "value": "2019-05-13",
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی Mon 13 May '19"
+     },
+     "start": {
+      "value": null,
+      "confidence": null,
+      "from": "image",
+      "note": "ناخوانا",
+      "how": "تاریخ آغاز روی این تصویر چاپ نشده"
+     }
+    }
+   ]
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_11m43.0s",
+   "t": 703.0,
+   "refs": [
+    {
+     "doc": "2026-09-28_benjamin_cowen_2C70_Ms3",
+     "row": 10,
+     "time": "11:32",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:28:47+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:28:47 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 210000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 4375,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 81500,
+      "confidence": "low",
+      "from": "image",
+      "how": "خط دستی شیب‌دار؛ درون‌یابی لگاریتمی میان برچسب 85,000 و 79,000 — چپ حدود 82,000، میانه حدود 80,900"
+     },
+     "kind": "freehand",
+     "drawn_at": {
+      "value": "نامعلوم",
+      "confidence": "low",
+      "from": "image"
+     },
+     "label": "خط دستی زرد در نوار سقف مه"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "5,678.38 (24.53%) 567,838 — اندازه ۲۰۲۳",
+     "confidence": "high"
+    },
+    {
+     "text": "?,453.56 (10.82%) 845,356 — اندازه حرکت فعلی",
+     "confidence": "high"
+    },
+    {
+     "text": "…) 204,583 — بریده در لبه چپ؛ اندازه ۲۰۱۹",
+     "confidence": "high"
+    },
+    {
+     "text": "74,083.28 · Mon 14 Jul '25 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "…302.70 −1,774.28 (−1.49%) — شمع زیر نشانگر",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او این بار پس از عبور سود کمتر بوده؛ شاید چون سال میان‌دوره‌ای است، یا بازده بلندمدت و خاورمیانه.",
+   "method_notes": [
+    "سه اندازه‌گیری همانند پس از عبور از میانگین — ۲۰۱۹، ۲۰۲۳ و اکنون — روی یک نما: ‎+37.62٪، ‎+24.53٪، ‎+10.82٪",
+    "پایه هر اندازه چاپ نشده؛ محاسبه‌شده از تفاضل و درصد: حدود 23,149 و 78,129"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2019-07",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2027-07",
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "marks": [
+    "دایره زرد کف ژوئن ۲۰۲۶"
+   ],
+   "measurements": [
+    {
+     "change": {
+      "value": 5678.38,
+      "confidence": "high",
+      "from": "image"
+     },
+     "pct": {
+      "value": 24.53,
+      "confidence": "high",
+      "from": "image"
+     },
+     "label": "۲۰۲۳"
+    },
+    {
+     "change": {
+      "value": 8453.56,
+      "confidence": "high",
+      "from": "image",
+      "how": "رقم اول زیر خط صورتی؛ با 845,356 × 0.01 تأیید شد"
+     },
+     "pct": {
+      "value": 10.82,
+      "confidence": "high",
+      "from": "image"
+     },
+     "label": "حرکت فعلی"
+    }
+   ]
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_12m23.5s",
+   "t": 743.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:29:27+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:29:27 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 128000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 22700,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "101,776.08 · Mon 23 Nov '26 — نشانگر موس روی چرخش میانگین",
+     "confidence": "high"
+    },
+    {
+     "text": "−959.87 (−1.14%) — آخرین شمع",
+     "confidence": "high"
+    },
+    {
+     "text": "83,497.07 · 6d 20h",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اگر زیر سقف مه برگردد نزولی است؛ برخی آن را بازآزمایی صعودی می‌خوانند؛ در ۲۰۱۹ و ۲۰۲۳ میانگین تا ماه‌ها بازآزمایی نشد.",
+   "method_notes": [
+    "سناریوی بازآزمایی میانگین را با نشانگر موس روی منحنی نشان داد"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2023-09",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2027-07",
+     "confidence": "high",
+     "from": "image"
+    }
+   }
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_13m48.0s",
+   "t": 828.0,
+   "refs": [
+    {
+     "doc": "2026-09-28_benjamin_cowen_2C70_Ms3",
+     "row": 16,
+     "time": "13:48",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:30:52+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:30:52 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 128000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 14450,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "61,774.98 · Mon 23 Mar '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "…6 −1,890.70 (−2.79%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,477.26 · 6d 20h",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بار اثبات با خرسی‌هاست؛ یادآوری می‌کند در اوت گفته بود ۶۵٪ احتمال دارد کف نخورده باشد.",
+   "method_notes": [
+    "پایان‌بندی با یادآوری پیش‌بینی پیشین خود و پذیرش اشتباه؛ تنها ترسیم تازه فلش عبور ۲۰۲۳"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2021-07",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2027-07",
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "marks": [
+    "فلش زرد به عبور قیمت از میانگین در مارس ۲۰۲۳"
+   ]
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_14m00.5s",
+   "t": 840.5,
+   "refs": [
+    {
+     "doc": "2026-09-28_benjamin_cowen_2C70_Ms3",
+     "row": 16,
+     "time": "13:48",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:31:04+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:31:04 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 112500,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 37500,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "77,851.00 · Mon 31 Aug '26 — نشانگر موس روی شمع شکست",
+     "confidence": "high"
+    },
+    {
+     "text": "…0 +2,677.49 (+3.45%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,471.86 · 6d 20h",
+     "confidence": "high"
+    }
+   ],
+   "speech": "وقتی سقف قبلی شکسته می‌شود باید فروتن بود و دیدگاه‌های دیگر را دید.",
+   "method_notes": [
+    "بزرگ‌نمایی روی شمع‌های شکست اوت و سپتامبر ۲۰۲۶"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2024-05",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2027-03",
+     "confidence": "high",
+     "from": "image"
+    }
+   }
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_15m15.5s",
+   "t": 915.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:32:19+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:32:19 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 6d 20h زیر قیمت زنده؛ تا بسته هفتگی دوشنبه 00:00 UTC محاسبه‌شده 6d 19:41"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 128000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 14450,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "81,772.41 · Mon 28 Sep '26 — نشانگر موس روی شمع جاری",
+     "confidence": "high"
+    },
+    {
+     "text": "−995.15 (−1.18%) — شمع جاری",
+     "confidence": "high"
+    },
+    {
+     "text": "83,461.74 −995.15 — پنل کناری",
+     "confidence": "high"
+    },
+    {
+     "text": "News · 31 minutes ago — Bitcoin, NASDAQ futures fall as Trump hints at…",
+     "confidence": "high"
+    }
+   ],
+   "speech": "برنامه را از پیش بنویس تا اضطراب کم شود؛ بسته ماهانه هم نزدیک است.",
+   "method_notes": [
+    "بسته ماهانه را رویداد بعدی می‌داند — از حرف"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2022-01",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2027-01",
+     "confidence": "high",
+     "from": "image"
+    }
+   }
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_16m07.5s",
+   "t": 967.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:33:11+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:33:11 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 2d 20h؛ تا بسته ماهانه 1 اکتبر 00:00 UTC محاسبه‌شده 2d 19:27؛ برچسب زمان روز اول ماه"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 120000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 506,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "−5,605.94 (−26.37%) −560,594 — ابزار اندازه‌گیری روی افت FTX",
+     "confidence": "high"
+    },
+    {
+     "text": "87,352.55 · Sun 01 Nov '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "…5 +4,878.70 (+6.21%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,454.32 −1,002.57 — پنل کناری",
+     "confidence": "high"
+    },
+    {
+     "text": "2d 20h — شمارش ماهانه",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اگر افتی مثل FTX، حدود ۲۶٪، بیاید، از سقف حتی کف تازه نمی‌سازد و زیر ۶۰ هزار نمی‌رود.",
+   "method_notes": [
+    "به تایم‌فریم ماهانه رفت و افت FTX را اندازه گرفت، سپس همان را فرضی بر سقف فعلی اعمال کرد — آزمون فشار",
+    "حساب: 21,260.75 − 15,654.81 = 5,605.94 و 26.37٪ — با نوشته می‌خواند"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2017-07",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2028-01",
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "measurements": [
+    {
+     "from": {
+      "value": 21260.75,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "to": {
+      "value": 15654.81,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "change": {
+      "value": -5605.94,
+      "confidence": "high",
+      "from": "image"
+     },
+     "pct": {
+      "value": -26.37,
+      "confidence": "high",
+      "from": "image"
+     },
+     "start": {
+      "value": "2022-11-01",
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب بریده Tue 0…"
+     },
+     "end": {
+      "value": "2023-02-01",
+      "confidence": "high",
+      "from": "image",
+      "how": "Wed 01 Feb '23"
+     }
+    }
+   ]
+  },
+  {
+   "frame_id": "2C70_Ms3V9A_17m04.0s",
+   "t": 1024.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-09-28T04:34:08+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از تاریخ انتشار سند و شمارش هفتگی دوشنبه",
+    "seen": "05:34:08 UTC+1"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSD — Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "TradingView INDEX",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Index · Crypto"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 2d 20h؛ تا بسته ماهانه 1 اکتبر 00:00 UTC محاسبه‌شده 2d 19:27؛ برچسب زمان روز اول ماه"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام برچسب‌های محور با پیکسل برابر پایین محور کوچک‌تر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 117000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 133.5,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین متحرک صورتی",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "راهنمای نمودار زیر دوربین چهره است",
+       "label": "نوع و دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "2,279.84 · Mon 01 Feb '27 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "…7 +4,874.42 (+6.20%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "83,454.17 · 2d 20h",
+     "confidence": "high"
+    }
+   ],
+   "speech": "جمع‌بندی و خداحافظی.",
+   "method_notes": [
+    "پایان روی نمای ماهانه کل تاریخ، بی‌ترسیم"
+   ],
+   "time_axis": {
+    "first_label": {
+     "value": "2015-01",
+     "confidence": "high",
+     "from": "image"
+    },
+    "last_label": {
+     "value": "2028-01",
+     "confidence": "high",
+     "from": "image"
+    }
+   }
+  }
+ ]
+}

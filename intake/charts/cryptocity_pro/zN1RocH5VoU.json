@@ -1,0 +1,3882 @@
+{
+ "schema": 1,
+ "kind": "radar-chart-cards",
+ "video_id": "zN1RocH5VoU",
+ "doc_id": "2026-10-02_cryptocity_pro_zN1RocH5",
+ "doc": "intake/cryptocity_pro/2026-10-02_تحلیل-بیت-کوین-کریپتوسیتی-پرو-خبر-مهم_zN1Roc.md",
+ "source": "cryptocity_pro",
+ "url": "https://www.youtube.com/watch?v=zN1RocH5VoU",
+ "title": "تحلیل بیت کوین کریپتوسیتی پرو | خبر مهم !!!",
+ "read_by": "مدل — نشست ۶ رادار",
+ "read_at": "2026-10-03",
+ "guide": "references/chart-reading.md",
+ "frames_tool": "radar_frames 1.0",
+ "cards": [
+  {
+   "frame_id": "zN1RocH5VoU_00m26.0s",
+   "t": 26.0,
+   "refs": [],
+   "is_chart": false,
+   "texts": [
+    {
+     "text": "کتاب روی میز: Technical Analysis — Mark Andrew Lim",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "تایم خبر ترید نمی‌کند؛ ترجیح می‌دهد روند مشخص شود و با استراتژی خودش وارد شود.",
+   "method_notes": [
+    "مقدمه رو به دوربین — نمودار نیست"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_00m46.5s",
+   "t": 46.5,
+   "refs": [],
+   "is_chart": false,
+   "texts": [
+    {
+     "text": "CRYPTO CITY PRO — کارت نشان",
+     "confidence": "high"
+    }
+   ],
+   "speech": "معرفی کانال: تحلیل روزانه بیت‌کوین، اتریوم و آلت‌کوین از ورود تا خروج.",
+   "method_notes": [
+    "کارت نشان کانال — نمودار نیست"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_01m02.0s",
+   "t": 62.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:12:07+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:42:07 UTC+3:30"
+   },
+   "coin": {
+    "value": "SUI",
+    "confidence": "high",
+    "from": "image",
+    "seen": "SUIUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن؛ شمارش 03:47:52 تا بسته 12:00 UTC — محاسبه‌شده 3:47:53"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 0.02 در 1.08 حدود 30 پیکسل و در 0.96 حدود 34 پیکسل؛ نسبت 1.13 با لگاریتم 1.126 می‌خواند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 1.3,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 0.922,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 1.2677,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    },
+    {
+     "price": {
+      "value": 1.1978,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 1.1103,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O1.1843 H1.1892 L1.1819 C1.1889 +0.0045 (+0.38%) Vol572.45K",
+     "confidence": "high"
+    },
+    {
+     "text": "1.1889 · 03:47:52 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "3SMA 1.1776",
+     "confidence": "high"
+    },
+    {
+     "text": "RSI 57.82",
+     "confidence": "high"
+    },
+    {
+     "text": "BTCUSDT 86,342.80 +1.72% — واچ‌لیست",
+     "confidence": "high"
+    }
+   ],
+   "speech": "در ساعت خواب بازار بالا زده؛ کندل ستاپ ۵ و نیم صبح به یک ریسک به ریوارد رسیده؛ به همان مقاومت از پیش رصدشده خورده.",
+   "method_notes": [
+    "سطح‌های افقی روی سقف‌ها و کف‌های ۴ ساعته با برچسب قیمت روی محور",
+    "چیدمان ثابت همه نمودارها: حجم، میانگین ساده ۳ دوره‌ای و RSI"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_01m45.5s",
+   "t": 105.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:12:51+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:42:51 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTC.D",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTC.D — دامیننس بیت‌کوین"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن؛ برچسب زمان نشانگر Fri 02 Oct '26 11:30"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 59.85,
+     "confidence": "high",
+     "from": "image",
+     "unit": "%"
+    },
+    "bottom": {
+     "value": 58.96,
+     "confidence": "high",
+     "from": "image",
+     "unit": "%"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 59.28,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی",
+     "unit": "%"
+    },
+    {
+     "price": {
+      "value": 59.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی",
+     "unit": "%"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O59.61% H59.65% L59.60% C59.65% +0.04 (+0.07%) Vol32.92B",
+     "confidence": "high"
+    },
+    {
+     "text": "59.65% — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "59.61% — دو برچسب، یکی نشانگر موس، دیگری معنا نامعلوم",
+     "confidence": "medium"
+    },
+    {
+     "text": "RSI 70.00",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اگر دامیننس ریزشی شود روی آلت‌ها لانگ باز می‌کند؛ از این ناحیه ریجکت خوردیم؛ کندل هفتگی ۲ روز و ۱۶ ساعت دیگر می‌بندد.",
+   "method_notes": [
+    "دامیننس بیت‌کوین را سنجه فصل آلت‌کوین می‌گیرد",
+    "«۲ روز و ۱۶ ساعت» از حرف با بسته دوشنبه 00:00 UTC می‌خواند — محاسبه‌شده 2d 15:48"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_02m27.0s",
+   "t": 147.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:13:32+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:43:32 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D روشن؛ شمارش 15:46:27 تا بسته 00:00 UTC — محاسبه‌شده"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 100000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 56800,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O86,620.01 H86,717.60 L85,114.00 C86,208.56 −411.44 (−0.47%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "84,409.42 — 3SMA جاری",
+     "confidence": "high"
+    },
+    {
+     "text": "86,491.01 · Tue 22 Sep '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "15:46:27 — شمارش روزانه",
+     "confidence": "high"
+    },
+    {
+     "text": "RSI 79.87 زیر نشانگر و 74.44 جاری",
+     "confidence": "high"
+    }
+   ],
+   "speech": "روزانه به بالا برگشتیم با کمی کاهش حجم؛ ۱۵ ساعت از روز مانده؛ زیر مقاومت مهمی هستیم که قبلاً حمایت بوده، هم‌زمان با خبر امروز.",
+   "method_notes": [
+    "تبدیل حمایت به مقاومت از حرف است؛ روی این تصویر خط ترسیم‌شده‌ای نیست",
+    "حجم شمع روزانه را با زمان باقی‌مانده روز می‌سنجد"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_03m09.0s",
+   "t": 189.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:14:14+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:44:14 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن؛ شمارش تا بسته 12:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 90000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 74950,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 86722.93,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0"
+    },
+    {
+     "price": {
+      "value": 83912.41,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.236"
+    },
+    {
+     "price": {
+      "value": 82219.49,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.382"
+    },
+    {
+     "price": {
+      "value": 79554.92,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.618"
+    },
+    {
+     "price": {
+      "value": 86701.53,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 84355.46,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 82948.88,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 81639.27,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    },
+    {
+     "price": {
+      "value": 79371.24,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 76804.18,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 75472.47,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": 81639.27,
+      "confidence": "medium",
+      "from": "image",
+      "how": "لبه پایین بر خط سفید منطبق"
+     },
+     "high": {
+      "value": 82179.52,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب ابزار اندازه‌گیری فریم 03m15.0s روی لبه بالا"
+     },
+     "label": "چهارگوش فیروزه‌ای — ناحیه حمایتی"
+    }
+   ],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "پروفایل حجم بازه ثابت",
+      "confidence": "high",
+      "from": "image",
+      "how": "ابزار ترسیم، نه اندیکاتور"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "O84,472.01 H84,999.00 L83,210.00 C83,338.60 −1,133.40 (−1.34%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "86,333.00 · 03:45:45 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "85,079.91 — 3SMA جاری",
+     "confidence": "high"
+    },
+    {
+     "text": "83,726.28 · Mon 28 Sep '26 03:30 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "87,011.20 — برچسب سبز، معنا نامعلوم",
+     "confidence": "high"
+    },
+    {
+     "text": "81,873.35 خاکستری و 81,300.51 قرمز — معنا نامعلوم",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به ناحیه حمایتی نرسید؛ بیشتر تحلیل‌گرها نزولی بودند ولی او رنج انتظار داشت؛ تریگر ورود اصلی از دست رفت؛ دنبال ورود تازه است.",
+   "method_notes": [
+    "فیبوناچی بازگشتی در حالت لگاریتمی — محاسبه‌شده: با لگاریتم 0.382 و 0.618 دقیق تا سنت می‌خوانند، با خطی نه؛ سطح 1 حدود 75,423.71",
+    "ناحیه حمایت چهارگوش زیر 0.382",
+    "پروفایل حجم بازه ثابت روی تراکم ۲۳ تا ۲۸ سپتامبر"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_03m15.0s",
+   "t": 195.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:14:20+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:44:20 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن؛ شمارش تا بسته 12:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 90000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 74950,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 86722.93,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0"
+    },
+    {
+     "price": {
+      "value": 83912.41,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.236"
+    },
+    {
+     "price": {
+      "value": 82219.49,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.382"
+    },
+    {
+     "price": {
+      "value": 79554.92,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.618"
+    },
+    {
+     "price": {
+      "value": 86701.53,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 84355.46,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 82948.88,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 81639.27,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    },
+    {
+     "price": {
+      "value": 79371.24,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 76804.18,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 75472.47,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": 81639.27,
+      "confidence": "medium",
+      "from": "image",
+      "how": "لبه پایین بر خط سفید منطبق"
+     },
+     "high": {
+      "value": 82179.52,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب ابزار اندازه‌گیری فریم 03m15.0s روی لبه بالا"
+     },
+     "label": "چهارگوش فیروزه‌ای — ناحیه حمایتی"
+    }
+   ],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "پروفایل حجم بازه ثابت",
+      "confidence": "high",
+      "from": "image",
+      "how": "ابزار ترسیم، نه اندیکاتور"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "−1,546.76 (−1.85%) −154,676 · 17 bars, 2d 20h · Vol 52.95K — ابزار اندازه‌گیری",
+     "confidence": "high"
+    },
+    {
+     "text": "86,320.31 · 03:45:39 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "85,078.10 — 3SMA جاری",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اگر از این ناحیه پوزیشن باز دارید ارزش نگه‌داشتن دارد؛ خودش لانگ را هولد می‌کند.",
+   "method_notes": [
+    "فاصله کف اخیر تا لبه ناحیه حمایت را اندازه گرفت: ‎−1.85٪ در ۱۷ شمع ۴ ساعته — حساب: 17 × 4 = 68 ساعت = 2d 20h"
+   ],
+   "measurements": [
+    {
+     "from": {
+      "value": 83726.28,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "to": {
+      "value": 82179.52,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "change": {
+      "value": -1546.76,
+      "confidence": "high",
+      "from": "image"
+     },
+     "pct": {
+      "value": -1.85,
+      "confidence": "high",
+      "from": "image"
+     },
+     "bars": {
+      "value": 17,
+      "confidence": "high",
+      "from": "image"
+     },
+     "start": {
+      "value": "2026-09-28",
+      "confidence": "high",
+      "from": "image",
+      "how": "Mon 28 Sep '26"
+     },
+     "end": {
+      "value": "2026-09-30T23:30",
+      "confidence": "high",
+      "from": "image",
+      "how": "Wed 30 Sep '26 23:30"
+     }
+    }
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_03m28.0s",
+   "t": 208.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:14:33+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:44:33 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن؛ شمارش تا بسته 09:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 89200,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 82100,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 86701.53,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 84355.46,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 82948.88,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 81639.27,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": 81639.27,
+      "confidence": "medium",
+      "from": "image",
+      "how": "لبه پایین بر خط سفید منطبق"
+     },
+     "high": {
+      "value": 82179.52,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب ابزار اندازه‌گیری فریم 03m15.0s روی لبه بالا"
+     },
+     "label": "چهارگوش فیروزه‌ای — ناحیه حمایتی"
+    }
+   ],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O86,089.64 H86,342.81 L86,062.28 C86,320.00 +230.35 (+0.27%)",
+     "confidence": "high"
+    },
+    {
+     "text": "86,320.00 · 45:26 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "85,965.38 — 3SMA",
+     "confidence": "high"
+    },
+    {
+     "text": "85,728.57 · Sat 03 Oct '26 04:30 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "1px — ابزار ترسیم",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اگر با این کندل پوزیشن باز کردید نگه دارید؛ خودش باز نکرده چون درگیر سفر است.",
+   "method_notes": [
+    "همان سطح‌های ۴ ساعته را روی ۱ ساعته نگه می‌دارد — سطح میان تایم‌فریم‌ها مشترک است"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_03m56.0s",
+   "t": 236.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:15:01+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:45:01 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن؛ شمارش تا بسته 12:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 92000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 79000,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 86722.93,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0"
+    },
+    {
+     "price": {
+      "value": 83912.41,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.236"
+    },
+    {
+     "price": {
+      "value": 82219.49,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.382"
+    },
+    {
+     "price": {
+      "value": 79554.92,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.618"
+    },
+    {
+     "price": {
+      "value": 86701.53,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 84355.46,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 82948.88,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 81639.27,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    },
+    {
+     "price": {
+      "value": 79371.24,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    }
+   ],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": 81639.27,
+      "confidence": "medium",
+      "from": "image",
+      "how": "لبه پایین بر خط سفید منطبق"
+     },
+     "high": {
+      "value": 82179.52,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب ابزار اندازه‌گیری فریم 03m15.0s روی لبه بالا"
+     },
+     "label": "چهارگوش فیروزه‌ای — ناحیه حمایتی"
+    }
+   ],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "پروفایل حجم بازه ثابت",
+      "confidence": "high",
+      "from": "image",
+      "how": "ابزار ترسیم، نه اندیکاتور"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "O86,089.64 H86,342.81 L86,062.28 C86,320.01 +230.36 (+0.27%) — شمع جاری",
+     "confidence": "high"
+    },
+    {
+     "text": "86,320.01 · 03:44:58 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "85,078.05 — 3SMA",
+     "confidence": "high"
+    },
+    {
+     "text": "78,553.60 · Sat 03 Oct '26 07:30 — نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "۴ ساعته وارد اشباع خرید شده؛ روی ۴ ساعته پوزیشن نمی‌گیرد چون اندازه حد ضرر زیاد می‌شود.",
+   "method_notes": [
+    "در اشباع خرید ۴ ساعته ورود نمی‌زند چون فاصله تا حد ضرر زیاد است — از حرف",
+    "شمع ۴ ساعته و ۱ ساعته هر دو از 08:00 UTC باز شده‌اند و یکسان‌اند: O 86,089.64 در هر دو"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_04m34.5s",
+   "t": 274.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:21:15+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:51:15 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "seen": "BTCUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن؛ شمارش تا بسته 12:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 92000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 77300,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 86722.93,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0"
+    },
+    {
+     "price": {
+      "value": 83912.41,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.236"
+    },
+    {
+     "price": {
+      "value": 82219.49,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.382"
+    },
+    {
+     "price": {
+      "value": 79554.92,
+      "confidence": "high",
+      "from": "image",
+      "how": "نوشته کنار سطح"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.618"
+    },
+    {
+     "price": {
+      "value": 86701.53,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 84355.46,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 82948.88,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 81639.27,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    },
+    {
+     "price": {
+      "value": 79371.24,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 76804.18,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    }
+   ],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": 81639.27,
+      "confidence": "medium",
+      "from": "image",
+      "how": "لبه پایین بر خط سفید منطبق"
+     },
+     "high": {
+      "value": 82179.52,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب ابزار اندازه‌گیری فریم 03m15.0s روی لبه بالا"
+     },
+     "label": "چهارگوش فیروزه‌ای — ناحیه حمایتی"
+    }
+   ],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "پروفایل حجم بازه ثابت",
+      "confidence": "high",
+      "from": "image",
+      "how": "ابزار ترسیم، نه اندیکاتور"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "O86,089.64 H86,640.61 L86,062.28 C86,494.00 +404.35 (+0.47%) — شمع جاری",
+     "confidence": "high"
+    },
+    {
+     "text": "86,494.00 · 03:38:45 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "85,102.91 — 3SMA",
+     "confidence": "high"
+    },
+    {
+     "text": "11:51:15 UTC+3:30 — شش دقیقه پس از فریم پیش؛ ویدیو بریده شده",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به بالا خارج شدیم و به ناحیه حمایتی نرسیدیم؛ با افزایش حجم احتمال کف بالاتر هست؛ وگرنه تایم‌فریم پایین‌تر.",
+   "method_notes": [
+    "سناریوی کف بالاتر؛ ورود جایگزین در تایم‌فریم پایین‌تر یا پس از شکست ۱۵ دقیقه‌ای — از حرف"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_05m15.5s",
+   "t": 315.5,
+   "refs": [],
+   "is_chart": false,
+   "texts": [
+    {
+     "text": "Today: Oct 2 — Forex Factory",
+     "confidence": "high"
+    },
+    {
+     "text": "4:00pm USD Non-Farm Employment Change — اثر بالا",
+     "confidence": "high"
+    },
+    {
+     "text": "Average Hourly Earnings m/m — پیش‌بینی 0.3% و قبلی 0.3%",
+     "confidence": "high"
+    },
+    {
+     "text": "Unemployment Rate — USD",
+     "confidence": "high"
+    },
+    {
+     "text": "France has proposed plan to release 50M barrels of diesel from Europe…",
+     "confidence": "high"
+    },
+    {
+     "text": "11:51am — ساعت سایت",
+     "confidence": "high"
+    }
+   ],
+   "speech": "خبر NFP و نرخ بیکاری؛ به گفته او بار پیش ۱۶۲ آمد و بیت‌کوین ریخت و این بار ممکن است ۸۹ بیاید.",
+   "method_notes": [
+    "تقویم اقتصادی را پیش از تصمیم می‌بیند؛ تایم خبر ترید نمی‌کند — از حرف"
+   ],
+   "readings": [
+    {
+     "label": "NFP پیش‌بینی",
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا",
+     "how": "ستون زیر دوربین چهره است"
+    },
+    {
+     "label": "NFP قبلی",
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا",
+     "how": "ستون زیر دوربین چهره است"
+    }
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_05m44.5s",
+   "t": 344.5,
+   "refs": [],
+   "is_chart": false,
+   "texts": [
+    {
+     "text": "Today: Oct 2 — Forex Factory",
+     "confidence": "high"
+    },
+    {
+     "text": "4:00pm USD Non-Farm Employment Change — اثر بالا",
+     "confidence": "high"
+    },
+    {
+     "text": "Average Hourly Earnings m/m — پیش‌بینی 0.3% و قبلی 0.3%",
+     "confidence": "high"
+    },
+    {
+     "text": "Unemployment Rate — USD",
+     "confidence": "high"
+    },
+    {
+     "text": "France has proposed plan to release 50M barrels of diesel from Europe…",
+     "confidence": "high"
+    },
+    {
+     "text": "11:51am — ساعت سایت",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اگر عدد بالاتر از انتظار بیاید احتمال ریزش بیت‌کوین هست؛ بقیه ارقام احتمالاً ثابت‌اند.",
+   "method_notes": [
+    "نشانگر روی ردیف NFP — رویداد کلیدی روز"
+   ],
+   "readings": [
+    {
+     "label": "NFP پیش‌بینی",
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا",
+     "how": "ستون زیر دوربین چهره است"
+    },
+    {
+     "label": "NFP قبلی",
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا",
+     "how": "ستون زیر دوربین چهره است"
+    }
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_07m14.0s",
+   "t": 434.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:23:54+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:53:54 UTC+3:30"
+   },
+   "coin": {
+    "value": "USDT.D",
+    "confidence": "high",
+    "from": "image",
+    "seen": "USDT.D — دامیننس تتر"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن؛ شمارش تا بسته 12:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 6.9,
+     "confidence": "high",
+     "from": "image",
+     "unit": "%"
+    },
+    "bottom": {
+     "value": 5.92,
+     "confidence": "high",
+     "from": "image",
+     "unit": "%"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 6.757,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید",
+     "unit": "%"
+    },
+    {
+     "price": {
+      "value": 6.622,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید",
+     "unit": "%"
+    },
+    {
+     "price": {
+      "value": 6.524,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی",
+     "unit": "%"
+    },
+    {
+     "price": {
+      "value": 6.411,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی",
+     "unit": "%"
+    },
+    {
+     "price": {
+      "value": 6.263,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی",
+     "unit": "%"
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-10-02",
+       "confidence": "medium",
+       "from": "image",
+       "how": "آغاز روی شمع جاری"
+      },
+      "price": {
+       "value": 6.32,
+       "confidence": "high",
+       "from": "image",
+       "how": "قیمت زنده هنگام ترسیم"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-04",
+       "confidence": "low",
+       "from": "image",
+       "how": "از جای افقی میان برچسب 3 و 5"
+      },
+      "price": {
+       "value": 6.14,
+       "confidence": "medium",
+       "from": "image",
+       "how": "انتهای مسیر کنار برچسب 6.140%"
+      }
+     },
+     "label": "مسیر پیش‌بینی دستی آبی: برگشت کوتاه سپس ریزش",
+     "kind": "projection"
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O6.692% H6.692% L6.635% C6.664% −0.027 (−0.41%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "6.320% · 03:36:06 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "6.402% — 3SMA",
+     "confidence": "high"
+    },
+    {
+     "text": "6.569% · Sat 19 Sep '26 03:30 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "4px — قلم دستی",
+     "confidence": "high"
+    }
+   ],
+   "speech": "پوزیشن شورت باز نکرده؛ شکست ۶.۲۶۳ می‌تواند پوزیشن بدهد؛ اگر مقاومت را به بالا شکستیم و دامیننس تتر همچنان ریخت اوکی است.",
+   "method_notes": [
+    "دامیننس تتر را وارونه بازار می‌خواند: ریزشش یعنی صعود رمزارز",
+    "مسیر آینده را با قلم دستی کشید — پیش‌بینی تصویری، نه سطح"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_07m26.5s",
+   "t": 446.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:24:07+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:54:07 UTC+3:30"
+   },
+   "coin": {
+    "value": "USDT.D",
+    "confidence": "high",
+    "from": "image",
+    "seen": "USDT.D — دامیننس تتر"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 6.15,
+     "confidence": "high",
+     "from": "image",
+     "unit": "%"
+    },
+    "bottom": {
+     "value": 5.275,
+     "confidence": "high",
+     "from": "image",
+     "unit": "%"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 6.263,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب در لبه بالای محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی",
+     "unit": "%"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O6.982% H7.044% L6.976% C7.040% +0.058 (+0.83%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "5.766% · Tue 15 Sep '26 07:30 — نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "مثال می‌زند: اگر مقاومت شکست و دامیننس تتر همچنان ریخت، لازم نیست کندلش هم‌رنگ باشد.",
+   "method_notes": [
+    "نمودار را برای کشیدن مثال جابه‌جا کرد؛ نمای گذرا و کم‌داده"
+   ],
+   "marks": [
+    "منحنی آبی دستی برگزیده، در حال ترسیم مثال"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_08m40.5s",
+   "t": 520.5,
+   "refs": [
+    {
+     "doc": "2026-10-02_cryptocity_pro_zN1RocH5",
+     "row": 2,
+     "time": "08:45",
+     "role": "before",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:25:21+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:55:21 UTC+3:30"
+   },
+   "coin": {
+    "value": "ARB",
+    "confidence": "high",
+    "from": "image",
+    "seen": "ARBUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن؛ شمارش تا بسته 09:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 0.24,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 0.1895,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 0.2353,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    },
+    {
+     "price": {
+      "value": 0.1941,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O0.2056 H0.2080 L0.2056 C0.2074 +0.0018 (+0.88%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "0.2063 · 34:39 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "0.2051 — 3SMA",
+     "confidence": "high"
+    },
+    {
+     "text": "0.2101 · Mon 28 Sep '26 13:30 — نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او OP شکسته ۲.۴۷۴، AVAX ۱۱۹ و ARB شکسته ۲۰۹۰ پوزیشن لاین می‌دهند؛ لول ۱.۱۸ توتال ۲ را از دست ندهید.",
+   "method_notes": [
+    "آلت‌کوین‌ها را پشت‌سرهم با خط شکست بالای رنج ۱ ساعته غربال می‌کند",
+    "«۲۰۹۰» در حرف قیمت 0.2090 است، نه سال؛ در این فریم هنوز خطی با این قیمت نیست"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_08m42.5s",
+   "t": 522.5,
+   "refs": [
+    {
+     "doc": "2026-10-02_cryptocity_pro_zN1RocH5",
+     "row": 2,
+     "time": "08:45",
+     "role": "claim",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:25:23+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:55:23 UTC+3:30"
+   },
+   "coin": {
+    "value": "ARB",
+    "confidence": "high",
+    "from": "image",
+    "seen": "ARBUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن؛ شمارش تا بسته 09:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 0.24,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 0.1895,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 0.2353,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    },
+    {
+     "price": {
+      "value": 0.209,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "drawn_at": {
+      "value": "سایه",
+      "confidence": "medium",
+      "from": "image",
+      "how": "از چند سقف سایه ۱ ساعته می‌گذرد"
+     },
+     "label": "خط سفید",
+     "start": {
+      "value": "2026-09-28T17:30",
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی Mon 28 Sep '26 17:30"
+     }
+    },
+    {
+     "price": {
+      "value": 0.1941,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O0.1985 H0.2005 L0.1985 C0.1997 +0.0011 (+0.55%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "0.2064 · 34:37 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "0.1985 · Fri 02 Oct '26 01:30 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "1px — ابزار ترسیم",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او ARB شکسته ۲۰۹۰ پوزیشن لاین می‌دهد و همه آلت‌ها امروز نقطه ورود دارند.",
+   "method_notes": [
+    "خط ماشه 0.2090 را همان لحظه کشید: از سقف 28 سپتامبر 17:30 روی چند سقف سایه ۱ ساعته — شکستش ورود لانگ",
+    "نامزد ردیف ۱ با همین عدد به‌خاطر قاعده سال‌محور بی‌فریم ماند؛ این فریم از راه ردیف ۲ آمد"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_08m49.5s",
+   "t": 529.5,
+   "refs": [
+    {
+     "doc": "2026-10-02_cryptocity_pro_zN1RocH5",
+     "row": 2,
+     "time": "08:45",
+     "role": "after",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:25:30+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:55:30 UTC+3:30"
+   },
+   "coin": {
+    "value": "TOTAL2",
+    "confidence": "high",
+    "from": "image",
+    "seen": "TOTAL2 — ارزش بازار بی بیت‌کوین"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن؛ شمارش تا بسته 09:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 1.2,
+     "confidence": "high",
+     "from": "image",
+     "unit": "T"
+    },
+    "bottom": {
+     "value": 1.13,
+     "confidence": "high",
+     "from": "image",
+     "unit": "T"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 1.18,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی",
+     "unit": "T"
+    },
+    {
+     "price": {
+      "value": 1.15,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید",
+     "unit": "T"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O1.17T H1.18T L1.17T C1.18T +4.72B (+0.40%) Vol276.45B",
+     "confidence": "high"
+    },
+    {
+     "text": "1.18T · 34:30 — قیمت زنده روی خط",
+     "confidence": "high"
+    },
+    {
+     "text": "1.17T — 3SMA",
+     "confidence": "high"
+    }
+   ],
+   "speech": "این لول ۱.۱۸ توتال ۲ را با یک پوزیشن امتحان کنید؛ می‌رویم سراغ آلت‌ها.",
+   "method_notes": [
+    "ارزش کل بازار آلت‌کوین را مثل نماد معامله‌ای با سطح شکست می‌خواند"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_09m52.0s",
+   "t": 592.0,
+   "refs": [
+    {
+     "doc": "2026-10-02_cryptocity_pro_zN1RocH5",
+     "row": 3,
+     "time": "09:55",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:28:11+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:58:11 UTC+3:30"
+   },
+   "coin": {
+    "value": "ZEN",
+    "confidence": "high",
+    "from": "image",
+    "seen": "ZENUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن؛ شمارش تا بسته 09:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 8.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 6.5,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 8.193,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 7.53,
+      "confidence": "low",
+      "from": "image",
+      "how": "برچسب زیر برچسب نشانگر پنهان؛ درون‌یابی خطی میان 7.600 و 7.500"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 7.104,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-09-26",
+       "confidence": "low",
+       "from": "image",
+       "how": "از جای افقی"
+      },
+      "price": {
+       "value": 6.45,
+       "confidence": "low",
+       "from": "image",
+       "how": "زیر برچسب 6.500"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-09-29",
+       "confidence": "low",
+       "from": "image",
+       "how": "از جای افقی"
+      },
+      "price": {
+       "value": 7.27,
+       "confidence": "low",
+       "from": "image",
+       "how": "درون‌یابی"
+      }
+     },
+     "label": "خط آبی ضخیم صعودی از کف ۲۶ سپتامبر"
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O7.287 H7.337 L7.259 C7.299 +0.012 (+0.16%) Vol14.36K",
+     "confidence": "high"
+    },
+    {
+     "text": "7.299 · 31:49 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "7.231 — 3SMA",
+     "confidence": "high"
+    },
+    {
+     "text": "7.565 · Fri 02 Oct '26 15:30 — نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "موج اول، اصلاح، موج دوم؛ کندل ستاپ هست ولی ورود تازه بالای ۷.۵۳۹ است؛ آلارم می‌گذارد.",
+   "method_notes": [
+    "ورود را بالای سطح شکست می‌گذارد و آلارم تنظیم می‌کند؛ عدد ۷.۵۳۹ از حرف است و برچسب تصویر پنهان بود"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_09m57.5s",
+   "t": 597.5,
+   "refs": [
+    {
+     "doc": "2026-10-02_cryptocity_pro_zN1RocH5",
+     "row": 3,
+     "time": "09:55",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-10-02_cryptocity_pro_zN1RocH5",
+     "row": 4,
+     "time": "10:07",
+     "role": "claim",
+     "strength": 4,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:28:17+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:58:17 UTC+3:30"
+   },
+   "coin": {
+    "value": "MORPHO",
+    "confidence": "high",
+    "from": "image",
+    "seen": "MORPHOUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن؛ شمارش تا بسته 09:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 3.05,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 2.4,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 2.9313,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 2.631,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O2.6108 H2.6274 L2.5997 C2.6129 +0.0024 (+0.09%) Vol4.78K",
+     "confidence": "high"
+    },
+    {
+     "text": "2.6129 · 31:43 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "2.6026 — 3SMA",
+     "confidence": "high"
+    }
+   ],
+   "speech": "ETH و FET نقطه ورود ندارند؛ به گفته او AVAX ۱۱۹۹ و ARB ۲۰۹۰ امروز پوزیشن دارند.",
+   "method_notes": [
+    "حرف و صفحه هم‌زمان نیستند: از AVAX و ARB می‌گوید، صفحه MORPHO است"
+   ],
+   "marks": [
+    "منحنی کوچک آبی دستی روی موج ۳۰ سپتامبر"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_10m01.0s",
+   "t": 601.0,
+   "refs": [
+    {
+     "doc": "2026-10-02_cryptocity_pro_zN1RocH5",
+     "row": 3,
+     "time": "09:55",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:28:20+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:58:20 UTC+3:30"
+   },
+   "coin": {
+    "value": "ETHFI",
+    "confidence": "high",
+    "from": "image",
+    "seen": "ETHFIUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن؛ شمارش تا بسته 09:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 0.84,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 0.67,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 0.785,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    },
+    {
+     "price": {
+      "value": 0.752,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 0.7106,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 0.6627,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O0.7374 H0.7404 L0.7313 C0.7353 −0.0019 (−0.26%) Vol277.82K",
+     "confidence": "high"
+    },
+    {
+     "text": "0.7353 · 31:40 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "0.7335 — 3SMA",
+     "confidence": "high"
+    }
+   ],
+   "speech": "آلت‌ها امروز پوزیشن دارند؛ به اندازه یک حد ضرر به خودتان فرصت بدهید.",
+   "method_notes": [
+    "قاعده ریسک: هر ورود آلت با یک واحد حد ضرر — از حرف",
+    "چهار سطح افقی: دو سفید بیرونی، دو آبی درونی — رنج تودرتو"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_10m56.0s",
+   "t": 656.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:29:15+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "11:59:15 UTC+3:30"
+   },
+   "coin": {
+    "value": "1INCH",
+    "confidence": "high",
+    "from": "image",
+    "seen": "1INCHUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن؛ شمارش تا بسته 09:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 0.107,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 0.097,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 0.1053,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O0.1026 H0.1030 L0.1022 C0.1025 −0.0002 (−0.19%) Vol205.35K — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "0.1053 · 30:45 — قیمت زنده روی خط",
+     "confidence": "high"
+    },
+    {
+     "text": "0.1045 — 3SMA",
+     "confidence": "high"
+    },
+    {
+     "text": "0.1032 · Thu 01 Oct '26 22:30 — نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "وارنینگ ۴ ساعته؛ جای حد ضرر ۱۰ یا ۱۴؛ یک‌ساعته کندل ستاپ هست ولی حجم کم است؛ BNB ۷۸۲ نقطه ورود است.",
+   "method_notes": [
+    "حجم شمع ستاپ را شرط ورود می‌گیرد: ستاپ با حجم کم رد می‌شود — از حرف"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_11m42.0s",
+   "t": 702.0,
+   "refs": [
+    {
+     "doc": "2026-10-02_cryptocity_pro_zN1RocH5",
+     "row": 5,
+     "time": "11:42",
+     "role": "claim",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:30:01+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "12:00:01 UTC+3:30"
+   },
+   "coin": {
+    "value": "ADA",
+    "confidence": "high",
+    "from": "image",
+    "seen": "ADAUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن؛ شمارش تا بسته 09:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 0.268,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 0.234,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 0.2571,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    },
+    {
+     "price": {
+      "value": 0.2402,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "پروفایل حجم بازه ثابت",
+      "confidence": "high",
+      "from": "image",
+      "how": "ابزار ترسیم، نه اندیکاتور"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "منوی زمینه: Add alert on ADAUSDT at 0.2567 …",
+     "confidence": "high"
+    },
+    {
+     "text": "O0.2555 H0.2573 L0.2545 C0.2564 +0.0009 (+0.35%) Vol8.55M",
+     "confidence": "high"
+    },
+    {
+     "text": "0.2564 · 29:59 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "0.2536 — 3SMA",
+     "confidence": "high"
+    },
+    {
+     "text": "Crypto Top 30 — واچ‌لیست",
+     "confidence": "high"
+    }
+   ],
+   "speech": "دوج نقطه ورودش ۹۸ تا ۹۹؛ ADA یک‌ساعته شکسته ۲۵۷۱ خوب است؛ LINK و XLM نقطه ورود ندارند؛ طلا بسته به خبر.",
+   "method_notes": [
+    "روی خط شکست 0.2571 آلارم قیمت می‌گذارد — منوی Add alert باز است",
+    "«۲۵۷۱» در حرف همان خط سفید 0.2571 روی تصویر است"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_11m49.5s",
+   "t": 709.5,
+   "refs": [
+    {
+     "doc": "2026-10-02_cryptocity_pro_zN1RocH5",
+     "row": 5,
+     "time": "11:42",
+     "role": "after",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:30:09+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "12:00:09 UTC+3:30"
+   },
+   "coin": {
+    "value": "PAXG",
+    "confidence": "high",
+    "from": "image",
+    "seen": "PAXGUSDT — طلا"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن؛ شمارش تا بسته 09:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 4280,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 4094,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 4275.8,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 4131.4,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O4,189.28 H4,199.32 L4,187.57 C4,189.44 +0.65 (+0.02%) Vol312.07",
+     "confidence": "high"
+    },
+    {
+     "text": "4,189.44 · 29:51 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "4,188.06 — 3SMA",
+     "confidence": "high"
+    },
+    {
+     "text": "4,175.41 · Fri 02 Oct '26 15:30 — نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "طلا امروز بستگی به خبر دارد و پوزیشن باز نمی‌کند؛ روی سهام کمتر می‌گیرد چون رمزارز خودش حرکت می‌کند.",
+   "method_notes": [
+    "رنج طلا میان دو خط آبی؛ تصمیم را به خبر روز موکول می‌کند — از حرف"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_12m49.5s",
+   "t": 769.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T08:31:09+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تصویر؛ روز از برچسب‌های Fri 02 Oct '26 و Today: Oct 2 همین ویدیو",
+    "seen": "12:01:09 UTC+3:30"
+   },
+   "coin": {
+    "value": "CHZ",
+    "confidence": "high",
+    "from": "image",
+    "seen": "CHZUSDT"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی روی تصویر دیده نمی‌شود"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن؛ شمارش تا بسته 12:00 UTC با ساعت تصویر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کمی بیشتر است"
+   },
+   "price_axis": {
+    "top": {
+     "value": 0.017,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 0.01295,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 0.01771,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 0.0167,
+      "confidence": "low",
+      "from": "image",
+      "how": "برچسب زیر برچسب نشانگر پنهان؛ درون‌یابی خطی میان 0.01700 و 0.01580"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید"
+    },
+    {
+     "price": {
+      "value": 0.01514,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 0.01451,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    },
+    {
+     "price": {
+      "value": 0.01343,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب روی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی"
+    }
+   ],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": 0.01517,
+      "confidence": "high",
+      "from": "image",
+      "how": "لنگر آبی ابزار برگزیده"
+     },
+     "high": {
+      "value": 0.01742,
+      "confidence": "high",
+      "from": "image",
+      "how": "لنگر آبی ابزار برگزیده"
+     },
+     "start": {
+      "value": "2026-09-22T11:30",
+      "confidence": "high",
+      "from": "image",
+      "how": "Tue 22 Sep '26 11:30"
+     },
+     "end": {
+      "value": "2026-10-02T11:30",
+      "confidence": "high",
+      "from": "image",
+      "how": "Fri 02 Oct '26 11:30"
+     },
+     "label": "بازه پروفایل حجم ثابت"
+    }
+   ],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "از نام 3SMA",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "پروفایل حجم بازه ثابت",
+      "confidence": "high",
+      "from": "image",
+      "how": "ابزار ترسیم، نه اندیکاتور"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "O0.01663 H0.01672 L0.01645 C0.01654 −0.00009 (−0.54%) Vol16.69M",
+     "confidence": "high"
+    },
+    {
+     "text": "0.01664 · 03:28:51 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "0.01629 — 3SMA",
+     "confidence": "high"
+    },
+    {
+     "text": "0.01681 · Fri 25 Sep '26 19:30 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "Crypto Top 100 — واچ‌لیست",
+     "confidence": "high"
+    }
+   ],
+   "speech": "CHZ این‌جا مهم است ولی با پروفایل حجم بازه ثابت می‌بیند هنوز حجم هست؛ پوزیشن نمی‌گیرد چون کوینی می‌خواهد که بالایش راحت باشد.",
+   "method_notes": [
+    "پروفایل حجم بازه ثابت را برای سنجش راه بالای قیمت می‌کشد: حجم سنگین بالای قیمت یعنی ورود نه",
+    "آشکارترین روش‌نمای ویدیو: ابزار مستقیم بر تصمیم اثر گذاشت"
+   ]
+  },
+  {
+   "frame_id": "zN1RocH5VoU_13m58.5s",
+   "t": 838.5,
+   "refs": [],
+   "is_chart": false,
+   "texts": [
+    {
+     "text": "کتاب روی میز: Technical Analysis — Mark Andrew Lim",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "پایان؛ تحلیل ساعت ۴ را در کانال تلگرام پشتیبانی می‌کند.",
+   "method_notes": [
+    "پایان رو به دوربین — نمودار نیست"
+   ]
+  }
+ ]
+}
