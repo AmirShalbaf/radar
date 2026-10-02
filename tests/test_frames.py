@@ -182,6 +182,29 @@ def test_auto_mask_takes_face_cam_not_chart() -> None:
     assert not F.analyse(fr).mask_warning
 
 
+def dense_view(seed: int) -> np.ndarray:
+    """نمای پرشمع و پرحجم — هر جابه‌جایی بیشتر پیکسل‌های بلوک را عوض می‌کند."""
+    img = np.full((H, W), 20, np.uint8)
+    rng = np.random.default_rng(seed)
+    img[60:, 100:] = np.where(rng.random((H - 60, W - 100)) < 0.3, 200, 20)
+    return img
+
+
+def test_frequent_chart_motion_does_not_mask_the_chart() -> None:
+    """
+    ایستگاه ۲ نشست ۶: در کریپتوسیتی خود نمودار در ۵.۵٪ گام‌ها عوض می‌شد و
+    ماسک ۶۲.۸٪ قاب را گرفت. ماسک «گام آرام» — تأیید کاربر — بسامد را فقط در
+    نیمه آرام‌تر گام‌ها می‌شمارد: دوربین چهره آنجا هم می‌جنبد، نمودار نه.
+    """
+    fr = seq([(dense_view(300 + k), 10) for k in range(20)])
+    keep, share = F.auto_mask(fr)
+    assert not keep[:50, :90].any()                 # دوربین چهره هنوز ماسک
+    assert keep[100:, 150:].mean() > 0.95           # خود نمودار نه
+    assert share < F.MASK_WARN
+    an = F.analyse(fr)
+    assert len(an.states) == 20                     # هر نما یک حالت ساکن
+
+
 def test_mask_warning_when_most_of_frame_moves() -> None:
     rng = np.random.default_rng(3)
     fr = rng.integers(0, 256, (30, H, W), dtype=np.uint8)
@@ -208,10 +231,14 @@ def test_rep_takes_most_ink_and_never_a_motion_sample() -> None:
     base = view(1)
     pan = view(9)                        # یک نمونه جابه‌جایی وسط حالت
     marked = with_mark(base, 130)
-    an = F.analyse(seq([(base, 5), (pan, 1), (marked, 5)]))
+    # ۱۰ نمونه هر سو: ماسک «گام آرام» فقط نیمه آرام گام‌ها را می‌شمارد و دوربین
+    # چهره باید دست‌کم MASK_MIN_CHANGES بار در آن‌ها بجنبد. با ۵ نمونه، ۵.۵ ثانیه
+    # ویدیو، چهره ماسک نمی‌شد — اندازه‌ای که ورودی واقعی هرگز ندارد: intake
+    # ویدیوی ۳ دقیقه یا کمتر را رد می‌کند.
+    an = F.analyse(seq([(base, 10), (pan, 1), (marked, 10)]))
     assert len(an.states) == 1
     rep = an.states[0].rep
-    assert rep != 5 and rep >= 6         # نمونه جوهردار، نه نمونه حرکت
+    assert rep != 10 and rep >= 11       # نمونه جوهردار، نه نمونه حرکت
 
 
 # ═══════════════ ۳ — انتخاب، سقف، حذف تکراری، نگاشت ═══════════════

@@ -86,6 +86,7 @@ PIX_DELTA = 25            # تغییر روشنایی که «عوض‌شده» �
 MASK_BLOCK = 10           # بلوک ماسک خودکار، پیکسل
 MASK_FREQ = 0.02          # بلوکی که در بیش از ۲٪ گام‌ها عوض شود، پرجنبش است
 MASK_MIN_CHANGES = 5      # و دست‌کم ۵ بار — در ویدیوی کوتاه یک خط‌کشی خودش ۲٪ گام‌هاست
+QUIET_Q = 50              # بسامد فقط در گام‌هایی تا این صدک تغییر کل قاب شمرده می‌شود
 MASK_WARN = 0.30          # سهم ماسک بالای این یعنی شاید خود نمودار ماسک شده
 STILL = 0.002             # گام زیر این ساکن است
 MIN_STILL_SAMPLES = 3     # ۱.۵ ثانیه در ۲ نمونه در ثانیه
@@ -306,20 +307,33 @@ def load_doc(path: Path, url: str | None = None) -> VideoDoc:
 
 def auto_mask(frames: np.ndarray) -> tuple[np.ndarray, float]:
     """
-    ماسک خودکار ناحیه پرجنبش: بلوکی که در بیش از MASK_FREQ گام‌ها و دست‌کم
-    MASK_MIN_CHANGES بار عوض شود — دوربین چهره، قیمت زنده، واچ‌لیست — با یک
-    بلوک گسترش کنار می‌رود. برمی‌گرداند (keep، سهم ماسک). keep یعنی پیکسل
-    شمرده‌شده.
+    ماسک خودکار ناحیه پرجنبش — دوربین چهره، قیمت زنده، شمع زنده — با یک بلوک
+    گسترش کنار می‌رود. برمی‌گرداند (keep، سهم ماسک). keep یعنی پیکسل شمرده‌شده.
+
+    «گام آرام» — تأیید کاربر، ایستگاه ۲ نشست ۶: بسامد تغییر هر بلوک فقط در
+    گام‌هایی شمرده می‌شود که تغییر کل قاب تا صدک QUIET_Q است. دوربین چهره در
+    گام آرام هم می‌جنبد؛ نمودار فقط در جابه‌جایی، که گام پرتغییر است. بلوکی
+    ماسک می‌شود که در بیش از MASK_FREQ گام‌های آرام و دست‌کم MASK_MIN_CHANGES
+    بار عوض شود. پیش از این بسامد روی همه گام‌ها بود و در کریپتوسیتی، که خود
+    نمودار در ۵.۵٪ گام‌ها عوض می‌شد، ۶۲.۸٪ قاب ماسک شد؛ با گام آرام ۱۳.۰٪.
     """
     n, h, w = frames.shape
     if n < 2:
         return np.ones((h, w), bool), 0.0
-    count = np.zeros((h, w), np.float64)
+    changes = []
+    glob = np.zeros(n - 1)
     for i in range(1, n):
-        count += np.abs(frames[i].astype(np.int16) - frames[i - 1].astype(np.int16)) > PIX_DELTA
+        c = np.abs(frames[i].astype(np.int16) - frames[i - 1].astype(np.int16)) > PIX_DELTA
+        glob[i - 1] = c.mean()
+        changes.append(np.packbits(c))          # حافظه: یک بیت برای هر پیکسل
+    quiet = glob <= np.percentile(glob, QUIET_Q)
+    count = np.zeros((h, w), np.float64)
+    for i in np.nonzero(quiet)[0]:
+        count += np.unpackbits(changes[i], count=h * w).reshape(h, w)
+    nq = int(quiet.sum())
     bh, bw = h // MASK_BLOCK, w // MASK_BLOCK
     blk = count[:bh * MASK_BLOCK, :bw * MASK_BLOCK].reshape(
-        bh, MASK_BLOCK, bw, MASK_BLOCK).mean((1, 3)) > max(MASK_FREQ * (n - 1), MASK_MIN_CHANGES)
+        bh, MASK_BLOCK, bw, MASK_BLOCK).mean((1, 3)) > max(MASK_FREQ * nq, MASK_MIN_CHANGES)
     grown = blk.copy()
     grown[1:] |= blk[:-1]
     grown[:-1] |= blk[1:]
