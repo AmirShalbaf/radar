@@ -928,6 +928,8 @@ NOT_CHART_KEYS = ("frame_id", "t", "refs", "texts", "speech", "method_notes")
 FIELD_KEYS = ("recorded_at", "coin", "venue", "timeframe", "chart_type", "scale")
 # منبع آنچه روی صفحه است — نشست ۷: خود گوینده، دیگران، توییت، بی‌تصویر، نامعلوم
 SCREEN_KINDS = ("own", "other", "tweet", "none", "unknown")
+# کشنده سطح — نشست ۷: بی این میدان، از screen_source کارت برداشت می‌شود
+DRAWN_BY = ("speaker", "other")
 
 
 def _is_num(x) -> bool:
@@ -1060,6 +1062,10 @@ def validate_card(card: dict, where: str = "card") -> list[str]:
     # میدان اختیاری snap کنار سطح — نشست ۷. عددهایش از کندل است، نه از تصویر؛ پس
     # قالب خودش را radar_history.validate_snap می‌سنجد و از قاعده «فقط تصویر» بیرون است.
     levels = card.get("levels")
+    for i, lv in enumerate(levels if isinstance(levels, list) else []):
+        # drawn_by اختیاری: سطحی که خود گوینده روی تصویر دیگران کشید، یا برعکس
+        if isinstance(lv, dict) and "drawn_by" in lv and lv["drawn_by"] not in DRAWN_BY:
+            errs.append(f"{where}.levels[{i}].drawn_by: {lv['drawn_by']!r} — باید یکی از {DRAWN_BY}")
     snaps = [(i, lv["snap"]) for i, lv in enumerate(levels if isinstance(levels, list) else [])
              if isinstance(lv, dict) and "snap" in lv]
     if snaps:

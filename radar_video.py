@@ -707,8 +707,9 @@ def _snap_section(charts: list[dict]) -> list[str]:
     lines = ["", "## وارسی سطح با کندل", "",
              "> هر سطح با کندل واقعی پیش از انتشار ویدیو سنجیده شد — `radar_history.py cards`.",
              "> ناحیه و خط روند وارسی نمی‌شوند. زیر روزانه «ماشه‌ای، نه ساختاری» است — قاعده ۴.", ""]
-    snaps = [lv["snap"] for c in charts for lv in (c.get("levels") or [])
+    pairs = [(_level_origin(c, lv), lv["snap"]) for c in charts for lv in (c.get("levels") or [])
              if isinstance(lv, dict) and isinstance(lv.get("snap"), dict)]
+    snaps = [s for _, s in pairs]
     if not snaps:
         return lines + [f"{NOT_SNAPPED} — کارت میدان snap ندارد."]
     lines += H.summary_lines(H.summarize(snaps))
@@ -717,7 +718,24 @@ def _snap_section(charts: list[dict]) -> list[str]:
         d = H.summarize(daily)
         lines += ["", f"ستون روزانه، برای سطح‌های زیر روزانه: {d['confirmed']} واقعی از {d['n']} "
                       f"سطح یکتا با داده؛ {d['no_data']} بی‌داده."]
+    # «سطوح این تحلیل‌گر» یعنی سطح‌هایی که خودش کشید، نه خط تصویر دیگرانی که نشان داد
+    if any(o is not None for o, _ in pairs):
+        for key, head in (("speaker", "### سطح‌های خود گوینده"), ("other", "### سطح‌های تصویر دیگران"),
+                          (None, "### سطح‌های بی‌منشأ")):
+            group = [s for o, s in pairs if o == key]
+            if group:
+                lines += ["", head, ""] + H.summary_lines(H.summarize(group))
     return lines
+
+
+def _level_origin(card: dict, lv: dict) -> str | None:
+    """کشنده سطح: drawn_by صریح، وگرنه از screen_source کارت؛ بی هر دو None."""
+    if lv.get("drawn_by") in F.DRAWN_BY:
+        return lv["drawn_by"]
+    src = card.get("screen_source")
+    if isinstance(src, dict):
+        return "speaker" if src.get("kind") == "own" else "other"
+    return None
 
 
 METHOD_KEYS = ("area", "rule", "where", "library")

@@ -599,6 +599,37 @@ def test_exchange_symbol(coin, sym):
     assert H.exchange_symbol(coin) == sym
 
 
+@pytest.mark.parametrize("bad", ["me", 3, None])
+def test_drawn_by_is_validated(bad):
+    lv = level_obj()
+    lv["drawn_by"] = bad
+    assert any("drawn_by" in e for e in F.validate_card(card_with(lv)))
+    lv["drawn_by"] = "speaker"
+    assert F.validate_card(card_with(lv)) == []
+
+
+def test_video_report_splits_speaker_levels_from_others():
+    """سطح نمودار خود گوینده جدا از سطح تصویر دیگران — جمع‌بندی هر کدام جدا."""
+    own = card_with(level_obj(110.2))
+    own["levels"][0]["snap"] = good_snap()
+    own["screen_source"] = {"kind": "own", "who": None, "evidence": "تریدینگ‌ویو خودش"}
+    tweet = card_with(level_obj(117.0))
+    tweet["frame_id"] = "v_00m20.0s"
+    tweet["levels"][0]["snap"] = H.snap_frame(zigzag(THREE, T0), 117.0, "1D", FAR)
+    arrow = level_obj(120.0)
+    arrow["drawn_by"] = "speaker"                                  # پیکان دستی او روی تصویر دیگران
+    arrow["snap"] = H.snap_frame(zigzag(THREE, T0), 120.0, "1D", FAR)
+    tweet["levels"].append(arrow)
+    tweet["screen_source"] = {"kind": "tweet", "who": "@someone", "evidence": "x.com"}
+    md = V.render_report({"schema": 1, "video_id": "v", "doc_id": "d", "source": "s", "cards": [own, tweet]}, {})
+    sec = md.split("## وارسی سطح با کندل")[1]
+    assert "### سطح‌های خود گوینده" in sec and "### سطح‌های تصویر دیگران" in sec
+    mine = sec.split("### سطح‌های خود گوینده")[1].split("###")[0]
+    theirs = sec.split("### سطح‌های تصویر دیگران")[1]
+    assert "| سطح یکتا با داده | 2 |" in mine and "| واقعی — قوی / همه | 1 / 1 |" in mine
+    assert "| سطح یکتا با داده | 1 |" in theirs and "| خط دلخواه | 1 |" in theirs
+
+
 def test_video_report_has_one_line_per_level():
     lv1, lv2 = level_obj(110.2), level_obj(117.0)
     lv1["snap"] = good_snap()
