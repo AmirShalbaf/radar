@@ -166,7 +166,8 @@ def test_ascii_only_patterns_reject_persian_digits() -> None:
     assert pat.search('VERSION = "6.1"').group(1) == "6.1"
     assert pat.search('VERSION = "۶.۱"') is None
     # و خود تابع هم همان را می‌خواند
-    assert ST.file_version("radar_state.py") == ST.VERSION
+    # مسیر مطلق: آزمون‌ها در پوشه موقت با رونوشت داده اجرا می‌شوند — ک۶۴
+    assert ST.file_version(str(ROOT / "radar_state.py")) == ST.VERSION
 
 
 def test_youtube_id_patterns_are_ascii_only() -> None:
