@@ -172,6 +172,7 @@ def test_video_inside_playlist_is_the_video_with_a_note() -> None:
     link = V.parse_link(f"https://www.youtube.com/watch?v={VID}&list={PL}&index=3")
     assert link.kind == "video" and link.video_id == VID
     assert f"playlist?list={PL}" in link.note
+    assert link.playlist_id == PL           # منبع پلی‌لیست شناخته‌شده از همین می‌آید
 
 
 def test_auto_mix_is_never_a_playlist() -> None:
@@ -254,6 +255,73 @@ def test_playlist_source_from_analysts_wins(env) -> None:
     assert rc == 0
     docs = list(Path("intake/arshia_course").glob("*.md"))
     assert len(docs) == 1 and front(docs[0])["جایگاه در رادار"] == "کتابخانه روش"
+
+
+def test_video_link_of_known_playlist_takes_its_source_and_position(env) -> None:
+    """
+    نشست ۶ب، پیوند آزمایشی کاربر: ویدیوی دوره با &list= منبع arshia_course و شماره
+    قسمتش را می‌گیرد — «پارت ۳» بدون شماره در فهرست گم می‌شود.
+    """
+    other = "aaaaaaaaaa1"
+    meta = FakeMeta(videos={VID: info(VID)},
+                    playlists={COURSE: _playlist((other, 900), (VID, 900))})
+    rc, _ = run([f"https://www.youtube.com/watch?v={VID}&list={COURSE}"], meta)
+    assert rc == 0
+    docs = list(Path("intake/arshia_course").glob("*.md"))
+    assert len(docs) == 1 and front(docs[0])["عنوان"] == f"[02] عنوان {VID}"
+    assert ("video", other) not in meta.calls
+
+
+def test_video_link_of_unknown_playlist_resolves_by_channel(env) -> None:
+    meta = FakeMeta(videos={VID: info(VID)})
+    rc, _ = run([f"https://www.youtube.com/watch?v={VID}&list={PL}"], meta)
+    assert rc == 0 and meta.calls == [("video", VID)]          # پلی‌لیست ناشناخته خوانده نشد
+    assert list(Path("intake", V.SINGLE_PREFIX + STRANGER).glob("*.md"))
+
+
+def test_video_not_in_the_named_playlist_is_loud(env, capsys) -> None:
+    meta = FakeMeta(videos={VID: info(VID)},
+                    playlists={COURSE: _playlist(("aaaaaaaaaa1", 900))})
+    rc, _ = run([f"https://www.youtube.com/watch?v={VID}&list={COURSE}"], meta)
+    assert rc == 0 and "در پلی‌لیست" in capsys.readouterr().out
+    assert not list(Path("intake").glob("arshia_course/*.md"))   # منبع از کانال، نه دوره
+
+
+def legacy_doc(vid: str, n: int) -> Path:
+    """سند دوره پیش از نشست ۴: متن کامل در خود سند عمومی، بی‌نسخه محلی."""
+    p = Path("intake/arshia_course") / f"2026-08-09_{n:02d}-قسمت_{vid[:6]}.md"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(f"---\nعنوان: [{n:02d}] قسمت\nنشانی: https://www.youtube.com/watch?v={vid}\n"
+                 f"ساخته‌شده با: radar_intake 1.3\n---\n\n## متن کامل\n\n[00:01] {SECRET}\n",
+                 encoding="utf-8")
+    return p
+
+
+def test_legacy_full_doc_is_never_refetched_or_duplicated(env, capsys) -> None:
+    """۹ فایل دوره ارشیا متن کامل را در خود دارند. پیش از رفع، نبود نسخه محلی
+    «دوباره گرفته می‌شود» می‌خواند و سند دوم با نام دیگر می‌ساخت."""
+    old = legacy_doc(VID, 1)
+    before = old.read_bytes()
+    rc, calls = run([VID], FakeMeta({VID: info(VID)}))
+    out = capsys.readouterr().out
+    assert calls.transcript == [] and calls.frames == []
+    assert old.read_bytes() == before
+    assert sorted(Path("intake").rglob("*.md")) == [old]          # هیچ سند دومی
+    assert "سند قدیمی" in out and rc == 0
+
+
+def test_legacy_episodes_count_as_done_in_playlist(env, capsys) -> None:
+    ids = ["aaaaaaaaaa1", "bbbbbbbbbb2", "cccccccccc3"]
+    legacy_doc(ids[0], 1)
+    legacy_doc(ids[1], 2)
+    meta = FakeMeta(videos={v: info(v) for v in ids},
+                    playlists={COURSE: _playlist(*((v, 900) for v in ids))})
+    rc, _ = run([COURSE], meta)
+    rows = [l for l in capsys.readouterr().out.splitlines() if l.startswith("| 0")]
+    assert "پیشین" in rows[0] and "پیشین" in rows[1] and "تازه" in rows[2]
+    rc, calls = run([COURSE, "--limit", "1"], meta)
+    assert rc == 0 and [c for c in meta.calls if c[0] == "video"] == [("video", ids[2])]
+    assert len(calls.frames) == 1
 
 
 def test_block_stops_the_playlist_loudly(env, capsys) -> None:

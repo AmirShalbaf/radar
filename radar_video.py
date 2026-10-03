@@ -22,8 +22,13 @@ analysts.yml نیست — و رادار آن را کامل می‌بیند.
     فقط فهرست و برآورد زمان، و می‌ایستد — هیچ فایلی نوشته نمی‌شود. با --limit N،
     N قسمت تازه به ترتیب؛ قسمت پیشین و کوتاه شمرده نمی‌شوند.
 
+ویدیوی درون پلی‌لیست — watch?v=…&list=… — اگر آن پلی‌لیست منبع analysts.yml
+است، منبع و شماره قسمت را از آن می‌گیرد؛ وگرنه منبع از کانال است.
+
 بازاستفاده — هیچ‌چیز بی‌صدا بازنویسی نمی‌شود:
-    سند موجود دوباره گرفته نمی‌شود. فریم موجود دوباره ساخته نمی‌شود مگر با
+    سند موجود دوباره گرفته نمی‌شود. سند پیش از نشست ۴ — متن کامل در خود سند
+    عمومی، مثل ۹ قسمت نخست دوره ارشیا — پیشین است و دست نمی‌خورد؛ فریمش هم
+    ساخته نمی‌شود، چون radar_frames نسخه محلی می‌خواهد. فریم موجود دوباره ساخته نمی‌شود مگر با
     --force. اگر کارت نمودار ویدیو هست، فریم حتی با --force ساخته نمی‌شود —
     شناسه‌های کارت از فهرست فریم جدا می‌افتند، درس رویداد ۵۹.
 
@@ -128,11 +133,13 @@ def parse_link(raw: str) -> Link:
         return Link("playlist", playlist_id=pid)
     vid = _video_id(s)
     if vid:
-        note = ""
-        if pid and not auto:
-            note = (f"این ویدیو درون پلی‌لیست {pid} است؛ فقط همین ویدیو دیده می‌شود. "
-                    f"برای کل پلی‌لیست: https://www.youtube.com/playlist?list={pid}")
-        return Link("video", video_id=vid, note=note)
+        if not pid or auto:
+            return Link("video", video_id=vid)
+        # شناسه پلی‌لیست می‌ماند: اگر منبع شناخته‌شده analysts.yml باشد، منبع و
+        # شماره قسمت از آن می‌آید — main
+        note = (f"این ویدیو درون پلی‌لیست {pid} است؛ فقط همین ویدیو دیده می‌شود. "
+                f"برای کل پلی‌لیست: https://www.youtube.com/playlist?list={pid}")
+        return Link("video", video_id=vid, playlist_id=pid, note=note)
     if re.match(r"^/(@|channel/|c/|user/)", u.path):
         raise LinkError("پیوند کانال است، نه ویدیو یا پلی‌لیست — کانال ثابت در "
                         "analysts.yml با radar_intake جمع می‌شود")
@@ -261,6 +268,19 @@ def find_doc(intake: Path, vid: str) -> Path | None:
     return None
 
 
+def is_legacy(doc: Path) -> bool:
+    """
+    سند پیش از نشست ۴: متن کامل در خود سند عمومی، بی‌نسخه محلی — ۹ قسمت
+    نخست دوره ارشیا. دست نمی‌خورد: بازگیری‌اش سند دوم با نام دیگر می‌ساخت.
+    """
+    return F.FULL_TEXT in doc.read_text(encoding="utf-8")
+
+
+def known_playlist(sources: list[I.Source], pid: str) -> bool:
+    return bool(pid) and any(s.kind == "playlist" and I.extract_playlist_id(s.playlist_id or s.url) == pid
+                             for s in sources)
+
+
 def run_frames(doc_path: Path, out_root: Path, max_frames: int) -> tuple[dict, int]:
     return F.run(F.load_doc(doc_path), out_root, max_frames)
 
@@ -317,13 +337,17 @@ class Episode:
     single: I.Source | None = None
 
 
-def _done(ctx: Ctx, vid: str) -> bool:
-    """سند و فریم یا کارت هست — قسمت پیشین."""
+def _done(ctx: Ctx, vid: str) -> str:
+    """چرا قسمت پیشین است — سند قدیمی، یا سند با کارت یا فریم؛ تهی یعنی تازه."""
     doc = find_doc(ctx.intake, vid)
     if doc is None:
-        return False
+        return ""
+    if is_legacy(doc):
+        return "سند قدیمی"
     cards = ctx.intake / F.CHARTS_DIR.name / doc.parent.name / f"{vid}.json"
-    return cards.exists() or (ctx.frames_root / vid / "frames.json").exists()
+    if cards.exists():
+        return "کارت هست"
+    return "فریم هست" if (ctx.frames_root / vid / "frames.json").exists() else ""
 
 
 def see_video(ctx: Ctx, vid: str, *, pos: int | None = None, playlist_id: str = "",
@@ -343,6 +367,13 @@ def see_video(ctx: Ctx, vid: str, *, pos: int | None = None, playlist_id: str = 
     secs = _seconds(info.get("duration"))
 
     pub = find_doc(ctx.intake, vid)
+    if pub is not None and is_legacy(pub):
+        ep.doc = pub.as_posix()
+        ep.status = "پیشین — سند قدیمی"
+        ep.detail = ("متن کامل در خود سند عمومی، پیش از نشست ۴ — دست نمی‌خورد؛ "
+                     "radar_frames نسخه محلی می‌خواهد، پس فریم ساخته نشد")
+        ctx.log(f"  سند قدیمی: {ep.doc} — {ep.detail}")
+        return ep
     if pub is not None and (ctx.intake / I.LOCAL_DIR / pub.relative_to(ctx.intake)).exists():
         ctx.log(f"  سند موجود — بازاستفاده: {pub.as_posix()}")
     else:
@@ -464,7 +495,7 @@ def render_listing(link: Link, pinfo: dict, entries: list[dict], status: dict[st
         f"| قسمت تازه | {est['fresh']} |",
         f"| مدت نامعلوم، درون تازه‌ها | {est['unknown']} |",
         f"| کوتاه — رد می‌شود | {count('کوتاه')} |",
-        f"| پیشین — سند و فریم یا کارت هست | {count('پیشین')} |",
+        f"| پیشین — سند قدیمی، یا سند با فریم یا کارت | {count('پیشین')} |",
         f"| مدت کل قسمت‌های تازه با مدت معلوم | {I.fmt_ts(est['total_s'])} |",
         f"| اجرای اسکریپت، برآورد | حدود {est['run_min']} دقیقه |",
         f"| فضای محلی، برآورد | حدود {est['mb']} MB |", "",
@@ -787,8 +818,22 @@ def main(argv: list[str] | None = None, deps: Deps | None = None) -> int:
             print("ℹ️ --limit فقط برای پلی‌لیست است — نادیده گرفته شد")
         if link.note:
             print(f"ℹ️ {link.note}")
+        pos, pl = None, ""
+        if known_playlist(ctx.sources, link.playlist_id):
+            try:
+                pinfo = deps.meta.playlist(link.playlist_id)
+            except MetaError as e:
+                print(f"⛔ فهرست پلی‌لیست گرفته نشد — {e}", file=sys.stderr)
+                return 3
+            hit = next((x for x in playlist_entries(pinfo) if x["id"] == link.video_id), None)
+            if hit:
+                pos, pl = hit["pos"], link.playlist_id
+                print(f"ℹ️ قسمت {hit['pos']:02d} از پلی‌لیست شناخته‌شده {link.playlist_id} — "
+                      "منبع از analysts.yml")
+            else:
+                print(f"⚠️ ویدیو در پلی‌لیست {link.playlist_id} نیست — منبع از کانال")
         print(f"▶ ویدیو {link.video_id}")
-        ep, _ = _attempt(ctx, link.video_id)
+        ep, _ = _attempt(ctx, link.video_id, pos=pos, playlist_id=pl)
         eps.append(ep)
         head = ep.title or link.video_id
     else:
@@ -805,8 +850,9 @@ def main(argv: list[str] | None = None, deps: Deps | None = None) -> int:
         if listing:
             status = {}
             for e in entries:
-                if _done(ctx, e["id"]):
-                    status[e["id"]] = "پیشین"
+                why = _done(ctx, e["id"])
+                if why:
+                    status[e["id"]] = f"پیشین — {why}"
                 elif e["duration"] is not None and e["duration"] <= I.SHORT_MAX_SECONDS:
                     status[e["id"]] = "کوتاه — رد می‌شود"
                 elif e["duration"] is None:
@@ -817,8 +863,9 @@ def main(argv: list[str] | None = None, deps: Deps | None = None) -> int:
             return 0
         taken = 0
         for i, e in enumerate(entries):
-            if _done(ctx, e["id"]):
-                eps.append(Episode(e["pos"], e["id"], title=e["title"], status="پیشین"))
+            why = _done(ctx, e["id"])
+            if why:
+                eps.append(Episode(e["pos"], e["id"], title=e["title"], status=f"پیشین — {why}"))
                 continue
             if taken >= a.limit:
                 break
