@@ -143,6 +143,21 @@ def test_existing_arshia_files_stay_full() -> None:
         assert "## متن کامل" in f.read_text(encoding="utf-8"), f.name
 
 
+def test_write_documents_is_the_single_writer(tmp_path) -> None:
+    """
+    نشست ۶ب: radar_video هم سند می‌سازد. نام فایل و چیدمان عمومی و محلی فقط در
+    write_documents است — متنی که در دو جا نوشته شود، از هم جدا می‌افتد (رویداد ۲۲).
+    """
+    item = {**_item(), "published": "2026-09-29T05:23:15+00:00"}
+    segs = [{"text": SECRET, "start": 5.0}, {"text": "bitcoin to 62000 by december", "start": 9.0}]
+    fname, n, date = I.write_documents(_src(), item, segs, "زیرنویس", tmp_path, duration="12:00")
+    assert date == "2026-09-29" and fname == "2026-09-29_عنوان_abcdef.md"
+    public = (tmp_path / "alpha" / fname).read_text(encoding="utf-8")
+    local = (tmp_path / I.LOCAL_DIR / "alpha" / fname).read_text(encoding="utf-8")
+    assert SECRET not in public and SECRET in local
+    assert "مدت: 12:00" in public and f"نامزد ادعا: {n}" in public
+
+
 # ═══════════════════ radar_digest ═══════════════════
 
 def test_digest_and_intake_agree_on_local_dir() -> None:

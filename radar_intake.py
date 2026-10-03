@@ -1232,6 +1232,37 @@ def build_documents(
     return public, full
 
 
+def write_documents(
+    src: Source,
+    item: dict,
+    segments: list[dict],
+    method: str,
+    outdir: Path,
+    *,
+    gap: str | None = None,
+    duration: str = "—",
+    min_strength: int = 2,
+) -> tuple[str, int, str]:
+    """
+    سند عمومی و نسخه کامل محلی یک آیتم. برمی‌گرداند (نام فایل، شمار نامزد، تاریخ).
+
+    تنها جای نام فایل و چیدمان — radar_video هم از همین می‌نویسد، نشست ۶ب.
+    متنی که در دو جا نوشته شود دیر یا زود از هم جدا می‌افتد — رویداد ۲۲.
+    """
+    cands = extract_claim_candidates(segments, min_strength=min_strength)
+    date = (item.get("published") or "")[:10] or datetime.now(UTC).strftime("%Y-%m-%d")
+    fname = f"{date}_{slugify(item['title'])}_{item['id'][:6]}.md"
+    local_rel = f"{LOCAL_DIR}/{src.key}/{fname}"
+    public, full = build_documents(src, item, segments, method, cands, gap,
+                                   local_rel=local_rel, duration=duration)
+    # نسخه محلی اول: اگر نوشتنش شکست، شناسنامه عمومیِ بی‌متن نمی‌ماند
+    (outdir / LOCAL_DIR / src.key).mkdir(parents=True, exist_ok=True)
+    (outdir / local_rel).write_text(full, encoding="utf-8")
+    (outdir / src.key).mkdir(parents=True, exist_ok=True)
+    (outdir / src.key / fname).write_text(public, encoding="utf-8")
+    return fname, len(cands), date
+
+
 # ===========================================================================
 # ۷ — وضعیت و فهرست
 # ===========================================================================
@@ -1560,22 +1591,11 @@ def process_source(
                 run.incomplete += 1
                 log(f"      ⚠ متن ناقص — {gap}")
 
-        cands = extract_claim_candidates(segs, min_strength=args.min_strength)
-
-        date = (item.get("published") or "")[:10] or datetime.now(UTC).strftime("%Y-%m-%d")
-        fname = f"{date}_{slugify(item['title'])}_{item['id'][:6]}.md"
-        local_rel = f"{LOCAL_DIR}/{src.key}/{fname}"
-        public, full = build_documents(src, item, segs, method, cands, gap,
-                                       local_rel=local_rel, duration=duration)
-        # نسخه محلی اول: اگر نوشتنش شکست، شناسنامه عمومیِ بی‌متن نمی‌ماند
-        (outdir / LOCAL_DIR / src.key).mkdir(parents=True, exist_ok=True)
-        (outdir / local_rel).write_text(full, encoding="utf-8")
-        (outdir / src.key).mkdir(parents=True, exist_ok=True)
-        (outdir / src.key / fname).write_text(public, encoding="utf-8")
-
+        fname, ncands, date = write_documents(src, item, segs, method, outdir, gap=gap,
+                                              duration=duration, min_strength=args.min_strength)
         seen[item["id"]] = {"title": item["title"], "file": fname, "at": date}
         run.made += 1
-        log(f"      ✓ {method} — {len(cands)} نامزد → {fname}")
+        log(f"      ✓ {method} — {ncands} نامزد → {fname}")
         time.sleep(args.sleep)
 
     return run
