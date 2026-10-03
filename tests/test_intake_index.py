@@ -74,6 +74,18 @@ def test_fresh_reindex_has_no_run_section(tmp_path) -> None:
     assert "## آخرین اجرا" not in (out / "INDEX.md").read_text(encoding="utf-8")
 
 
+def test_video_reports_are_not_documents(tmp_path) -> None:
+    """نشست ۶ب: گزارش ویدیو در intake/reports/ خوانده ماست، نه سند جمع‌آوری."""
+    out = tmp_path / "intake"
+    (out / "a").mkdir(parents=True)
+    (out / "a" / "x.md").write_text(_doc("یک", "2026-09-29"), encoding="utf-8")
+    (out / I.REPORTS_DIR / "a").mkdir(parents=True)
+    (out / I.REPORTS_DIR / "a" / "vid.md").write_text("# گزارش ویدیو\n", encoding="utf-8")
+    I.rebuild_index(out)
+    idx = (out / "INDEX.md").read_text(encoding="utf-8")
+    assert "تعداد سند: 1" in idx and "vid.md" not in idx
+
+
 def test_new_run_replaces_old_section(tmp_path) -> None:
     out = tmp_path / "intake"
     out.mkdir()

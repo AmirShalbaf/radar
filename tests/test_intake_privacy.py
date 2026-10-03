@@ -149,6 +149,18 @@ def test_digest_and_intake_agree_on_local_dir() -> None:
     """radar_digest بی‌وابستگی به radar_intake هم باید اجرا شود؛ پس نام تکرار شده."""
     assert DG.LOCAL_DIR == I.LOCAL_DIR
 
+
+def test_digest_and_intake_agree_on_reports_dir() -> None:
+    assert DG.REPORTS_DIR == I.REPORTS_DIR == "reports"
+
+
+def test_digest_skips_video_reports(tmp_path) -> None:
+    """نشست ۶ب: گزارش ویدیو سند نیست؛ «بی‌متن محلی» هم شمرده نمی‌شود."""
+    (tmp_path / "reports" / "a").mkdir(parents=True)
+    (tmp_path / "reports" / "a" / "v.md").write_text("# گزارش ویدیو\n", encoding="utf-8")
+    docs, rep = DG.load_docs(tmp_path, None)
+    assert docs == [] and rep.no_local == [] and rep.unreadable == []
+
 def _stub(title: str) -> str:
     return (f"---\nمنبع: الف\nجایگاه در رادار: کتابخانه روش\nعنوان: {title}\n"
             f"تاریخ انتشار: 2026-09-29\n---\n\n## نامزدهای ادعا\n\n"

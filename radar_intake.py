@@ -1121,6 +1121,9 @@ def slugify(text: str, maxlen: int = 40) -> str:
 # یک قاعده برای همه منابع. ۹ فایل پیشین دوره ارشیا همان‌طور می‌مانند.
 # ---------------------------------------------------------------------------
 LOCAL_DIR = "_local"
+# گزارش ویدیوی radar_video — خوانده ماست، نه سند جمع‌آوری؛ INDEX و DIGEST
+# نمی‌شمارندش. نشست ۶ب.
+REPORTS_DIR = "reports"
 PUBLIC_MAX_CANDIDATES = 10
 PUBLIC_MAX_CHARS = 200
 
@@ -1387,6 +1390,8 @@ def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
         rel = f.relative_to(outdir).as_posix()
         if rel in ("INDEX.md", "DIGEST.md") or rel.startswith(LOCAL_DIR + "/"):
             continue      # نسخه محلی جفت همان شناسنامه است، سند دوم نیست
+        if rel.startswith(REPORTS_DIR + "/"):
+            continue      # گزارش ویدیو خوانده ماست، نه سند
         try:
             txt = f.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError) as e:

@@ -200,6 +200,7 @@ class Doc:
 
 
 LOCAL_DIR = "_local"          # همان radar_intake.LOCAL_DIR — آزمون برابری قفلش می‌کند
+REPORTS_DIR = "reports"       # همان radar_intake.REPORTS_DIR — گزارش ویدیو، نه سند
 FULL_TEXT = "## متن کامل"
 
 
@@ -243,6 +244,8 @@ def load_docs(intake: Path, days: int | None) -> tuple[list[Doc], LoadReport]:
         rel = f.relative_to(intake).as_posix()
         if rel in ("INDEX.md", "DIGEST.md") or rel.startswith(LOCAL_DIR + "/"):
             continue
+        if rel.startswith(REPORTS_DIR + "/"):
+            continue                  # گزارش ویدیو — نشست ۶ب
         try:
             txt = f.read_text(encoding="utf-8")
             meta, body = _split(txt)
