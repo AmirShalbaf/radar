@@ -72,6 +72,25 @@
       "p30": null,
       "chg30": null,
       "saved30": null
+    },
+    {
+      "id": 3,
+      "date": "2026-10-02",
+      "at": "2026-10-02T08:17:19+00:00",
+      "book": "position",
+      "symbol": "ETH",
+      "action": "trim",
+      "reason": "reserve",
+      "qty": 0.0472,
+      "price": 2755.0,
+      "level": null,
+      "order_id": "ccb9052a-ce7b-4d51-8834-feecf67c83e1",
+      "p14": null,
+      "chg14": null,
+      "saved14": null,
+      "p30": null,
+      "chg30": null,
+      "saved30": null
     }
   ]
 }

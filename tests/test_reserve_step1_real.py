@@ -35,8 +35,9 @@ def _load(name):
 def test_ledger_has_both_receipts() -> None:
     h = _load("holdings.json")
     rows = [r for r in h["ledger"] if r["action"] == "trim" and r["reason"] == "reserve"]
-    assert [r["symbol"] for r in rows] == ["SOL", "ETH"]        # به ترتیب زمان رسید
-    for r in rows:
+    # دو ردیف نخست؛ پله دوم ETH، ۲ اکتبر، در test_reserve_step2_real.py
+    assert [r["symbol"] for r in rows[:2]] == ["SOL", "ETH"]    # به ترتیب زمان رسید
+    for r in rows[:2]:
         s = SALES[r["symbol"]]
         assert r["at"] == s["at"] and r["delta"] == -s["qty"] and r["price"] == s["price"]
         assert r["gross"] == s["gross"] and r["fee"] == s["fee"]
@@ -44,12 +45,19 @@ def test_ledger_has_both_receipts() -> None:
 
 
 def test_cash_and_quantities() -> None:
+    """
+    سهم پله اول در نقد LBank. از ۲ اکتبر ردیف‌های بعدی هم هست؛ وضعیت فعلی —
+    اسکرین‌شات به‌علاوه همه ردیف‌ها — در test_holdings_real.py سنجیده می‌شود.
+    """
     h, j = P.load(str(ROOT / "holdings.json"), str(ROOT / "radar_journal.json"))
+    ids = {s["order_id"] for s in SALES.values()}
+    rows = [r for r in h["ledger"] if r.get("order_id") in ids]
+    assert len(rows) == 2
+    for r in rows:
+        assert r["net"] == pytest.approx(r["gross"] - r["fee"], abs=1e-9)
+    assert sum(r["net"] for r in rows) == pytest.approx(217.406122, abs=1e-9)
     cash = {c["account"]: c["qty"] for c in h["cash"]}
-    assert cash["LBank"] == pytest.approx(0.1010102 + 217.406122, abs=1e-9)
     lots = {p["symbol"]: {l["account"]: l["qty"] for l in p["lots"]} for p in h["positions"]}
-    assert lots["SOL"]["LBank"] == pytest.approx(6.38005369 - 0.749, abs=1e-12)
-    assert lots["ETH"]["LBank"] == pytest.approx(0.242657 - 0.0472, abs=1e-12)
     # «صرافی دوم» ۲۹ سپتامبر با withdraw از رادار رفت — ETH رادار فقط LBank است
     assert "صرافی دوم" not in cash and "صرافی دوم" not in lots["ETH"]
 
@@ -66,13 +74,12 @@ def test_watch_marks_and_no_market_reminder() -> None:
     w, h = _load("watch.json"), _load("holdings.json")
     W.validate_watch(w)
     steps = w["reserve_plan"]["steps"]
-    marked = {s["symbol"]: s["executed"] for s in steps if s.get("executed")}
-    assert {k: v["order_id"] for k, v in marked.items()} == \
-        {k: v["order_id"] for k, v in SALES.items()}
-    assert all(s["price"] is None for s in steps if s.get("executed"))
-    assert W.unfilled_steps(w["reserve_plan"], h) == [
-        {"symbol": "ETH", "qty": 0.0472, "price": 2755}, {"symbol": "ETH", "qty": 0.0472, "price": 2940},
-        {"symbol": "SOL", "qty": 0.749, "price": 125.5}]
+    marked = {s["executed"]["order_id"]: s for s in steps if s.get("executed")}
+    for sym, sale in SALES.items():
+        s = marked[sale["order_id"]]
+        assert s["symbol"] == sym and s["price"] is None        # پله بازار
+    # هیچ پله بازاری یادآوری «مانده» نمی‌گیرد؛ فهرست کامل مانده در پله دوم
+    assert all(s["price"] is not None for s in W.unfilled_steps(w["reserve_plan"], h))
 
 
 def test_sol_131_5_cancelled_with_reason() -> None:
