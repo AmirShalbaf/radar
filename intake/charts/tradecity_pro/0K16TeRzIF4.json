@@ -1,0 +1,4150 @@
+{
+ "schema": 1,
+ "kind": "radar-chart-cards",
+ "video_id": "0K16TeRzIF4",
+ "doc_id": "2023-03-13_tradecity_pro_0K16TeRz",
+ "doc": "intake/tradecity_pro/2023-03-13_آموزش-تحلیل-تکنیکال-پارت-35-کندل-ستاپ-تر_0K16Te.md",
+ "source": "tradecity_pro",
+ "url": "https://www.youtube.com/watch?v=0K16TeRzIF4",
+ "title": "آموزش تحلیل تکنیکال پارت 35  - کندل ستاپ ترید ارشیا عزیزپور بر اساس پرایس اکشن و کندل شناسی",
+ "read_by": "مدل — نشست ۶ب رادار",
+ "read_at": "2026-10-03",
+ "guide": "references/chart-reading.md",
+ "frames_tool": "radar_frames 1.1",
+ "cards": [
+  {
+   "frame_id": "0K16TeRzIF4_01m49.0s",
+   "t": 109.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:05:21+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:05:21 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن؛ وارسی: 12:05:21 UTC به‌علاوه شمارش 3:54:39 = 16:00 UTC، بسته چهارساعته"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "محاسبه‌شده: 62 پیکسل برای هر 1000 در 25000 تا 26000 و 82 در 19050 تا 19550 — نسبت 1.32 برابر نسبت قیمت"
+   },
+   "price_axis": {
+    "top": {
+     "value": 26000.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 19050.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O22984.00 H23498.00 L22768.00 C23392.00 +406.00 (+1.77%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "22613.27 · Wed 01 Feb '23 11:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22153.00 · 03:54:39 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "22140.00 · 8.00 · 22148.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "3SMA 7 25 99: 23136.43 · 23203.76 · 22472.78 — مقدار سه میانگین زیر نشانگر",
+     "confidence": "high"
+    }
+   ],
+   "speech": "آغاز درس ستاپ: پس از دیدن، پیش از ورود خودت بک‌تست بگیر و نتیجه را بگو؛ به گفته او در چهارساعته با آن پوزیشن گرفته.",
+   "method_notes": [
+    "پیش از معامله اول بک‌تست، بعد فوروارد تست — به گفته او",
+    "تریدینگ‌ویو مرورگری، منطقه زمانی نیویورک: ساعت ضبط UTC-4، کندل‌های فوریه UTC-5 — د۲۴",
+    "وارسی تایم‌فریم، محاسبه‌شده: 12:05:21 UTC به‌علاوه 3:54:39 = 16:00 UTC — بسته چهارساعته"
+   ],
+   "claims": [
+    "از آغاز ویدیو، 00:23 تا 00:31: به گفته او در ماه‌های اخیر فقط با همین ستاپ پوزیشن گرفته، حدود ۲۵ تا ۳۰ پوزیشن — شمار بی‌کارنامه"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "«توی فور» در زیرنویس مبهم است؛ صفحه چهارساعته بی‌ترسیم"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_02m33.5s",
+   "t": 153.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:06:05+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:06:05 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "محاسبه‌شده: 62 پیکسل برای هر 1000 در 25000 تا 26000 و 82 در 19050 تا 19550 — نسبت 1.32 برابر نسبت قیمت"
+   },
+   "price_axis": {
+    "top": {
+     "value": 26000.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 18850.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O24526.00 H24727.00 L24501.00 C24680.00 +150.00 (+0.61%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "21562.95 · Sat 18 Feb '23 07:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22114.00 · 03:53:55 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "22115.00 · 8.00 · 22123.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "3SMA 7 25 99: 24511.29 · 23755.76 · 22917.36 — زیر نشانگر",
+     "confidence": "high"
+    }
+   ],
+   "speech": "ستاپ را اول بک‌تست، بعد فوروارد تست کن؛ به گفته او در همه تایم‌فریم‌ها جواب می‌دهد و تایم بالاتر پوزیشن کمتری می‌دهد؛ زیر ۱۵ دقیقه معامله نمی‌کند.",
+   "method_notes": [
+    "قاعده شخصی به گفته او: زیر ۱۵ دقیقه معامله نمی‌کند، چون حس اعتیاد می‌دهد",
+    "تایم‌فریم بالاتر یعنی پوزیشن کمتر — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "قاعده کلی؛ صفحه فقط نمودار چهارساعته بی‌ترسیم"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_03m00.0s",
+   "t": 180.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:06:32+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:06:32 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "محاسبه‌شده: 62 پیکسل برای هر 1000 در 25000 تا 26000 و 82 در 19050 تا 19550 — نسبت 1.32 برابر نسبت قیمت"
+   },
+   "price_axis": {
+    "top": {
+     "value": 26000.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 18850.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O21683.00 H21717.00 L21649.00 C21694.00 +11.00 (+0.05%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "21206.98 · Fri 10 Feb '23 23:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22106.00 · 03:53:28 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "22103.00 · 3.00 · 22106.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "ستاپ فقط در جهت روند گرفته می‌شود؛ به گفته او پس از موج اول بهتر و مطمئن‌تر سود می‌دهد.",
+   "method_notes": [
+    "فقط در جهت روند",
+    "موج اول را از دست بده؛ از موج بعد بهتر جواب می‌دهد — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "قاعده کلی؛ روی صفحه موجی نشان داده نشد"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_03m19.0s",
+   "t": 199.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:06:51+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:06:51 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "محاسبه‌شده: 62 پیکسل برای هر 1000 در 25000 تا 26000 و 82 در 19050 تا 19550 — نسبت 1.32 برابر نسبت قیمت"
+   },
+   "price_axis": {
+    "top": {
+     "value": 25000.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 18650.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O23031.00 H23031.00 L22651.00 C22763.00 −271.00 (−1.18%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "20078.23 · Mon 06 Feb '23 15:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22113.00 · 03:53:09 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "22091.00 · 8.00 · 22099.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "3SMA 7 25 99: 22921.14 · 23245.80 · 23122.59 — زیر نشانگر",
+     "confidence": "high"
+    }
+   ],
+   "speech": "ابزار لازم: سه میانگین ساده ۷ و ۲۵ و ۹۹، و کمی کندل‌شناسی برای تشخیص زور خریدار و فروشنده.",
+   "method_notes": [
+    "ابزار: میانگین ساده ۷، ۲۵ و ۹۹، به‌علاوه کندل‌شناسی"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف «۷ ۲۵۹۹» همان 3SMA 7 25 99 صفحه است — زیرنویس ۲۵ و ۹۹ را چسبانده؛ گونه تازه د۲۰"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_03m35.0s",
+   "t": 215.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:07:07+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:07:07 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کوچک‌تر است — همان نمودار"
+   },
+   "price_axis": {
+    "top": {
+     "value": 23750.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 20650.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O22692.00 H22821.00 L22567.00 C22606.00 −83.00 (−0.37%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "22604.72 · Thu 09 Feb '23 07:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22095.00 · 03:52:53 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "22094.00 · 4.00 · 22098.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "3SMA 7 25 99: 22743.14 · 22933.72 · 23134.71 — زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "23506.00 سبز — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "ابزار دیگر: مدیریت سرمایه و ریسک، و حمایت و مقاومت؛ کندل‌شناسی یعنی تشخیص اینکه زور خریدار بیشتر است یا فروشنده.",
+   "method_notes": [
+    "کندل نمونه شورت: شمع چهارساعته Thu 09 Feb '23 07:00 به وقت نیویورک، یعنی 12:00 UTC — د۲۴",
+    "وارسی قاعده سایه، محاسبه‌شده از راهنمای OHLC: سایه بالا 22821 − 22692 = 129؛ بدنه 22692 − 22606 = 86؛ نسبت 1.50؛ سایه پایین 39 کمتر از بدنه",
+    "سایه بالای همین کندل از میانگین ۷ زرد گذشته — «میانگین پشت کندل»",
+    "تغییر راهنما −83.00 است نه −86.00: نسبت به بسته قبلی است، نه باز همین کندل؛ 83 ÷ 22689 = 0.37٪ — د۲۵"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف از ابزارها؛ کندل نمونه زیر نشانگر است ولی هنوز از آن نمی‌گوید"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_03m53.5s",
+   "t": 233.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:07:25+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:07:25 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "همان نمودار"
+   },
+   "price_axis": {
+    "top": {
+     "value": 23200.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 20000.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O22613.00 H22621.00 L21897.00 C22033.00 −573.00 (−2.53%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "19639.01 · Thu 09 Feb '23 11:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22104.00 · 03:52:35 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "22101.00 · 3.00 · 22104.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "23506.00 سبز — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "به گفته او شاخص قدرت نسبی و حجم برای این ستاپ لازم نیستند؛ وین‌ریت را بالا ولی تعداد پوزیشن را پایین می‌برند؛ کندل و یک میانگین و جهت روند کافی است.",
+   "method_notes": [
+    "فیلترهای اضافه — شاخص قدرت نسبی، حجم — به گفته او وین‌ریت را بالا و شمار پوزیشن را پایین می‌برند",
+    "جهت روند با داو تئوری",
+    "کندل بعد از کندل نمونه: افت 573.00، یعنی −2.53٪ — از راهنمای OHLC"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "قاعده کلی"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_04m59.5s",
+   "t": 299.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:08:31+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:08:31 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 23000.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 22000.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O22613.00 H22621.00 L21897.00 C22033.00 −573.00 (−2.53%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "22696.29 · Thu 09 Feb '23 11:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22109.00 · 03:51:29 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "22098.00 · 10.00 · 22108.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "22121.00 سبز — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "شکل کندل مهم است: سایه دست‌کم یک‌ونیم تا دو برابر بدنه — در شورت سایه بالا، در لانگ سایه پایین؛ سایه بزرگ‌تر حرکت تندتر ولی استاپ بزرگ‌تر.",
+   "method_notes": [
+    "سایه دست‌کم ۱.۵ تا ۲ برابر بدنه، در سمت مخالف معامله",
+    "ورود با بسته کندل؛ حد ضرر پشت سایه — سایه بلند دفتر سفارش می‌خواهد تا استاپ درست بنشیند"
+   ],
+   "claims": [
+    "به گفته او هرچه سایه بلندتر، حرکت بعد تندتر — بک‌تست‌پذیر"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "قاعده ۱.۵ برابر با کندل نمونه می‌خواند — محاسبه‌شده در کارت 03:35: 129 ÷ 86 = 1.50"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_05m37.0s",
+   "t": 337.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:09:09+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:09:09 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 23100.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 21860.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O22679.00 H22760.00 L22674.00 C22689.00 +9.00 (+0.04%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "22677.05 · Thu 09 Feb '23 03:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22120.00 · 03:50:51 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "22118.00 · 4.00 · 22122.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "22121.00 سبز — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "میانگین ۷ باید به کندل چسبیده باشد و با بسته کندل داوری می‌شود؛ سایه پایین بهتر است کوچک‌تر از بدنه باشد؛ پوزیشن اینجا و استاپ بالای سایه؛ تایم چهارساعته است.",
+   "method_notes": [
+    "میانگین ۷ «پشت کندل» با بسته کندل داوری می‌شود، نه وسط آن",
+    "حد ضرر شورت بالای سایه همان کندل",
+    "وارسی، محاسبه‌شده از دو راهنمای OHLC: ورود در بسته 22606، حد ضرر بالای 22821 — ریسک 215؛ کف کندل بعد 21897 — 709، یعنی 3.30 برابر ریسک در یک کندل",
+    "رقم «بیشینه نسبت» در زیرنویس افتاده — «پ…»"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف از چهارساعته؛ صفحه 4h"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_07m39.5s",
+   "t": 459.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:11:11+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:11:11 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSDT",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / TetherUS"
+   },
+   "venue": {
+    "value": "BINANCE",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن؛ وارسی: 08:11:11 به‌علاوه 3:49 = 08:15:00"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 22700.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 21745.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "22360.65 H22386.83 L22286.68 C22290.87 −67.80 (−0.30%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "22294.78 · Mon 13 Mar '23 04:30 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "21980.09 · 03:49 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "21988.87 · 1.94 · 21990.81 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "3SMA 7 25 99: 22379.87 · 22325.30 · 21292.47 — زیر نشانگر",
+     "confidence": "high"
+    }
+   ],
+   "speech": "در ۱۵ دقیقه رنج بود و ریجکت خورد؛ کف با همین کندل از دست رفت، میانگین ۷ پشت کندل، پوزیشن و استاپ پشتش؛ به گفته او مجبور شد نمودار بیت‌استمپ را بیاورد.",
+   "method_notes": [
+    "صرافی را عوض کرد: کندل بایننس و بیت‌استمپ فرق داشت — به گفته او"
+   ],
+   "claims": [
+    "به گفته او این نمونه ۱۵ دقیقه تا نسبت حدود ۴ و خرده‌ای رفت"
+   ],
+   "speech_vs_screen": {
+    "agree": false,
+    "note": "حرف از نمودار بیت‌استمپ؛ صفحه هنوز BINANCE — فریم بعد بیت‌استمپ است"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_09m15.0s",
+   "t": 555.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:12:47+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:12:47 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن و عنوان «15»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 22800.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 21365.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O22167.00 H22187.00 L22018.00 C22045.00 −121.00 (−0.55%) — نشانگر در فضای آینده، پس آخرین شمع — د۱۶",
+     "confidence": "high"
+    },
+    {
+     "text": "22005.80 · Mon 13 Mar '23 09:15 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22036.00 · 11.00 · 22047.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "3SMA 7 25 99: 22132.71 · 22275.40 · 21698.13 — آخرین شمع",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او پشت پوزیشن صبر نمی‌کند — حدود سه تا چهار کندل تا هدف؛ مثال‌ها: روند کلی در چهارساعته نزولی است.",
+   "method_notes": [
+    "روند از تایم بالاتر — چهارساعته؛ ورود در ۱۵ دقیقه",
+    "نگه‌داری کوتاه: چند کندل، نه انتظار طولانی"
+   ],
+   "claims": [
+    "به گفته او پوزیشن معمولاً ظرف ۳ تا ۴ کندل به هدف می‌رسد"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف از روند چهارساعته؛ صفحه ۱۵ دقیقه"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_09m50.0s",
+   "t": 590.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:13:22+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:13:22 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن و عنوان «15»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 20550.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 19970.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O20346.00 H20348.00 L20250.00 C20319.00 −27.00 (−0.13%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "20345.21 · Sat 11 Mar '23 02:15 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22060.00 · 8.00 · 22068.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "20596.00 سبز — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "روند کلی نزولی؛ کف با این کندل شکست و میانگین ۷ پشتش بود؛ کندل بی‌سایه پایین کمی سخت است چون باید مارکت بزنی؛ استاپ پشت کندل و نسبت حدود ۲.",
+   "method_notes": [
+    "کندل بی‌سایه پایین: ورود مارکت، بی‌فرصت دیدن دفتر سفارش برای جای استاپ",
+    "در این نمونه هیچ اندیکاتور دیگری چک نشد — به گفته او"
+   ],
+   "claims": [
+    "به گفته او این نمونه نسبت حدود ۲ داد"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "نسبت روی این فریم اندازه‌گیری نشده"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_10m26.0s",
+   "t": 626.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:13:58+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:13:58 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن و عنوان «15»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 20800.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 19925.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 20650.83,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور، هم‌ردیف خط افقی سفید"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O19908.00 H19933.00 L19864.00 C19906.00 +13.00 (+0.07%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "20341.94 · Fri 10 Mar '23 13:30 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22048.00 · 5.00 · 22053.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "3SMA 7 25 99: 19926.71 · 19958.44 · 20105.57 — زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "20441.00 قاب قرمز — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "نمونه‌ای که استاپ خورد؛ روند نزولی و میانگین ۷ پشتش، ولی به گفته او اینجا پوزیشن نگرفت: کندل باید هم‌رنگ جهت باشد — در ریزش قرمز؛ سبز وین‌ریت پایین‌تری دارد.",
+   "method_notes": [
+    "رنگ کندل ستاپ هم‌جهت معامله: شورت با قرمز، لانگ با سبز",
+    "در بک‌تست چشم فقط نمونه خوب را می‌بیند — به گفته او؛ برای همین نمونه استاپ‌خورده هم آورد"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "کندل سبزی که از آن می‌گوید زیر نشانگر نیست"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_11m19.0s",
+   "t": 679.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:14:51+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:14:51 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن و عنوان «15»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 21680.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 21140.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O20889.00 H20899.00 L20774.00 C20841.00 −50.00 (−0.24%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "21330.05 · Thu 09 Mar '23 14:45 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22067.00 · 8.00 · 22075.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "Thu 09 Mar '23 11:15 — برچسب آبی محور زمان: خط عمودی برگزیده — د۱",
+     "confidence": "high"
+    },
+    {
+     "text": "دو خط عمودی آبی روی کندل‌های ریزش",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "به گفته او این کندل جزو ستاپ نیست چون بدنه‌اش زیادی بزرگ است؛ ولی چون میانگین پشتش است و حمایت شکسته، می‌شود از آن استفاده کرد.",
+   "method_notes": [
+    "کندل با بدنه بزرگ ستاپ نیست — به گفته او",
+    "کندل مورد بحث را با خط عمودی آبی نشان می‌دهد"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "کندل مورد بحث با خط عمودی نشان داده شده ولی OHLCاش روی صفحه نیست"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_11m55.0s",
+   "t": 715.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:15:27+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:15:27 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن و عنوان «15»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 21775.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 21435.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O21607.00 H21621.00 L21505.00 C21525.00 −72.00 (−0.33%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "21678.72 · Thu 09 Mar '23 11:30 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22130.00 · 8.00 · 22138.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "خط عمودی آبی برگزیده — برچسب زمانش زیر برچسب نشانگر پنهان",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "کف شکست؛ میانگین ۷ کمی فاصله دارد که به گفته او اوکی است و بیشتر از این قبول نیست؛ پوزیشن و استاپ اینجا؛ استاپ حدود سه‌دهم درصد و نسبت تا اینجا حدود ۲۰.",
+   "method_notes": [
+    "فاصله کندل تا میانگین ۷: باید چسبیده باشد، یا سایه به آن خورده، یا از آن رد شده — فاصله بیشتر قبول نیست"
+   ],
+   "claims": [
+    "به گفته او حد ضرر این نمونه حدود ۰.۳٪ بود و حرکت تا نسبت حدود ۲۰ رفت"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "نسبت ۲۰ روی این فریم اندازه‌گیری نشده"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_12m34.0s",
+   "t": 754.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:16:06+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:16:06 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن؛ وارسی: 08:16:06 به‌علاوه 13:54 = 08:30:00"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 22250.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 21935.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "22020.00 H22025.00 L22012.00 C22016.00 −5.00 (−0.02%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "22055.63 · Wed 08 Mar '23 14:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22136.00 · 13:54 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "22138.00 · 3.00 · 22141.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "3SMA 7 25 99: 22016.00 · 22051.20 · 22082.79 — زیر نشانگر",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اینجا ستاپ نداد؛ میانگین ۷ همراهش خورده و رو به پایین است؛ استاپ حدود دودهم و حرکت پنج‌دهم درصد، به گفته او نزدیک نسبت ۳؛ نمونه بعد استاپ حدود چهارده‌صدم درصد و نسبت ۱۰.",
+   "method_notes": [
+    "وارسی، محاسبه‌شده: 0.5 ÷ 0.2 = 2.5 — «نزدیک ۳» گرد شده",
+    "استاپ نخورده و می‌شد بیشتر نگه داشت — به گفته او"
+   ],
+   "claims": [
+    "به گفته او حد ضرر حدود ۰.۲٪ و حرکت ۰.۵٪ — «نزدیک نسبت ۳»",
+    "به گفته او نمونه بعد حد ضرر حدود ۰.۱۴٪ و نسبت ۱۰"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "درصدها روی این فریم اندازه‌گیری نشده"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_13m15.0s",
+   "t": 795.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:16:47+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:16:47 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد نوار بالا"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "عنوان نمودار در این نما پنهان است"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "medium",
+    "from": "image",
+    "how": "دکمه 15m روشن؛ عنوان نمودار پنهان است"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 23560.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 23340.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "23451.16 · Thu 02 Mar '23 19:45 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "23529.19 سبز — معنا نامعلوم",
+     "confidence": "medium"
+    },
+    {
+     "text": "منحنی دستی سفید و خط عمودی سفید — معنا نامعلوم",
+     "confidence": "medium"
+    },
+    {
+     "text": "ابزار خط‌کش در نوار چپ برگزیده",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "این را عمداً آورد: جایی که ستاپ شکست خورد؛ به گفته او در بایننس این شکل نبود و کندل بیت‌استمپ در این تایم خراب است؛ اگر استاپ فعال شده بود، استاپ خورده بودی.",
+   "method_notes": [
+    "نمونه شکست‌خورده را عمداً نشان داد",
+    "کندل صرافی‌ها فرق دارد — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "کندلی که از آن می‌گوید روی صفحه مشخص نشده"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_14m37.5s",
+   "t": 877.5,
+   "refs": [
+    {
+     "doc": "2023-03-13_tradecity_pro_0K16TeRz",
+     "row": 1,
+     "time": "14:38",
+     "role": "claim",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:18:09+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:18:09 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن و عنوان «15»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 23550.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 23250.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": null,
+      "confidence": null,
+      "from": "image",
+      "note": "ناخوانا",
+      "how": "برچسب‌های سبز کنار ابزار در نمای بی‌ابزار هم هستند — مال ابزار نیستند، د۲۳"
+     },
+     "high": {
+      "value": null,
+      "confidence": null,
+      "from": "image",
+      "note": "ناخوانا",
+      "how": "بالای ناحیه قرمز بیرون از بازه محور است"
+     },
+     "label": "ابزار موقعیت فروش — قرمز بالا، سبز پایین؛ برگزیده نیست"
+    }
+   ],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O23534.00 H23551.00 L23518.00 C23520.00 −17.00 (−0.07%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "23361.39 · Tue 28 Feb '23 13:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22058.00 · 1.00 · 22059.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "3SMA 7 25 99: 23498.29 · 23467.44 · 23399.04 — زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "23529.19 سبز — در نمای بی‌ابزار 13:15 هم هست — معنا نامعلوم",
+     "confidence": "medium"
+    },
+    {
+     "text": "23316.61 سبز — در نمای بی‌ابزار 19:24 هم هست — معنا نامعلوم",
+     "confidence": "medium"
+    },
+    {
+     "text": "23442.00 قاب قرمز — معنا نامعلوم",
+     "confidence": "medium"
+    },
+    {
+     "text": "دایره‌ها و منحنی‌های دستی سفید پیشین — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "نمونه‌ای پیدا کرد که استاپ می‌خورد؛ به گفته او درست‌تر این بود که استاپ زیر این کف باشد، ولی قابل‌قبول است؛ همه‌چیز صددرصدی نیست ولی وین‌ریتش خوب است.",
+   "method_notes": [
+    "حد ضرر درست‌تر: زیر کف ساختار، نه فقط پشت سایه — اصلاح خودش",
+    "نامزد ادعای ردیف ۱ «1 درصد» همان «۱۰۰ درصدی» حرف است — صفرها در زیرنویس افتاده؛ ادعای عددی نیست — د۲۰",
+    "د۲۱ وارسی نشد: کنار ابزار برچسب خاکستری یا قرمزی نیست و دو برچسب سبز مال ابزار نیستند — د۲۳"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف از مثال لانگ با استاپ زیر کف؛ ابزار روی صفحه شکل فروش دارد و ربطش پیدا نیست"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_14m40.0s",
+   "t": 880.0,
+   "refs": [
+    {
+     "doc": "2023-03-13_tradecity_pro_0K16TeRz",
+     "row": 1,
+     "time": "14:38",
+     "role": "after",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:18:12+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:18:12 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن و عنوان «15»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 23550.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 23250.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": null,
+      "confidence": null,
+      "from": "image",
+      "note": "ناخوانا",
+      "how": "برچسب‌های سبز کنار ابزار در نمای بی‌ابزار هم هستند — مال ابزار نیستند، د۲۳"
+     },
+     "high": {
+      "value": null,
+      "confidence": null,
+      "from": "image",
+      "note": "ناخوانا",
+      "how": "بالای ناحیه قرمز بیرون از بازه محور است"
+     },
+     "label": "ابزار موقعیت فروش — قرمز بالا، سبز پایین؛ برگزیده نیست"
+    }
+   ],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "−11.87 (−0.05%), −1187 · 6 bars, 1h 30m · Vol 80 — ابزار اندازه‌گیری",
+     "confidence": "high"
+    },
+    {
+     "text": "23400.45 و 23388.59 — برچسب‌های آبی محور: لنگرهای اندازه‌گیری — د۱",
+     "confidence": "high"
+    },
+    {
+     "text": "Tue 28 Feb '23 08:00 — برچسب آبی محور زمان: لنگر",
+     "confidence": "high"
+    },
+    {
+     "text": "23529.19 سبز — معنا نامعلوم",
+     "confidence": "medium"
+    },
+    {
+     "text": "23316.61 سبز — معنا نامعلوم",
+     "confidence": "medium"
+    },
+    {
+     "text": "23442.00 قاب قرمز — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "ادامه همان نمونه استاپ‌خورده: به گفته او همه‌چیز صددرصدی نیست ولی وین‌ریت خوب است.",
+   "method_notes": [
+    "وارسی ابزار اندازه‌گیری، محاسبه‌شده: 11.87 ÷ 0.01 = 1187 گام؛ 6 × 15 دقیقه = 1h 30m؛ 11.87 ÷ 23400.45 = 0.051٪؛ تفاضل دو برچسب آبی 11.86 — یک سنت اختلاف — د۳",
+    "فاصله کوچکی را اندازه گرفت — شاید ورود تا استاپ نمونه؛ برداشت، اطمینان پایین"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "اندازه‌گیری روی صفحه هست ولی حرف عددش را نمی‌گوید"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_16m55.5s",
+   "t": 1015.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:20:27+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:20:27 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن و عنوان «15»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 25100.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 24270.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O24565.00 H24587.00 L24394.00 C24447.00 −116.00 (−0.47%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "24431.23 · Tue 21 Feb '23 11:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22096.00 · 7.00 · 22103.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "در پولبک: لگ اول از دست رفت و در ادامه همان کندل نسبت داد؛ کی نسبت ۱ و کی ۵ یا ۱۰ — حمایت و مقاومت تعیین می‌کند؛ به گفته او حمایت اینجا هنوز نشکسته که نسبت زیاد بدهد.",
+   "method_notes": [
+    "هدف و نسبت را حمایت و مقاومت بعدی تعیین می‌کند؛ حمایت نزدیکِ نشکسته یعنی نسبت کم"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حمایتی که از آن می‌گوید رسم نشده"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_18m31.0s",
+   "t": 1111.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:22:03+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:22:03 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن؛ وارسی: 08:22:03 به‌علاوه 7:57 = 08:30:00"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 23100.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 21940.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O21827.00 H21875.00 L21822.00 C21868.00 +41.00 (+0.19%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "22606.61 · Thu 09 Feb '23 20:30 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22117.00 · 07:57 — قیمت زنده",
+     "confidence": "high"
+    },
+    {
+     "text": "22117.00 · 5.00 · 22122.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "Wed 08 Feb '23 21:30 — برچسب آبی محور زمان: خط عمودی برگزیده — د۱",
+     "confidence": "high"
+    },
+    {
+     "text": "3SMA 7 25 99: 21851.00 · 21883.08 · 22464.24 — زیر نشانگر",
+     "confidence": "high"
+    }
+   ],
+   "speech": "برای نسبت بیشتر: تایم بالاتر هم‌جهت باشد یا تغییر روند داده باشد و رنج نزند؛ موقع شکست حجم در کمترین حالت باشد — به گفته او اکثر این کندل‌ها حجم کم دارند.",
+   "method_notes": [
+    "هم‌جهتی تایم بالاتر نسبت را بالا می‌برد — به گفته او",
+    "حجم کندل شکست معمولاً کم است — به گفته او"
+   ],
+   "claims": [
+    "به گفته او بیشتر کندل‌های این ستاپ حجم کمی دارند — بک‌تست‌پذیر"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حجم کندل نشان‌داده‌شده خوانده نشد"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_19m20.0s",
+   "t": 1160.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:22:52+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:22:52 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن و عنوان «15»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 23120.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 22740.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O22968.00 H22978.00 L22918.00 C22932.00 −31.00 (−0.13%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "22821.94 · Wed 08 Feb '23 17:45 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22095.00 · 5.00 · 22100.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "22711.00 قاب قرمز — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "یک نمونه استاپ‌خورده: نسبت ۱ داد بعد استاپ خورد؛ برای همین مدیریت سرمایه و ریسک لازم است؛ به گفته او بک‌تست کاملش را نگرفته.",
+   "method_notes": [
+    "خودش بک‌تست کامل نگرفته — به گفته او؛ همان ایراد ای۳ کتابخانه"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "نسبت روی این فریم اندازه‌گیری نشده"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_19m24.5s",
+   "t": 1164.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:22:56+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:22:56 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن و عنوان «15»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 23200.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 22590.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O22965.00 H23003.00 L22957.00 C22957.00 −4.00 (−0.02%) — شمع زیر نشانگر؛ رقم O نیمه‌پنهان",
+     "confidence": "medium"
+    },
+    {
+     "text": "22719.22 · Wed 08 Feb '23 19:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22097.00 · 9.00 · 22106.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "23316.61 سبز — همان برچسب کنار ابزار 14:37، اینجا بی‌ابزار — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "اگر هیچ فاکتوری در نظر نگیری فقط همین را باز می‌کنی؛ به گفته او خودش شاید اینجا باز نمی‌کرد، چون در تایم بالاتر یک بار تست شده بود و تست دوم می‌خواست.",
+   "method_notes": [
+    "قضاوت تایم بالاتر — «یک بار تست کرده، تست دوم می‌خواهد» — ستاپ را رد می‌کند، به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "تایم بالاتر روی صفحه نیست"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_21m08.5s",
+   "t": 1268.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:24:40+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:24:40 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن و عنوان «1h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 17900.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 17045.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O17559.00 H17992.00 L17553.00 C17930.00 +358.00 (+2.04%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "17594.52 · Wed 11 Jan '23 18:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22125.00 · 4.00 · 22129.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "3SMA 7 25 99: 17576.57 · 17465.20 · 17226.99 — زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "خط مورب سفید پایین نمودار — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "لگ کامل از دست رفت و مهم نیست؛ میانگین ۷ پشتش است و با دیدن این کندل پوزیشن باز می‌شود؛ استاپ کوچک — رقمش در زیرنویس مبهم است.",
+   "method_notes": [
+    "در یک‌ساعته همان قاعده: لگ اول را از دست بده؛ کندل با میانگین ۷ پشتش",
+    "رقم استاپ در زیرنویس «چهاردهم دهم» — مبهم، ثبت نشد"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "کندل ستاپ زیر نشانگر نیست؛ شمع زیر نشانگر جهش 2.04٪ است"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_22m14.0s",
+   "t": 1334.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:25:46+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:25:46 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن و عنوان «1h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 17800.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 16640.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O17143.00 H17159.00 L17140.00 C17148.00 +4.00 (+0.02%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "17264.58 · Fri 09 Dec '22 22:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22135.00 · 1.00 · 22136.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "3SMA 7 25 99: 17140.14 · 17178.36 · 17008.78 — زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "17425.00 سبز — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "شکل کندل را حفظ نکن، دلیل دارد: زور خریدار و فروشنده؛ میانگین رو به پایین شتاب حرکت را نشان می‌دهد؛ سایه بلند یعنی طرف مقابل شکست خورده؛ دفتر سفارش را ببین تا استاپ نزدیک بنشیند.",
+   "method_notes": [
+    "مکانیزم، نه حفظ شکل: سایه بلند یعنی طرف مقابل شکست خورده؛ شیب میانگین یعنی شتاب — همان ک۶",
+    "شیب میانگین ۷ در جهت معامله"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "جمع‌بندی کلی؛ نمونه تازه‌ای نشان داده نشد"
+   }
+  },
+  {
+   "frame_id": "0K16TeRzIF4_22m56.5s",
+   "t": 1376.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2023-03-13T12:26:28+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت از نوار پایین تریدینگ‌ویو؛ روز از آخرین کندل‌های 13 Mar نمودار و انتشار 2023-03-13 16:30 UTC",
+    "seen": "08:26:28 (UTC-4)"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "seen": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن و عنوان «1h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه کوچک است؛ خطی و لگاریتمی جدا نمی‌شوند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 17920.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 17500.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Vol",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 7,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۱ — زرد"
+      },
+      {
+       "value": 25,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۲ — آبی"
+      },
+      {
+       "value": 99,
+       "confidence": "high",
+       "from": "image",
+       "label": "دوره ۳ — قرمز"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«RSI 14 close SMA 14 2»",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "ROC",
+      "confidence": "high",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": 14,
+       "confidence": "high",
+       "from": "image",
+       "how": "«ROC 14 close»",
+       "label": "دوره"
+      }
+     ]
+    }
+   ],
+   "texts": [
+    {
+     "text": "O17724.00 H17741.00 L17691.00 C17693.00 −32.00 (−0.18%) — شمع زیر نشانگر؛ رقم دوم H و L زیر کندل نیمه‌پنهان",
+     "confidence": "medium"
+    },
+    {
+     "text": "17949.17 · Thu 15 Dec '22 02:00 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "22146.00 · 4.00 · 22150.00 — دکمه فروش و خرید و فاصله‌شان",
+     "confidence": "medium"
+    },
+    {
+     "text": "3SMA 7 25 99: 17705.29 · 17849.56 · 17418.20 — زیر نشانگر",
+     "confidence": "high"
+    }
+   ],
+   "speech": "پایان: ویدیو را برای دیگران بفرست و بک‌تستش را دربیاور.",
+   "method_notes": [
+    "وارسی پیوستگی، محاسبه‌شده: 01:49 تا 22:56 ویدیو 21:07؛ ساعت 08:05:21 تا 08:26:28 هم 21:07 — برشی در ضبط نیست — د۱۷"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "پایان ویدیو"
+   }
+  }
+ ],
+ "methods": [
+  {
+   "area": "ساختار و سطح",
+   "rule": "جهت روند با داو تئوری؛ فقط در جهت روند — خلاف روند به گفته او وین‌ریت پایین‌تری دارد",
+   "where": "03:03، 06:07، 08:10",
+   "library": "ر۱ و جزء ۱ معماری"
+  },
+  {
+   "area": "ساختار و سطح",
+   "rule": "سطح ماشه کف یا سقف نزدیک همان تایم ورود است — ۱۵ دقیقه، یک ساعت، چهارساعته",
+   "where": "04:38، 07:28، 11:36",
+   "library": "هست: شکست سطح، و «زیر روزانه سطح نیست — ماشه است»"
+  },
+  {
+   "area": "ساختار و سطح",
+   "rule": "روند از تایم بالاتر، ورود در تایم پایین‌تر؛ تایم بالای هم‌جهت و بی‌رنج نسبت را بالا می‌برد",
+   "where": "09:23، 17:39",
+   "library": "ر۱۶ — نزدیک، نه همان"
+  },
+  {
+   "area": "ساختار و سطح",
+   "rule": "لگ اول را از دست بده؛ ستاپ در موج بعد یا پولبک بهتر جواب می‌دهد",
+   "where": "03:07، 06:14، 16:20",
+   "library": "تازه — ر۱۲ فقط تعریف موج است"
+  },
+  {
+   "area": "ساختار و سطح",
+   "rule": "سطحی که در تایم بالاتر یک بار تست شده، تست دوم می‌خواهد — ستاپ را رد می‌کند",
+   "where": "19:33",
+   "library": "تازه"
+  },
+  {
+   "area": "ورود — کندل ستاپ",
+   "rule": "سایه دست‌کم ۱.۵ تا ۲ برابر بدنه، سمت مخالف معامله؛ سایه دیگر کوچک‌تر از بدنه — کندل 03:35 وارسی شد: 1.50",
+   "where": "04:54، 05:38",
+   "library": "تازه — سازوکارش همان ک۶"
+  },
+  {
+   "area": "ورود — کندل ستاپ",
+   "rule": "بدنه کوچک؛ کندل با بدنه بزرگ ستاپ نیست",
+   "where": "06:21، 11:11",
+   "library": "تازه"
+  },
+  {
+   "area": "ورود — کندل ستاپ",
+   "rule": "میانگین ساده ۷ «پشت کندل»: چسبیده، یا سایه به آن خورده یا از آن رد شده — نه از بدنه؛ با بسته کندل داوری می‌شود",
+   "where": "05:22، 11:45، 15:32",
+   "library": "تازه"
+  },
+  {
+   "area": "ورود — کندل ستاپ",
+   "rule": "شیب میانگین ۷ در جهت معامله — نشانه شتاب",
+   "where": "12:26، 22:21",
+   "library": "تازه"
+  },
+  {
+   "area": "ورود — کندل ستاپ",
+   "rule": "رنگ کندل هم‌جهت معامله: شورت قرمز، لانگ سبز",
+   "where": "10:33",
+   "library": "تازه"
+  },
+  {
+   "area": "ورود — کندل ستاپ",
+   "rule": "ورود با بسته کندل؛ کندل بی‌سایه یعنی مارکت، بی‌فرصت دیدن دفتر سفارش",
+   "where": "05:34، 09:44",
+   "library": "تازه"
+  },
+  {
+   "area": "ورود — کندل ستاپ",
+   "rule": "حجم کندل شکست در کمترین حالت",
+   "where": "18:22",
+   "library": "ر۵ — نزدیک: کمینه نوسان و کمینه حجم"
+  },
+  {
+   "area": "ورود — کندل ستاپ",
+   "rule": "شاخص قدرت نسبی و حجم لازم نیستند؛ وین‌ریت را بالا و شمار پوزیشن را پایین می‌برند",
+   "where": "03:44",
+   "library": "تازه"
+  },
+  {
+   "area": "حد ضرر",
+   "rule": "حد ضرر پشت سایه همان کندل — بالای سایه در شورت، زیر سایه در لانگ",
+   "where": "05:45، 08:01",
+   "library": "تازه — در تنش با ر۶ و با قاعده سخت ۴ رادار: ابطال فقط از روزانه یا بالاتر"
+  },
+  {
+   "area": "حد ضرر",
+   "rule": "اصلاح خودش: درست‌تر زیر کف ساختار",
+   "where": "14:32",
+   "library": "ر۶"
+  },
+  {
+   "area": "حد ضرر",
+   "rule": "سایه بلند استاپ را بزرگ می‌کند؛ دفتر سفارش برای جای دقیق ورود و استاپ",
+   "where": "05:13، 22:34",
+   "library": "ر۱۷ — مشابه"
+  },
+  {
+   "area": "هدف و خروج",
+   "rule": "نگه‌داری کوتاه، حدود ۳ تا ۴ کندل؛ هدف و نسبت را حمایت و مقاومت بعدی تعیین می‌کند",
+   "where": "08:56، 16:59",
+   "library": "تازه برای نگه‌داری؛ هدف از سطح نزدیک ر۱۷"
+  },
+  {
+   "area": "هدف و خروج",
+   "rule": "نسبت ادعایی نمونه‌ها ۲ تا ۲۰، روی صفحه اندازه‌گیری نشد؛ تنها نمونه وارسی‌شده 3.30 برابر در یک کندل",
+   "where": "05:37، 11:59، 12:29",
+   "library": "ای۳ — همان ایراد"
+  },
+  {
+   "area": "رفتار و داده",
+   "rule": "اول بک‌تست، بعد فوروارد تست — ولی به گفته خودش بک‌تست کامل نگرفته",
+   "where": "02:00، 19:28",
+   "library": "ای۳"
+  },
+  {
+   "area": "رفتار و داده",
+   "rule": "زیر ۱۵ دقیقه معامله نمی‌کند — حس اعتیاد",
+   "where": "02:46",
+   "library": "تازه"
+  },
+  {
+   "area": "رفتار و داده",
+   "rule": "صرافی داده را عوض کرد چون کندل بایننس و بیت‌استمپ فرق داشت",
+   "where": "07:18، 13:20",
+   "library": "تازه — هم‌جهت با ای۴"
+  }
+ ]
+}
