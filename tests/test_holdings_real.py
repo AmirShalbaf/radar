@@ -106,7 +106,7 @@ def test_second_exchange_withdrawn_once() -> None:
     عددهای پیش از ۲۹ سپتامبر، مثل 2631.20 رویداد ۴۲، این مقدار را هم داشتند.
     """
     h = json.loads((ROOT / "holdings.json").read_text(encoding="utf-8"))
-    rows = [r for r in h["ledger"] if r["action"] == "withdraw"]
+    rows = [r for r in h["ledger"] if r["action"] == "withdraw" and r["account"] == "صرافی دوم"]
     assert len(rows) == 1
     r = rows[0]
     assert (r["symbol"], r["delta"], r["account"]) == ("ETH", -0.15892356, "صرافی دوم")
@@ -119,6 +119,26 @@ def test_second_exchange_withdrawn_once() -> None:
     assert not [x for x in oc.get("exits", []) if abs(x.get("qty", 0) - 0.15892356) < 1e-9]
     jr = (ROOT / "radar_journal.json").read_text(encoding="utf-8")
     assert "0.15892356" not in jr
+
+
+def test_lbank_cash_withdrawn_once() -> None:
+    """
+    تصمیم کاربر، ۳ اکتبر ۲۰۲۶: تتر LBank 12.15376371 کمتر از دفتر بود — اختلاف
+    دفتر پس از پله دوم ETH با اسکرین‌شات 04:10 UTC. کاربر خودش برداشت، خرج
+    شخصی. فقط نقد؛ زمان دقیق نامعلوم، پس زمان اسکرین‌شات و همین در دلیل.
+    مثل ک۱۰: بی‌پیگیری هزینه فرصت و بی‌رکورد دفترچه.
+    """
+    h = json.loads((ROOT / "holdings.json").read_text(encoding="utf-8"))
+    rows = [r for r in h["ledger"] if r["action"] == "withdraw" and r["account"] == "LBank"]
+    assert len(rows) == 1
+    r = rows[0]
+    assert (r["symbol"], r["delta"], r["at"]) == ("USDT", -12.15376371, "2026-10-03T04:10:00+00:00")
+    assert r["cash"] == {"asset": "USDT", "qty": 12.15376371, "account": "LBank"}
+    assert r["reason"].startswith("پول خرج شخصی — برداشت از LBank")
+    assert "نامعلوم" in r["reason"] and "اسکرین‌شات" in r["reason"]
+    oc = json.loads((ROOT / "radar_optcost.json").read_text(encoding="utf-8"))
+    assert not [x for x in oc.get("exits", []) if x.get("symbol") == "USDT"]
+    assert "12.15376371" not in (ROOT / "radar_journal.json").read_text(encoding="utf-8")
 
 
 def test_all_in_position_book_trade_book_empty(h) -> None:
