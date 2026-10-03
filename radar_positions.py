@@ -33,7 +33,10 @@ holdings.json نسخه ۲ بر پایه **مقدار** است، نه دلار. �
     adjust   پاداش سهام‌گذاری یا کارمزد، حداکثر ۱٪ مقدار نماد در هر ردیف
     withdraw برداشت از رادار — پولی که دیگر جزو سبد نیست، مثل خرج شخصی. فقط
              کاهش، با دلیل و حساب؛ نقد همان حساب در همان ردیف. نه پیگیری
-             هزینه فرصت، نه سهمیه ورود دوباره، نه آمار نتیجه — الگوی ONDO ک۱۰
+             هزینه فرصت، نه سهمیه ورود دوباره، نه آمار نتیجه — الگوی ONDO ک۱۰.
+             با --symbol USDT فقط نقد همان حساب کم می‌شود و ناوردای کوین‌ها
+             دست نمی‌خورد. --at زمان برداشت؛ زمان دقیق نامعلوم یعنی زمان شاهد،
+             مثل اسکرین‌شات، و همین در دلیل
 
 بسته هفتگی = بسته کندل هفته دوشنبه تا یکشنبه به وقت جهانی، یعنی لحظه
 **دوشنبه ۰۰:۰۰ UTC**. اوکی‌اکس با 1Wutc، گیت با 7d. لنگر پیش‌فرض اوکی‌اکس
@@ -50,6 +53,8 @@ radar_book.py بتواند بی‌آنکه استقلالش بشکند ایمپ�
     python radar_positions.py add --symbol LINK --qty 10 --price 14 --account LBank \\
         --decision-id D-... --setup-name ...
     python radar_positions.py adjust --symbol SOL --qty 0.02 --reason "پاداش سهام‌گذاری"
+    python radar_positions.py withdraw --symbol USDT --qty 12 --account LBank \\
+        --reason "پول خرج شخصی" --at 2026-10-03T04:10:00+00:00
 """
 from __future__ import annotations
 
@@ -396,6 +401,15 @@ def _replay(h: dict, jidx: dict, check_journal: bool = True) -> dict:
         elif act == "withdraw":
             if not r.get("reason") or not r.get("account"):
                 raise PositionsError(f"{where}: دلیل و حساب لازم است")
+            if sym in STABLE_ASSETS:
+                # برداشت فقط نقد — ۳ اکتبر ۲۰۲۶. نقد در ناوردا نیست؛ پس اینجا فقط
+                # هم‌خوانی ردیف با خودش، و مقدار نماد کوینی عوض نمی‌شود
+                c = r.get("cash") or {}
+                if not (d < 0 and c.get("asset") == sym and c.get("account") == r["account"]
+                        and _num(c.get("qty")) and _close(c["qty"], -d)):
+                    raise PositionsError(f"{where}: برداشت نقد باید کاهش باشد، با cash همان "
+                                         "دارایی و حساب و به اندازه delta")
+                continue
             if not (d < 0 and -d <= cur + TOL):
                 raise PositionsError(f"{where}: برداشت فقط کاهش است و بیش از مقدار نماد "
                                      f"({cur}) نه")
@@ -717,11 +731,10 @@ def _take(p: dict, qty: float, account: str | None) -> str:
 def _apply(h: dict, a, journal: dict) -> dict:
     sym = a.symbol.upper()
     row = {"at": _now(), "action": a.cmd, "symbol": sym}
-    if a.cmd in ("trim", "exit"):
-        if a.at is not None:
-            row["at"] = _receipt_at(a.at, h)
-        if a.order_id:
-            row["order_id"] = a.order_id
+    if a.cmd in ("trim", "exit", "withdraw") and a.at is not None:
+        row["at"] = _receipt_at(a.at, h)
+    if a.cmd in ("trim", "exit") and a.order_id:
+        row["order_id"] = a.order_id
     p = _find(h, sym)
     if a.cmd == "trim":
         if p is None or p["status"] != "open":
@@ -788,6 +801,19 @@ def _apply(h: dict, a, journal: dict) -> dict:
         else:
             _take(p, -a.qty, a.account)
         row.update(delta=a.qty, reason=a.reason)
+    elif a.cmd == "withdraw" and sym in STABLE_ASSETS:
+        # برداشت فقط نقد — تصمیم کاربر، ۳ اکتبر ۲۰۲۶؛ مقدار با --qty
+        if a.cash is not None:
+            raise PositionsError("برداشت نقد: مقدار با --qty است؛ --cash تکراری است")
+        c = next((c for c in h["cash"]
+                  if c.get("asset") == sym and c.get("account") == a.account), None)
+        if c is None or a.qty > c["qty"] + TOL:
+            raise PositionsError(f"نقد {sym} حساب {a.account} این مقدار را ندارد: {a.qty}")
+        c["qty"] = round(c["qty"] - a.qty, 10)
+        if c["qty"] <= TOL:
+            h["cash"].remove(c)
+        row.update(delta=-a.qty, reason=a.reason, account=a.account,
+                   cash={"asset": sym, "qty": a.qty, "account": a.account})
     elif a.cmd == "withdraw":
         if p is None or p["status"] != "open":
             raise PositionsError(f"{sym} در دفتر موقعیت باز نیست")
@@ -825,10 +851,12 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--qty", type=float, required=True)
         if name not in ("adjust", "withdraw"):
             p.add_argument("--price", type=float, required=True)
-        if name in ("trim", "exit"):
-            # رسید صرافی — نشست ۳: زمان فروش، نه زمان ثبت؛ نقد خالص به تتر همان حساب
+        if name in ("trim", "exit", "withdraw"):
+            # رسید صرافی — نشست ۳: زمان فروش، نه زمان ثبت؛ برداشت هم از ۳ اکتبر
             p.add_argument("--at", default=None,
-                           help="زمان رسید، مهر کامل با منطقه زمانی؛ پیش‌فرض اکنون")
+                           help="زمان رسید یا برداشت، مهر کامل با منطقه زمانی؛ پیش‌فرض اکنون")
+        if name in ("trim", "exit"):
+            # نقد خالص به تتر همان حساب
             p.add_argument("--gross", type=float, default=None,
                            help="مجموع رسید به تتر؛ باید با مقدار × قیمت بخواند")
             p.add_argument("--fee", type=float, default=None, help="کارمزد به تتر")

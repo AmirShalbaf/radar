@@ -116,3 +116,65 @@ def test_trim_still_goes_to_optcost(files) -> None:
     assert _run(files, "trim", "--symbol", "SOL", "--qty", "1", "--price", "100",
                 "--reason", "reserve") == 0
     assert (files[0].parent / "optcost.json").exists()
+
+
+# ── برداشت فقط نقد و زمان برداشت — تصمیم کاربر، ۳ اکتبر ۲۰۲۶ ──
+# تتر LBank حدود 12.15 کمتر از دفتر بود و کاربر خودش برداشته بود. پیش از این
+# withdraw فقط کوین دفتر موقعیت می‌پذیرفت و نقد فقط کنار آن می‌رفت؛ --at هم نداشت.
+
+AT = "2026-10-03T04:10:00+00:00"
+CASH_ROW = {"asset": "USDT", "qty": 1.5, "account": "A"}
+
+
+def _cash_out(files, qty="1.5", *extra) -> int:
+    return _run(files, "withdraw", "--symbol", "USDT", "--qty", qty, "--account", "A",
+                "--reason", REASON, *extra)
+
+
+def test_cash_only_withdraw_one_row(files) -> None:
+    before = _read(files[0])
+    assert _cash_out(files, "1.5", "--at", AT) == 0
+    h = _read(files[0])
+    assert {c["account"]: c["qty"] for c in h["cash"]} == {"A": 1.5, "B": 3.17}
+    row = h["ledger"][-1]
+    assert (row["action"], row["symbol"], row["delta"], row["account"], row["at"]) == \
+        ("withdraw", "USDT", -1.5, "A", AT)
+    assert row["cash"] == CASH_ROW and len(h["ledger"]) == 1
+    assert h["positions"] == before["positions"]              # کوین دست نخورد
+    assert not (files[0].parent / "optcost.json").exists()    # نتیجه تصمیم نیست
+    P.validate(h, _j())
+
+
+def test_cash_only_withdraw_refusals(files) -> None:
+    assert _cash_out(files, "3.5") != 0                        # حساب A فقط 3.0 دارد
+    assert _run(files, "withdraw", "--symbol", "USDT", "--qty", "1", "--account", "C",
+                "--reason", REASON) != 0                       # حساب بی‌نقد
+    assert _cash_out(files, "1", "--cash", "1") != 0           # مقدار دو بار، نه
+    assert _read(files[0])["ledger"] == []
+
+
+def test_coin_withdraw_takes_at(files) -> None:
+    assert _withdraw(files, "--at", AT) == 0
+    assert _read(files[0])["ledger"][-1]["at"] == AT
+
+
+@pytest.mark.parametrize("at", ["2026-10-03T04:10:00", "2026-09-24T23:00:00+00:00",
+                                "2099-01-01T00:00:00+00:00"])
+def test_withdraw_at_full_past_after_frozen(files, at) -> None:
+    assert _cash_out(files, "1", "--at", at) != 0
+    assert _read(files[0])["ledger"] == []
+
+
+def test_replay_cash_row_rules() -> None:
+    h = _h()
+    h["ledger"] = [_row("withdraw", "USDT", -1.5, account="A", reason=REASON, cash=CASH_ROW)]
+    P.validate(h, _j())                                        # ناوردای کوین‌ها برقرار
+    for bad in (dict(cash=None), dict(cash={**CASH_ROW, "qty": 2.0}),
+                dict(cash={**CASH_ROW, "account": "B"}), dict(cash={**CASH_ROW, "asset": "USDC"})):
+        h["ledger"] = [_row("withdraw", "USDT", -1.5,
+                            **{"account": "A", "reason": REASON, "cash": CASH_ROW, **bad})]
+        with pytest.raises(P.PositionsError, match="برداشت نقد"):
+            P.validate(h, _j())
+    h["ledger"] = [_row("withdraw", "USDT", 1.5, account="A", reason=REASON, cash=CASH_ROW)]
+    with pytest.raises(P.PositionsError, match="برداشت نقد"):
+        P.validate(h, _j())
