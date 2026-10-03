@@ -620,3 +620,46 @@ def test_no_ocr_and_no_pillow_in_code() -> None:
     for bad in ("pytesseract", "easyocr", "paddleocr", "tesserocr", "import PIL",
                 "from PIL", "import cv2", "imagehash"):
         assert bad not in src, bad
+
+
+# ═══════════════ ۷ — نسخه، نشست ۶ب ═══════════════
+
+# ثابت‌هایی که انتخاب لحظه را می‌سازند. تغییر هر کدام یعنی شناسه فریم دیگر
+# بازتولید نمی‌شود، پس نسخه باید بالا برود — همین‌جا با هم ویرایش شوند.
+SELECTION_VERSION = "1.1"
+SELECTION = {
+    "ANALYSIS_W": 320, "ANALYSIS_H": 180, "SAMPLE_FPS": 2, "PIX_DELTA": 25,
+    "MASK_BLOCK": 10, "MASK_FREQ": 0.02, "MASK_MIN_CHANGES": 5, "QUIET_Q": 50,
+    "MASK_WARN": 0.30, "STILL": 0.002, "MIN_STILL_SAMPLES": 3, "MERGE_DIFF": 0.003,
+    "THUMB_W": 64, "THUMB_H": 36, "THUMB_DELTA": 12, "DUP_FRAC": 0.005,
+    "SNAP_WINDOW": 3.0, "NEIGHBOR_WINDOW": 10.0, "TIER1_CAP": 12, "GAP_MAX": 120.0,
+    "GAP_CAP": 3, "DEFAULT_MAX_FRAMES": 25, "SECTION_LEN": 2,
+    "YEAR_MIN": 2009, "YEAR_AHEAD": 5,
+}
+
+
+def test_selection_constants_locked_to_version() -> None:
+    """
+    ماسک گام آرام (01197ac) انتخاب لحظه را عوض کرد ولی VERSION همان 1.0 ماند،
+    پس هر دو فایل کارت «radar_frames 1.0» می‌گویند و مرز ماسک از برچسب پیدا
+    نیست — رویداد ۵۹. حالا هر تغییر ثابت انتخاب بی‌بالا رفتن نسخه قرمز است.
+    """
+    assert F.VERSION == SELECTION_VERSION
+    assert {k: getattr(F, k) for k in SELECTION} == SELECTION
+
+
+def test_new_card_frames_tool_is_version(tmp_path) -> None:
+    frames = seq([(view(k), 12) for k in range(1, 4)])
+    _, man, _, _ = _run(tmp_path, frames, [])
+    assert man["radar_frames"] == F.VERSION
+    assert F.card_template(man)["frames_tool"] == f"radar_frames {F.VERSION}"
+    md = (tmp_path / "frames" / VID / "FRAMES.md").read_text(encoding="utf-8")
+    assert f"radar_frames {F.VERSION}" in md
+
+
+@pytest.mark.parametrize("rel", ["benjamin_cowen/2C70_Ms3V9A.json",
+                                 "cryptocity_pro/zN1RocH5VoU.json"])
+def test_session6_cards_keep_their_tool_version(rel) -> None:
+    """کارت‌های نشست ۶ با 1.0 ساخته شدند. برچسبشان تاریخ است، نه خطا — دست نمی‌خورد."""
+    d = json.loads((ROOT / "intake" / "charts" / rel).read_text(encoding="utf-8"))
+    assert d["frames_tool"] == "radar_frames 1.0"
