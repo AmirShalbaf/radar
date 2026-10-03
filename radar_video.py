@@ -614,6 +614,44 @@ def _marks(card: dict) -> list[tuple[str, str, str, str]]:
     return out
 
 
+METHOD_KEYS = ("area", "rule", "where", "library")
+METHODS_HEAD = "## روش‌های گوینده — در برابر method-library.md"
+
+
+def validate_methods(cards: dict) -> list[str]:
+    """
+    فهرست اختیاری methods سند کارت — نشست ۶ب، خواسته کاربر: روش گوینده با جایش
+    در کتابخانه روش، یا «تازه». داوری ماست، نه خوانده از تصویر؛ پس فقط متن، بی‌عدد.
+    """
+    m = cards.get("methods")
+    if m is None:
+        return []
+    if not isinstance(m, list):
+        return ["methods: باید فهرست باشد"]
+    errs = []
+    for i, x in enumerate(m):
+        if not (isinstance(x, dict) and set(x) == set(METHOD_KEYS)
+                and all(isinstance(x[k], str) and x[k].strip() for k in METHOD_KEYS)):
+            errs.append(f"methods[{i}]: باید شیء متنی ناتهی {{{', '.join(METHOD_KEYS)}}} باشد")
+        elif len(x["rule"]) > F.TEXT_MAX:
+            errs.append(f"methods[{i}].rule: بالای {F.TEXT_MAX} نویسه")
+    return errs
+
+
+def _methods_section(cards: dict) -> list[str]:
+    lines = ["", METHODS_HEAD, ""]
+    ms = cards.get("methods")
+    if not ms:
+        return lines + ["ثبت نشده — سند کارت فهرست `methods` ندارد."]
+    fresh = sum(1 for x in ms if x["library"].startswith("تازه"))
+    lines += [f"روش تازه: {fresh} از {len(ms)} — بقیه در `method-library.md` هست یا نزدیکش."]
+    for area in dict.fromkeys(x["area"] for x in ms):
+        lines += ["", f"### {I._cell(area)}", "", "| قاعده | کجا | method-library |", "|---|---|---|"]
+        lines += [f"| {I._cell(x['rule'])} | {I._cell(x['where'])} | {I._cell(x['library'])} |"
+                  for x in ms if x["area"] == area]
+    return lines
+
+
 def render_report(cards: dict, meta: dict, man: dict | None = None) -> str:
     """
     گزارش ساده فارسی یک ویدیو، فقط از کارت اعتبارسنجی‌شده. عمومی است: هیچ
@@ -692,6 +730,7 @@ def render_report(cards: dict, meta: dict, man: dict | None = None) -> str:
     if pats:
         lines.append("- الگوهای نام‌برده: " + "، ".join(pats))
     lines += [f"- {I._cell(n)}" for n in notes] or ["- یادداشت روشی ثبت نشده."]
+    lines += _methods_section(cards)
 
     # ادعاها
     lines += ["", "## ادعاها — به بیان ما، نه نقل", ""]
@@ -745,7 +784,7 @@ def report_cli(cards_path: Path, intake: Path, frames_root: Path) -> int:
         return 2
     man_path = frames_root / str(cards.get("video_id", "")) / "frames.json"
     man = json.loads(man_path.read_text(encoding="utf-8")) if man_path.exists() else None
-    errs = F.validate_cards(cards, man)
+    errs = F.validate_cards(cards, man) + validate_methods(cards)
     if errs:
         print(f"⛔ کارت نامعتبر — {len(errs)} خطا؛ گزارش ساخته نشد:", file=sys.stderr)
         for e in errs:

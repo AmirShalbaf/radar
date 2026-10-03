@@ -489,7 +489,14 @@ def report_cards() -> dict:
     return {"schema": 1, "kind": "radar-chart-cards", "video_id": VID, "doc_id": "D",
             "doc": "intake/single_UCx/doc.md", "source": "single_UCx", "url": f"https://youtu.be/{VID}",
             "title": "عنوان ویدیو", "read_by": "مدل", "read_at": "2026-10-03",
-            "frames_tool": "radar_frames 1.1", "cards": [chart(69.0), c2, c3, c4]}
+            "frames_tool": "radar_frames 1.1", "cards": [chart(69.0), c2, c3, c4],
+            "methods": [
+                {"area": "ورود", "rule": "سایه دست‌کم ۱.۵ برابر بدنه", "where": "01:09",
+                 "library": "تازه"},
+                {"area": "حد ضرر", "rule": "پشت سایه همان کندل", "where": "01:15",
+                 "library": "تازه — در تنش با ر۶"},
+                {"area": "ورود", "rule": "فقط در جهت روند", "where": "02:00", "library": "ر۱"},
+            ]}
 
 
 def test_report_format() -> None:
@@ -501,7 +508,13 @@ def test_report_format() -> None:
     heads = [l for l in rep.splitlines() if l.startswith("#")]
     assert heads == ["# گزارش ویدیو — عنوان ویدیو", "## نمودارها",
                      "## سطح‌ها و خط‌ها — هر عدد از تصویر", "## روش",
+                     "## روش‌های گوینده — در برابر method-library.md", "### ورود", "### حد ضرر",
                      "## ادعاها — به بیان ما، نه نقل", "## حرف و صفحه"]
+    # نشست ۶ب، خواسته کاربر: هر روش با جایش در کتابخانه روش — یا «تازه»
+    assert "| سایه دست‌کم ۱.۵ برابر بدنه | 01:09 | تازه |" in rep
+    assert "| فقط در جهت روند | 02:00 | ر۱ |" in rep
+    assert "| پشت سایه همان کندل | 01:15 | تازه — در تنش با ر۶ |" in rep
+    assert "روش تازه: 2 از 3" in rep
     assert SECRET not in rep                                # حرف گوینده نقل نمی‌شود
     assert "تک‌ویدیو — بدون حق رأی" in rep
     assert "| 2026-10-01 |" in rep and "| 15:00 |" in rep
@@ -526,8 +539,24 @@ def test_report_of_session6_cards_says_fields_missing() -> None:
     for c in cards["cards"]:
         c.pop("claims", None)
         c.pop("speech_vs_screen", None)
+    cards.pop("methods")
     rep = V.render_report(cards, {})
     assert "میدان `claims` ندارند" in rep and "میدان `speech_vs_screen` ندارند" in rep
+    assert "فهرست `methods` ندارد" in rep
+
+
+@pytest.mark.parametrize("bad", [
+    "یک رشته",
+    [{"area": "ورود", "rule": "x", "where": "01:09"}],                     # library نیست
+    [{"area": "ورود", "rule": "x", "where": "01:09", "library": ""}],      # خالی
+    [{"area": "ورود", "rule": "x" * 201, "where": "01:09", "library": "تازه"}],
+    [{"area": "ورود", "rule": 1.5, "where": "01:09", "library": "تازه"}],
+])
+def test_methods_are_validated(bad) -> None:
+    cards = report_cards()
+    cards["methods"] = bad
+    assert any("methods" in e for e in V.validate_methods(cards))
+    assert V.validate_methods(report_cards()) == []
 
 
 def test_report_cli_writes_public_report_only_from_valid_cards(env, capsys) -> None:
