@@ -604,6 +604,7 @@ VOICE_NUMBER = re.compile(r"[0-9۰-۹]|(?<!\w)(?:هزار|میلیون|درصد)
 VOICE_TIME = re.compile(r"(?<!\w)(?:امروز|فردا|روز|هفته|ماه|سال|ساعت|ژانویه|فوریه|مارس|آوریل|ژوئن|ژوئیه|"
                         r"جولای|اوت|آگوست|سپتامبر|اکتبر|نوامبر|دسامبر|کریسمس|202[0-9]|۲۰۲[۰-۹]|۱۴۰[۰-۹])(?!\w)")
 VOICE_WINDOW = 25
+QUOTE_GAP = 3       # «میگه که من فکر می‌کنم» — اول‌شخص تا این فاصله پس از نقل، جزو همان نقل
 SCREEN_LABEL = (("own", "نمودار با رسم خودش"), ("other", "نمودار یا تصویر دیگران"),
                 ("tweet", "توییت یا پست"), ("none", "بی‌نمودار و بی‌تصویر"), ("unknown", "نامعلوم"))
 
@@ -620,8 +621,13 @@ def voice_counts(body: str) -> dict | None:
     marks = sorted([(m.start(), m.end(), "reported") for m in VOICE_REPORTED.finditer(text)]
                    + [(m.start(), m.end(), "own") for m in VOICE_OWN.finditer(text)])
     out = {"words": len(text.split()), "reported": 0, "reported_number": 0,
-           "own": 0, "own_number": 0, "own_number_time": 0}
-    for i, (_, end, kind) in enumerate(marks):
+           "own": 0, "own_number": 0, "own_number_time": 0, "quoted_own": 0}
+    for i, (start, end, kind) in enumerate(marks):
+        # «دنیس میگه که من فکر می‌کنم…» — اول‌شخص درون نقل، مال گوینده نیست
+        if kind == "own" and i and marks[i - 1][2] == "reported" \
+                and len(text[marks[i - 1][1]:start].split()) <= QUOTE_GAP:
+            out["quoted_own"] += 1
+            continue
         stop = marks[i + 1][0] if i + 1 < len(marks) else len(text)
         ctx = " ".join(text[end:stop].split()[:VOICE_WINDOW])
         num, when = bool(VOICE_NUMBER.search(ctx)), bool(VOICE_TIME.search(ctx))
@@ -647,7 +653,8 @@ def _voice_section(cs: list[dict], meta: dict, voice: dict | None) -> list[str]:
                   "| عبارت | شمار | با عدد | با عدد و زمان |", "|---|---|---|---|",
                   f"| «فلانی می‌گوید / میگه» | {voice['reported']} | {voice['reported_number']} | — |",
                   f"| «به نظر من» و هم‌خانواده | {voice['own']} | {voice['own_number']} | "
-                  f"{voice['own_number_time']} |"]
+                  f"{voice['own_number_time']} |",
+                  f"| اول‌شخص درون نقل — «میگه که من…» | {voice['quoted_own']} | — | — |"]
     lines += ["", "### از صفحه", "", f"دیده مدل در {len(srcs)} فریم.", "",
               "| آنچه روی صفحه است | فریم | نام، واترمارک یا نشانی |", "|---|---|---|"]
     for kind, label in SCREEN_LABEL:

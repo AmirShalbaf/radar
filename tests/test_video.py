@@ -600,6 +600,14 @@ def test_voice_counts_reported_vs_own():
     assert v["words"] > 30
 
 
+def test_quoted_first_person_is_reported_not_own():
+    """«دنیس میگه که من فکر می‌کنم…» نقل اول‌شخص دیگری است، نه نظر گوینده."""
+    body = "[00:01] دنیس میگه که من فکر می‌کنم ریپل کف خودش\n[00:04] رو دیده و فکر می‌کنم ۹۰ هزار تا"
+    v = V.voice_counts(body)
+    assert v["reported"] == 1 and v["quoted_own"] == 1
+    assert v["own"] == 1                         # «فکر می‌کنم» دوم، دور از «میگه»، مال خود اوست
+
+
 def test_voice_counts_without_transcript_is_none():
     assert V.voice_counts("بی‌مهر زمان") is None
 
