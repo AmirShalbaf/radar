@@ -20,3 +20,6 @@ intake/_local/
 # به مخزن فقط کارت نمودار می‌رود، چون خوانده ماست: intake/charts/<منبع>/
 frames/
 FRAMES.md
+
+# نهان‌گاه کندل radar_history.py — فقط کندل بسته، که عوض نمی‌شود. نشست ۷.
+.radar_cache/

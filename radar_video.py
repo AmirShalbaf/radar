@@ -60,6 +60,7 @@ from typing import Callable
 from urllib.parse import urlparse
 
 import radar_frames as F
+import radar_history as H            # حکم و جمع‌بندی وارسی سطح — نشست ۷
 import radar_intake as I
 from radar_one import video_id as _video_id     # تنها منبع الگوی شناسه ویدیو
 from radar_text import fa
@@ -592,26 +593,59 @@ def _drawn(lv: dict) -> str:
     return f"روی {d}" if isinstance(d, str) and d else ""
 
 
-def _marks(card: dict) -> list[tuple[str, str, str, str]]:
-    """(نوع، قیمت، اطمینان، برچسب) — سطح، ناحیه، خط روند."""
+NOT_SNAPPED = "وارسی نشده"
+
+
+def _snap_cells(lv: dict) -> tuple[str, str]:
+    """
+    (حکم کندل، ستون روزانه) — نشست ۷. حکم از تایم‌فریم خود نمودار؛ ستون روزانه فقط
+    برای سطح زیر روزانه، برای قاعده ۴ و نشست ۸.
+    """
+    s = lv.get("snap")
+    if not isinstance(s, dict):
+        return NOT_SNAPPED, "—"
+    d = s.get("daily")
+    return H.snap_label(s), (H.snap_label(d) if isinstance(d, dict) else "—")
+
+
+def _marks(card: dict) -> list[tuple[str, str, str, str, str, str]]:
+    """(نوع، قیمت، اطمینان، برچسب، حکم کندل، روزانه) — سطح، ناحیه، خط روند."""
     out = []
     for lv in card.get("levels") or []:
         unit = lv.get("unit") or ""
         kind = {"horizontal": "سطح افقی"}.get(lv.get("kind"), lv.get("kind") or "سطح")
         label = "، ".join(x for x in (lv.get("label") or "", _drawn(lv)) if x)
-        out.append((kind, _val(lv.get("price")) + unit, _conf(lv.get("price")), label))
+        out.append((kind, _val(lv.get("price")) + unit, _conf(lv.get("price")), label, *_snap_cells(lv)))
     for z in card.get("zones") or []:
         unit = z.get("unit") or ""
         out.append(("ناحیه", f"{_val(z.get('low'))} تا {_val(z.get('high'))}{unit}",
-                    _conf(z.get("low"), z.get("high")), z.get("label") or ""))
+                    _conf(z.get("low"), z.get("high")), z.get("label") or "", "—", "—"))
     for t in card.get("trendlines") or []:
         p1, p2 = t.get("p1") or {}, t.get("p2") or {}
         kind = "مسیر پیش‌بینی" if t.get("kind") == "projection" else "خط روند"
         span = f"{_val(p1.get('time'))} تا {_val(p2.get('time'))}"
         out.append((kind, f"{_val(p1.get('price'))} تا {_val(p2.get('price'))}",
                     _conf(p1.get("price"), p2.get("price")),
-                    "، ".join(x for x in (t.get("label") or "", span) if x)))
+                    "، ".join(x for x in (t.get("label") or "", span) if x), "—", "—"))
     return out
+
+
+def _snap_section(charts: list[dict]) -> list[str]:
+    """جمع‌بندی وارسی سطح این ویدیو، در برابر شانس تصادفی همان پنجره‌ها — ف۲۱."""
+    lines = ["", "## وارسی سطح با کندل", "",
+             "> هر سطح با کندل واقعی پیش از انتشار ویدیو سنجیده شد — `radar_history.py cards`.",
+             "> ناحیه و خط روند وارسی نمی‌شوند. زیر روزانه «ماشه‌ای، نه ساختاری» است — قاعده ۴.", ""]
+    snaps = [lv["snap"] for c in charts for lv in (c.get("levels") or [])
+             if isinstance(lv, dict) and isinstance(lv.get("snap"), dict)]
+    if not snaps:
+        return lines + [f"{NOT_SNAPPED} — کارت میدان snap ندارد."]
+    lines += H.summary_lines(H.summarize(snaps))
+    daily = [s["daily"] for s in snaps if isinstance(s.get("daily"), dict)]
+    if daily:
+        d = H.summarize(daily)
+        lines += ["", f"ستون روزانه، برای سطح‌های زیر روزانه: {d['confirmed']} واقعی از {d['n']} "
+                      f"سطح یکتا با داده؛ {d['no_data']} بی‌داده."]
+    return lines
 
 
 METHOD_KEYS = ("area", "rule", "where", "library")
@@ -701,22 +735,24 @@ def render_report(cards: dict, meta: dict, man: dict | None = None) -> str:
 
     # سطح‌ها و خط‌ها — تکراری‌ها یک ردیف، با شمار تکرار
     lines += ["", "## سطح‌ها و خط‌ها — هر عدد از تصویر", "",
-              "| زمان | نماد | نوع | قیمت | اطمینان | برچسب |", "|---|---|---|---|---|---|"]
+              "| زمان | نماد | نوع | قیمت | اطمینان | برچسب | وارسی کندل | روزانه |",
+              "|---|---|---|---|---|---|---|---|"]
     rows: dict[tuple, list] = {}
     for c in charts:
-        coin = _val(c.get("coin"))
-        for kind, price, conf, label in _marks(c):
-            k = (coin, kind, price, label)
+        coin, tf = _val(c.get("coin")), _val(c.get("timeframe"))
+        for kind, price, conf, label, snap_txt, daily_txt in _marks(c):
+            k = (coin, tf, kind, price, label, snap_txt, daily_txt)
             if k in rows:
                 rows[k][1] += 1
             else:
                 rows[k] = [t(c), 1, conf]
     if not rows:
-        lines.append("| — | — | — | — | — | هیچ سطح یا خطی خوانده نشد |")
-    for (coin, kind, price, label), (first, n, conf) in rows.items():
+        lines.append("| — | — | — | — | — | هیچ سطح یا خطی خوانده نشد | — | — |")
+    for (coin, tf, kind, price, label, snap_txt, daily_txt), (first, n, conf) in rows.items():
         when = first + (f" (×{n})" if n > 1 else "")
         lines.append(f"| {when} | {I._cell(coin)} | {kind} | {I._cell(price)} | {conf} "
-                     f"| {I._cell(label)[:80]} |")
+                     f"| {I._cell(label)[:80]} | {I._cell(snap_txt)} | {I._cell(daily_txt)} |")
+    lines += _snap_section(charts)
 
     # روش
     notes = list(dict.fromkeys(n for c in cs for n in (c.get("method_notes") or [])))

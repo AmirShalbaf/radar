@@ -260,6 +260,26 @@ def cluster_levels(pivots: list, tol: float, n_bars: int,
     return out
 
 
+def structural_levels(df: pd.DataFrame, atr: float,
+                      tol_atr: float = 1.0) -> tuple[list[Level], list[Level]]:
+    """
+    سطح‌های ساختاری یک قاب کندل بسته — تنها تعریف. assess و وارسی سطح
+    radar_history.py (snap، نشست ۷) هر دو همین را صدا می‌زنند.
+
+    نقطه چرخش ۳ و ۳، خوشه محدود با روادار tol_atr برابر دامنه واقعی همان
+    تایم‌فریم، دست‌کم دو برخورد. سقف‌ها مقاومت، کف‌ها حمایت — جدا.
+    """
+    highs, lows = find_pivots(df)
+    tol = tol_atr * atr
+    res = cluster_levels(highs, tol, len(df))
+    sup = cluster_levels(lows, tol, len(df))
+    for lv in res:
+        lv.kind = "مقاومت"
+    for lv in sup:
+        lv.kind = "حمایت"
+    return res, sup
+
+
 def pick_invalidation(daily: pd.DataFrame, weekly: pd.DataFrame, price: float) -> dict:
     """
     سطح ابطال دفتر موقعیت — روش ایستگاه دو نشست ۳، با قاعده لنگر.
@@ -378,20 +398,13 @@ def assess(sym: str, df: pd.DataFrame, buffer_atr: float = 0.25,
         a.trend = "؟"
         a.note = "میانگین ۲۰۰ محاسبه نشد"
 
-    highs, lows = find_pivots(df)
     # درس آزمون ۹ اوت ۲۰۲۶:
     #   با tol = نصف دامنه، دو قله واقعی به فاصله ۲.۷۹ خوشه نشدند چون
     #   آستانه ۲.۲۱ بود. نتیجه: هیچ مقاومتی پیدا نشد و نسبت nan شد.
     #   در بازار واقعی، دو برخورد به یک سطح که ماه‌ها فاصله دارند،
     #   طبیعتاً حدود یک دامنه از هم فرق می‌کنند، نه نصف دامنه.
     #   رسم دستی هم همین‌قدر روادار است — چشم «تقریباً همان‌جا» را می‌بیند.
-    tol = tol_atr * atr
-    res_all = cluster_levels(highs, tol, len(df))
-    sup_all = cluster_levels(lows, tol, len(df))
-    for L in res_all:
-        L.kind = "مقاومت"
-    for L in sup_all:
-        L.kind = "حمایت"
+    res_all, sup_all = structural_levels(df, atr, tol_atr)
 
     # سطحی که از مقاومت به حمایت برگشته، هنوز به‌عنوان حمایت آزمون نشده.
     # درس رخداد سولانا ۹ اوت: اسکنر «حمایت با ۵ برخورد» گفت، ولی هر پنج

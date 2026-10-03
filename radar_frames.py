@@ -1042,6 +1042,17 @@ def validate_card(card: dict, where: str = "card") -> list[str]:
             elif len(sv["note"]) > TEXT_MAX:
                 errs.append(f"{where}.speech_vs_screen.note: بالای {TEXT_MAX} نویسه")
     rest = {k: v for k, v in card.items() if k not in ("t", "speech", "method_notes")}
+    # میدان اختیاری snap کنار سطح — نشست ۷. عددهایش از کندل است، نه از تصویر؛ پس
+    # قالب خودش را radar_history.validate_snap می‌سنجد و از قاعده «فقط تصویر» بیرون است.
+    levels = card.get("levels")
+    snaps = [(i, lv["snap"]) for i, lv in enumerate(levels if isinstance(levels, list) else [])
+             if isinstance(lv, dict) and "snap" in lv]
+    if snaps:
+        import radar_history as H           # فقط وقتی کارت snap دارد
+        for i, s in snaps:
+            errs += H.validate_snap(s, f"{where}.levels[{i}].snap")
+        rest["levels"] = [{k: v for k, v in lv.items() if k != "snap"} if isinstance(lv, dict) else lv
+                          for lv in levels]
     _walk(rest, where, errs)
     return errs
 
