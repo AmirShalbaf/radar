@@ -561,7 +561,7 @@ def snap_label(s: dict) -> str:
     if v == "not_near":
         if s.get("nearest") is None:
             return "خط دلخواه — هیچ سطح ساختاری در پنجره نیست"
-        return (f"خط دلخواه — نزدیک‌ترین سطح {_num(s['nearest'])} با {s['nearest_touches']} برخورد، "
+        return (f"خط دلخواه — نزدیک‌ترین سطح {s['nearest']:.7g} با {s['nearest_touches']} برخورد، "
                 f"{s['distance_atr']:.2f} دامنه واقعی دورتر")
     return f"داده کافی نیست — {s.get('reason') or '—'}"
 

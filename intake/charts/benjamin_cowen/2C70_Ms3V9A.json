@@ -208,6 +208,32 @@
       "confidence": "high",
       "from": "image",
       "how": "برچسب آبی Mon 23 Feb '26"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.0",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 82111.82,
+      "cutoff": "2026-09-28T05:23:15+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-21T00:00:00+00:00",
+      "atr": 6356.51328906107,
+      "touches": null,
+      "nearest": 77357.71167002011,
+      "nearest_touches": 3,
+      "distance_atr": 0.7479113334288534,
+      "distance_pct": 5.789797778176019,
+      "chance_pct": 30.884557721139434,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null
      }
     }
    ],
@@ -334,7 +360,33 @@
       "how": "برچسب آبی همین خط در فریم 01m09.0s که برگزیده بود"
      },
      "kind": "horizontal",
-     "label": "سقف مه — خط خاکستری"
+     "label": "سقف مه — خط خاکستری",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.0",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 82111.82,
+      "cutoff": "2026-09-28T05:23:15+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-21T00:00:00+00:00",
+      "atr": 6356.51328906107,
+      "touches": null,
+      "nearest": 77357.71167002011,
+      "nearest_touches": 3,
+      "distance_atr": 0.7479113334288534,
+      "distance_pct": 5.789797778176019,
+      "chance_pct": 30.884557721139434,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null
+     }
     }
    ],
    "trendlines": [
@@ -496,7 +548,33 @@
       "how": "برچسب آبی همین خط در فریم 01m09.0s که برگزیده بود"
      },
      "kind": "horizontal",
-     "label": "سقف مه — خط خاکستری"
+     "label": "سقف مه — خط خاکستری",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.0",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 82111.82,
+      "cutoff": "2026-09-28T05:23:15+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-21T00:00:00+00:00",
+      "atr": 6356.51328906107,
+      "touches": null,
+      "nearest": 77357.71167002011,
+      "nearest_touches": 3,
+      "distance_atr": 0.7479113334288534,
+      "distance_pct": 5.789797778176019,
+      "chance_pct": 30.884557721139434,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null
+     }
     }
    ],
    "trendlines": [
@@ -895,6 +973,32 @@
       "confidence": "high",
       "from": "image",
       "how": "برچسب آبی Mon 15 Feb '27"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.0",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 82210.39,
+      "cutoff": "2026-09-28T05:23:15+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-21T00:00:00+00:00",
+      "atr": 6356.51328906107,
+      "touches": null,
+      "nearest": 77357.71167002011,
+      "nearest_touches": 3,
+      "distance_atr": 0.7634182623877879,
+      "distance_pct": 5.9027555154280185,
+      "chance_pct": 30.884557721139434,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null
      }
     }
    ],
@@ -1881,7 +1985,33 @@
       "confidence": "low",
       "from": "image"
      },
-     "label": "خط دستی زرد در نوار سقف مه"
+     "label": "خط دستی زرد در نوار سقف مه",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.0",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 81500.0,
+      "cutoff": "2026-09-28T05:23:15+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-21T00:00:00+00:00",
+      "atr": 6356.51328906107,
+      "touches": null,
+      "nearest": 77357.71167002011,
+      "nearest_touches": 3,
+      "distance_atr": 0.651660453083352,
+      "distance_pct": 5.082562368073479,
+      "chance_pct": 30.884557721139434,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null
+     }
     }
    ],
    "trendlines": [],
@@ -2411,7 +2541,33 @@
       "confidence": "low",
       "from": "image"
      },
-     "label": "خط دستی زرد در نوار سقف مه"
+     "label": "خط دستی زرد در نوار سقف مه",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.0",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 81500.0,
+      "cutoff": "2026-09-28T05:23:15+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-21T00:00:00+00:00",
+      "atr": 6356.51328906107,
+      "touches": null,
+      "nearest": 77357.71167002011,
+      "nearest_touches": 3,
+      "distance_atr": 0.651660453083352,
+      "distance_pct": 5.082562368073479,
+      "chance_pct": 30.884557721139434,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null
+     }
     }
    ],
    "trendlines": [],
