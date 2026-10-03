@@ -49,7 +49,10 @@ def test_real_file_is_v2_and_valid(h) -> None:
 def _ledger_by_account(h, field) -> dict:
     out: dict = {}
     for r in h["ledger"]:
-        key = (r["symbol"], r.get("account")) if field == "delta" else r.get("account")
+        # ردیف adjust حساب ندارد. همه نمادها حالا فقط در LBank‌اند — همین آزمون
+        # یک لات LBank برای هر نماد را می‌سنجد؛ adjust BNB، ۳ اکتبر ۲۰۲۶
+        acct = r.get("account") or ("LBank" if r["action"] == "adjust" else None)
+        key = (r["symbol"], acct) if field == "delta" else r.get("account")
         out[key] = out.get(key, 0.0) + (r.get(field) or 0.0)
     return out
 
@@ -139,6 +142,19 @@ def test_lbank_cash_withdrawn_once() -> None:
     oc = json.loads((ROOT / "radar_optcost.json").read_text(encoding="utf-8"))
     assert not [x for x in oc.get("exits", []) if x.get("symbol") == "USDT"]
     assert "12.15376371" not in (ROOT / "radar_journal.json").read_text(encoding="utf-8")
+
+
+def test_bnb_adjust_cause_unknown(h) -> None:
+    """
+    تصمیم کاربر، ۳ اکتبر ۲۰۲۶: BNB در اسکرین‌شات 0.001443 کمتر از دفتر بود —
+    0.44٪، زیر سقف ۱٪ adjust. علت نامعلوم، و همین در دلیل.
+    """
+    rows = [r for r in h["ledger"] if r["action"] == "adjust"]
+    assert len(rows) == 1
+    r = rows[0]
+    assert (r["symbol"], r["delta"]) == ("BNB", -0.001443)
+    assert r["reason"] == "اختلاف با اسکرین‌شات ۱۱ مهر — علت نامعلوم"
+    assert -r["delta"] <= P.ADJUST_MAX * LBANK["BNB"]
 
 
 def test_all_in_position_book_trade_book_empty(h) -> None:
