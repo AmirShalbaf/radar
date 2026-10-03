@@ -1021,6 +1021,26 @@ def validate_card(card: dict, where: str = "card") -> list[str]:
     for i, r in enumerate(card.get("refs") or []):
         if not isinstance(r, dict) or "doc" not in r or "row" not in r or "claim_id" not in r:
             errs.append(f"{where}.refs[{i}]: doc، row و claim_id لازم است")
+    # دو میدان اختیاری نشست ۶ب — گزارش ویدیو از همین‌ها می‌خواند، نه از متن آزاد
+    cl = card.get("claims")
+    if cl is not None:
+        if not (isinstance(cl, list) and all(isinstance(c, str) for c in cl)):
+            errs.append(f"{where}.claims: باید فهرست متن ساده باشد — ادعا به بیان ما؛ "
+                        "عدد حرف فقط به شکل متن")
+        elif any(len(c) > TEXT_MAX for c in cl):
+            errs.append(f"{where}.claims: ادعای بالای {TEXT_MAX} نویسه")
+    sv = card.get("speech_vs_screen")
+    if sv is not None:
+        if not (isinstance(sv, dict) and set(sv) == {"agree", "note"}):
+            errs.append(f"{where}.speech_vs_screen: باید شیء {{agree, note}} باشد")
+        else:
+            if not (sv["agree"] is None or isinstance(sv["agree"], bool)):
+                errs.append(f"{where}.speech_vs_screen.agree: درست، نادرست یا null — "
+                            f"نه {sv['agree']!r}")
+            if not isinstance(sv["note"], str):
+                errs.append(f"{where}.speech_vs_screen.note: باید متن ساده باشد")
+            elif len(sv["note"]) > TEXT_MAX:
+                errs.append(f"{where}.speech_vs_screen.note: بالای {TEXT_MAX} نویسه")
     rest = {k: v for k, v in card.items() if k not in ("t", "speech", "method_notes")}
     _walk(rest, where, errs)
     return errs
@@ -1073,7 +1093,10 @@ def card_template(man: dict) -> dict:
             "chart_type": unread(), "scale": unread(),
             "price_axis": {"top": unread(), "bottom": unread()},
             "levels": [], "trendlines": [], "zones": [], "patterns": [],
-            "indicators": [], "texts": [], "speech": "", "method_notes": []})
+            "indicators": [], "texts": [], "speech": "", "method_notes": [],
+            # اختیاری، نشست ۶ب: ادعای قابل‌تسویه به بیان ما؛ و آیا حرف با صفحه
+            # می‌خواند — درست، نادرست، یا null یعنی وارسی‌نشدنی
+            "claims": [], "speech_vs_screen": {"agree": None, "note": ""}})
     return {"schema": 1, "template": True, "kind": "radar-chart-cards",
             "video_id": man["video_id"], "doc_id": man["doc_id"], "doc": man["doc"],
             "source": man["source"], "url": man["url"], "title": man["title"],

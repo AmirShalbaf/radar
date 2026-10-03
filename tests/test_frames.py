@@ -563,6 +563,29 @@ def test_missing_field_rejected_and_not_chart_card_is_lighter() -> None:
     assert F.validate_cards(cards_doc(nc)) == []
 
 
+def test_optional_claims_and_speech_vs_screen() -> None:
+    """
+    نشست ۶ب — گزارش ویدیو ادعا و ناهمخوانی حرف و صفحه را از کارت می‌خواند،
+    نه از متن آزاد method_notes. هر دو اختیاری‌اند: کارت‌های نشست ۶ بی‌آن‌ها معتبرند.
+    """
+    ok = card(claims=["لانگ پس از شکست 2.474 — به گفته او"],
+              speech_vs_screen={"agree": False, "note": "حرف از AVAX، صفحه MORPHO — د۱۳"})
+    assert F.validate_cards(cards_doc(ok)) == []
+    assert F.validate_cards(cards_doc(card(speech_vs_screen={"agree": None, "note": ""}))) == []
+    assert F.validate_cards(cards_doc(card())) == []
+    bad = [
+        (card(claims="یک ادعا"), "claims"),
+        (card(claims=["x" * (F.TEXT_MAX + 1)]), "claims"),
+        (card(claims=[num(2.474)]), "claims"),
+        (card(speech_vs_screen={"agree": 1, "note": ""}), "agree"),
+        (card(speech_vs_screen={"agree": True}), "speech_vs_screen"),
+        (card(speech_vs_screen={"agree": False, "note": "x" * (F.TEXT_MAX + 1)}), "note"),
+    ]
+    for c, word in bad:
+        errs = F.validate_cards(cards_doc(c))
+        assert any(word in e for e in errs), (word, errs)
+
+
 def test_manifest_cross_check() -> None:
     man = {"frames": [{"frame_id": f"{VID}_00m07.0s", "t": 7.0},
                       {"frame_id": f"{VID}_00m20.0s", "t": 20.0}], "missing": []}
@@ -582,6 +605,8 @@ def test_template_is_rejected_until_filled(tmp_path) -> None:
     errs = F.validate_cards(tpl, man)
     assert any("template" in e for e in errs)
     assert len(tpl["cards"]) == len(man["frames"])
+    for c in tpl["cards"]:          # نشست ۶ب — خواننده یادش بماند
+        assert c["claims"] == [] and c["speech_vs_screen"] == {"agree": None, "note": ""}
 
 
 def test_validate_cli(tmp_path) -> None:
