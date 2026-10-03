@@ -593,6 +593,71 @@ def _drawn(lv: dict) -> str:
     return f"روی {d}" if isinstance(d, str) and d else ""
 
 
+# ترجمه یا تحلیل؟ — نشست ۷، آزمون analysts.yml برای تکرارگر. زیرنویس خودکار نقطه
+# ندارد و جمله میان خط‌ها می‌شکند؛ پس شمارش روی متن پیوسته است، و بافت هر عبارت
+# کلمه‌های پس از آن تا عبارت بعدی، حداکثر VOICE_WINDOW کلمه.
+_ZW = "[‌ ]?"
+VOICE_REPORTED = re.compile(r"(?<!\w)(?:می" + _ZW + r"گ(?:ه|ن|وید|ویند|فت|فتن)|گفته|به نقل از|نوشته|توییت)(?!\w)")
+VOICE_OWN = re.compile(r"(?<!\w)(?:به نظر من|به نظرم|از نظر من|فکر می" + _ZW + r"کنم|من معتقدم|من می"
+                       + _ZW + r"گم|پیشنهاد من|دید من)(?!\w)")
+VOICE_NUMBER = re.compile(r"[0-9۰-۹]|(?<!\w)(?:هزار|میلیون|درصد)(?!\w)")
+VOICE_TIME = re.compile(r"(?<!\w)(?:امروز|فردا|روز|هفته|ماه|سال|ساعت|ژانویه|فوریه|مارس|آوریل|ژوئن|ژوئیه|"
+                        r"جولای|اوت|آگوست|سپتامبر|اکتبر|نوامبر|دسامبر|کریسمس|202[0-9]|۲۰۲[۰-۹]|۱۴۰[۰-۹])(?!\w)")
+VOICE_WINDOW = 25
+SCREEN_LABEL = (("own", "نمودار با رسم خودش"), ("other", "نمودار یا تصویر دیگران"),
+                ("tweet", "توییت یا پست"), ("none", "بی‌نمودار و بی‌تصویر"), ("unknown", "نامعلوم"))
+
+
+def voice_counts(body: str) -> dict | None:
+    """
+    شمار «فلانی می‌گوید / میگه» در برابر «به نظر من» در متن محلی، و چندتایشان با عدد
+    و با عدد و زمان. فقط شمارش — هیچ تکه‌ای از حرف بیرون نمی‌رود. بی‌مهر زمان None.
+    """
+    segs = F.parse_transcript(body)
+    if not segs:
+        return None
+    text = " ".join(" ".join(t for _, t in segs).split())
+    marks = sorted([(m.start(), m.end(), "reported") for m in VOICE_REPORTED.finditer(text)]
+                   + [(m.start(), m.end(), "own") for m in VOICE_OWN.finditer(text)])
+    out = {"words": len(text.split()), "reported": 0, "reported_number": 0,
+           "own": 0, "own_number": 0, "own_number_time": 0}
+    for i, (_, end, kind) in enumerate(marks):
+        stop = marks[i + 1][0] if i + 1 < len(marks) else len(text)
+        ctx = " ".join(text[end:stop].split()[:VOICE_WINDOW])
+        num, when = bool(VOICE_NUMBER.search(ctx)), bool(VOICE_TIME.search(ctx))
+        out[kind] += 1
+        out[f"{kind}_number"] += num
+        if kind == "own":
+            out["own_number_time"] += num and when
+    return out
+
+
+def _voice_section(cs: list[dict], meta: dict, voice: dict | None) -> list[str]:
+    srcs = [c["screen_source"] for c in cs if isinstance(c.get("screen_source"), dict)]
+    if not srcs:
+        return []
+    lines = ["", "## ترجمه یا تحلیل؟", "",
+             f"> آزمون `analysts.yml` — ویدیوی {(meta.get('تاریخ انتشار') or '—')[:10]}. "
+             "فقط شمارش و دیدن؛ حکم نهایی پس از چند ویدیو.", "", "### از حرف", ""]
+    if voice is None:
+        lines.append("متن محلی نیست — شمارش حرف انجام نشد.")
+    else:
+        lines += [f"شمارش خودکار الگو در متن محلی، {voice['words']} کلمه. بافت هر عبارت تا عبارت "
+                  f"بعدی، حداکثر {fa(VOICE_WINDOW)} کلمه. حرف نقل نمی‌شود.", "",
+                  "| عبارت | شمار | با عدد | با عدد و زمان |", "|---|---|---|---|",
+                  f"| «فلانی می‌گوید / میگه» | {voice['reported']} | {voice['reported_number']} | — |",
+                  f"| «به نظر من» و هم‌خانواده | {voice['own']} | {voice['own_number']} | "
+                  f"{voice['own_number_time']} |"]
+    lines += ["", "### از صفحه", "", f"دیده مدل در {len(srcs)} فریم.", "",
+              "| آنچه روی صفحه است | فریم | نام، واترمارک یا نشانی |", "|---|---|---|"]
+    for kind, label in SCREEN_LABEL:
+        ks = [s for s in srcs if s["kind"] == kind]
+        if ks or kind in ("own", "other", "tweet"):
+            who = "، ".join(dict.fromkeys(s["who"] for s in ks if s.get("who")))
+            lines.append(f"| {label} | {len(ks)} | {I._cell(who) or '—'} |")
+    return lines
+
+
 NOT_SNAPPED = "وارسی نشده"
 
 
@@ -686,7 +751,7 @@ def _methods_section(cards: dict) -> list[str]:
     return lines
 
 
-def render_report(cards: dict, meta: dict, man: dict | None = None) -> str:
+def render_report(cards: dict, meta: dict, man: dict | None = None, voice: dict | None = None) -> str:
     """
     گزارش ساده فارسی یک ویدیو، فقط از کارت اعتبارسنجی‌شده. عمومی است: هیچ
     حرف گوینده نقل نمی‌شود — speech کارت در گزارش نمی‌آید؛ ادعا از claims، که
@@ -804,6 +869,7 @@ def render_report(cards: dict, meta: dict, man: dict | None = None) -> str:
         else:
             lines.append("هیچ ناهمخوانی‌ای ثبت نشد.")
 
+    lines += _voice_section(cs, meta, voice)
     lines += ["", f"> ساخته‌شده با radar_video {VERSION} از کارت اعتبارسنجی‌شده."]
     return "\n".join(lines) + "\n"
 
@@ -834,9 +900,11 @@ def report_cli(cards_path: Path, intake: Path, frames_root: Path) -> int:
         meta = I._front_matter(doc.read_text(encoding="utf-8"))
     else:
         print(f"⚠️ سند {doc} نیست — شناسنامه گزارش فقط از کارت")
+    local = intake / meta["متن محلی"] if meta.get("متن محلی") else None
+    voice = voice_counts(local.read_text(encoding="utf-8")) if local and local.is_file() else None
     out = report_path(intake, cards)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(render_report(cards, meta, man), encoding="utf-8")
+    out.write_text(render_report(cards, meta, man, voice), encoding="utf-8")
     print(f"✅ گزارش: {out.as_posix()}")
     return 0
 

@@ -926,6 +926,8 @@ CARD_KEYS = ("frame_id", "t", "refs", "recorded_at", "coin", "venue", "timeframe
              "patterns", "indicators", "texts", "speech", "method_notes")
 NOT_CHART_KEYS = ("frame_id", "t", "refs", "texts", "speech", "method_notes")
 FIELD_KEYS = ("recorded_at", "coin", "venue", "timeframe", "chart_type", "scale")
+# منبع آنچه روی صفحه است — نشست ۷: خود گوینده، دیگران، توییت، بی‌تصویر، نامعلوم
+SCREEN_KINDS = ("own", "other", "tweet", "none", "unknown")
 
 
 def _is_num(x) -> bool:
@@ -1041,6 +1043,19 @@ def validate_card(card: dict, where: str = "card") -> list[str]:
                 errs.append(f"{where}.speech_vs_screen.note: باید متن ساده باشد")
             elif len(sv["note"]) > TEXT_MAX:
                 errs.append(f"{where}.speech_vs_screen.note: بالای {TEXT_MAX} نویسه")
+    # میدان اختیاری screen_source — نشست ۷، آزمون «ترجمه یا تحلیل؟» analysts.yml: آنچه
+    # روی صفحه است نمودار خود گوینده است، یا تصویر و توییت دیگران با نام یا واترمارک؟
+    src = card.get("screen_source")
+    if src is not None:
+        if not (isinstance(src, dict) and set(src) == {"kind", "who", "evidence"}):
+            errs.append(f"{where}.screen_source: باید شیء {{kind, who, evidence}} باشد")
+        else:
+            if src["kind"] not in SCREEN_KINDS:
+                errs.append(f"{where}.screen_source.kind: {src['kind']!r} — باید یکی از {SCREEN_KINDS}")
+            if not (src["who"] is None or isinstance(src["who"], str)):
+                errs.append(f"{where}.screen_source.who: متن یا null")
+            if not isinstance(src["evidence"], str) or len(src["evidence"]) > TEXT_MAX:
+                errs.append(f"{where}.screen_source.evidence: متن ساده تا {TEXT_MAX} نویسه")
     rest = {k: v for k, v in card.items() if k not in ("t", "speech", "method_notes")}
     # میدان اختیاری snap کنار سطح — نشست ۷. عددهایش از کندل است، نه از تصویر؛ پس
     # قالب خودش را radar_history.validate_snap می‌سنجد و از قاعده «فقط تصویر» بیرون است.

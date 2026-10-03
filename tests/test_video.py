@@ -574,3 +574,95 @@ def test_report_cli_writes_public_report_only_from_valid_cards(env, capsys) -> N
     out.unlink()
     assert V.main(["--report", p.as_posix(), "--intake", "intake", "--frames", "frames"]) == 2
     assert not out.exists() and "کارت نامعتبر" in capsys.readouterr().err
+
+
+# ═══════════════ ۶ — ترجمه یا تحلیل؟ — نشست ۷ ═══════════════
+# آزمون analysts.yml برای تکرارگر: «فلانی می‌گوید» در برابر «به نظر من» با عدد و
+# زمان، از حرف؛ و نمودار خود او در برابر تصویر دیگران، از صفحه. فقط شمارش.
+
+VOICE_BODY = "\n".join([
+    "## متن کامل", "",
+    "[00:01] سلام دوستان امروز سالووی میگه بیت",
+    "[00:04] کوین تا ۸۵ هزار میره و گلدمن ساکس",
+    "[00:07] هم گفته که بازار ریسک داره ولی به نظر",
+    "[00:10] من اتریوم تا آخر هفته به ۲۵۰۰ میرسه",
+    "[00:13] من میگم صبر کنید فکر میکنم ریپل",
+    "[00:16] خوبه",
+])
+
+
+def test_voice_counts_reported_vs_own():
+    v = V.voice_counts(VOICE_BODY)
+    assert v["reported"] == 2                    # میگه، گفته — «من میگم» گوینده خودش است
+    assert v["reported_number"] == 1             # فقط سالووی عدد دارد
+    assert v["own"] == 3                         # به نظر من (میان دو خط)، من میگم، فکر میکنم
+    assert v["own_number"] == 1 and v["own_number_time"] == 1
+    assert v["words"] > 30
+
+
+def test_voice_counts_without_transcript_is_none():
+    assert V.voice_counts("بی‌مهر زمان") is None
+
+
+def screen(kind, who=None, evidence="واترمارک گوشه پایین"):
+    return {"kind": kind, "who": who, "evidence": evidence}
+
+
+@pytest.mark.parametrize("bad", [
+    {"kind": "maybe", "who": None, "evidence": "x"},
+    {"kind": "other", "who": None},
+    {"kind": "other", "who": 3, "evidence": "x"},
+    {"kind": "tweet", "who": "x", "evidence": "y" * 201},
+    "own",
+])
+def test_screen_source_is_validated(bad):
+    c = chart(69.0)
+    c["screen_source"] = bad
+    assert any("screen_source" in e for e in F.validate_card(c))
+    c["screen_source"] = screen("other", "TradingView — نام نویسنده")
+    assert F.validate_card(c) == []
+
+
+def test_report_voice_section_counts_speech_and_screen():
+    cards = report_cards()
+    cards["cards"][0]["screen_source"] = screen("own", evidence="ابزار رسم خودش، بی‌واترمارک")
+    cards["cards"][1]["screen_source"] = screen("other", "CryptoQuant")
+    cards["cards"][2]["screen_source"] = screen("tweet", "@someone")
+    rep = V.render_report(cards, {"تاریخ انتشار": "2026-10-03T16:30:00Z"}, voice=V.voice_counts(VOICE_BODY))
+    assert "## ترجمه یا تحلیل؟" in rep
+    assert "| «فلانی می‌گوید / میگه» | 2 | 1 | — |" in rep
+    assert "| «به نظر من» و هم‌خانواده | 3 | 1 | 1 |" in rep
+    assert "| نمودار با رسم خودش | 1 |" in rep
+    assert "| نمودار یا تصویر دیگران | 1 | CryptoQuant |" in rep
+    assert "| توییت یا پست | 1 | @someone |" in rep
+    assert "حکم نهایی پس از چند ویدیو" in rep and "2026-10-03" in rep
+
+
+def test_report_without_screen_source_has_no_voice_section():
+    assert "ترجمه یا تحلیل؟" not in V.render_report(report_cards(), {})
+
+
+def test_report_voice_section_says_when_local_text_missing():
+    cards = report_cards()
+    cards["cards"][0]["screen_source"] = screen("own")
+    rep = V.render_report(cards, {}, voice=None)
+    assert "متن محلی نیست — شمارش حرف انجام نشد" in rep
+
+
+def test_report_cli_counts_voice_from_local_text(env):
+    cards = report_cards()
+    cards["cards"][0]["screen_source"] = screen("own")
+    doc = Path("intake/single_UCx/d.md")
+    doc.parent.mkdir(parents=True)
+    doc.write_text("---\nمتن محلی: _local/single_UCx/d.md\n---\n", encoding="utf-8")
+    local = Path("intake", I.LOCAL_DIR, "single_UCx", "d.md")
+    local.parent.mkdir(parents=True)
+    local.write_text(VOICE_BODY, encoding="utf-8")
+    cards["doc"] = doc.as_posix()
+    p = Path("intake/charts/single_UCx") / f"{VID}.json"
+    p.parent.mkdir(parents=True)
+    p.write_text(json.dumps(cards, ensure_ascii=False), encoding="utf-8")
+    assert V.main(["--report", p.as_posix(), "--intake", "intake", "--frames", "frames"]) == 0
+    rep = Path("intake", I.REPORTS_DIR, "single_UCx", f"{VID}.md").read_text(encoding="utf-8")
+    assert "| «به نظر من» و هم‌خانواده | 3 | 1 | 1 |" in rep
+    assert "سالووی" not in rep                       # حرف گوینده نقل نمی‌شود
