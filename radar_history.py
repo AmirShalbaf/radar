@@ -55,7 +55,7 @@ import radar_anchor as A
 import radar_levels as L          # تعریف سطح ساختاری — یک تعریف، نه دو
 from radar_text import fa
 
-VERSION = "1.0"
+VERSION = "1.1"                   # ۱.۱: برش با زمان پایان نمودار کارت و میدان cutoff_basis
 UTC = timezone.utc
 
 VENUES = ("okx", "gate")
@@ -89,6 +89,8 @@ SNAP_NUMBERS = ("level", "lookback", "width_atr", "bars", "atr", "touches", "nea
                 "strong_min_touches", "chance_at_touches_pct")
 SNAP_KEYS = {"from", "tool", "symbol", "venue", "tf", "class", "cutoff", "verdict", "strength",
              "last_bar", "reason", *SNAP_NUMBERS}
+# مبنای برش — اختیاری، نسخه ۱.۱: انتشار ویدیو، پایان نمودار کارت، یا پایان نمودار ناخوانا
+CUTOFF_BASES = ("publish", "chart_end", "chart_end_unknown")
 REASON_MAX = 300
 
 SESSION = requests.Session()
@@ -554,16 +556,17 @@ def snap(symbol: str, tf: str, level, cutoff: datetime, *, history_fn=None, dail
 def snap_label(s: dict) -> str:
     """یک خط برای گزارش: «واقعی با N برخورد»، «خط دلخواه» یا «داده کافی نیست»."""
     v = s.get("verdict")
+    unknown = " — زمان نمودار نامعلوم" if s.get("cutoff_basis") == "chart_end_unknown" else ""
     if v == "confirmed":
         strength = "قوی" if s.get("strength") == "strong" else "ضعیف"
         trig = " — ماشه‌ای، نه ساختاری" if s.get("class") == "trigger" else ""
-        return f"واقعی با {s['touches']} برخورد — {strength}{trig}"
+        return f"واقعی با {s['touches']} برخورد — {strength}{trig}{unknown}"
     if v == "not_near":
         if s.get("nearest") is None:
-            return "خط دلخواه — هیچ سطح ساختاری در پنجره نیست"
+            return f"خط دلخواه — هیچ سطح ساختاری در پنجره نیست{unknown}"
         return (f"خط دلخواه — نزدیک‌ترین سطح {s['nearest']:.7g} با {s['nearest_touches']} برخورد، "
-                f"{s['distance_atr']:.2f} دامنه واقعی دورتر")
-    return f"داده کافی نیست — {s.get('reason') or '—'}"
+                f"{s['distance_atr']:.2f} دامنه واقعی دورتر{unknown}")
+    return f"داده کافی نیست — {s.get('reason') or '—'}{unknown}"
 
 
 def validate_snap(s, where: str = "snap", nested: bool = False) -> list[str]:
@@ -574,7 +577,9 @@ def validate_snap(s, where: str = "snap", nested: bool = False) -> list[str]:
     if not isinstance(s, dict):
         return [f"{where}: باید شیء باشد"]
     errs = []
-    keys = set(s) - ({"daily"} if not nested else set())
+    keys = set(s) - ({"daily"} if not nested else set()) - {"cutoff_basis"}
+    if "cutoff_basis" in s and s["cutoff_basis"] not in CUTOFF_BASES:
+        errs.append(f"{where}.cutoff_basis: {s['cutoff_basis']!r} — باید یکی از {CUTOFF_BASES}")
     if SNAP_KEYS - keys:
         errs.append(f"{where}: میدان نیست — {sorted(SNAP_KEYS - keys)}")
     if keys - SNAP_KEYS:
@@ -707,6 +712,28 @@ def card_snap(coin, tf_raw, price, cutoff: datetime, history_fn, **kw) -> dict:
     return snap(coin, tf, float(price), cutoff, history_fn=history_fn, **kw)
 
 
+def card_cutoff(card: dict, published: datetime) -> tuple[datetime, str]:
+    """
+    برش snap یک کارت — نشست ۷: کمینه زمان پایان نمودار و زمان انتشار. ویدیوی آموزشی
+    مثال گذشته را نشان می‌دهد و پنجره پیش از انتشار به آن نمی‌رسد. پایان نمودار
+    ناخوانا: همان انتشار، با مبنای chart_end_unknown. هرگز پس از انتشار — نگاه به آینده.
+    """
+    ce = card.get("chart_end")
+    if not isinstance(ce, dict):
+        return published, "publish"
+    if ce.get("value") is None:
+        return published, "chart_end_unknown"
+    end = datetime.fromisoformat(str(ce["value"])).astimezone(UTC)
+    return (end, "chart_end") if end < published else (published, "publish")
+
+
+def _with_basis(s: dict, basis: str) -> dict:
+    s["cutoff_basis"] = basis
+    if isinstance(s.get("daily"), dict):
+        s["daily"]["cutoff_basis"] = basis
+    return s
+
+
 def _is_price(x) -> bool:
     return isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x) and x > 0
 
@@ -743,15 +770,16 @@ def cards_cmd(paths, *, history_fn=None, dry_run: bool = False, venue: str = "au
                   file=sys.stderr)
             rc = 2
             continue
-        cutoff = parse_time(meta["تاریخ انتشار"])
+        published = parse_time(meta["تاریخ انتشار"])
         snaps = []
         for card in doc.get("cards") or []:
             if card.get("is_chart", True) is False:
                 continue
             coin, tf_raw = _value(card.get("coin")), _value(card.get("timeframe"))
+            cutoff, basis = card_cutoff(card, published)
             for lv in card.get("levels") or []:
-                lv["snap"] = card_snap(coin, tf_raw, _value(lv.get("price")), cutoff, cached_fn,
-                                       venue=venue, cache_dir=cache_dir)
+                lv["snap"] = _with_basis(card_snap(coin, tf_raw, _value(lv.get("price")), cutoff, cached_fn,
+                                                   venue=venue, cache_dir=cache_dir), basis)
                 snaps.append(lv["snap"])
         errs = F.validate_cards(doc)
         if errs:
@@ -763,7 +791,10 @@ def cards_cmd(paths, *, history_fn=None, dry_run: bool = False, venue: str = "au
         if not dry_run:
             path.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         by_source.setdefault(str(doc.get("source")), []).extend(snaps)
-        print(f"{'🔎' if dry_run else '✅'} {path.as_posix()} — {len(snaps)} سطح، برش {cutoff.isoformat()}")
+        early = sum(1 for s in snaps if s.get("cutoff_basis") == "chart_end")
+        unknown = sum(1 for s in snaps if s.get("cutoff_basis") == "chart_end_unknown")
+        print(f"{'🔎' if dry_run else '✅'} {path.as_posix()} — {len(snaps)} سطح، انتشار {published.isoformat()}؛ "
+              f"برش با پایان نمودار {early}، زمان نمودار نامعلوم {unknown}")
     for src, snaps in by_source.items():
         print(f"\n## {src}\n")
         print("\n".join(summary_lines(summarize(snaps))))

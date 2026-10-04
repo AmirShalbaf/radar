@@ -1004,6 +1004,17 @@ def validate_card(card: dict, where: str = "card") -> list[str]:
                 errs.append(f"{where}.recorded_at: زمان بی‌منطقه")
         except ValueError:
             errs.append(f"{where}.recorded_at: زمان ISO نیست: {rec['value']!r}")
+    # زمان پایان نمودار — نشست ۷، اختیاری: آخرین شمع دیده‌شده، برای برش snap مثال گذشته
+    if "chart_end" in card:
+        ce = card["chart_end"]
+        if not (isinstance(ce, dict) and "value" in ce):
+            errs.append(f"{where}.chart_end: باید شیء مقدار باشد")
+        elif ce["value"] is not None:
+            try:
+                if datetime.fromisoformat(str(ce["value"])).tzinfo is None:
+                    errs.append(f"{where}.chart_end: زمان بی‌منطقه")
+            except ValueError:
+                errs.append(f"{where}.chart_end: زمان ISO نیست: {ce['value']!r}")
     sp = card.get("speech")
     if not isinstance(sp, str):
         errs.append(f"{where}.speech: باید متن ساده باشد — عدد از حرف فقط به شکل متن")

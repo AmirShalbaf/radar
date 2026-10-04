@@ -592,6 +592,75 @@ def test_cards_dry_run_writes_nothing(tmp_path):
     assert path.read_bytes() == before
 
 
+# ─── زمان پایان نمودار — نشست ۷، ایستگاه ۲: برش = کمینه پایان نمودار و انتشار ───
+
+PUBLISHED = datetime(2026, 1, 10, 8, tzinfo=UTC)
+
+
+def card_with_end(tmp_path, end_obj):
+    path = write_card(tmp_path, [level_obj(110.2)])
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    doc["cards"][0]["chart_end"] = end_obj
+    path.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return path
+
+
+def test_chart_end_before_publish_is_the_cutoff(tmp_path):
+    end = "2025-12-01T00:00:00+00:00"
+    path = card_with_end(tmp_path, {"value": end, "confidence": "medium", "from": "image"})
+    calls = []
+    assert H.cards_cmd([path], history_fn=fake_history_fn(calls)) == 0
+    s = json.loads(path.read_text(encoding="utf-8"))["cards"][0]["levels"][0]["snap"]
+    assert all(e == datetime(2025, 12, 1, tzinfo=UTC) for _, _, e in calls)
+    assert s["cutoff"] == end and s["cutoff_basis"] == "chart_end"
+    assert s["daily"]["cutoff"] == end and s["daily"]["cutoff_basis"] == "chart_end"
+    assert "نامعلوم" not in H.snap_label(s)
+
+
+def test_unreadable_chart_end_keeps_publish_and_says_so(tmp_path):
+    path = card_with_end(tmp_path, {"value": None, "confidence": None, "from": "image", "note": "ناخوانا"})
+    calls = []
+    assert H.cards_cmd([path], history_fn=fake_history_fn(calls)) == 0
+    s = json.loads(path.read_text(encoding="utf-8"))["cards"][0]["levels"][0]["snap"]
+    assert all(e == PUBLISHED for _, _, e in calls)
+    assert s["cutoff_basis"] == "chart_end_unknown"
+    assert "زمان نمودار نامعلوم" in H.snap_label(s)
+
+
+def test_chart_end_after_publish_never_looks_ahead(tmp_path):
+    path = card_with_end(tmp_path, {"value": "2026-02-01T00:00:00+00:00", "confidence": "high", "from": "image"})
+    calls = []
+    assert H.cards_cmd([path], history_fn=fake_history_fn(calls)) == 0
+    s = json.loads(path.read_text(encoding="utf-8"))["cards"][0]["levels"][0]["snap"]
+    assert all(e == PUBLISHED for _, _, e in calls) and s["cutoff_basis"] == "publish"
+
+
+def test_card_without_chart_end_cuts_at_publish(tmp_path):
+    path = write_card(tmp_path, [level_obj(110.2)])
+    assert H.cards_cmd([path], history_fn=fake_history_fn([])) == 0
+    s = json.loads(path.read_text(encoding="utf-8"))["cards"][0]["levels"][0]["snap"]
+    assert s["cutoff_basis"] == "publish"
+
+
+@pytest.mark.parametrize("bad", [
+    {"value": "2025-12-01T00:00:00", "confidence": "medium", "from": "image"},      # بی‌منطقه
+    {"value": "دیروز", "confidence": "medium", "from": "image"},
+    "2025-12-01T00:00:00+00:00",
+])
+def test_chart_end_is_validated(bad):
+    c = card_with(level_obj())
+    c["chart_end"] = bad
+    assert any("chart_end" in e for e in F.validate_card(c))
+    c["chart_end"] = {"value": "2025-12-01T00:00:00+00:00", "confidence": "medium", "from": "image"}
+    assert F.validate_card(c) == []
+
+
+def test_snap_cutoff_basis_is_validated():
+    lv = level_obj()
+    lv["snap"] = {**good_snap(), "cutoff_basis": "guess"}
+    assert any("cutoff_basis" in e for e in F.validate_card(card_with(lv)))
+
+
 @pytest.mark.parametrize("coin,sym", [("BTC", "BTC"), ("BTCUSD", "BTC"), ("BTCUSDT", "BTC"),
                                       ("ETH/USDT", "ETH"), ("BTC.D", None), ("TOTAL2", None),
                                       ("USDT.D", None)])
