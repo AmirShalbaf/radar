@@ -1204,10 +1204,21 @@ def _video_block(n: int, vid: str, e: dict, names: dict[str, str], intake: Path)
                 pairs.append((_level_origin(c, lv), lv["snap"]))
     lines += ["", "**سطح‌ها و حکم snap:**", ""]
     if rows:
-        lines += ["| نماد | تایم‌فریم | قیمت | حکم کندل | روزانه |", "|---|---|---|---|---|"]
-        lines += [f"| {I._cell(a)} | {I._cell(b)} | {I._cell(p)} | {I._cell(s)} | {I._cell(d)} |"
-                  for (a, b, p, s, d) in rows]
-        lines.append("")
+        # خلاصه کوتاه است — اجرای واقعی ۴ اکتبر جدول ۴۵ ردیفی ساخت. فقط سطحی که در یکی از
+        # دو ستون «واقعی» است ردیف می‌گیرد؛ بقیه شمرده می‌شوند و جدول کامل در گزارش ویدیو است.
+        # آغاز برچسب، نه هر جای آن — «خط دلخواه … دامنه واقعی دورتر» هم واژه «واقعی» دارد
+        real = [k for k in rows if k[3].startswith("واقعی") or k[4].startswith("واقعی")]
+        unsnapped = sum(1 for k in rows if k[3] == NOT_SNAPPED)
+        rest = len(rows) - len(real) - unsnapped
+        if real:
+            lines += ["| نماد | تایم‌فریم | قیمت | حکم کندل | روزانه |", "|---|---|---|---|---|"]
+            lines += [f"| {I._cell(a)} | {I._cell(b)} | {I._cell(p)} | {I._cell(s)} | {I._cell(d)} |"
+                      for (a, b, p, s, d) in real]
+            lines.append("")
+        if rest:
+            lines.append(f"- سطح دیگر — خط دلخواه یا بی‌داده: {rest} — جدول کامل در گزارش ویدیو")
+        if unsnapped:
+            lines.append(f"- {NOT_SNAPPED}: {unsnapped}")
         for key, head in (("speaker", "خود گوینده"), ("other", "تصویر دیگران"), (None, "بی‌منشأ")):
             group = [s for o, s in pairs if o == key]
             if group:

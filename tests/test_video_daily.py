@@ -150,13 +150,41 @@ def test_seen_video_section(env) -> None:
     assert "تکرارگر — حمیدرضا برزگر" in rep and V.SUGGEST_LABEL in rep
     assert "BTC — صعود — بالای 85,000 — تا پایان اکتبر — نقل از سالووی" in rep
     assert "بازار هیجانی است" not in rep and "ادعای بی‌عدد: 1" in rep
-    assert "واقعی با 3 برخورد — ضعیف" in rep and "خط دلخواه" in rep
+    assert "واقعی با 3 برخورد — ضعیف" in rep
+    assert "سطح دیگر — خط دلخواه یا بی‌داده: 1" in rep               # خلاصه کوتاه است
     assert "## ترجمه یا تحلیل؟" in rep or "ترجمه یا تحلیل؟" in rep
     assert "«فلانی می‌گوید / میگه»: 1" in rep and "«به نظر من»: 1" in rep
     assert "توییت یا پست: 1" in rep
     assert "شکست با بسته روزانه" in rep and "فقط در جهت روند" not in rep    # فقط روش تازه
     assert f"intake/reports/tekrargar/{TK}.md" in rep
     assert SECRET not in rep
+
+
+def test_level_table_lists_only_confirmed_and_counts_the_rest(env) -> None:
+    """
+    اجرای واقعی ۴ اکتبر: جدول سطح کریپتوسیتی ۴۵ ردیف شد — خلاصه «ساده و کوتاه» نبود.
+    فقط سطحی که در یکی از دو ستون «واقعی» است ردیف می‌گیرد؛ بقیه یک خط شمارش، و جدول
+    کامل در گزارش ویدیو.
+    """
+    p = write_cards(CW, "benjamin_cowen")
+    cards = json.loads(p.read_text(encoding="utf-8"))
+    lv = cards["cards"][0]["levels"]
+    # برچسب خط دلخواه با نزدیک‌ترین سطح «… دامنه واقعی دورتر» دارد — تله واژه «واقعی»،
+    # پیداشده در خلاصه واقعی ۴ اکتبر
+    lv[1]["snap"].update(nearest=91000.0, nearest_touches=3, distance_atr=0.5)
+    lv.append({"price": num(70000), "kind": "horizontal", "snap": {**snap(70000, verdict="not_near"),
+                                                                     "daily": snap(70000)}})
+    lv.append({"price": num(60000), "kind": "horizontal",
+               "snap": {"verdict": "no_data", "symbol": "BTC", "tf": "1d", "cutoff": "c", "level": 60000,
+                        "reason": "داده کم"}})
+    p.write_text(json.dumps(cards, ensure_ascii=False), encoding="utf-8")
+    put_state(videos={CW: {"source": "benjamin_cowen", "title": "t", "status": "seen",
+                           "seen_at": f"{DAY}T10:00:00Z", "report": "intake/reports/benjamin_cowen/x.md"}})
+    rep = daily()
+    assert "| 82,000 |" in rep                         # واقعی روی تایم خود نمودار
+    assert "| 70,000 |" in rep                         # واقعی فقط در ستون روزانه
+    assert "| 90,000 |" not in rep and "| 60,000 |" not in rep
+    assert "سطح دیگر — خط دلخواه یا بی‌داده: 2 — جدول کامل در گزارش ویدیو" in rep
 
 
 def test_translation_section_only_for_tekrargar(env) -> None:
