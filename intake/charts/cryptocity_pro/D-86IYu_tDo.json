@@ -1,0 +1,7473 @@
+{
+ "schema": 1,
+ "kind": "radar-chart-cards",
+ "video_id": "D-86IYu_tDo",
+ "doc_id": "2026-09-25_cryptocity_pro_D-86IYu_",
+ "doc": "intake/cryptocity_pro/2026-09-25_آموزش-تحلیل-تکنیکال-صفر-تا-100-استراتژی_D-86IY.md",
+ "source": "cryptocity_pro",
+ "url": "https://www.youtube.com/watch?v=D-86IYu_tDo",
+ "title": "آموزش تحلیل تکنیکال | صفر تا 100 استراتژی حمایت و مقاومت !",
+ "frames_tool": "radar_frames 1.1",
+ "guide": "references/chart-reading.md",
+ "cards": [
+  {
+   "frame_id": "D-86IYu_tDo_01m39.5s",
+   "t": 99.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T17:28:27+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "20:58:27 UTC+3:30"
+   },
+   "coin": {
+    "value": "AAVEUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «AAVEUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 132.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 116.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل بالای حجم"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 128.59,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "15m",
+      "class": "trigger",
+      "level": 128.59,
+      "cutoff": "2026-09-16T17:28:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T17:00:00+00:00",
+      "atr": 0.7477908545968989,
+      "touches": null,
+      "nearest": 128.36447164948456,
+      "nearest_touches": 3,
+      "distance_atr": 0.3015928172015677,
+      "distance_pct": 0.17538560581339654,
+      "chance_pct": 16.94152923538231,
+      "strong_min_touches": 3,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 128.59,
+       "cutoff": "2026-09-16T17:28:27+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": null,
+       "nearest": 120.02521345407501,
+       "nearest_touches": 2,
+       "distance_atr": 1.1331371055820985,
+       "distance_pct": 6.660538569037241,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 124.12,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "15m",
+      "class": "trigger",
+      "level": 124.12,
+      "cutoff": "2026-09-16T17:28:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T17:00:00+00:00",
+      "atr": 0.7477908545968989,
+      "touches": null,
+      "nearest": 123.18231818181819,
+      "nearest_touches": 2,
+      "distance_atr": 1.2539359266265406,
+      "distance_pct": 0.7554639205460967,
+      "chance_pct": 16.94152923538231,
+      "strong_min_touches": 3,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 124.12,
+       "cutoff": "2026-09-16T17:28:27+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": null,
+       "nearest": 120.02521345407501,
+       "nearest_touches": 2,
+       "distance_atr": 0.5417478357161849,
+       "distance_pct": 3.2990545809901626,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 120.34,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "15m",
+      "class": "trigger",
+      "level": 120.34,
+      "cutoff": "2026-09-16T17:28:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-09-16T17:00:00+00:00",
+      "atr": 0.7477908545968989,
+      "touches": 3,
+      "nearest": 120.4295548961424,
+      "nearest_touches": 3,
+      "distance_atr": 0.11975928241416879,
+      "distance_pct": 0.07441822847133342,
+      "chance_pct": 16.94152923538231,
+      "strong_min_touches": 3,
+      "chance_at_touches_pct": 7.946026986506746,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 120.34,
+       "cutoff": "2026-09-16T17:28:27+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": 2,
+       "nearest": 120.02521345407501,
+       "nearest_touches": 2,
+       "distance_atr": 0.04164684240675434,
+       "distance_pct": 0.26158097550688764,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": 31.284357821089454,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "3SMA 115.54",
+     "confidence": "high"
+    },
+    {
+     "text": "115.04 · 01:32 — قیمت زنده و شمارش تا بسته ۱۵ دقیقه",
+     "confidence": "high"
+    }
+   ],
+   "speech": "آغاز: حمایت و مقاومت جایی است که پیش‌تر خریدار و فروشنده تصمیم مهم گرفتند؛ بیشتر تریدرها درست رسمش نمی‌کنند.",
+   "method_notes": [
+    "سطح ناحیه است، نه عدد دقیق — 01:07"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T17:28:27+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "20:58:27 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_01m46.0s",
+   "t": 106.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T17:28:34+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "20:58:34 UTC+3:30"
+   },
+   "coin": {
+    "value": "AAVEUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «AAVEUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 128.59,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب آبی محور، کوچک‌تر"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "15m",
+      "class": "trigger",
+      "level": 128.59,
+      "cutoff": "2026-09-16T17:28:34+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T17:00:00+00:00",
+      "atr": 0.7477908545968989,
+      "touches": null,
+      "nearest": 128.36447164948456,
+      "nearest_touches": 3,
+      "distance_atr": 0.3015928172015677,
+      "distance_pct": 0.17538560581339654,
+      "chance_pct": 16.94152923538231,
+      "strong_min_touches": 3,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 128.59,
+       "cutoff": "2026-09-16T17:28:34+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": null,
+       "nearest": 120.02521345407501,
+       "nearest_touches": 2,
+       "distance_atr": 1.1331371055820985,
+       "distance_pct": 6.660538569037241,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 124.12,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "15m",
+      "class": "trigger",
+      "level": 124.12,
+      "cutoff": "2026-09-16T17:28:34+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T17:00:00+00:00",
+      "atr": 0.7477908545968989,
+      "touches": null,
+      "nearest": 123.18231818181819,
+      "nearest_touches": 2,
+      "distance_atr": 1.2539359266265406,
+      "distance_pct": 0.7554639205460967,
+      "chance_pct": 16.94152923538231,
+      "strong_min_touches": 3,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 124.12,
+       "cutoff": "2026-09-16T17:28:34+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": null,
+       "nearest": 120.02521345407501,
+       "nearest_touches": 2,
+       "distance_atr": 0.5417478357161849,
+       "distance_pct": 3.2990545809901626,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 120.34,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "15m",
+      "class": "trigger",
+      "level": 120.34,
+      "cutoff": "2026-09-16T17:28:34+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-09-16T17:00:00+00:00",
+      "atr": 0.7477908545968989,
+      "touches": 3,
+      "nearest": 120.4295548961424,
+      "nearest_touches": 3,
+      "distance_atr": 0.11975928241416879,
+      "distance_pct": 0.07441822847133342,
+      "chance_pct": 16.94152923538231,
+      "strong_min_touches": 3,
+      "chance_at_touches_pct": 7.946026986506746,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 120.34,
+       "cutoff": "2026-09-16T17:28:34+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": 2,
+       "nearest": 120.02521345407501,
+       "nearest_touches": 2,
+       "distance_atr": 0.04164684240675434,
+       "distance_pct": 0.26158097550688764,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": 31.284357821089454,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Wed 16 Sep '26 07:00 — برچسب زمان نشانگر موس",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "معرفی: محمدرضا از کریپتوسیتی پرو؛ هر روز تحلیل بیت‌کوین و اتریوم و پوزیشن آلت‌کوین.",
+   "method_notes": [
+    "گوینده محمدرضا است، نه ارشیا — 01:26؛ ج۶"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T17:28:34+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "20:58:34 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_02m06.5s",
+   "t": 126.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 3,
+     "time": "02:38",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-09-16T17:29:07+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "20:59:07 UTC+3:30"
+   },
+   "coin": {
+    "value": "AAVEUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «AAVEUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "این اصول را خودش نوشته؛ هنر است نه علم — شکست سطح بیشتر وقت‌ها تا سطح بعد می‌برد، نه همیشه.",
+   "method_notes": [
+    "اصول شخصی از بک‌تست و فوروارد تست — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T17:29:07+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "20:59:07 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_02m35.5s",
+   "t": 155.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 3,
+     "time": "02:38",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 4,
+     "time": "02:49",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 6,
+     "time": "03:39",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 7,
+     "time": "04:13",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 8,
+     "time": "05:05",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 9,
+     "time": "05:52",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 10,
+     "time": "06:00",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-09-16T17:33:30+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:03:30 UTC+3:30"
+   },
+   "coin": {
+    "value": "AAVEUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «AAVEUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "مثال بازار ملک: در ناحیه پایین خرید زیاد می‌شود و قیمت بالا می‌رود؛ در ناحیه بالا تقاضا کم و قیمت برمی‌گردد.",
+   "method_notes": [
+    "سطح از تصمیم جمعی تریدرها ساخته می‌شود — 04:36"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T17:33:30+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "21:03:30 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_05m08.5s",
+   "t": 308.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 8,
+     "time": "05:05",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-09-16T17:36:27+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:06:27 UTC+3:30"
+   },
+   "coin": {
+    "value": "AAVEUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «AAVEUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 15m روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "وقتی مقاومت بشکند، خودش حمایت می‌شود؛ جاماندگان منتظر برگشت قیمت به آن‌اند.",
+   "method_notes": [
+    "تغییر نقش: مقاومت شکسته حمایت می‌شود — 04:56 تا 05:27"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T17:36:27+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "21:06:27 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_06m59.0s",
+   "t": 419.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 11,
+     "time": "07:05",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-09-16T18:10:52+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:40:52 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 81753.57,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 81753.57,
+      "cutoff": "2026-09-16T18:10:52+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 81393.58805147058,
+      "nearest_touches": 2,
+      "distance_atr": 0.40560126028063626,
+      "distance_pct": 0.44032566226701575,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 81753.57,
+       "cutoff": "2026-09-16T18:10:52+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 4,
+       "nearest": 82208.76804915513,
+       "nearest_touches": 4,
+       "distance_atr": 0.20003194386327705,
+       "distance_pct": 0.5567928705194429,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 20.539730134932537,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 79371.24,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 79371.24,
+      "cutoff": "2026-09-16T18:10:52+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": 5,
+      "nearest": 79347.86736770692,
+      "nearest_touches": 5,
+      "distance_atr": 0.0263345680328683,
+      "distance_pct": 0.02944723087744229,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 4.497751124437781,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 79371.24,
+       "cutoff": "2026-09-16T18:10:52+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 4,
+       "nearest": 79376.60860869565,
+       "nearest_touches": 4,
+       "distance_atr": 0.0023591780220152373,
+       "distance_pct": 0.006763921913836889,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 20.539730134932537,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 75488.46,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 75488.46,
+      "cutoff": "2026-09-16T18:10:52+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 75191.48139534883,
+      "nearest_touches": 2,
+      "distance_atr": 0.3346137127569143,
+      "distance_pct": 0.39340927692944405,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 75488.46,
+       "cutoff": "2026-09-16T18:10:52+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": null,
+       "nearest": 76315.2769659012,
+       "nearest_touches": 4,
+       "distance_atr": 0.36333592645075385,
+       "distance_pct": 1.0952892215594157,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 74153.44,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 74153.44,
+      "cutoff": "2026-09-16T18:10:52+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 75191.48139534883,
+      "nearest_touches": 2,
+      "distance_atr": 1.1695889193803204,
+      "distance_pct": 1.3998560219847271,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 74153.44,
+       "cutoff": "2026-09-16T18:10:52+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 3,
+       "nearest": 74311.96603535353,
+       "nearest_touches": 3,
+       "distance_atr": 0.06966258107555803,
+       "distance_pct": 0.21378109411178606,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 36.33183408295852,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "81,765.62 · 76,503.83 · 74,126.83 — سه برچسب قیمت آبی با پیکان؛ ابزار یادداشت قیمت، نه خط",
+     "confidence": "high"
+    },
+    {
+     "text": "CRYPTO CITY PRO · SUBSCRIBE — لوگوی روی صفحه",
+     "confidence": "high"
+    }
+   ],
+   "speech": "سطح‌هایی که رسم می‌کنیم عدد دقیق نیستند، ناحیه‌اند — بسته به تایم‌فریم، درصد بزرگ یا کوچک.",
+   "method_notes": [
+    "سطح ناحیه است و پهنایش با تایم‌فریم عوض می‌شود — 07:16 تا 07:28"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:10:52+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "21:40:52 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_07m05.0s",
+   "t": 425.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 11,
+     "time": "07:05",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-09-16T18:10:59+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:40:59 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 81753.57,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 81753.57,
+      "cutoff": "2026-09-16T18:10:59+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 81393.58805147058,
+      "nearest_touches": 2,
+      "distance_atr": 0.40560126028063626,
+      "distance_pct": 0.44032566226701575,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 81753.57,
+       "cutoff": "2026-09-16T18:10:59+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 4,
+       "nearest": 82208.76804915513,
+       "nearest_touches": 4,
+       "distance_atr": 0.20003194386327705,
+       "distance_pct": 0.5567928705194429,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 20.539730134932537,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 79371.24,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 79371.24,
+      "cutoff": "2026-09-16T18:10:59+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": 5,
+      "nearest": 79347.86736770692,
+      "nearest_touches": 5,
+      "distance_atr": 0.0263345680328683,
+      "distance_pct": 0.02944723087744229,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 4.497751124437781,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 79371.24,
+       "cutoff": "2026-09-16T18:10:59+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 4,
+       "nearest": 79376.60860869565,
+       "nearest_touches": 4,
+       "distance_atr": 0.0023591780220152373,
+       "distance_pct": 0.006763921913836889,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 20.539730134932537,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 75488.46,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 75488.46,
+      "cutoff": "2026-09-16T18:10:59+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 75191.48139534883,
+      "nearest_touches": 2,
+      "distance_atr": 0.3346137127569143,
+      "distance_pct": 0.39340927692944405,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 75488.46,
+       "cutoff": "2026-09-16T18:10:59+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": null,
+       "nearest": 76315.2769659012,
+       "nearest_touches": 4,
+       "distance_atr": 0.36333592645075385,
+       "distance_pct": 1.0952892215594157,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 74153.44,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 74153.44,
+      "cutoff": "2026-09-16T18:10:59+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 75191.48139534883,
+      "nearest_touches": 2,
+      "distance_atr": 1.1695889193803204,
+      "distance_pct": 1.3998560219847271,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 74153.44,
+       "cutoff": "2026-09-16T18:10:59+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 3,
+       "nearest": 74311.96603535353,
+       "nearest_touches": 3,
+       "distance_atr": 0.06966258107555803,
+       "distance_pct": 0.21378109411178606,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 36.33183408295852,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "81,765.62 · 76,503.83 · 74,126.83 — برچسب‌های قیمت آبی",
+     "confidence": "high"
+    },
+    {
+     "text": "3SMA 75,944.29",
+     "confidence": "high"
+    }
+   ],
+   "speech": "مثال: این حمایتی که رسم کردیم فقط یک عدد نیست؛ یک ناحیه است.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:10:59+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "21:40:59 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_07m15.5s",
+   "t": 435.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 11,
+     "time": "07:05",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-09-16T18:11:11+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:41:11 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 83000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 70890.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 81753.57,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 81753.57,
+      "cutoff": "2026-09-16T18:11:11+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 81393.58805147058,
+      "nearest_touches": 2,
+      "distance_atr": 0.40560126028063626,
+      "distance_pct": 0.44032566226701575,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 81753.57,
+       "cutoff": "2026-09-16T18:11:11+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 4,
+       "nearest": 82208.76804915513,
+       "nearest_touches": 4,
+       "distance_atr": 0.20003194386327705,
+       "distance_pct": 0.5567928705194429,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 20.539730134932537,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 79371.24,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 79371.24,
+      "cutoff": "2026-09-16T18:11:11+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": 5,
+      "nearest": 79347.86736770692,
+      "nearest_touches": 5,
+      "distance_atr": 0.0263345680328683,
+      "distance_pct": 0.02944723087744229,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 4.497751124437781,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 79371.24,
+       "cutoff": "2026-09-16T18:11:11+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 4,
+       "nearest": 79376.60860869565,
+       "nearest_touches": 4,
+       "distance_atr": 0.0023591780220152373,
+       "distance_pct": 0.006763921913836889,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 20.539730134932537,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 75488.46,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "کف بدنه‌های ۱۵ و ۱۶ سپتامبر؛ سایه‌ها زیرش"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 75488.46,
+      "cutoff": "2026-09-16T18:11:11+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 75191.48139534883,
+      "nearest_touches": 2,
+      "distance_atr": 0.3346137127569143,
+      "distance_pct": 0.39340927692944405,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 75488.46,
+       "cutoff": "2026-09-16T18:11:11+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": null,
+       "nearest": 76315.2769659012,
+       "nearest_touches": 4,
+       "distance_atr": 0.36333592645075385,
+       "distance_pct": 1.0952892215594157,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 74153.44,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 74153.44,
+      "cutoff": "2026-09-16T18:11:11+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 75191.48139534883,
+      "nearest_touches": 2,
+      "distance_atr": 1.1695889193803204,
+      "distance_pct": 1.3998560219847271,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 74153.44,
+       "cutoff": "2026-09-16T18:11:11+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 3,
+       "nearest": 74311.96603535353,
+       "nearest_touches": 3,
+       "distance_atr": 0.06966258107555803,
+       "distance_pct": 0.21378109411178606,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 36.33183408295852,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "76,120.00 · 01:48:49 — قیمت زنده و شمارش تا بسته چهارساعته",
+     "confidence": "high"
+    },
+    {
+     "text": "3SMA 75,940.00",
+     "confidence": "high"
+    }
+   ],
+   "speech": "هرچه واکنش به سطح قوی‌تر — ریزش شارپ و برگشت، یا دور شدن شارپ — آن سطح مهم‌تر است.",
+   "method_notes": [
+    "قدرت واکنش اهمیت سطح را تعیین می‌کند — 07:31 تا 08:00"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:11:11+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "21:41:11 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_07m27.0s",
+   "t": 447.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:11:24+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:41:24 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 81753.57,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 81753.57,
+      "cutoff": "2026-09-16T18:11:24+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 81393.58805147058,
+      "nearest_touches": 2,
+      "distance_atr": 0.40560126028063626,
+      "distance_pct": 0.44032566226701575,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 81753.57,
+       "cutoff": "2026-09-16T18:11:24+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 4,
+       "nearest": 82208.76804915513,
+       "nearest_touches": 4,
+       "distance_atr": 0.20003194386327705,
+       "distance_pct": 0.5567928705194429,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 20.539730134932537,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 75488.46,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 75488.46,
+      "cutoff": "2026-09-16T18:11:24+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 75191.48139534883,
+      "nearest_touches": 2,
+      "distance_atr": 0.3346137127569143,
+      "distance_pct": 0.39340927692944405,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 75488.46,
+       "cutoff": "2026-09-16T18:11:24+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": null,
+       "nearest": 76315.2769659012,
+       "nearest_touches": 4,
+       "distance_atr": 0.36333592645075385,
+       "distance_pct": 1.0952892215594157,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "−284.88 (−0.38%) −28,488 · 63 bars, 10d 12h — ابزار اندازه‌گیری",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "تایم‌فریم مهم است: خط‌ها را در هفتگی و روزانه رسم می‌کند و در چهارساعته هدف می‌گذارد.",
+   "method_notes": [
+    "خط در هفتگی و روزانه؛ چهارساعته برای هدف — 08:03 تا 08:12"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:11:24+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "21:41:24 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_08m54.5s",
+   "t": 534.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 14,
+     "time": "09:01",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-09-16T18:13:19+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:43:19 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 104826.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 104826.0,
+      "cutoff": "2026-09-16T18:13:19+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": null,
+      "nearest": 99882.93216374269,
+      "nearest_touches": 2,
+      "distance_atr": 0.7856261665580803,
+      "distance_pct": 4.715497907253266,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "اصل چهارم: شکست حمایت، مقاومت می‌سازد و شکست مقاومت، حمایت. — زیرنویس ویرایشگر",
+     "confidence": "high"
+    }
+   ],
+   "speech": "پوزیشن چهارساعته با استاپ کوچک تا سطح چهارساعته بعدی؛ شکست روزانه را با ۱۵ دقیقه نمی‌گیرد چون نوسان بیشتر است.",
+   "method_notes": [
+    "تایم ورود هم‌تراز تایم سطح — 08:19 تا 08:46"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:13:19+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "21:43:19 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_09m09.0s",
+   "t": 549.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 15,
+     "time": "09:09",
+     "role": "claim",
+     "strength": 4,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 14,
+     "time": "09:01",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-09-16T18:13:35+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:43:35 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 150000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 29800.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 104826.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "از بالای بدنه‌های پایان ۲۰۲۴؛ سایه‌ها بالاتر"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 104826.0,
+      "cutoff": "2026-09-16T18:13:35+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": null,
+      "nearest": 99882.93216374269,
+      "nearest_touches": 2,
+      "distance_atr": 0.7856261665580803,
+      "distance_pct": 4.715497907253266,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "3SMA",
+      "confidence": "high",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "RSI",
+      "confidence": "high",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "78,955 · Mon 21 Apr '25 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "76,001 · 4d 6h — قیمت زنده و شمارش تا بسته هفتگی",
+     "confidence": "high"
+    }
+   ],
+   "speech": "مقاومت ۱۰۰ هزار شکست، تا ۱۲۰ هزار رفت و به آن پولبک زد؛ جاماندگان آنجا خریدند و حمایت شد.",
+   "method_notes": [
+    "پولبک به مقاومت شکسته — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:13:35+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "21:43:35 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_10m30.5s",
+   "t": 630.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:15:13+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:45:13 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "طرح: برخوردهای پیاپی به یک خط حمایت با برگشت‌های کوچک‌شونده — خط طرح حدود 4,4…",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "برخورد زیاد لزوماً سطح را قوی نمی‌کند؛ اگر هر بار کمتر دور شوی حمایت ضعیف‌تر می‌شود.",
+   "method_notes": [
+    "نمودار پنهان و طرح دستی آبی — مثال آموزشی، نه داده؛ خط افقی طرح سطح بازار نیست",
+    "برخورد بیشتر با واکنش کوچک‌شونده یعنی ضعف سطح، نه قوت — 09:41 تا 10:11"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_11m01.5s",
+   "t": 661.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:15:47+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:45:47 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "طرح: برگشت‌های کوچک‌شونده — مثل پرش روی ترامپولین",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "بار اول ده کندل بالا، بعد هشت، بعد شش، بعد چهار؛ این نشان می‌دهد حمایت بالاخره می‌شکند.",
+   "method_notes": [
+    "نمودار پنهان و طرح دستی آبی — مثال آموزشی، نه داده؛ خط افقی طرح سطح بازار نیست",
+    "شمار کندل هر برگشت را بشمار؛ کوچک‌شدنش هشدار شکست است — 10:42 تا 11:03"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_11m30.0s",
+   "t": 690.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:17:07+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:47:07 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "طرح: همان برگشت‌های کوچک‌شونده، کامل‌تر",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "عبور قیمت از سطح شکست نیست؛ برای او یک بسته بدنه آن سو یعنی شکست، سایه‌ای که برگردد نه.",
+   "method_notes": [
+    "نمودار پنهان و طرح دستی آبی — مثال آموزشی، نه داده؛ خط افقی طرح سطح بازار نیست",
+    "شکست: یک بسته بدنه آن سوی خط؛ سایه‌ای که برگردد شکست نیست — 11:05 تا 11:51"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_12m39.0s",
+   "t": 759.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:18:41+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:48:41 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "طرح: حمایت با واکنش‌های پیاپی و چرخه تازه بالاتر — خط طرح حدود 368",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "آینده بازار مهم‌تر است: اگر بعدها از سطح بالاتری برگشت، حمایت اصلی به آن جابه‌جا می‌شود.",
+   "method_notes": [
+    "نمودار پنهان و طرح دستی آبی — مثال آموزشی، نه داده؛ خط افقی طرح سطح بازار نیست",
+    "آینده بازار مهم‌تر: حمایت اصلی به واکنش تازه‌تر جابه‌جا می‌شود — 11:51 تا 12:21"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_13m01.0s",
+   "t": 781.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:19:06+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:49:06 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "طرح: حمایت شکسته، برگشت و ریجکت از زیرش — پولبک؛ خط طرح حدود 138",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "حمایت شکسته اکنون مقاومت است؛ برگشت به آن و ریجکت را پولبک می‌گویند.",
+   "method_notes": [
+    "نمودار پنهان و طرح دستی آبی — مثال آموزشی، نه داده؛ خط افقی طرح سطح بازار نیست",
+    "پولبک: برگشت به سطح شکسته و ریجکت — 12:37 تا 13:01"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_13m24.0s",
+   "t": 804.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:19:29+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:49:29 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "طرح: ریجکت از سقف پایین‌تر به‌جای خود مقاومت — خط طرح حدود 129",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "اگر ریجکت از سطح پایین‌تری آمد، مقاومت دیگر آنجا نیست؛ سقفی که کف پایین‌تر ساخت قوی‌تر است.",
+   "method_notes": [
+    "نمودار پنهان و طرح دستی آبی — مثال آموزشی، نه داده؛ خط افقی طرح سطح بازار نیست",
+    "سقفی که کف پایین‌تر می‌سازد سطح قوی‌تر است — همان ج۳ — 13:09 تا 13:25"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_13m49.0s",
+   "t": 829.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 16,
+     "time": "13:49",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-09-16T18:21:26+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:51:26 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "طرح: همان پولبک با ریجکت پایین‌تر — خط طرح حدود 129",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "هیچ سطحی قطعی نیست؛ شکست حمایت لزوماً ریزش شارپ نمی‌آورد. مثال سقف ۲۰۲۱: پس از شکست ۶۹ هزار تا ۱۶ هزار ریخت.",
+   "method_notes": [
+    "نمودار پنهان و طرح دستی آبی — مثال آموزشی، نه داده؛ خط افقی طرح سطح بازار نیست",
+    "عدم قطعیت همیشه هست — 13:28 تا 14:17"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_15m26.5s",
+   "t": 926.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:23:43+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:53:43 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "طرح: برخوردهای پیاپی و سریع به یک سطح — خط طرح حدود 164",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "فاصله زمانی میان برخوردها مهم است: اگر قیمت تند و پیاپی به سطح برگردد، فروشنده حاضر است و شکست نزدیک.",
+   "method_notes": [
+    "نمودار پنهان و طرح دستی آبی — مثال آموزشی، نه داده؛ خط افقی طرح سطح بازار نیست",
+    "برگشت سریع و پیاپی به سطح نشانه شکست نزدیک است — 14:17 تا 14:49"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_16m10.0s",
+   "t": 970.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:24:53+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:54:53 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "طرح: حمایت هم‌جهت روند صعودی — خط طرح حدود 29",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "سطحی که هم‌جهت روند اصلی ساخته شود مهم‌تر است؛ ورود با شکست نوسان ریز تایم پایین‌تر.",
+   "method_notes": [
+    "نمودار پنهان و طرح دستی آبی — مثال آموزشی، نه داده؛ خط افقی طرح سطح بازار نیست",
+    "سطح هم‌جهت روند اصلی مهم‌تر است — 14:53 تا 15:32",
+    "برای رسم سطح یک نقطه کافی است — 15:45"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_16m43.5s",
+   "t": 1003.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:25:32+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:55:32 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "طرح: نزدیک‌شدن با حجم کم و دور شدن با حجم زیاد — خط طرح حدود 29",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "حجم مهم‌ترین چیز در واکنش است: آمدن با حجم کم و رفتن با حجم زیاد یعنی سطح معتبر؛ عدد رند هم مهم است.",
+   "method_notes": [
+    "نمودار پنهان و طرح دستی آبی — مثال آموزشی، نه داده؛ خط افقی طرح سطح بازار نیست",
+    "حجم واکنش: کم در آمدن و زیاد در رفتن یعنی اعتبار — 15:35 تا 16:45",
+    "عدد رند مهم است — 16:53"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_17m54.0s",
+   "t": 1074.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:28:55+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "21:58:55 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "60,283 — نشانگر موس",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "رسم روی بیت‌کوین بیت‌استمپ: چشمت باید جاهایی را ببیند که قیمت واکنش داد و در طول زمان از آن دور شد.",
+   "method_notes": [
+    "نمودار بیت‌استمپ چون بیشترین تاریخچه را دارد — 17:38",
+    "نقطه رسم: جایی که قیمت واکنش داد و در طول زمان دور شد — 18:04 تا 18:21"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:28:55+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "21:58:55 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_18m50.5s",
+   "t": 1130.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:30:00+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:00:00 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 82137.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور؛ خط در حال رسم با لنگر آبی"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "از بدنه‌های ۲۰۲۵ و سقف ۲۰۲۶"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 82137.0,
+      "cutoff": "2026-09-16T18:30:00+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": null,
+      "nearest": 77357.0412,
+      "nearest_touches": 3,
+      "distance_atr": 0.7597024424396505,
+      "distance_pct": 5.819495233573168,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "66,154 · Mon 28 Sep '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "75,937 · 4d 6h — قیمت زنده",
+     "confidence": "high"
+    }
+   ],
+   "speech": "سطح ۸۲ هزار: هر بار رسید، با حجم کمتر دور شد؛ یعنی خریدار هنوز هست و فروشنده جان نداشت.",
+   "method_notes": [
+    "از هفتگی شروع کن، بعد روزانه، چهارساعته، یک‌ساعته؛ زیر چهارساعته فقط ماشه — 18:57 تا 19:09"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:30:00+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:00:00 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_19m03.0s",
+   "t": 1143.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:30:14+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:00:14 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "117,329 · Mon 24 Nov '25 — نشانگر موس",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "وسواس در رسم نکن؛ کمال‌گرایی شش ماه عقبش انداخت. خط هفتگی و روزانه با تغییر بازار کمتر کهنه می‌شود.",
+   "method_notes": [
+    "کمال‌گرایی نکن؛ هفتگی و روزانه کم‌تغییرند — 19:32 تا 20:36"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:30:14+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:00:14 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_21m02.0s",
+   "t": 1262.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 19,
+     "time": "21:03",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-09-16T18:35:25+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:05:25 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "ناحیه استفاده نمی‌کند، خط می‌کشد؛ و خط را از بدنه رسم می‌کند چون در استراتژی‌اش بسته بدنه بالای سطح مهم است، مثل داو.",
+   "method_notes": [
+    "خط، نه ناحیه — 20:39",
+    "روی بدنه، نه سایه — 20:44 تا 20:58"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:35:25+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:05:25 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_21m13.5s",
+   "t": 1273.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 19,
+     "time": "21:03",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-09-16T18:35:45+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:05:45 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "125,849 — نشانگر موس روی سقف تاریخی",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "مقاومت اول هفتگی ۱۲۳ هزار، سقف تاریخی؛ فضای فیک‌بریک‌اوت را پایین‌تر می‌آورد و مقاومت اصلی را ۱۲۰ هزار می‌داند.",
+   "method_notes": [
+    "سقف تاریخی از بدنه؛ فیک‌بریک‌اوت را پایین‌تر می‌آورد — 21:06 تا 21:25"
+   ],
+   "claims": [
+    "به گفته او با شکست حدود ۱۲۰ هزار دلار بیت‌کوین پوزیشن لانگ باز می‌کند — بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:35:45+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:05:45 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_21m16.0s",
+   "t": 1276.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-09-25_cryptocity_pro_D-86IYu_",
+     "row": 20,
+     "time": "21:16",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-09-16T18:35:47+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:05:47 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 123569.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "medium",
+      "from": "image",
+      "how": "زیر نوک سایه سقف اکتبر ۲۰۲۵، هم‌تراز بالای بدنه‌ها؛ خودش می‌گوید از بدنه رسم می‌کند، نه سایه — 20:44"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 123569.0,
+      "cutoff": "2026-09-16T18:35:47+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": 3,
+      "nearest": 124659.59999999999,
+      "nearest_touches": 3,
+      "distance_atr": 0.17333444039824725,
+      "distance_pct": 0.882583819566389,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 19.54022988505747,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "67,787 · Mon 04 Aug '25 — نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "سقف تاریخی را رسم می‌کند؛ برای یادگیری همین سطح کافی است.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:35:47+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:05:47 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_21m46.5s",
+   "t": 1306.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:36:21+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:06:21 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 160000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 16500.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 123569.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 123569.0,
+      "cutoff": "2026-09-16T18:36:21+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": 3,
+      "nearest": 124659.59999999999,
+      "nearest_touches": 3,
+      "distance_atr": 0.17333444039824725,
+      "distance_pct": 0.882583819566389,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 19.54022988505747,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 87566.0,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب سفید زیر نشانگر؛ خط برگزیده در حال رسم — د۱"
+     },
+     "kind": "horizontal",
+     "label": "خطی که گفت لازم نیست بکشد",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 87566.0,
+      "cutoff": "2026-09-16T18:36:21+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": null,
+      "nearest": 77357.0412,
+      "nearest_touches": 3,
+      "distance_atr": 1.6225602059845723,
+      "distance_pct": 11.658587579654196,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "75,086 · 4d 6h — قیمت زنده و شمارش تا بسته هفتگی",
+     "confidence": "high"
+    }
+   ],
+   "speech": "این ناحیه مهم است — بسته زیرش، پولبک و ریزش حدود ۲۰ درصد — ولی لازم نیست برایش خط جدا بکشد؛ تعداد خط را الکی زیاد نکن.",
+   "method_notes": [
+    "خط اضافه نکش؛ همان خط در آینده پایین‌تر به ناحیه دیگر تبدیل می‌شود — 21:55 تا 22:15"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:36:21+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:06:21 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_23m43.0s",
+   "t": 1423.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:39:23+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:09:23 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 59056.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 59056.0,
+      "cutoff": "2026-09-16T18:39:23+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": 3,
+      "nearest": 58255.02155339806,
+      "nearest_touches": 3,
+      "distance_atr": 0.12730345755804687,
+      "distance_pct": 1.356303248784105,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 19.54022988505747,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 44358.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 44358.0,
+      "cutoff": "2026-09-16T18:39:23+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": null,
+      "nearest": 46878.16608187135,
+      "nearest_touches": 2,
+      "distance_atr": 0.4005424330752038,
+      "distance_pct": 5.681424053995559,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 30543.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 30543.0,
+      "cutoff": "2026-09-16T18:39:23+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": 2,
+      "nearest": 31447.986754966885,
+      "nearest_touches": 2,
+      "distance_atr": 0.14383401131488355,
+      "distance_pct": 2.9629923549320147,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 30.484757621189406,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 25380.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 25380.0,
+      "cutoff": "2026-09-16T18:39:23+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": 5,
+      "nearest": 23903.914024390244,
+      "nearest_touches": 5,
+      "distance_atr": 0.23460162897672837,
+      "distance_pct": 5.815941590266966,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 2.848575712143928,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "15,796 · Mon 14 Nov '22 — نشانگر موس روی خطی که برچسبش زیر آن پنهان است — د۲۲",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "حمایت‌های هفتگی: ۳۰ هزار، ۲۵ هزار — کندل تصمیم — و ۱۶ هزار. در هفتگی می‌شود دور رسم کرد؛ در تایم پایین فقط دو سه سطح بالا و پایین قیمت.",
+   "method_notes": [
+    "هفتگی تا گذشته دور؛ تایم پایین فقط دو سه سطح نزدیک قیمت — 23:48 تا 24:13"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:39:23+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:09:23 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_24m02.0s",
+   "t": 1442.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:39:43+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:09:43 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 55000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 11100.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 59056.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "کف بدنه‌های ۲۰۲۴؛ سایه‌ها زیرش"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 59056.0,
+      "cutoff": "2026-09-16T18:39:43+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": 3,
+      "nearest": 58255.02155339806,
+      "nearest_touches": 3,
+      "distance_atr": 0.12730345755804687,
+      "distance_pct": 1.356303248784105,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 19.54022988505747,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 44358.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "از بدنه‌های ژانویه و فوریه ۲۰۲۴"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 44358.0,
+      "cutoff": "2026-09-16T18:39:43+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": null,
+      "nearest": 46878.16608187135,
+      "nearest_touches": 2,
+      "distance_atr": 0.4005424330752038,
+      "distance_pct": 5.681424053995559,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 30543.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "بالای بدنه‌های محدوده ۲۰۲۳؛ سایه‌ها بالاتر"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 30543.0,
+      "cutoff": "2026-09-16T18:39:43+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": 2,
+      "nearest": 31447.986754966885,
+      "nearest_touches": 2,
+      "distance_atr": 0.14383401131488355,
+      "distance_pct": 2.9629923549320147,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 30.484757621189406,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 25380.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "کف بدنه‌های ژوئن و سپتامبر ۲۰۲۳؛ سایه‌ها زیرش"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 25380.0,
+      "cutoff": "2026-09-16T18:39:43+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": 5,
+      "nearest": 23903.914024390244,
+      "nearest_touches": 5,
+      "distance_atr": 0.23460162897672837,
+      "distance_pct": 5.815941590266966,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 2.848575712143928,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 16109.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "medium",
+      "from": "image",
+      "how": "کف بدنه‌های نوامبر ۲۰۲۲؛ نوک سایه حدود 15,796 زیرش — فریم 23:43"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 16109.0,
+      "cutoff": "2026-09-16T18:39:43+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 6291.8828912146155,
+      "touches": null,
+      "nearest": 23903.914024390244,
+      "nearest_touches": 5,
+      "distance_atr": 1.238884155850122,
+      "distance_pct": 48.388565549632155,
+      "chance_pct": 30.484757621189406,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "12,066 · Mon 08 Apr '24 — نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "در هفتگی همه خط‌ها رسم شد؛ جز فضای تایم پایین‌تر چیزی نمی‌بیند. می‌رود یک تایم پایین‌تر.",
+   "method_notes": [
+    "همه پنج خط هفتگی روی بدنه‌اند، سایه‌ها بیرون — خودش می‌گوید از بدنه رسم می‌کند، نه سایه — 20:44"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:39:43+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:09:43 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_25m01.5s",
+   "t": 1501.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:40:49+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:10:49 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 81432.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "بالای بدنه‌های سقف مه و سپتامبر ۲۰۲۶؛ سایه‌ها بالاتر"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 81432.0,
+      "cutoff": "2026-09-16T18:40:49+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-15T00:00:00+00:00",
+      "atr": 2275.626784221287,
+      "touches": null,
+      "nearest": 82208.76804915513,
+      "nearest_touches": 4,
+      "distance_atr": 0.3413424620157725,
+      "distance_pct": 0.953885510800581,
+      "chance_pct": 45.42728635682159,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "62,600 · Mon 17 Aug '26 — نشانگر موس روی خط در حال رسم",
+     "confidence": "high"
+    },
+    {
+     "text": "75,813 · 05:19:11 — قیمت زنده و شمارش تا بسته روزانه",
+     "confidence": "high"
+    }
+   ],
+   "speech": "روزانه: اول خط‌های بالاتر را خوشگل می‌کند؛ مقاومت مهم در آینده بازار به ۸۱٬۴۳۲ واکنش داد، نه به سطح بالاتر قبلی.",
+   "method_notes": [
+    "آینده بازار مهم‌تر: خط به واکنش تازه — 24:35 تا 24:47"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:40:49+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:10:49 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_25m57.5s",
+   "t": 1557.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:41:52+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:11:52 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 88000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 50300.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 81432.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 81432.0,
+      "cutoff": "2026-09-16T18:41:52+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-15T00:00:00+00:00",
+      "atr": 2275.626784221287,
+      "touches": null,
+      "nearest": 82208.76804915513,
+      "nearest_touches": 4,
+      "distance_atr": 0.3413424620157725,
+      "distance_pct": 0.953885510800581,
+      "chance_pct": 45.42728635682159,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 75283.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "کف بدنه‌های سپتامبر ۲۰۲۶"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 75283.0,
+      "cutoff": "2026-09-16T18:41:52+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-15T00:00:00+00:00",
+      "atr": 2275.626784221287,
+      "touches": null,
+      "nearest": 74311.96603535353,
+      "nearest_touches": 3,
+      "distance_atr": 0.4267105534964759,
+      "distance_pct": 1.289844937962715,
+      "chance_pct": 45.42728635682159,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 66551.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 66551.0,
+      "cutoff": "2026-09-16T18:41:52+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-15T00:00:00+00:00",
+      "atr": 2275.626784221287,
+      "touches": null,
+      "nearest": 65506.50135478407,
+      "nearest_touches": 7,
+      "distance_atr": 0.4589938264298259,
+      "distance_pct": 1.5694710000089078,
+      "chance_pct": 45.42728635682159,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 62212.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "کف بدنه‌های ژوئیه و اوت ۲۰۲۶؛ سایه‌ها زیرش"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 62212.0,
+      "cutoff": "2026-09-16T18:41:52+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-09-15T00:00:00+00:00",
+      "atr": 2275.626784221287,
+      "touches": 5,
+      "nearest": 61950.24443776307,
+      "nearest_touches": 5,
+      "distance_atr": 0.11502569931585015,
+      "distance_pct": 0.4207477050037497,
+      "chance_pct": 45.42728635682159,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 6.946526736631683,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "69,494 · Mon 27 Jul '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "75,871 · 05:18:08 — قیمت زنده",
+     "confidence": "high"
+    }
+   ],
+   "speech": "مقاومت روزانه ۶۶ هزار، حمایت روزانه ۷۵ هزار که الان درگیرش است؛ اگر حمایت بشکند تا حمایت بعدی می‌رود. حد ضرر پشت سقف قبلی داو یا روی مقاومت.",
+   "method_notes": [
+    "حد ضرر پشت سقف قبلی یا روی مقاومت — 25:39 تا 26:01",
+    "شکست سطح روزانه تا سطح روزانه بعدی — 27:53"
+   ],
+   "claims": [
+    "به گفته او اگر بیت‌کوین بالای حدود ۸۱٬۴۳۲ بشکند، هدف بعدی حدود ۹۰ هزار دلار است — بی‌مهلت",
+    "به گفته او با بسته روزانه زیر حمایت حدود ۷۵ هزار، حرکت تا حمایت روزانه بعدی — بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:41:52+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:11:52 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_27m26.0s",
+   "t": 1646.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:43:31+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:13:31 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 75425.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 75425.0,
+      "cutoff": "2026-09-16T18:43:31+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 75191.48139534883,
+      "nearest_touches": 2,
+      "distance_atr": 0.2631116386041389,
+      "distance_pct": 0.30960371846359463,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 75425.0,
+       "cutoff": "2026-09-16T18:43:31+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": null,
+       "nearest": 76315.2769659012,
+       "nearest_touches": 4,
+       "distance_atr": 0.39122274885943026,
+       "distance_pct": 1.1803473197231653,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 72707.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی — چهارساعته",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 72707.0,
+      "cutoff": "2026-09-16T18:43:31+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 75191.48139534883,
+      "nearest_touches": 2,
+      "distance_atr": 2.799331436517576,
+      "distance_pct": 3.4171144392545885,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 72707.0,
+       "cutoff": "2026-09-16T18:43:31+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 2,
+       "nearest": 73002.75409836066,
+       "nearest_touches": 2,
+       "distance_atr": 0.12996599460480765,
+       "distance_pct": 0.40677527385349355,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 45.42728635682159,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 70812.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور؛ خط برگزیده"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی از ۹ آوریل",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 70812.0,
+      "cutoff": "2026-09-16T18:43:31+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 75191.48139534883,
+      "nearest_touches": 2,
+      "distance_atr": 4.934478466449749,
+      "distance_pct": 6.18465993807382,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 70812.0,
+       "cutoff": "2026-09-16T18:43:31+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": null,
+       "nearest": 73002.75409836066,
+       "nearest_touches": 2,
+       "distance_atr": 0.9627036004106136,
+       "distance_pct": 3.0937610833766302,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 64888.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 64888.0,
+      "cutoff": "2026-09-16T18:43:31+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": 2,
+      "nearest": 64850.659367945824,
+      "nearest_touches": 2,
+      "distance_atr": 0.042072685818609255,
+      "distance_pct": 0.057546282909284055,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 19.69015492253873,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 64888.0,
+       "cutoff": "2026-09-16T18:43:31+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 3,
+       "nearest": 65435.335082458776,
+       "nearest_touches": 3,
+       "distance_atr": 0.24052058371516863,
+       "distance_pct": 0.8435074011508692,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 36.33183408295852,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 62729.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 62729.0,
+      "cutoff": "2026-09-16T18:43:31+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 64850.659367945824,
+      "nearest_touches": 2,
+      "distance_atr": 2.390530183639736,
+      "distance_pct": 3.38226237935536,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 62729.0,
+       "cutoff": "2026-09-16T18:43:31+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": null,
+       "nearest": 61950.24443776307,
+       "nearest_touches": 5,
+       "distance_atr": 0.34221585351194606,
+       "distance_pct": 1.241460189444966,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "4,902 (6.92%) 4,902 · 6 bars, 1d · Vol 5.78K — ابزار اندازه‌گیری از خط آبی",
+     "confidence": "high"
+    },
+    {
+     "text": "75,714 · Tue 14 Apr '26 19:30 — نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اگر ۷۵ هزار بشکند به کجا می‌رود؟ در گذشته عقب می‌رود تا سطحی پیدا کند؛ رنگ خط چهارساعته را آبی می‌کند. از آنجا شش درصد بالا رفت — در چهارساعته کم نیست.",
+   "method_notes": [
+    "خط چهارساعته آبی، روزانه سفید — 27:07",
+    "اندازه واکنش را با ابزار می‌سنجد: 4,902 ÷ 70,812 = 6.92٪ — محاسبه‌شده، د۳"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:43:31+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:13:31 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_28m07.5s",
+   "t": 1687.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:46:30+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:16:30 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «BTCUSD»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 80000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 59200.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 81301.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور — خط روزانه پس از خوشگل‌کردن"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 81301.0,
+      "cutoff": "2026-09-16T18:46:30+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": 2,
+      "nearest": 81393.58805147058,
+      "nearest_touches": 2,
+      "distance_atr": 0.10432142644042916,
+      "distance_pct": 0.11388304137781657,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 19.69015492253873,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 81301.0,
+       "cutoff": "2026-09-16T18:46:30+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": null,
+       "nearest": 82208.76804915513,
+       "nearest_touches": 4,
+       "distance_atr": 0.3989090194619786,
+       "distance_pct": 1.1165521323909042,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 78980.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی — چهارساعته",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 78980.0,
+      "cutoff": "2026-09-16T18:46:30+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": 3,
+      "nearest": 78845.00992063493,
+      "nearest_touches": 3,
+      "distance_atr": 0.15209692191379753,
+      "distance_pct": 0.1709167882566144,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 10.944527736131935,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 78980.0,
+       "cutoff": "2026-09-16T18:46:30+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 4,
+       "nearest": 79376.60860869565,
+       "nearest_touches": 4,
+       "distance_atr": 0.17428543706975555,
+       "distance_pct": 0.5021633434991761,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 20.539730134932537,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 75425.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور — خط روزانه پس از خوشگل‌کردن"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "کف بدنه‌های ۱۵ و ۱۶ سپتامبر"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 75425.0,
+      "cutoff": "2026-09-16T18:46:30+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 75191.48139534883,
+      "nearest_touches": 2,
+      "distance_atr": 0.2631116386041389,
+      "distance_pct": 0.30960371846359463,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 75425.0,
+       "cutoff": "2026-09-16T18:46:30+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": null,
+       "nearest": 76315.2769659012,
+       "nearest_touches": 4,
+       "distance_atr": 0.39122274885943026,
+       "distance_pct": 1.1803473197231653,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 72707.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی — چهارساعته",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 72707.0,
+      "cutoff": "2026-09-16T18:46:30+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 75191.48139534883,
+      "nearest_touches": 2,
+      "distance_atr": 2.799331436517576,
+      "distance_pct": 3.4171144392545885,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 72707.0,
+       "cutoff": "2026-09-16T18:46:30+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 2,
+       "nearest": 73002.75409836066,
+       "nearest_touches": 2,
+       "distance_atr": 0.12996599460480765,
+       "distance_pct": 0.40677527385349355,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 45.42728635682159,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 70651.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی — چهارساعته",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 70651.0,
+      "cutoff": "2026-09-16T18:46:30+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 75191.48139534883,
+      "nearest_touches": 2,
+      "distance_atr": 5.115881459494119,
+      "distance_pct": 6.426634294417395,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 70651.0,
+       "cutoff": "2026-09-16T18:46:30+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": null,
+       "nearest": 73002.75409836066,
+       "nearest_touches": 2,
+       "distance_atr": 1.0334533389513707,
+       "distance_pct": 3.3286918774832057,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 64888.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 64888.0,
+      "cutoff": "2026-09-16T18:46:30+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": 2,
+      "nearest": 64850.659367945824,
+      "nearest_touches": 2,
+      "distance_atr": 0.042072685818609255,
+      "distance_pct": 0.057546282909284055,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 19.69015492253873,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 64888.0,
+       "cutoff": "2026-09-16T18:46:30+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": 3,
+       "nearest": 65435.335082458776,
+       "nearest_touches": 3,
+       "distance_atr": 0.24052058371516863,
+       "distance_pct": 0.8435074011508692,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 36.33183408295852,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 62729.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 62729.0,
+      "cutoff": "2026-09-16T18:46:30+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 887.5267011753272,
+      "touches": null,
+      "nearest": 64850.659367945824,
+      "nearest_touches": 2,
+      "distance_atr": 2.390530183639736,
+      "distance_pct": 3.38226237935536,
+      "chance_pct": 19.69015492253873,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 62729.0,
+       "cutoff": "2026-09-16T18:46:30+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 2275.626784221287,
+       "touches": null,
+       "nearest": 61950.24443776307,
+       "nearest_touches": 5,
+       "distance_atr": 0.34221585351194606,
+       "distance_pct": 1.241460189444966,
+       "chance_pct": 45.42728635682159,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "75,907 · 01:13:30 — قیمت زنده و شمارش تا بسته چهارساعته",
+     "confidence": "high"
+    },
+    {
+     "text": "مسیر دستی آبی کوتاه کنار قیمت — پیش‌بینی، نه سطح — د۱۸",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "پوزیشن: خط روزانه شکست و بسته زیرش؛ حد ضرر با داو یا مقاومت قبلی؛ تا ریسک‌به‌ریوارد صبر. شکست چهارساعته تا چهارساعته بعدی.",
+   "method_notes": [
+    "خط روزانه روی چهارساعته جابه‌جا می‌شود: 81,432 به 81,301 و 75,283 به 75,425 — حمایت بالاتر چون آخرین واکنش آنجا بود — 26:31 تا 26:52"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:46:30+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:16:30 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_29m07.0s",
+   "t": 1747.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:47:36+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:17:36 UTC+3:30"
+   },
+   "coin": {
+    "value": "AAVEUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «AAVEUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 534.47,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "medium",
+      "from": "image",
+      "how": "سقف تاریخی از بدنه؛ خودش می‌گوید از بدنه رسم می‌کند، نه سایه — 20:44"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 534.47,
+      "cutoff": "2026-09-16T18:47:36+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 20.604991636657104,
+      "touches": null,
+      "nearest": 382.4590091463415,
+      "nearest_touches": 2,
+      "distance_atr": 7.377386680576221,
+      "distance_pct": 28.44144495549957,
+      "chance_pct": 24.737631184407796,
+      "strong_min_touches": 3,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 348.09,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 348.09,
+      "cutoff": "2026-09-16T18:47:36+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 20.604991636657104,
+      "touches": null,
+      "nearest": 331.8257526080477,
+      "nearest_touches": 2,
+      "distance_atr": 0.7893353066456732,
+      "distance_pct": 4.672425922017946,
+      "chance_pct": 24.737631184407796,
+      "strong_min_touches": 3,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "چارت دیگر: اول تایم بالا و سقف تاریخی؛ سقف تاریخی را از بدنه می‌کشد، ۵۳۴ دلار.",
+   "method_notes": [
+    "سقف تاریخی از بدنه — 28:26 تا 28:31"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:47:36+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:17:36 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_30m00.0s",
+   "t": 1800.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:48:56+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:18:56 UTC+3:30"
+   },
+   "coin": {
+    "value": "AAVEUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «AAVEUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 1000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 18.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 534.47,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 534.47,
+      "cutoff": "2026-09-16T18:48:56+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 20.604991636657104,
+      "touches": null,
+      "nearest": 382.4590091463415,
+      "nearest_touches": 2,
+      "distance_atr": 7.377386680576221,
+      "distance_pct": 28.44144495549957,
+      "chance_pct": 24.737631184407796,
+      "strong_min_touches": 3,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 348.09,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "medium",
+      "from": "image",
+      "how": "زیر نوک سایه‌های دسامبر ۲۰۲۴ و اوت ۲۰۲۵، هم‌تراز بالای بدنه‌ها"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 348.09,
+      "cutoff": "2026-09-16T18:48:56+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 20.604991636657104,
+      "touches": null,
+      "nearest": 331.8257526080477,
+      "nearest_touches": 2,
+      "distance_atr": 0.7893353066456732,
+      "distance_pct": 4.672425922017946,
+      "chance_pct": 24.737631184407796,
+      "strong_min_touches": 3,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 221.65,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 221.65,
+      "cutoff": "2026-09-16T18:48:56+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 20.604991636657104,
+      "touches": null,
+      "nearest": 179.59242424242424,
+      "nearest_touches": 2,
+      "distance_atr": 2.041135298630923,
+      "distance_pct": 18.974769121396687,
+      "chance_pct": 24.737631184407796,
+      "strong_min_touches": 3,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 141.94,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 141.94,
+      "cutoff": "2026-09-16T18:48:56+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-09-07T00:00:00+00:00",
+      "atr": 20.604991636657104,
+      "touches": 3,
+      "nearest": 144.38324064171124,
+      "nearest_touches": 3,
+      "distance_atr": 0.11857518240214274,
+      "distance_pct": 1.7213193192273086,
+      "chance_pct": 24.737631184407796,
+      "strong_min_touches": 3,
+      "chance_at_touches_pct": 7.9960019990005,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "21.93 · Mon 26 Oct '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "117.05 · 4d 6h — قیمت زنده",
+     "confidence": "high"
+    }
+   ],
+   "speech": "۳۴۸ دلار مقاومتی است که از آن ۸۰ درصد ریخت؛ احتمال واکنش دوباره زیاد است. سطحی که با حجم کم از آن دور شوی، احتمال تست دوباره‌اش بیشتر است.",
+   "method_notes": [
+    "ریزش بزرگ از سطح، اعتبار سطح است — 28:43 تا 29:15",
+    "دور شدن با حجم کم یعنی تست دوباره محتمل — 29:55"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:48:56+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:18:56 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_30m44.5s",
+   "t": 1844.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:49:44+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:19:44 UTC+3:30"
+   },
+   "coin": {
+    "value": "AAVEUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «AAVEUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 180.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 48.5,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 141.58,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 141.58,
+      "cutoff": "2026-09-16T18:49:44+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-15T00:00:00+00:00",
+      "atr": 7.558473289536497,
+      "touches": 2,
+      "nearest": 142.6456544502618,
+      "nearest_touches": 2,
+      "distance_atr": 0.14098805531760014,
+      "distance_pct": 0.7526871381987391,
+      "chance_pct": 31.284357821089454,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 31.284357821089454,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 85.91,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور؛ پرتو افقی از ژوئیه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 85.91,
+      "cutoff": "2026-09-16T18:49:44+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-09-15T00:00:00+00:00",
+      "atr": 7.558473289536497,
+      "touches": 11,
+      "nearest": 86.15525469168901,
+      "nearest_touches": 11,
+      "distance_atr": 0.032447649451712544,
+      "distance_pct": 0.28547863076360475,
+      "chance_pct": 31.284357821089454,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 4.3478260869565215,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 60.75,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 60.75,
+      "cutoff": "2026-09-16T18:49:44+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-15T00:00:00+00:00",
+      "atr": 7.558473289536497,
+      "touches": null,
+      "nearest": 74.13976744186046,
+      "nearest_touches": 2,
+      "distance_atr": 1.7714910047239907,
+      "distance_pct": 22.04076945162215,
+      "chance_pct": 31.284357821089454,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Horizontal ray — راهنمای ابزار زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "204.19 برچسب بالای محور — خط بیرون از دید",
+     "confidence": "medium"
+    },
+    {
+     "text": "116.92 · 05:10:15 — قیمت زنده",
+     "confidence": "high"
+    }
+   ],
+   "speech": "روزانه: خط‌ها را خوشگل می‌کند؛ یکی می‌ماند، یکی پایین‌تر می‌آید چون آنجا واکنش بهتری داد.",
+   "method_notes": [
+    "پرتو افقی از نقطه واکنش، نه خط سراسری — ابزار Horizontal ray"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:49:44+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:19:44 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_31m22.5s",
+   "t": 1882.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:50:28+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:20:28 UTC+3:30"
+   },
+   "coin": {
+    "value": "AAVEUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «AAVEUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 120.88,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 120.88,
+      "cutoff": "2026-09-16T18:50:28+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 3.2053616591554617,
+      "touches": 5,
+      "nearest": 120.60416043507817,
+      "nearest_touches": 5,
+      "distance_atr": 0.0860556761618287,
+      "distance_pct": 0.2281928895779487,
+      "chance_pct": 19.090454772613693,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 4.147926036981509,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 120.88,
+       "cutoff": "2026-09-16T18:50:28+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": 2,
+       "nearest": 120.02521345407501,
+       "nearest_touches": 2,
+       "distance_atr": 0.11308984145095763,
+       "distance_pct": 0.7071364542728166,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": 31.284357821089454,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 101.4,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 101.4,
+      "cutoff": "2026-09-16T18:50:28+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 3.2053616591554617,
+      "touches": null,
+      "nearest": 88.5762645011601,
+      "nearest_touches": 4,
+      "distance_atr": 4.000714073000632,
+      "distance_pct": 12.646681951518648,
+      "chance_pct": 19.090454772613693,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 101.4,
+       "cutoff": "2026-09-16T18:50:28+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "strong",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": 8,
+       "nearest": 100.84256959314774,
+       "nearest_touches": 8,
+       "distance_atr": 0.07374907411843816,
+       "distance_pct": 0.5497341290456235,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": 8.695652173913043,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 85.91,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 85.91,
+      "cutoff": "2026-09-16T18:50:28+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 3.2053616591554617,
+      "touches": 2,
+      "nearest": 86.07990909090911,
+      "nearest_touches": 2,
+      "distance_atr": 0.05300777540150728,
+      "distance_pct": 0.1977756849134157,
+      "chance_pct": 19.090454772613693,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 19.090454772613693,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 85.91,
+       "cutoff": "2026-09-16T18:50:28+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "strong",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": 11,
+       "nearest": 86.15525469168901,
+       "nearest_touches": 11,
+       "distance_atr": 0.032447649451712544,
+       "distance_pct": 0.28547863076360475,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": 4.3478260869565215,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "141.34 · Mon 07 Sep '26 23:30 — نشانگر موس روی خط بالا",
+     "confidence": "high"
+    },
+    {
+     "text": "116.87 · 01:09:31 — قیمت زنده",
+     "confidence": "high"
+    }
+   ],
+   "speech": "حمایت روزانه ۱۲۰.۸۸ مهم است؛ کندل هنوز زیرش بسته نشده. اگر ببندد، حرکت تا سطح روزانه پایین‌تر محتمل است.",
+   "method_notes": [
+    "داوری شکست با بسته کندل همان تایم — 31:02 تا 31:11"
+   ],
+   "claims": [
+    "به گفته او اگر AAVE زیر حمایت روزانه حدود ۱۲۰.۸۸ ببندد، حرکت تا سطح روزانه پایین‌تر محتمل است — روی صفحه 101.40 — بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:50:28+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:20:28 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_31m53.5s",
+   "t": 1913.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-09-16T18:51:08+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش «4d 6h» تا بسته هفتگی و برچسب Wed 16 Sep '26 — چهارشنبه ۱۶ سپتامبر ۲۰۲۶",
+    "seen": "22:21:08 UTC+3:30"
+   },
+   "coin": {
+    "value": "AAVEUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "نماد بالا چپ «AAVEUSDT»"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نام صرافی در عنوان دیده نمی‌شود — فقط نماد"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 144.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 73.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 141.58,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 141.58,
+      "cutoff": "2026-09-16T18:51:08+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 3.2053616591554617,
+      "touches": null,
+      "nearest": 136.0937442218798,
+      "nearest_touches": 4,
+      "distance_atr": 1.7115871347777059,
+      "distance_pct": 3.8750217390310846,
+      "chance_pct": 19.090454772613693,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 141.58,
+       "cutoff": "2026-09-16T18:51:08+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": 2,
+       "nearest": 142.6456544502618,
+       "nearest_touches": 2,
+       "distance_atr": 0.14098805531760014,
+       "distance_pct": 0.7526871381987391,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": 31.284357821089454,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 131.64,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی — چهارساعته",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 131.64,
+      "cutoff": "2026-09-16T18:51:08+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 3.2053616591554617,
+      "touches": 3,
+      "nearest": 132.286181640625,
+      "nearest_touches": 3,
+      "distance_atr": 0.2015939882413319,
+      "distance_pct": 0.49087028306366026,
+      "chance_pct": 19.090454772613693,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 16.391804097951024,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 131.64,
+       "cutoff": "2026-09-16T18:51:08+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": null,
+       "nearest": 142.6456544502618,
+       "nearest_touches": 2,
+       "distance_atr": 1.4560684451312909,
+       "distance_pct": 8.360418148178214,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 120.88,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "کف بدنه‌های اواخر اوت و ۱۱ سپتامبر"
+     },
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 120.88,
+      "cutoff": "2026-09-16T18:51:08+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 3.2053616591554617,
+      "touches": 5,
+      "nearest": 120.60416043507817,
+      "nearest_touches": 5,
+      "distance_atr": 0.0860556761618287,
+      "distance_pct": 0.2281928895779487,
+      "chance_pct": 19.090454772613693,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 4.147926036981509,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 120.88,
+       "cutoff": "2026-09-16T18:51:08+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": 2,
+       "nearest": 120.02521345407501,
+       "nearest_touches": 2,
+       "distance_atr": 0.11308984145095763,
+       "distance_pct": 0.7071364542728166,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": 31.284357821089454,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 108.91,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی آبی — چهارساعته",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 108.91,
+      "cutoff": "2026-09-16T18:51:08+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 3.2053616591554617,
+      "touches": null,
+      "nearest": 120.60416043507817,
+      "nearest_touches": 5,
+      "distance_atr": 3.6483123212247177,
+      "distance_pct": 10.737453342280944,
+      "chance_pct": 19.090454772613693,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 108.91,
+       "cutoff": "2026-09-16T18:51:08+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": null,
+       "nearest": 100.84256959314774,
+       "nearest_touches": 8,
+       "distance_atr": 1.0673359682332046,
+       "distance_pct": 7.407428525252276,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 101.4,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 101.4,
+      "cutoff": "2026-09-16T18:51:08+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 3.2053616591554617,
+      "touches": null,
+      "nearest": 88.5762645011601,
+      "nearest_touches": 4,
+      "distance_atr": 4.000714073000632,
+      "distance_pct": 12.646681951518648,
+      "chance_pct": 19.090454772613693,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 101.4,
+       "cutoff": "2026-09-16T18:51:08+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "strong",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": 8,
+       "nearest": 100.84256959314774,
+       "nearest_touches": 8,
+       "distance_atr": 0.07374907411843816,
+       "distance_pct": 0.5497341290456235,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": 8.695652173913043,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 85.91,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "AAVE/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 85.91,
+      "cutoff": "2026-09-16T18:51:08+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-16T12:00:00+00:00",
+      "atr": 3.2053616591554617,
+      "touches": 2,
+      "nearest": 86.07990909090911,
+      "nearest_touches": 2,
+      "distance_atr": 0.05300777540150728,
+      "distance_pct": 0.1977756849134157,
+      "chance_pct": 19.090454772613693,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 19.090454772613693,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "AAVE/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 85.91,
+       "cutoff": "2026-09-16T18:51:08+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "strong",
+       "bars": 200,
+       "last_bar": "2026-09-15T00:00:00+00:00",
+       "atr": 7.558473289536497,
+       "touches": 11,
+       "nearest": 86.15525469168901,
+       "nearest_touches": 11,
+       "distance_atr": 0.032447649451712544,
+       "distance_pct": 0.28547863076360475,
+       "chance_pct": 31.284357821089454,
+       "strong_min_touches": 4,
+       "chance_at_touches_pct": 4.3478260869565215,
+       "reason": null,
+       "cutoff_basis": "chart_end"
+      },
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "105.80 · Thu 17 Sep '26 19:30 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "116.45 · 01:08:51 — قیمت زنده",
+     "confidence": "high"
+    }
+   ],
+   "speech": "از اینجا به بعد به ناحیه‌ها اهمیت کمتری می‌دهد چون در حد چهارساعته است؛ احتمال واکنش به ۱۰۸ دلار زیاد است.",
+   "method_notes": [
+    "چهارساعته فقط تا چهارساعته بعدی — 31:16 تا 31:24"
+   ],
+   "claims": [
+    "به گفته او احتمال واکنش AAVE به حدود ۱۰۸ دلار زیاد است — بی‌مهلت؛ روی صفحه خط آبی 108.91"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2026-09-16T18:51:08+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۹ روز پس از ضبط بود، پس برش snap زمان ضبط است، نه انتشار — د۳۱",
+    "seen": "22:21:08 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "D-86IYu_tDo_33m26.5s",
+   "t": 2006.5,
+   "is_chart": false,
+   "refs": [],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "seen": null
+   },
+   "coin": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "chart_type": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "صفحه یوتیوب کانال Crypto City Pro و پلی‌لیست تحلیل کوین‌ها",
+     "confidence": "high"
+    }
+   ],
+   "speech": "توصیه پایانی: تحلیل روزانه بیت‌کوین و اتریوم را دنبال کن؛ این سیزده اصل از تجربه و چک گذشته چارت‌ها آمده.",
+   "method_notes": [
+    "سیزده اصل از تجربه، چک گذشته ده کوین و سهام — به گفته او، بی‌عدد"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  }
+ ],
+ "read_by": "مدل — کار ویژه روش حمایت و مقاومت، ۴ اکتبر ۲۰۲۶",
+ "read_at": "2026-10-04",
+ "methods": [
+  {
+   "area": "رسم حمایت و مقاومت",
+   "rule": "خط، نه ناحیه؛ روی بدنه، نه سایه — چون بسته بدنه بالای خط مهم است",
+   "where": "20:39 تا 20:58، 28:26",
+   "library": "تازه — ر۳۹، در تنش با تعریف سایه‌ای رادار"
+  },
+  {
+   "area": "رسم حمایت و مقاومت",
+   "rule": "یک نقطه برای رسم بس است: جایی که قیمت واکنش داد و در طول زمان دور شد",
+   "where": "15:45 تا 15:56، 18:04 تا 18:21",
+   "library": "تازه — ر۴۰، خلاف گام ۲ روش رسم سطح"
+  },
+  {
+   "area": "رسم حمایت و مقاومت",
+   "rule": "هفتگی، روزانه، چهارساعته؛ زیر چهارساعته فقط ماشه؛ چهارساعته برای هدف",
+   "where": "08:03، 18:57 تا 19:09",
+   "library": "نزدیک گام ۵، با یک پله پایین‌تر"
+  },
+  {
+   "area": "رسم حمایت و مقاومت",
+   "rule": "آینده بازار مهم‌تر: خط به آخرین واکنش جابه‌جا می‌شود",
+   "where": "11:51 تا 12:21، 24:35، 26:31",
+   "library": "هست: گام ۳"
+  },
+  {
+   "area": "قدرت سطح",
+   "rule": "برخورد بیشتر با واکنش کوچک‌شونده یعنی ضعف، نه قوت",
+   "where": "09:38 تا 11:05",
+   "library": "تازه — ر۴۱، خلاف شمار برخورد رادار"
+  },
+  {
+   "area": "قدرت سطح",
+   "rule": "برگشت سریع و پیاپی به سطح یعنی شکست نزدیک",
+   "where": "14:17 تا 14:49",
+   "library": "تازه — ر۴۲"
+  },
+  {
+   "area": "قدرت سطح",
+   "rule": "آمدن با حجم کم و رفتن با حجم زیاد یعنی سطح معتبر؛ دور شدن با حجم کم یعنی تست دوباره",
+   "where": "15:35 تا 16:45، 29:55",
+   "library": "نزدیک ر۳"
+  },
+  {
+   "area": "شکست",
+   "rule": "یک بسته بدنه آن سوی خط شکست است؛ سایه‌ای که برگردد نه",
+   "where": "11:05 تا 11:51",
+   "library": "تازه — ر۴۳"
+  },
+  {
+   "area": "شکست",
+   "rule": "شکست سطح هر تایم تا سطح بعدی همان تایم",
+   "where": "25:33، 27:53 تا 28:01",
+   "library": "تازه — ر۴۴"
+  },
+  {
+   "area": "تغییر نقش",
+   "rule": "مقاومت شکسته حمایت می‌شود و برعکس؛ سقفی که کف پایین‌تر ساخت قوی‌تر است",
+   "where": "08:49، 13:09 تا 13:25",
+   "library": "هست: ج۳"
+  },
+  {
+   "area": "سطح",
+   "rule": "عدد رند مهم است",
+   "where": "16:47 تا 17:27",
+   "library": "تازه — ر۴۵"
+  },
+  {
+   "area": "ریسک",
+   "rule": "حد ضرر پشت سقف قبلی داو یا روی مقاومت؛ سایز بزرگ‌تر ولی ریسک‌به‌ریوارد بهتر",
+   "where": "25:39 تا 26:01",
+   "library": "نزدیک ر۶"
+  }
+ ]
+}

@@ -357,7 +357,7 @@
    "title": "آموزش تحلیل تکنیکال | صفر تا 100 استراتژی حمایت و مقاومت !",
    "published": "2026-09-25T14:30:06+00:00",
    "channel_id": "UC2I0e9vRItuSE8-1ub_35AA",
-   "status": "ready",
+   "status": "seen",
    "first_at": "2026-10-04T18:27:09Z",
    "detail": "کار ویژه ۴ اکتبر، درخواست مستقیم کاربر — بیرون از سقف روزانه",
    "suggested": true,
@@ -365,14 +365,16 @@
    "doc": "intake/cryptocity_pro/2026-09-25_آموزش-تحلیل-تکنیکال-صفر-تا-100-استراتژی_D-86IY.md",
    "frames_md": "frames/D-86IYu_tDo/FRAMES.md",
    "template": "frames/D-86IYu_tDo/card_template.json",
-   "cards": "intake/charts/cryptocity_pro/D-86IYu_tDo.json"
+   "cards": "intake/charts/cryptocity_pro/D-86IYu_tDo.json",
+   "seen_at": "2026-10-04T18:45:14Z",
+   "report": "intake/reports/cryptocity_pro/D-86IYu_tDo.md"
   },
   "rui0-OuNWmY": {
    "source": "arshia_course",
    "title": "[03] آموزش تحلیل‌ تکنیکال  - استراتژی ترید ارشیاعزیز پور پارت 3 | حمایت و مقاومت",
    "published": "2025-10-21T12:45:20+00:00",
    "channel_id": "UCSiXqiaB5JgSicZBGh1VXEw",
-   "status": "ready",
+   "status": "seen",
    "first_at": "2026-10-04T18:27:09Z",
    "detail": "کار ویژه ۴ اکتبر، درخواست مستقیم کاربر — بیرون از سقف روزانه",
    "suggested": true,
@@ -380,7 +382,9 @@
    "doc": "intake/arshia_course/2026-08-09_03-آموزش-تحلیل-تکنیکال-استراتژی-ترید-ارش_rui0-O.md",
    "frames_md": "frames/rui0-OuNWmY/FRAMES.md",
    "template": "frames/rui0-OuNWmY/card_template.json",
-   "cards": "intake/charts/arshia_course/rui0-OuNWmY.json"
+   "cards": "intake/charts/arshia_course/rui0-OuNWmY.json",
+   "seen_at": "2026-10-04T18:45:17Z",
+   "report": "intake/reports/arshia_course/rui0-OuNWmY.md"
   }
  },
  "runs": {

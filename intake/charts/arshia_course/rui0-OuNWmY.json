@@ -1,0 +1,4179 @@
+{
+ "schema": 1,
+ "kind": "radar-chart-cards",
+ "video_id": "rui0-OuNWmY",
+ "doc_id": "nodate_arshia_course_rui0-OuN",
+ "doc": "intake/arshia_course/2026-08-09_03-آموزش-تحلیل-تکنیکال-استراتژی-ترید-ارش_rui0-O.md",
+ "source": "arshia_course",
+ "url": "https://www.youtube.com/watch?v=rui0-OuNWmY",
+ "title": "[03] آموزش تحلیل‌ تکنیکال  - استراتژی ترید ارشیاعزیز پور پارت 3 | حمایت و مقاومت",
+ "frames_tool": "radar_frames 1.1",
+ "guide": "references/chart-reading.md",
+ "cards": [
+  {
+   "frame_id": "rui0-OuNWmY_00m12.5s",
+   "t": 12.5,
+   "is_chart": false,
+   "refs": [],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "seen": null
+   },
+   "coin": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "chart_type": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "نکسوس (۲) — صفحه آغاز با توضیح واژه Nexus",
+     "confidence": "high"
+    }
+   ],
+   "speech": "آغاز پارت؛ جهت روند مهم‌ترین چیز است و ابزارش داو، میانگین، الیوت، وایکوف یا پول هوشمند هر کدام باشد.",
+   "method_notes": [
+    "به گفته او دانستن جهت روند بیشتر راه است؛ بقیه برای ورود و حد ضرر بهتر"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_02m15.5s",
+   "t": 135.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:28:19+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "10:58:19 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن و عنوان «1W»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [
+    {
+     "kind": "pattern",
+     "label": "دو خط گوه نزولی ۲۰۲۲ — ترسیم سفید",
+     "p1": {
+      "time": {
+       "value": "2022-06",
+       "confidence": "low",
+       "from": "image",
+       "how": "از جای افقی"
+      },
+      "price": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2023-01",
+       "confidence": "low",
+       "from": "image",
+       "how": "از جای افقی"
+      },
+      "price": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      }
+     }
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "فالینگ وج (Falling Wedge): الگوی صعودی که قیمت میان دو خط همگرا پایین می‌آید — زیرنویس ویرایشگر روی صفحه",
+     "confidence": "high"
+    }
+   ],
+   "speech": "گوه نزولی ماهیت صعودی دارد؛ پرسش این است که چرا. پس از روند نزولی قوی، کندل‌های بزرگ فروش پایان زور فروشنده را نشان دادند.",
+   "method_notes": [
+    "مفهوم الگو: زور خریدار و فروشنده، نه حفظ نام الگو",
+    "نمودار در حالت بازپخش است: آخرین شمع پیش از امروز، ولی دکمه خرید و فروش قیمت زنده را دارد"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_02m39.0s",
+   "t": 159.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:28:42+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "10:58:42 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن و عنوان «1W»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 92000.0,
+     "confidence": "medium",
+     "from": "image",
+     "how": "برچسب محور زیر برچسب قرمز"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا",
+     "how": "زیر زیرنویس ویرایشگر"
+    }
+   },
+   "levels": [],
+   "trendlines": [
+    {
+     "kind": "pattern",
+     "label": "گوه نزولی ۲۰۲۲ — دو خط سفید",
+     "p1": {
+      "time": {
+       "value": "2022-06",
+       "confidence": "low",
+       "from": "image",
+       "how": "از جای افقی"
+      },
+      "price": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2023-01",
+       "confidence": "low",
+       "from": "image",
+       "how": "از جای افقی"
+      },
+      "price": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      }
+     }
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "کندل سل‌آف: کندلی با فشار شدید فروش که نشان‌دهنده خروج ناگهانی خریداران است — زیرنویس ویرایشگر",
+     "confidence": "high"
+    },
+    {
+     "text": "31,755 · Apr 18, 2022 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "97,291 برچسب قرمز بالای محور — آخرین شمع بازپخش",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "دو کندل سل‌آف بزرگ را نشان می‌دهد که پایان روند نزولی قوی بودند؛ پس از آن پولبک با حجم کاهشی آمد.",
+   "method_notes": [
+    "کندل سل‌آف بزرگ نشانه پایان زور یک طرف است — به گفته او",
+    "مفهوم الگو: زور خریدار و فروشنده، نه حفظ نام الگو"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_03m12.0s",
+   "t": 192.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:29:15+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "10:59:15 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن و عنوان «1W»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [
+    {
+     "kind": "pattern",
+     "label": "گوه نزولی ۲۰۲۲",
+     "p1": {
+      "time": {
+       "value": "2022-06",
+       "confidence": "low",
+       "from": "image",
+       "how": "از جای افقی"
+      },
+      "price": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2023-01",
+       "confidence": "low",
+       "from": "image",
+       "how": "از جای افقی"
+      },
+      "price": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      }
+     }
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "فروشنده‌ها کنترل گرفتند و تا کف قبلی آمدند، ولی خریدار دوباره گرفت؛ پس فروشنده قوی‌تر از قبل نیست.",
+   "method_notes": [
+    "مفهوم الگو: زور خریدار و فروشنده، نه حفظ نام الگو"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_03m34.0s",
+   "t": 214.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:29:37+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "10:59:37 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن و عنوان «1W»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "کف‌های قبلی با کندل بزرگ شکست ولی موج نزولی ادامه نیافت و رنج شد؛ یعنی فروشنده زور آخرش را می‌زند. با شکست خط روند از دو قله، خریدار کنترل را گرفت.",
+   "method_notes": [
+    "فیک کف قبلی و رنج پس از آن یعنی ضعف فروشنده — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_04m40.0s",
+   "t": 280.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:30:43+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:00:43 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن و عنوان «1W»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 58000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 12850.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "نک لاین (Neck Line): همان خط حمایتی یا مقاومتی کلیدی در الگوهایی مانند هد اند شولدر که شکست آن روند را تغییر می‌دهد — زیرنویس ویرایشگر",
+     "confidence": "high"
+    },
+    {
+     "text": "30,721 · Jul 03, 2023 — نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "دابل تاپ ۲۰۲۳: دو سقف هم‌سطح و خط گردن. خریدار نتوانست سقف را بشکند و فروشنده هم خط گردن را نشکست؛ پس دابل تاپ فعال نشد.",
+   "method_notes": [
+    "الگو را از مفهوم بخوان: دابل تاپی که خط گردنش نشکند، برعکس عمل می‌کند — به گفته او",
+    "نمودار در حالت بازپخش است: آخرین شمع پیش از امروز، ولی دکمه خرید و فروش قیمت زنده را دارد"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_05m00.5s",
+   "t": 300.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:31:04+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:01:04 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن و عنوان «1W»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "فروشنده یک بار حتی زیر خط گردن رفت ولی خریدار دوباره بازار را گرفت؛ کندل بعد تأیید کرد.",
+   "method_notes": [
+    "مفهوم الگو: زور خریدار و فروشنده، نه حفظ نام الگو"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_05m16.5s",
+   "t": 316.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:31:20+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:01:20 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن و عنوان «1W»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "از الگوی دابل تاپ برعکس استفاده کرد: فروشنده باید قوی می‌شد و نشد.",
+   "method_notes": [
+    "مفهوم الگو: زور خریدار و فروشنده، نه حفظ نام الگو"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_05m40.5s",
+   "t": 340.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:31:44+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:01:44 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن و عنوان «1W»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "مثل بردار فیزیک: نیروی فروشنده حذف شد و برداری هم‌اندازه خلافش ساخته شد؛ سقف شکست و پس از شکست باکس پوزیشن داد.",
+   "method_notes": [
+    "شکست باکس پس از فیک کف، ستاپ ورود است — به گفته او؛ در همه تایم‌ها"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_06m44.0s",
+   "t": 404.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:32:47+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:02:47 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "هد اند شولدر روی چهارساعته، بی‌آنکه زیبا باشد: سقف تازه با حجم کاهشی، سپس فروشنده با افزایش حجم ایستاد.",
+   "method_notes": [
+    "حجم کاهشی در موج آخر خریدار نشانه زور آخر است — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_07m02.0s",
+   "t": 422.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:33:05+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:03:05 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "خریدار در موج آخر زور آخرش را زد و سقف پایین‌تر ساخته شد؛ هد اند شولدر می‌تواند قیمت را پایین ببرد.",
+   "method_notes": [
+    "برای پوزیشن، مفهوم را دلیل بگیر نه نام الگو — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_07m49.5s",
+   "t": 469.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:33:53+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:03:53 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "وی پترن (V Pattern): یه الگوی چارتیه که قیمت به شکل حرف V حرکت می‌کنه… — زیرنویس ویرایشگر",
+     "confidence": "high"
+    }
+   ],
+   "speech": "وی پترن از شارپ‌ترین الگوهاست: در یک رفت و برگشت تکلیف خریدار و فروشنده معلوم می‌شود.",
+   "method_notes": [
+    "مفهوم الگو: زور خریدار و فروشنده، نه حفظ نام الگو"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_08m00.0s",
+   "t": 480.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:34:03+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:04:03 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "فروشنده با کندل بزرگ همه کف‌ها را رد کرد ولی خریدار گرفت و حتی سقف قبلی را رد کرد — آن شکست فیک بود.",
+   "method_notes": [
+    "فیک: شکستی که بعد برمی‌گردد و جهت را عوض می‌کند — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_09m17.0s",
+   "t": 557.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:35:20+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:05:20 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [
+    {
+     "kind": "pattern",
+     "label": "مثلث افزایشی — خط صاف بالا و خط کف‌های بالاتر",
+     "p1": {
+      "time": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      },
+      "price": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      },
+      "price": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      }
+     }
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "مثلث افزایشی صعودی است چون کف‌ها بالاتر می‌روند و فروشنده هر بار ضعیف‌تر می‌شود؛ اگر خریدار خط صاف را رد کند حرکت شارپ می‌آید.",
+   "method_notes": [
+    "کف بالاتر یعنی ضعف فروشنده؛ خط صاف جای سفارش فروشنده — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_10m15.0s",
+   "t": 615.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:36:18+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:06:18 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "ابزار اندازه‌گیری آبی: درصد و شمار شمع روی موج پس از شکست — نوشته ریز ناخوانا",
+     "confidence": "low"
+    }
+   ],
+   "speech": "هدف الگوها جایی جواب می‌دهد و جایی نه؛ بهانه‌ای است که به ترید نظم بدهیم، چون خود بازار نظم نمی‌دهد.",
+   "method_notes": [
+    "هدف الگو را بی‌نظمی بازار ضمانت نمی‌کند — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_10m52.0s",
+   "t": 652.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:36:55+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:06:55 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "تصمیم‌های بازار منطقی نیستند؛ خودت را منطقی کن و قانون بنویس. تغییر روند را هم با همین مفهوم می‌گیری.",
+   "method_notes": [
+    "قانون شخصی نوشته‌شده، نه منطق بازار — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_11m15.5s",
+   "t": 675.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:37:19+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:07:19 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "فیک را این‌طور می‌شناسد: اگر سه چهار کندل را حذف کنی و در روند و سطح مهم تغییری نیاید، آن فیک است.",
+   "method_notes": [
+    "آزمون حذف کندل برای شناخت فیک: اگر حذفشان ساختار را عوض نکند، فیک است — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_11m49.0s",
+   "t": 709.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:37:52+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:07:52 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "روند صعودی قوی، سپس سقف و پولبک با حجم کمتر؛ در موج دوم حجم روند را تأیید نکرد و ریزش با افزایش حجم قرمز آمد؛ پس جهت عوض شد.",
+   "method_notes": [
+    "حجم موج را با موج قبل بسنج؛ کمترین‌ها را حذف کن — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_12m22.5s",
+   "t": 742.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:38:26+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:08:26 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "این مفهوم در یک کندل تنها هم صدق می‌کند و در مجموعه‌ای از کندل‌ها هم.",
+   "method_notes": [
+    "مفهوم الگو: زور خریدار و فروشنده، نه حفظ نام الگو"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_12m45.0s",
+   "t": 765.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:38:48+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:08:48 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 4h روشن و عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "کندلی که سقف را تازه شکسته اجازه داد فروشنده کنترل بگیرد؛ خریدار باید هزینه کند تا برگرداند — نشانه ضعف.",
+   "method_notes": [
+    "کندل شکست با سایه بلند خلاف جهت نشانه ضعف شکست است — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_13m46.5s",
+   "t": 826.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:39:50+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:09:50 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / TetherUS · 15 · Binance»"
+   },
+   "venue": {
+    "value": "BINANCE",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «15»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "روی بایننس پانزده‌دقیقه حجم را نشان می‌دهد: موج صعودی با افزایش حجم، ریزش با حجم کمتر، و موج بعد بی‌افزایش حجم؛ پس احتمال شکست کم است و شاید رنج.",
+   "method_notes": [
+    "برای دیدن حجم بهتر به جفت تتری بایننس رفت — صرافی نمودار عوض شد"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_14m44.5s",
+   "t": 884.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:42:13+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:12:13 UTC+3:30"
+   },
+   "coin": {
+    "value": "SOLUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «SOL / TetherUS · 15 · Binance»"
+   },
+   "venue": {
+    "value": "BINANCE",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "15m",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «15»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [],
+   "speech": "در یک‌ساعته بیت‌کوین در باکس است؛ باید صبر کرد: شکست از بالا لانگ، از پایین شورت.",
+   "method_notes": [
+    "در باکس منتظر شکست بمان — همان ر۲"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_15m19.0s",
+   "t": 919.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:42:47+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:12:47 UTC+3:30"
+   },
+   "coin": {
+    "value": "SOLUSDT",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «SOL / TetherUS · 4h · Binance»"
+   },
+   "venue": {
+    "value": "BINANCE",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4H",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «4h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": null,
+      "confidence": null,
+      "from": "image",
+      "note": "ناخوانا"
+     },
+     "high": {
+      "value": null,
+      "confidence": null,
+      "from": "image",
+      "note": "ناخوانا"
+     },
+     "label": "ابزار موقعیت خرید — برچسب‌های هدف و حد ضرر ریز و ناخوانا"
+    }
+   ],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Target … Amount … و Stop … — نوشته ابزار موقعیت، ریز",
+     "confidence": "low"
+    }
+   ],
+   "speech": "با تصویر بزرگ‌تر: موج نزولی قوی، یک موج صعودی، و حالا رنج؛ اگر رو به پایین با افزایش حجم بشکند ادامه موج قبل است.",
+   "method_notes": [
+    "تصویر بزرگ‌تر را ببین، سپس تایم پایین — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_16m16.5s",
+   "t": 976.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:43:45+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:13:45 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه M روشن و عنوان «1M»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کوچک‌تر و بالا بزرگ‌تر — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 380000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 1220.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "55,152 · Feb 01, 2021 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "BTCUSD 123,466 · 25d 17h — قیمت زنده و شمارش تا بسته ماهانه",
+     "confidence": "high"
+    }
+   ],
+   "speech": "ساده‌ترین روش رسم: از ماهانه شروع کن. برای یک خط دو نقطه لازم است؛ جایی که فقط یک نقطه هست، در ماهانه خطی نمی‌کشی.",
+   "method_notes": [
+    "رسم از ماهانه شروع می‌شود — همان گام ۱ روش رسم سطح",
+    "هر خط دو نقطه لازم دارد؛ تک‌نقطه در ماهانه خط نیست — 16:02 تا 16:40"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_17m46.0s",
+   "t": 1066.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:45:14+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:15:14 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه M روشن و عنوان «1M»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کوچک‌تر و بالا بزرگ‌تر — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 4400000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 190.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 63035.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور هم‌ردیف خط"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "medium",
+      "from": "image",
+      "how": "از بالای بدنه‌های ۲۰۲۱ و کف بدنه‌های ۲۰۲۴ می‌گذرد؛ نوک سایه ۲۰۲۱ بالاتر است — برش بزرگ‌شده"
+     }
+    },
+    {
+     "price": {
+      "value": 16059.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور هم‌ردیف خط"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "نامعلوم",
+      "confidence": "low",
+      "from": "image",
+      "how": "از سایه‌های بالای سقف ۲۰۱۷ و نزدیک نوک سایه کف ۲۰۲۲"
+     }
+    },
+    {
+     "price": {
+      "value": 6205.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور هم‌ردیف خط"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "کف بدنه‌های ۲۰۱۸ و ۲۰۱۹؛ سایه‌های بلند، از جمله مارس ۲۰۲۰، زیرش"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "9,098 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "BTCUSD 123,473 · 25d 17h — قیمت زنده",
+     "confidence": "high"
+    }
+   ],
+   "speech": "داده سمت راست مهم‌تر است چون تازه‌تر است؛ خط را به جایی که قیمت اخیراً گیر کرد می‌برد. مقاومتی که شکست و پولبک خورد، درستی خط را تأیید می‌کند.",
+   "method_notes": [
+    "داده سمت راست مهم‌تر: خط به آخرین واکنش جابه‌جا می‌شود — 17:38 تا 18:13",
+    "شکست و پولبک به خط، تأیید خط است — 18:16 تا 18:29",
+    "خط‌های ماهانه از میان بدنه‌ها، نه نوک سایه‌های بلند"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:45:14+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:15:14 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_19m11.0s",
+   "t": 1151.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:46:39+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:16:39 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن و عنوان «1W»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام برچسب‌ها پایین محور کوچک‌تر — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 104733.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 72714.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 54268.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 16059.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور — خط ماهانه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 6205.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور — خط ماهانه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "62,777 · Jun 14, 2021 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "BTCUSD 123,478 · 6d 17h — قیمت زنده و شمارش تا بسته هفتگی",
+     "confidence": "high"
+    },
+    {
+     "text": "123,519 برچسب سبز بالای محور — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "در هفتگی همان کار: دو نقطه داری، خط می‌گذاری؛ جایی که نقطه مشترک ندارد، نه. برای خط‌های هر تایم رنگ جدا بگذار.",
+   "method_notes": [
+    "خط‌های ماهانه روی هفتگی هم می‌مانند",
+    "در هفتگی هم دو نقطه — 18:43 تا 19:12"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:46:39+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:16:39 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_19m41.5s",
+   "t": 1181.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "nodate_arshia_course_rui0-OuN",
+     "row": 1,
+     "time": "19:43",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2025-10-06T07:47:10+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:17:10 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن و عنوان «1W»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 108409.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 54268.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 31073.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "78,05… و 73,614 کنار خط میانی — زیر نشانگر، ناخوانا",
+     "confidence": "low"
+    }
+   ],
+   "speech": "داده سمت راست: قیمت از بالا آمد و به کجا گیر کرد و برگشت — آن حمایت است. خط را تمیز می‌کند.",
+   "method_notes": [
+    "خط را به آخرین واکنش سمت راست می‌برد"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:47:10+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:17:10 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_19m43.5s",
+   "t": 1183.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "nodate_arshia_course_rui0-OuN",
+     "row": 1,
+     "time": "19:43",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2025-10-06T07:47:12+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:17:12 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن و عنوان «1W»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 140000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 33700.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 108409.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "سایه",
+      "confidence": "medium",
+      "from": "image",
+      "how": "نوک سایه سقف‌های دسامبر ۲۰۲۴ به خط می‌رسد"
+     }
+    },
+    {
+     "price": {
+      "value": 77729.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور — خط برگزیده، د۱"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "کف بدنه‌های مارس و آوریل ۲۰۲۵؛ سایه آوریل زیرش"
+     }
+    },
+    {
+     "price": {
+      "value": 54268.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "کف بدنه‌های اوت ۲۰۲۴؛ سایه بلند زیرش"
+     }
+    },
+    {
+     "price": {
+      "value": 31073.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "−5,790 (−7.45%) · 1 bars, 7d — ابزار اندازه‌گیری از خط 77,729 تا 71,939",
+     "confidence": "high"
+    },
+    {
+     "text": "71,939 برچسب آبی محور — سر دیگر ابزار اندازه‌گیری",
+     "confidence": "high"
+    }
+   ],
+   "speech": "فاصله خالی: این همان خطی است که مقاومت ما بود. خریدارها از ترس جاماندن سفارششان را زودتر گذاشتند و حمایت بالاتر آمد.",
+   "method_notes": [
+    "حمایت تازه بالای مقاومت شکسته می‌نشیند اگر واکنش آنجا بود؛ خط را به واکنش واقعی می‌برد، نه به عدد قدیم",
+    "وارسی د۳: 77,729 − 71,939 = 5,790؛ 5,790 ÷ 77,729 = 7.45٪ — محاسبه‌شده"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف از مقاومت قدیم و فاصله تا حمایت تازه می‌گوید؛ ابزار اندازه‌گیری همان فاصله را نشان می‌دهد"
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:47:12+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:17:12 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_19m48.0s",
+   "t": 1188.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "nodate_arshia_course_rui0-OuN",
+     "row": 1,
+     "time": "19:43",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2025-10-06T07:47:16+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:17:16 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W روشن و عنوان «1W»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 108409.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 77729.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 54268.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 31073.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "−5,790 (−7.…) · 1 bars, 7d — ابزار اندازه‌گیری، نیمه‌پوشیده",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "سفارش‌های خرید پیش از رسیدن به حمایت گذاشته شد و حمایت را بالاتر آورد.",
+   "method_notes": [
+    "همان جابه‌جایی خط به واکنش تازه"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:47:16+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:17:16 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_22m30.0s",
+   "t": 1350.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "nodate_arshia_course_rui0-OuN",
+     "row": 2,
+     "time": "22:43",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2025-10-06T07:49:58+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:19:58 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن و عنوان «1h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 127200.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 118540.0,
+     "confidence": "medium",
+     "from": "image",
+     "how": "پایین‌ترین برچسب تیک کامل؛ 117,902 برچسب خط است، نه تیک — د۱۹"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 124233.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور؛ خط برگزیده با لنگر آبی از ۵ اکتبر — ماشه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "سایه",
+      "confidence": "low",
+      "from": "image",
+      "how": "از نوک سایه‌های یک‌ساعته ۵ اکتبر"
+     }
+    },
+    {
+     "price": {
+      "value": 121793.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور — ماشه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 119673.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور — خط روزانه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "122,611 · Oct 06, 2025 18:30 — نشانگر موس روی خط در حال ویرایش",
+     "confidence": "medium"
+    },
+    {
+     "text": "BTCUSD 123,403 · 10:01 — قیمت زنده و شمارش تا بسته ساعتی",
+     "confidence": "high"
+    }
+   ],
+   "speech": "حالا حمایت و مقاومتت را داری. اگر مقاومت در یک‌ساعته بشکند روند یک‌ساعته صعودی می‌شود؛ اگر حمایت از دست برود نزولی — ولی تا حمایت بعدی.",
+   "method_notes": [
+    "زیر روزانه فقط ماشه است، نه حمایت و مقاومت — 21:07 تا 21:17",
+    "ماشه: سطح ریجکت واضح، جایی که قیمت شارپ برگشت — 21:39 تا 21:51",
+    "روند هر تایم با شکست سطح همان تایم تعریف می‌شود"
+   ],
+   "claims": [
+    "به گفته او اگر مقاومت یک‌ساعته بشکند روند یک‌ساعته بیت‌کوین صعودی می‌شود و با از دست رفتن حمایت نزولی — بی‌عدد صریح، بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:49:58+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:19:58 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_22m40.5s",
+   "t": 1360.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "nodate_arshia_course_rui0-OuN",
+     "row": 2,
+     "time": "22:43",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2025-10-06T07:50:09+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:20:09 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1H",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه 1h روشن و عنوان «1h»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 124233.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور — ماشه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 122583.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور — ماشه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 121793.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور — ماشه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 119673.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور — خط روزانه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "127,101 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "O114,530 H114,596 L114,369 C114,440 — شمع زیر نشانگر، ۳۰ سپتامبر",
+     "confidence": "high"
+    }
+   ],
+   "speech": "در روزانه این خط‌های یک‌ساعته معنا ندارند؛ در روزانه برای نزولی شدن روند باید حدود ۱۱۸ هزار از دست برود.",
+   "method_notes": [
+    "ماشه یک‌ساعته در تحلیل روزانه حساب نمی‌شود — 22:41 تا 22:50"
+   ],
+   "claims": [
+    "به گفته او روند روزانه بیت‌کوین فقط با از دست رفتن حدود ۱۱۸ هزار دلار نزولی می‌شود — بی‌مهلت؛ زیرنویس «۱۸ هزار»، صفر افتاده — د۲۰"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "خط 117,902 روی محور همان «۱۸ هزار» حرف است، با رقم افتاده"
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:50:09+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:20:09 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_22m54.0s",
+   "t": 1374.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "nodate_arshia_course_rui0-OuN",
+     "row": 2,
+     "time": "22:43",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2025-10-06T07:50:22+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:20:22 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D روشن و عنوان «1D»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 145000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 89500.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 124233.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور — ماشه یک‌ساعته"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 122583.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور — ماشه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 121793.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور — ماشه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 119673.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 117902.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 100786.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 92019.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "109,573 — برچسب نشانگر موس روی خطی که برچسبش زیر آن پنهان است — د۲۲",
+     "confidence": "medium"
+    },
+    {
+     "text": "BTCUSD 123,405 · 16:09:37 — قیمت زنده و شمارش تا بسته روزانه",
+     "confidence": "high"
+    }
+   ],
+   "speech": "با حمایت روزانه تنها نمی‌ایستد؛ داو، الگو، فیک و کندل را هم یاد گرفتیم تا همه با هم بهترین داده را بدهند.",
+   "method_notes": [
+    "سطح تنها کافی نیست: داو، الگو، فیک و کندل کنارش — 22:55 تا 23:06"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:50:22+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:20:22 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_23m05.0s",
+   "t": 1385.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:50:33+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:20:33 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D روشن و عنوان «1D»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 155000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 95850.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 124233.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور — ماشه یک‌ساعته"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 122583.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور — ماشه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 121793.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور — ماشه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 119673.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "medium",
+      "from": "image",
+      "how": "بالای بدنه‌های محدوده ژوئیه و اوت ۲۰۲۵؛ سایه‌ها بالاتر — برش بزرگ‌شده"
+     }
+    },
+    {
+     "price": {
+      "value": 117902.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "سایه",
+      "confidence": "medium",
+      "from": "image",
+      "how": "نوک سایه سقف سپتامبر ۲۰۲۵ به خط می‌رسد — داده سمت راست"
+     }
+    },
+    {
+     "price": {
+      "value": 108871.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "low",
+      "from": "image",
+      "how": "کف بدنه‌های اول سپتامبر ۲۰۲۵؛ سایه‌ها زیرش"
+     }
+    },
+    {
+     "price": {
+      "value": 100786.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "110,691 · Oct 12, 2025 — نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اگر قیمت تا پایین بیاید باز حمایت و مقاومت جدید می‌سازد: یک بار واکنش، سقف، باکس، فیک، و دوباره واکنش.",
+   "method_notes": [
+    "خط‌های یک‌ساعته روی روزانه کوتاه و جدا مانده‌اند"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:50:33+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:20:33 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_23m16.5s",
+   "t": 1396.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:50:45+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:20:45 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D روشن و عنوان «1D»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 124233.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور — ماشه یک‌ساعته"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 122583.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور — ماشه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 121793.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب محور — ماشه"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 117902.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 108871.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [
+    {
+     "kind": "projection",
+     "label": "مسیر آبی دستی آینده: ریزش تا حدود 117,902، رنج و برگشت — د۱۸",
+     "p1": {
+      "time": {
+       "value": "2025-10-06",
+       "confidence": "low",
+       "from": "image",
+       "how": "از جای افقی"
+      },
+      "price": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2025-11-06",
+       "confidence": "low",
+       "from": "image",
+       "how": "از جای افقی"
+      },
+      "price": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      }
+     }
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "120,079 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "Nov 06, 2025 — برچسب زمان نشانگر",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بیت‌کوین یک‌بعدی حرکت نمی‌کند؛ هر بار جاهایی اذیت می‌کند. پول زیادی رویش است.",
+   "method_notes": [
+    "مسیر دستی پیش‌بینی است، نه سطح — د۱۸"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:50:45+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:20:45 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_25m20.5s",
+   "t": 1520.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:52:49+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:22:49 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D روشن و عنوان «1D»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 117902.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 108871.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 100786.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 92019.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "106,574 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "بیضی آبی دستی دور واکنش‌های حدود خط 108,871",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "حمایت یعنی سفارش‌های لیمیت خریدار زور سفارش‌های مارکت فروشنده را گرفت؛ قیمت از آنجا بالا رفت.",
+   "method_notes": [
+    "سطح از سفارش لیمیت ساخته می‌شود؛ سفارش مارکت قیمت را جابه‌جا می‌کند — 24:25 تا 24:54"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:52:49+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:22:49 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_26m12.5s",
+   "t": 1572.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:53:41+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:23:41 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D روشن و عنوان «1D»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 126000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 90200.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 119673.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 117902.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 100786.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 92019.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "109,908 · Jul 10, 2025 — نشانگر موس روی خطی که برچسبش زیر آن است — د۲۲",
+     "confidence": "medium"
+    },
+    {
+     "text": "O111,318 H117,000 L110,610 C116,031 +4,744 (+4.26%) — شمع زیر نشانگر، ۱۰ ژوئیه ۲۰۲۵",
+     "confidence": "high"
+    }
+   ],
+   "speech": "با شکست مقاومت لانگ، با شکست حمایت شورت؛ ارجاع به تحلیل روزانه ۹ ژوئیه و لانگ با همین کندل شکست.",
+   "method_notes": [
+    "خط زیر نشانگر حدود ۱۰۹.۷ هزار از میان بدنه‌های مه و ژوئن ۲۰۲۵ می‌گذرد، نه از نوک سایه‌ها — برش بزرگ‌شده",
+    "ستاپ: شکست مقاومت لانگ، شکست حمایت شورت — 25:40"
+   ],
+   "claims": [
+    "به گفته او در تحلیل ۹ ژوئیه ۲۰۲۵ با شکست مقاومت حدود ۱۱۰ هزار لانگ گرفتند — کارنامه، نه ادعای امروز"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:53:41+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:23:41 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_26m59.5s",
+   "t": 1619.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:54:28+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:24:28 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D روشن و عنوان «1D»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 112000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 62550.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 109761.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 100786.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 92019.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 78055.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید",
+     "drawn_at": {
+      "value": "بدنه",
+      "confidence": "medium",
+      "from": "image",
+      "how": "کف بدنه‌های مارس و آوریل ۲۰۲۵؛ سایه ۷ آوریل زیرش"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "72,310 · Apr 18, 2025 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "بیضی و پیکان آبی دستی دور کف‌های مارس و آوریل",
+     "confidence": "medium"
+    },
+    {
+     "text": "107,348 برچسب آبی کم‌رنگ زیر 109,761 — معنا نامعلوم",
+     "confidence": "low"
+    }
+   ],
+   "speech": "اگر کف قبلی را شکستی باید زور بیشتری داشته باشی؛ نداشتی و خریدار قوی‌تر آمد. حجم کندل‌های قرمز در رنج کم شد.",
+   "method_notes": [
+    "فیک کف و حجم کاهشی فروش در رنج یعنی ورود خریدار — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:54:28+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:24:28 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_27m30.5s",
+   "t": 1650.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:54:59+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:24:59 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D روشن و عنوان «1D»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 104000.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "بالاترین برچسب کامل"
+    },
+    "bottom": {
+     "value": 58700.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌ترین برچسب کامل"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 100786.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 92019.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 78055.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "75,091 · Mar 21, 2025 — نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "فقط با مفهوم، نه با حفظ اسم‌ها؛ مفهوم زور خریدار و فروشنده و بس. بقیه ابزار است تا چیزی از چشمت نیفتد.",
+   "method_notes": [
+    "کندل ستاپ ابزار یادآوری مفهوم است، نه قانون جدا — 27:43"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:54:59+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:24:59 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_28m14.5s",
+   "t": 1694.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2025-10-06T07:55:43+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نوار پایین تریدینگ‌ویو؛ روز از شمارش معکوس هفتگی و ماهانه و برچسب Oct 06 نمودار ساعتی — دوشنبه ۶ اکتبر ۲۰۲۵",
+    "seen": "11:25:43 UTC+3:30"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Bitcoin / U.S. Dollar · Bitstamp»"
+   },
+   "venue": {
+    "value": "BITSTAMP",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D روشن و عنوان «1D»"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 100786.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 92019.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    },
+    {
+     "price": {
+      "value": 78055.0,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب سفید محور"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی سفید"
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "71,825 · Apr 05, 2025 — نشانگر موس",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "هر کندل یا الگو را می‌توانی امضای خودت کنی، در گذشته پیدا کنی و قانون خودت کنی.",
+   "method_notes": [
+    "بک‌تست چشمی الگوی شخصی در نمودار گذشته — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "chart_end": {
+    "value": "2025-10-06T07:55:43+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده — آخرین شمع، شمع باز لحظه ضبط است؛ انتشار ۱۵ روز پس از ضبط بود، پس برش snap زمان ضبط است — د۳۱",
+    "seen": "11:25:43 UTC+3:30"
+   }
+  },
+  {
+   "frame_id": "rui0-OuNWmY_29m56.5s",
+   "t": 1796.5,
+   "is_chart": false,
+   "refs": [],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "seen": null
+   },
+   "coin": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "chart_type": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "TRADE CITY PRO — صفحه پایان",
+     "confidence": "high"
+    }
+   ],
+   "speech": "پایان؛ پیش از پارت بعد الگوها را تمرین کن و حمایت و مقاومت را رسم کن و با تحلیل روزانه بیت‌کوین او مقایسه کن.",
+   "method_notes": [
+    "تمرین پیشنهادی: رسم خودت و مقایسه با تحلیل روزانه — 28:55 تا 29:05"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   }
+  }
+ ],
+ "read_by": "مدل — کار ویژه روش حمایت و مقاومت، ۴ اکتبر ۲۰۲۶",
+ "read_at": "2026-10-04",
+ "methods": [
+  {
+   "area": "رسم حمایت و مقاومت",
+   "rule": "از ماهانه شروع کن، سپس هفتگی، سپس روزانه؛ زیر روزانه فقط ماشه",
+   "where": "15:56، 18:32، 20:10، 21:07",
+   "library": "هست: روش رسم سطح، گام ۱، ۴ و ۵"
+  },
+  {
+   "area": "رسم حمایت و مقاومت",
+   "rule": "هر خط دو نقطه لازم دارد؛ تک‌نقطه در آن تایم خط نیست",
+   "where": "16:02 تا 17:16",
+   "library": "هست: روش رسم سطح، گام ۲"
+  },
+  {
+   "area": "رسم حمایت و مقاومت",
+   "rule": "داده سمت راست مهم‌تر است؛ خط را به آخرین واکنش جابه‌جا کن",
+   "where": "17:38، 19:16، 20:51",
+   "library": "هست: گام ۳ — تازه: جابه‌جایی صریح خط"
+  },
+  {
+   "area": "رسم حمایت و مقاومت",
+   "rule": "شکست مقاومت و پولبک به آن، تأیید درستی خط است",
+   "where": "18:16 تا 18:29",
+   "library": "تازه — ر۳۳"
+  },
+  {
+   "area": "رسم حمایت و مقاومت",
+   "rule": "سفارش زودتر خریدار حمایت را بالای مقاومت شکسته می‌نشاند؛ خط به واکنش واقعی می‌رود",
+   "where": "19:41 تا 20:04",
+   "library": "تازه — ر۳۴"
+  },
+  {
+   "area": "رسم حمایت و مقاومت",
+   "rule": "ماشه زیر روزانه: سطح ریجکت واضح، جایی که قیمت شارپ برگشت؛ یک نقطه بس است",
+   "where": "21:36 تا 22:13",
+   "library": "تازه — ر۳۵"
+  },
+  {
+   "area": "روند",
+   "rule": "روند هر تایم با شکست سطح همان تایم تعریف می‌شود؛ ماشه تایم پایین در تایم بالا معنا ندارد",
+   "where": "22:20 تا 22:50",
+   "library": "تازه — ر۳۶"
+  },
+  {
+   "area": "ستاپ",
+   "rule": "با شکست مقاومت لانگ، با شکست حمایت شورت",
+   "where": "25:40 تا 25:57",
+   "library": "هست: سه ستاپ، شکست سطح"
+  },
+  {
+   "area": "الگو",
+   "rule": "الگو برای جهت و تغییر روند است، نه ماشه و نه هدف؛ از مفهوم زور خریدار و فروشنده بخوان",
+   "where": "01:37 تا 01:48، 05:14",
+   "library": "تازه — ر۳۷"
+  },
+  {
+   "area": "فیک",
+   "rule": "اگر حذف سه چهار کندل ساختار و سطح مهم را عوض نکند، آن حرکت فیک است",
+   "where": "11:09 تا 11:26",
+   "library": "تازه — ر۳۸"
+  }
+ ]
+}
