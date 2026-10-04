@@ -103,6 +103,7 @@ class World:
         self.blocked: set[str] = set()
         self.frames: list[str] = []
         self.meta_calls: list[str] = []
+        self.transcripts: list[str] = []
 
     def add(self, source: str | None, tag: str, published: datetime, *, dur=900,
             title: str | None = None, cid: str | None = None, in_feed: bool = True) -> str:
@@ -132,6 +133,7 @@ class World:
         return self.videos[v]
 
     def transcript(self, v, langs):
+        self.transcripts.append(v)
         return ([{"text": SECRET, "start": 0.0},
                  {"text": "bitcoin to 62000 by december", "start": 30.0}], "زیرنویس خودکار [en]")
 
@@ -414,6 +416,29 @@ def test_state_is_public_safe(env) -> None:
     w.add("cryptocity_pro", "a", ago(1))
     run_new(w)
     assert SECRET not in Path("intake", V.VIDEO_STATE_NAME).read_text(encoding="utf-8")
+
+
+# ═══════════════ گام صفر: ورود پوشه انتظار — کار شش ═══════════════
+
+def test_new_imports_nightly_pending_first_and_reuses_its_doc(env, capsys) -> None:
+    w = World()
+    a = w.add("tekrargar", "a", ago(3))
+    # کار شبانه همین ویدیو را در پوشه انتظار گرفته — سند عمومی، محلی و دیده‌شده
+    d = Path("intake", I.LOCAL_DIR, I.PENDING_DIR, "20261003T223000Z")
+    src = I.Source(key="tekrargar", name_fa="تکرارگر", kind="youtube", lang=["fa"])
+    item = V.item_from_info(w.videos[a])
+    fname, _, _ = I.write_documents(src, item, w.transcript(a, ["fa"])[0], "زیرنویس", d, duration="15:00")
+    w.transcripts.clear()
+    I.save_state(d / ".state.json", {"seen": {"tekrargar": {a: {"title": "x", "file": fname}}}})
+    (d / I.RUN_FILE).write_text(json.dumps({"started": "2026-10-03 22:30 UTC", "exit_code": 0}),
+                                encoding="utf-8")
+    assert run_new(w) == 0
+    assert w.transcripts == []                       # سند شب بازاستفاده شد، نه گرفتن دوباره
+    assert w.frames == [a]
+    assert Path("intake", "tekrargar", fname).exists() and not d.exists()
+    st = json.loads(Path("intake", ".state.json").read_text(encoding="utf-8"))
+    assert st["imports"][0]["stamp"] == "20261003T223000Z"
+    assert "ورود پوشه انتظار 20261003T223000Z" in capsys.readouterr().out
 
 
 # ═══════════════ --report وضعیت را «دیده‌شده» می‌کند ═══════════════

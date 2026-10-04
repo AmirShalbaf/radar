@@ -1106,6 +1106,15 @@ def new_cli(a, deps: Deps, now: datetime) -> int:
               "ffmpeg و ffprobe جدا", file=sys.stderr)
         return 2
     state_path = intake / VIDEO_STATE_NAME
+    # گام صفر: پوشه انتظار جمع‌آوری شبانه — پیش از هر چیز، وگرنه سند شب گرفته‌شده
+    # دوباره گرفته می‌شود و ورود بعدی با آن برخورد می‌کند. نشست ۷ب، کار شش.
+    try:
+        imported = I.import_pending(intake, intake / STATE_NAME, now)
+    except I.IntakeError as e:
+        print(f"⛔ ورود پوشه انتظار — {e}", file=sys.stderr)
+        return 2
+    for line in I.render_import(imported):
+        print(line)
     try:
         state = I.load_state(intake / STATE_NAME)
         vstate = load_video_state(state_path)

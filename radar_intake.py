@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-radar_intake.py  —  نسخه ۱.۵
+radar_intake.py  —  نسخه ۱.۶
 موتور جمع‌آوری منابع تحلیلی برای چارچوب رادار
 
 فلسفه:
@@ -25,6 +25,14 @@ radar_intake.py  —  نسخه ۱.۵
     python radar_intake.py --since 2026-07-01    # فقط بعد از این تاریخ
     python radar_intake.py --whisper             # اجازه رونویسی صوتی اگر زیرنویس نبود
     python radar_intake.py --dry-run             # فقط نشان بده چه چیزی می‌آورد
+    python radar_intake.py --pending             # کار شبانه: فقط پوشه انتظار، بیرون از مخزن
+    python radar_intake.py --import-pending      # روال روزانه: ورود پوشه‌های انتظار
+
+کار شبانه — نشست ۷ب:
+    radar_nightly.cmd با زمان‌بند ویندوز همان --pending را می‌زند. فقط در
+    intake/_local/_pending/<زمان>/ می‌نویسد؛ درخت گیت تمیز می‌ماند و هیچ دستور گیتی
+    نیست. شکست منبع کد ۳ و در run.json همان پوشه. radar_video.py --new پیش از هر
+    کار واردش می‌کند؛ رکورد ورود در .state.json برای خلاصه روزانه.
 """
 
 from __future__ import annotations
@@ -99,7 +107,7 @@ except ImportError:
     VideoUnavailable = VideoUnplayable = _Absent
 
 
-VERSION = "1.5"
+VERSION = "1.6"                   # ۱.۶: پوشه انتظار جمع‌آوری شبانه --pending و --import-pending — نشست ۷ب
 UTC = timezone.utc
 USER_AGENT = "radar-intake/1.0 (research; contact via github.com/AmirShalbaf/radar)"
 
@@ -1479,6 +1487,203 @@ def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
 
 
 # ===========================================================================
+# ۷ب — پوشه انتظار جمع‌آوری شبانه — نشست ۷ب
+#
+# کار شبانه فقط در intake/_local/_pending/<زمان>/ می‌نویسد — بیرون از مخزن. هیچ فایل
+# ردیابی‌شده‌ای دست نمی‌خورد، پس درخت تمیز می‌ماند و با جلسه در حال کار برخورد
+# نمی‌کند؛ هیچ دستور گیتی در کار شبانه نیست. روال روزانه با import_pending واردش
+# می‌کند و commit با همان روال است. راه ردشده: قفل جلسه و commit خود کار شبانه —
+# برخورد روی فهرست گیت، قفل کهنه پس از ازکارافتادن، و تاریخچه پر از commit شبانه.
+# ===========================================================================
+
+PENDING_DIR = "_pending"
+PARTIAL_SUFFIX = ".partial"
+RUN_FILE = "run.json"
+_PENDING_META = (".state.json", RUN_FILE, "RUN.md")
+
+
+class ImportConflict(IntakeError):
+    """فایل هم‌نام با محتوای دیگر — هیچ فایلی از آن پوشه جابه‌جا نشد. کد ۲."""
+
+
+@dataclass
+class ImportResult:
+    imported: list[dict] = field(default_factory=list)    # همان رکورد imports در .state.json
+    partial: list[str] = field(default_factory=list)       # نیمه‌کاره — هرگز وارد نمی‌شود
+    kept: list[str] = field(default_factory=list)          # پوشه با فایل ناشناخته، برداشته نشد
+
+
+def pending_root(outdir: Path) -> Path:
+    return outdir / LOCAL_DIR / PENDING_DIR
+
+
+def pending_dirs(outdir: Path) -> tuple[list[Path], list[Path]]:
+    """(کامل، نیمه‌کاره) به ترتیب زمان. فایل‌های ریشه — مثل گزارش کار شبانه — پوشه نیستند."""
+    root = pending_root(outdir)
+    if not root.is_dir():
+        return [], []
+    dirs = sorted(p for p in root.iterdir() if p.is_dir())
+    return ([p for p in dirs if not p.name.endswith(PARTIAL_SUFFIX)],
+            [p for p in dirs if p.name.endswith(PARTIAL_SUFFIX)])
+
+
+def _union_seen(state: dict, dirs: list[Path]) -> dict:
+    """حافظه اصلی به‌علاوه دیده‌شده‌های پوشه‌های وارد‌نشده — اصلی هرگز بازنویسی نمی‌شود."""
+    out = json.loads(json.dumps(state, ensure_ascii=False))
+    for d in dirs:
+        p = d / ".state.json"
+        if p.exists():
+            for src, entries in load_state(p)["seen"].items():
+                for vid, e in entries.items():
+                    out["seen"].setdefault(src, {}).setdefault(vid, e)
+    return out
+
+
+def _report_dict(run: RunReport) -> dict:
+    return {"started": run.started, "dry_run": run.dry_run,
+            "sources": [vars(s).copy() for s in run.sources],
+            "disabled": [{"key": s.key, "name_fa": s.name_fa, "disabled_reason": s.disabled_reason}
+                         for s in run.disabled]}
+
+
+def _report_from(d: dict) -> RunReport:
+    return RunReport(started=d.get("started", "—"), dry_run=bool(d.get("dry_run")),
+                     sources=[SourceRun(**s) for s in d.get("sources", [])],
+                     disabled=[Source(**s) for s in d.get("disabled", [])])
+
+
+def _failures(run: RunReport) -> list[str]:
+    out = []
+    for s in run.sources:
+        if s.failure:
+            out.append(f"{s.name} (`{s.key}`) — {s.failure}")
+        out += [f"{s.name} (`{s.key}`) — آیتم: {e}" for e in s.item_errors]
+    return out
+
+
+def import_pending(outdir: Path, statepath: Path, now: datetime | None = None) -> ImportResult:
+    """
+    پوشه‌های کامل انتظار، به ترتیب زمان. برای هر پوشه اول همه فایل‌ها سنجیده
+    می‌شوند و بعد جابه‌جا: فایل هم‌نام یکسان کنار می‌رود، با محتوای دیگر خطای بلند
+    و هیچ فایلی از آن پوشه جابه‌جا نمی‌شود. دیده‌شده‌ها ادغام می‌شوند — اصلی برنده
+    است. رکورد ورود در .state.json می‌نشیند — خلاصه روزانه از آن می‌خواند — و INDEX
+    با کارنامه آخرین شب ساخته می‌شود. نیمه‌کاره هرگز وارد نمی‌شود.
+    """
+    now = now or datetime.now(UTC)
+    complete, partial = pending_dirs(outdir)
+    res = ImportResult(partial=[p.name for p in partial])
+    if not complete:
+        return res
+    state = load_state(statepath)
+    last: RunReport | None = None
+    try:
+        for d in complete:
+            plan: list[tuple[Path, Path | None]] = []
+            for f in sorted(p for p in d.rglob("*") if p.is_file()):
+                rel = f.relative_to(d)
+                if len(rel.parts) == 1 and rel.name in _PENDING_META:
+                    continue
+                target = outdir / rel
+                if target.exists():
+                    if target.read_bytes() != f.read_bytes():
+                        raise ImportConflict(
+                            f"{target.as_posix()} هست با محتوای دیگر — {f.as_posix()}؛ هیچ فایلی از "
+                            f"{d.name} جابه‌جا نشد. دستی مقایسه کن و یکی را بردار.")
+                    plan.append((f, None))
+                else:
+                    plan.append((f, target))
+            docs = []
+            for f, target in plan:
+                if target is None:
+                    f.unlink()                 # همان بایت‌ها در intake هست
+                    continue
+                target.parent.mkdir(parents=True, exist_ok=True)
+                os.replace(f, target)
+                rel = target.relative_to(outdir).as_posix()
+                if not rel.startswith(LOCAL_DIR + "/") and rel.endswith(".md"):
+                    docs.append(rel)
+            if (d / ".state.json").exists():
+                for src, entries in load_state(d / ".state.json")["seen"].items():
+                    for vid, e in entries.items():
+                        state["seen"].setdefault(src, {}).setdefault(vid, e)
+            run = json.loads((d / RUN_FILE).read_text(encoding="utf-8")) if (d / RUN_FILE).exists() else {}
+            report = _report_from(run.get("report") or {"started": run.get("started", "—")})
+            rec = {"at": now.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"), "stamp": d.name,
+                   "started": run.get("started", "—"), "exit_code": run.get("exit_code"),
+                   "docs": sorted(docs), "failures": _failures(report)}
+            state.setdefault("imports", []).append(rec)
+            save_state(statepath, state)      # پس از هر پوشه — قطع اجرا ورود قبلی را گم نمی‌کند
+            res.imported.append(rec)
+            last = report
+            left = [p for p in d.rglob("*") if p.is_file()
+                    and not (p.parent == d and p.name in _PENDING_META)]
+            if left:
+                res.kept.append(d.name)
+            else:
+                shutil.rmtree(d)
+    finally:
+        if res.imported:
+            rebuild_index(outdir, last)
+    return res
+
+
+def render_import(res: ImportResult) -> list[str]:
+    out = []
+    for r in res.imported:
+        out.append(f"✓ ورود پوشه انتظار {r['stamp']} — اجرای {r['started']} — کد خروج {r['exit_code']} — "
+                   f"سند تازه {len(r['docs'])}")
+        out += [f"    ⛔ {f}" for f in r["failures"]]
+    out += [f"⚠ پوشه نیمه‌کاره {p} — اجرای شبانه قطع شد؛ وارد نشد و دست نخورد" for p in res.partial]
+    out += [f"⚠ پوشه {k} فایل ناشناخته دارد — وارد شد ولی برداشته نشد" for k in res.kept]
+    return out
+
+
+def run_pending(sources: list[Source], chosen: list[Source], outdir: Path, statepath: Path,
+                args, now: datetime) -> int:
+    """یک اجرای شبانه در پوشه انتظار. فقط همان پوشه نوشته می‌شود."""
+    complete, _ = pending_dirs(outdir)
+    base = _union_seen(load_state(statepath), complete)
+    before = {src: set(v) for src, v in base["seen"].items()}
+    stamp = now.astimezone(UTC).strftime("%Y%m%dT%H%M%SZ")
+    root = pending_root(outdir)
+    final, n = root / stamp, 1
+    while final.exists() or (root / (final.name + PARTIAL_SUFFIX)).exists():
+        n += 1
+        final = root / f"{stamp}_{n}"
+    work = root / (final.name + PARTIAL_SUFFIX)
+    work.mkdir(parents=True)
+    started = now.astimezone(UTC).strftime("%Y-%m-%d %H:%M UTC")
+    report = RunReport(started=started, disabled=[s for s in chosen if not s.enabled and not args.source])
+    log(f"  پوشه انتظار: {final.as_posix()} — هیچ فایل ردیابی‌شده‌ای نوشته نمی‌شود")
+    for src in sources:
+        try:
+            report.sources.append(process_source(src, make_session(), work, base, args))
+        except KeyboardInterrupt:
+            log("\nمتوقف شد.")
+            break
+        except Exception as e:
+            r = SourceRun(src.key, src.name_fa, failure=f"خطای پیش‌بینی‌نشده — {type(e).__name__}: {e}")
+            report.sources.append(r)
+            log(f"    ! {r.failure}")
+    fresh = {src: {v: e for v, e in entries.items() if v not in before.get(src, set())}
+             for src, entries in base["seen"].items()}
+    save_state(work / ".state.json", {"seen": {k: v for k, v in fresh.items() if v}})
+    code = 3 if report.failed else 0
+    (work / RUN_FILE).write_text(json.dumps(
+        {"started": started, "finished": datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC"),
+         "exit_code": code, "report": _report_dict(report)}, ensure_ascii=False, indent=1), encoding="utf-8")
+    summary = run_summary(report)
+    (work / "RUN.md").write_text("\n".join(summary) + "\n", encoding="utf-8")
+    os.replace(work, final)
+    log("")
+    log("\n".join(summary))
+    log(f"\nپوشه انتظار کامل: {final.as_posix()} — روال روزانه واردش می‌کند")
+    if code:
+        log("\n! کد خروج ۳ — دست‌کم یک منبع شکست خورد؛ فهرست بالا و run.json همان پوشه.")
+    return code
+
+
+# ===========================================================================
 # ۸ — اجرا
 # ===========================================================================
 
@@ -1604,7 +1809,8 @@ def process_source(
     return run
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: list[str] | None = None, now: datetime | None = None) -> int:
+    """now فقط برای آزمون — مهر پوشه انتظار و ورود؛ خط فرمان ساعت واقعی را می‌خواند."""
     ap = argparse.ArgumentParser(description="موتور جمع‌آوری منابع رادار")
     ap.add_argument("--config", default="analysts.yml")
     ap.add_argument("--out", default="intake")
@@ -1619,7 +1825,26 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--sleep", type=float, default=1.5)
     ap.add_argument("--force", action="store_true", help="دوباره‌سازی موارد دیده‌شده")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--pending", action="store_true",
+                    help="کار شبانه: فقط در intake/_local/_pending/<زمان>/ — نشست ۷ب")
+    ap.add_argument("--import-pending", action="store_true", dest="import_pending",
+                    help="ورود پوشه‌های انتظار به intake — روال روزانه")
     args = ap.parse_args(argv)
+
+    if args.import_pending:
+        if args.pending or args.dry_run:
+            log("! --import-pending تنها اجرا می‌شود")
+            return 2
+        try:
+            res = import_pending(Path(args.out), Path(args.state), now)
+        except IntakeError as e:
+            log(f"! ورود متوقف شد — {e}")
+            return 2
+        log("\n".join(render_import(res)) or "پوشه انتظاری برای ورود نیست.")
+        return 0
+    if args.pending and args.dry_run:
+        log("! --pending با --dry-run نمی‌آید — اجرای خشک هیچ پوشه‌ای نمی‌سازد")
+        return 2
 
     missing = missing_deps(args.whisper)
     if missing:
@@ -1652,6 +1877,12 @@ def main(argv: list[str] | None = None) -> int:
     if not sources:
         log("هیچ منبع فعالی انتخاب نشد.")
         return 1
+
+    if args.pending:
+        log("=" * 62)
+        log(f"  رادار — جمع‌آوری شبانه در پوشه انتظار  v{VERSION}")
+        log("=" * 62)
+        return run_pending(sources, chosen, outdir, statepath, args, now or datetime.now(UTC))
 
     started = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     report = RunReport(started=started, dry_run=args.dry_run,
