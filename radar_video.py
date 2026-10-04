@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-radar_video.py  —  نسخه ۱.۰ — «دیدن کامل» با یک پیوند، نشست ۶ب
+radar_video.py  —  نسخه ۱.۱ — «دیدن کامل» با یک پیوند، نشست ۶ب؛ رصد همیشگی، نشست ۷ب
 کاربر فقط پیوند می‌دهد — ویدیو یا پلی‌لیست، حتی از کانالی که در
 analysts.yml نیست — و رادار آن را کامل می‌بیند.
 
@@ -52,8 +52,17 @@ analysts.yml نیست — و رادار آن را کامل می‌بیند.
     python radar_video.py <پیوند> --max-frames 15
     python radar_video.py --report intake/charts/<منبع>/<video_id>.json
     python radar_video.py --new                           # رصد تازه، نشست ۷ب
+    python radar_video.py --suggest <پیوند ویدیو> [--note "..."]
 
-کد خروج: ۰ سالم؛ ۲ پیش‌نیاز، پیوند یا کارت نامعتبر؛ ۳ دست‌کم یک قسمت شکست خورد.
+صف پیشنهاد --suggest — نشست ۷ب:
+    فوری و بی‌شبکه؛ یک فایل برای هر ویدیو در intake/_local/suggest/ — محلی، بیرون از
+    مخزن، پس یادداشت کاربر عمومی نمی‌شود. ساخت انحصاری اتمی: دو نویسنده هم‌زمان
+    نوشته هم را پاک نمی‌کنند. تکراری، دیده‌شده یا کارت‌دار رد می‌شود با پیام روشن.
+    از cmd، از هر پوشه: C:\\Users\\User\\Documents\\radar\\suggest "<پیوند>" --note "..."
+    — suggest.cmd فقط اسکی است، چون cmd فایل دسته‌ای UTF-8 را درست نمی‌خواند.
+
+کد خروج: ۰ سالم؛ ۱ پیشنهاد رد شد — تکراری یا دیده‌شده؛ ۲ پیش‌نیاز، پیوند، کارت،
+وضعیت یا صف نامعتبر؛ ۳ دست‌کم یک قسمت یا یک خوراک شکست خورد.
 """
 
 from __future__ import annotations
@@ -78,7 +87,7 @@ import radar_intake as I
 from radar_one import video_id as _video_id     # تنها منبع الگوی شناسه ویدیو
 from radar_text import fa
 
-VERSION = "1.0"
+VERSION = "1.1"                   # ۱.۱: رصد تازه --new، صف --suggest — نشست ۷ب
 UTC = timezone.utc
 
 SINGLE_ROLE = "تک‌ویدیو"
@@ -771,6 +780,95 @@ def finish_queue(c: Cand, outcome: str, now: datetime) -> Path:
     return target
 
 
+class Suggestion:
+    """نتیجه --suggest: کد ۰ افزوده، ۱ رد روشن — تکراری یا دیده‌شده، ۲ پیوند یا وضعیت نامعتبر."""
+
+    def __init__(self, rc: int, message: str):
+        self.rc, self.message = rc, message
+
+
+def _blocking_done(intake: Path, vid: str) -> str:
+    """نتیجه پیشین این ویدیو در done/ اگر بسته است؛ شکست بسته نیست."""
+    d = queue_dir(intake) / "done"
+    for p in sorted(d.glob(f"{vid}__*.json")) if d.is_dir() else []:
+        try:
+            out = str(json.loads(p.read_text(encoding="utf-8")).get("outcome") or "")
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as e:
+            raise StateError(f"رکورد صف {p} خوانا نیست — {type(e).__name__}: {e}") from e
+        if out in CLOSED or out.startswith("پیشین"):
+            return f"{STATUS_FA.get(out, out)} — {p.name}"
+    return ""
+
+
+def enqueue(intake: Path, raw: str, note: str, now: datetime) -> Suggestion:
+    """
+    یک پیشنهاد در صف، فوری و بی‌شبکه. فایل موقت و سپس پیوند سخت به نام شناسه ویدیو:
+    پیوند سخت روی نام موجود شکست می‌خورد، پس ساخت انحصاری و اتمی است — دو نویسنده
+    هم‌زمان هرگز نوشته هم را پاک نمی‌کنند و تکراری خودبه‌خود رد می‌شود. افزودن به
+    ته یک فایل در ویندوز اتمی نیست — ایستگاه ۱، استدلال.
+    """
+    try:
+        link = parse_link(raw)
+    except LinkError as e:
+        return Suggestion(2, f"⛔ {e}")
+    if link.kind != "video":
+        return Suggestion(2, "⛔ فقط پیوند ویدیو — پلی‌لیست با `python radar_video.py <پیوند> --limit N`")
+    vid = link.video_id
+    try:
+        prev = load_video_state(intake / VIDEO_STATE_NAME)["videos"].get(vid, {}).get("status")
+        done = _blocking_done(intake, vid)
+    except StateError as e:
+        return Suggestion(2, f"⛔ {e}")
+    if prev in CLOSED:
+        return Suggestion(1, f"ℹ️ {vid} پیش‌تر {STATUS_FA[prev]} — دوباره در صف نرفت")
+    cards = sorted((intake / F.CHARTS_DIR.name).glob(f"*/{vid}.json"))
+    if cards:
+        return Suggestion(1, f"ℹ️ {vid} کارت نمودار دارد — دیده شده: {cards[0].as_posix()}")
+    if done:
+        return Suggestion(1, f"ℹ️ {vid} پیش‌تر از صف گذشت — {done}")
+    d = queue_dir(intake)
+    d.mkdir(parents=True, exist_ok=True)
+    rec = {"video_id": vid, "url": link.url, "queued_at": _iso(now), "note": note or "",
+           "by": f"radar_video {VERSION} --suggest"}
+    target = d / f"{vid}.json"
+    fd, tmp = tempfile.mkstemp(dir=d, prefix=vid + ".", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
+            f.write(json.dumps(rec, ensure_ascii=False, indent=1) + "\n")
+        os.link(tmp, target)
+    except FileExistsError:
+        try:
+            at = json.loads(target.read_text(encoding="utf-8")).get("queued_at", "—")
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+            at = "—"
+        return Suggestion(1, f"ℹ️ {vid} در صف هست — از {at}؛ دوباره افزوده نشد")
+    finally:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+    n = len(list(d.glob("*.json")))
+    return Suggestion(0, f"✅ {vid} در صف — «{SUGGEST_LABEL}»، پیش از منابع رصد دیده می‌شود. "
+                         f"صف: {n} پیشنهاد. {target.as_posix()}")
+
+
+def channel_candidates(vstate: dict, threshold: int = 3) -> list[dict]:
+    """
+    کانال ناشناخته‌ای که دست‌کم threshold ویدیوی پیشنهادی دارد — هر نتیجه‌ای. منبع
+    شناخته analysts.yml نامزد نیست. شمار از وضعیت است، چون نام کانال را فقط فراداده
+    هنگام دیدن می‌دهد؛ --suggest به شبکه نمی‌رود.
+    """
+    by: dict[str, dict] = {}
+    for e in vstate.get("videos", {}).values():
+        cid = e.get("channel_id") or ""
+        if not (e.get("suggested") and cid and str(e.get("source", "")).startswith(SINGLE_PREFIX)):
+            continue
+        c = by.setdefault(cid, {"channel_id": cid, "channel": e.get("channel") or cid, "count": 0})
+        c["count"] += 1
+    return sorted((c for c in by.values() if c["count"] >= threshold),
+                  key=lambda c: (-c["count"], c["channel_id"]))
+
+
 def _card_paths(ctx: Ctx, vid: str, folder: str) -> dict:
     vdir = ctx.frames_root / vid
     return {"frames_md": (vdir / "FRAMES.md").as_posix(),
@@ -892,6 +990,8 @@ def see_new(ctx: Ctx, watched: list[I.Source], vstate: dict, state_path: Path,
              "status": st, "first_at": _iso(now), "detail": ep.detail}
         if c.suggested:
             e["suggested"] = True
+        if ep.single is not None:
+            e["channel"] = ep.single.name_fa          # نام کانال ناشناخته، برای نامزد فهرست رصد
         if st == "ready":
             e.update(picked_at=_iso(now), doc=ep.doc, frames_md=ep.frames_md, template=ep.template,
                      cards=ep.cards)
@@ -1436,6 +1536,9 @@ def main(argv: list[str] | None = None, deps: Deps | None = None, now: datetime 
     ap.add_argument("link", nargs="?", help="پیوند ویدیو یا پلی‌لیست یوتیوب")
     ap.add_argument("--new", action="store_true",
                     help="رصد تازه: ویدیوهای ندیده فهرست رصد، سقف روزی ۳ — نشست ۷ب")
+    ap.add_argument("--suggest", metavar="LINK",
+                    help="پیوند ویدیو فوری در صف پیشنهاد — بی‌شبکه؛ پیش از منابع رصد دیده می‌شود")
+    ap.add_argument("--note", help="یادداشت پیشنهاد — فقط محلی، به مخزن نمی‌رود")
     ap.add_argument("--limit", type=int, help="پلی‌لیست: چند قسمت تازه، به ترتیب")
     ap.add_argument("--max-frames", type=int, default=F.DEFAULT_MAX_FRAMES)
     ap.add_argument("--force", action="store_true",
@@ -1448,8 +1551,14 @@ def main(argv: list[str] | None = None, deps: Deps | None = None, now: datetime 
     a = ap.parse_args(argv)
     intake, frames_root = Path(a.intake), Path(a.frames)
     now = now or datetime.now(UTC)
-    if sum(map(bool, (a.link, a.report, a.new))) > 1:
-        ap.error("فقط یکی: پیوند، --report یا --new")
+    if sum(map(bool, (a.link, a.report, a.new, a.suggest is not None))) > 1:
+        ap.error("فقط یکی: پیوند، --report، --new یا --suggest")
+    if a.note is not None and a.suggest is None:
+        ap.error("--note فقط همراه --suggest")
+    if a.suggest is not None:
+        res = enqueue(intake, a.suggest, a.note or "", now)
+        print(res.message, file=sys.stderr if res.rc == 2 else sys.stdout)
+        return res.rc
     if a.report:
         return report_cli(Path(a.report), intake, frames_root, now)
     if a.max_frames < 1:
