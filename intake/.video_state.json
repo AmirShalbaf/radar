@@ -325,14 +325,16 @@
    "title": "Payrolls Come in Weak, Unemployment Ticks Higher",
    "published": "2026-10-02T18:25:45Z",
    "channel_id": "UCRvqjQPSeaWn-uEx-w0XOIg",
-   "status": "ready",
+   "status": "seen",
    "first_at": "2026-10-04T07:40:01Z",
    "detail": "",
    "picked_at": "2026-10-04T07:40:01Z",
    "doc": "intake/benjamin_cowen/2026-10-02_Payrolls-Come-in-Weak-Unemployment-Ticks_kDJcse.md",
    "frames_md": "frames/kDJcse482Eo/FRAMES.md",
    "template": "frames/kDJcse482Eo/card_template.json",
-   "cards": "intake/charts/benjamin_cowen/kDJcse482Eo.json"
+   "cards": "intake/charts/benjamin_cowen/kDJcse482Eo.json",
+   "seen_at": "2026-10-04T08:39:06Z",
+   "report": "intake/reports/benjamin_cowen/kDJcse482Eo.md"
   },
   "hEKhT4uIg08": {
    "source": "tekrargar",

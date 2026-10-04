@@ -1,0 +1,1905 @@
+{
+ "schema": 1,
+ "kind": "radar-chart-cards",
+ "video_id": "kDJcse482Eo",
+ "doc_id": "2026-10-02_benjamin_cowen_kDJcse48",
+ "doc": "intake/benjamin_cowen/2026-10-02_Payrolls-Come-in-Weak-Unemployment-Ticks_kDJcse.md",
+ "source": "benjamin_cowen",
+ "url": "https://www.youtube.com/watch?v=kDJcse482Eo",
+ "title": "Payrolls Come in Weak, Unemployment Ticks Higher",
+ "read_by": "مدل — نشست ۷ب رادار",
+ "read_at": "2026-10-04",
+ "guide": "references/chart-reading.md",
+ "frames_tool": "radar_frames 1.1",
+ "methods": [
+  {
+   "area": "بازار کار",
+   "rule": "افزایش بیکاری را با نرخ مشارکت بسنج: اگر از ورود به بازار کار است، نه اخراج، کمتر نگران‌کننده است",
+   "where": "03:09 و 06:50",
+   "library": "تازه"
+  },
+  {
+   "area": "بازار کار",
+   "rule": "بیکاری را به گروه سنی تفکیک کن — ۲۰ تا ۲۴ ساله سخت‌تر، ۲۵ تا ۵۴ ساله ثابت",
+   "where": "05:27 تا 05:57",
+   "library": "تازه"
+  },
+  {
+   "area": "اعتبار",
+   "rule": "ریزش‌های بزرگ سهام با بالا رفتن اسپرد اعتباری همراه بوده؛ نرخ تغییر اسپرد مهم‌تر از سطح آن است",
+   "where": "12:13 و 17:40",
+   "library": "تازه"
+  },
+  {
+   "area": "نرخ بهره",
+   "rule": "راسل ۲۰۰۰ به نرخ بهره حساس‌تر از هفت غول است؛ افت بی‌دردسر بازده یعنی جبران عقب‌ماندگی راسل",
+   "where": "14:44",
+   "library": "تازه"
+  },
+  {
+   "area": "داوری ادعا",
+   "rule": "تز «فقط صبر کن» ابطال‌ناپذیر است؛ تا شاخص‌های اصلی واقعاً نریخته‌اند، حکم ریزش نده",
+   "where": "21:16",
+   "library": "نزدیک ج۱ — آزمون تفسیر بدیل"
+  },
+  {
+   "area": "داوری ادعا",
+   "rule": "استراتژی سرمایه‌گذاری داشته باش و بیش از حد به داده کلان تکیه نکن؛ بازار مدت‌ها به آن بی‌اعتناست",
+   "where": "27:27",
+   "library": "تازه"
+  },
+  {
+   "area": "نرخ بهره",
+   "rule": "قیاس با ۲۰۱۸: توالی افزایش نرخ بانک ژاپن و مکث فدرال‌رزرو",
+   "where": "32:10",
+   "library": "تازه"
+  }
+ ],
+ "cards": [
+  {
+   "frame_id": "kDJcse482Eo_00m37.0s",
+   "t": 37.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 1,
+     "time": "00:37",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "ساعت روی صفحه نیست"
+   },
+   "coin": {
+    "value": "Unemployment Rate (>16 Yrs)",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image",
+    "how": "سایت خود او؛ Data Sources: Federal Reserve Bank of St. Louis"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Monthly»"
+   },
+   "chart_type": {
+    "value": "area",
+    "confidence": "high",
+    "from": "image",
+    "how": "ناحیه قرمز به‌علاوه خط S&P 500"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "محور راست؛ دکمه Lin روشن"
+   },
+   "price_axis": {
+    "top": {
+     "value": 14,
+     "confidence": "high",
+     "from": "image",
+     "how": "محور راست، درصد"
+    },
+    "bottom": {
+     "value": 0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Latest: 4.2% +0.100% (2026-09-01، Updated 2026-10-02، Expected 2026-11-06)",
+     "confidence": "high"
+    },
+    {
+     "text": "13 February '80 · S&P 500 Price 118.44 · Unemployment Rate 6.3% — راهنمای نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "Overlay: GSPC · S&P 500 Index",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بیکاری کمی بالاتر آمد: ماه قبل حدود ۴.۱۴ درصد که ۴.۱ گرد شد، این ماه ۴.۱۸ درصد.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۴.۱۴ و ۴.۱۸؛ صفحه آخرین 4.2٪ با +0.100٪ — هر دو گردشده"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_03m21.5s",
+   "t": 201.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 2,
+     "time": "03:17",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Labor Force Participation Rate (>16 Yrs)",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "area",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "محور راست؛ دکمه Lin روشن"
+   },
+   "price_axis": {
+    "top": {
+     "value": 62.8,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 61.2,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Latest: 61.8% +0.200% (2026-09-01، Updated 2026-10-02)",
+     "confidence": "high"
+    },
+    {
+     "text": "06 September '25 · S&P 500 Price 6.48K · Labor Force Participation Rate 62.5% — راهنمای نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "یکی از دلایل پایین آمدن بیکاری در سال گذشته افت نرخ مشارکت بود: ۶۲.۵ درصد در سپتامبر یا اکتبر ۲۰۲۵، سپس ۶۱.۴ و حالا ۶۱.۸.",
+   "method_notes": [
+    "کف نمودار حدود 61.4 روی محور راست، اطمینان متوسط"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۶۲.۵ و ۶۱.۴ و ۶۱.۸؛ صفحه راهنمای 62.5٪ سپتامبر ۲۰۲۵، کف حدود 61.4 و آخرین 61.8٪"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_05m18.0s",
+   "t": 318.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 4,
+     "time": "05:31",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Unemployment Rate (20-24 Yrs)",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "area",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 9,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 5,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Latest: 8% +0.900% (2026-09-01، Updated 2026-10-02، Expected 2026-11-06)",
+     "confidence": "high"
+    }
+   ],
+   "speech": "برای کسی که تازه از دانشگاه آمده بازار کار سخت است؛ نباید جوان‌ها را با «اقتصاد عالی است» قانع کرد.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف از جوان‌ها؛ صفحه بیکاری ۲۰ تا ۲۴ ساله"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_05m30.5s",
+   "t": 330.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 4,
+     "time": "05:31",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Unemployment Rate (20-24 Yrs)",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "area",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 9,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 5,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "01 September '26 · S&P 500 Price 7.63K · Unemployment Rate (20-24 Yrs) 8% — راهنمای نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بیکاری ۲۰ تا ۲۴ ساله حدود ۸ درصد است و بالا می‌رود؛ اقتصاد چندتکه است.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف حدود ۸٪؛ صفحه 8٪"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_05m41.0s",
+   "t": 341.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 4,
+     "time": "05:31",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Unemployment Rate (20-24 Yrs)",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "area",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 26,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 2,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "01 July '26 · S&P 500 Price 7.48K · Unemployment Rate (20-24 Yrs) 7.1% — راهنمای نشانگر موس؛ تاریخچه از ۱۹۵۰",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اقتصاد به بخش‌های جدا تقسیم شده؛ حالا گروه ۲۵ تا ۵۴ ساله را ببینیم.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": false,
+    "note": "حرف به ۲۵ تا ۵۴ ساله رفت؛ صفحه هنوز ۲۰ تا ۲۴"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_05m47.0s",
+   "t": 347.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 5,
+     "time": "05:55",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Unemployment Rate (20-24 Yrs)",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "area",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 26,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 2,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "منوی Series باز: Unemployment Rate (>16)، (16-19)، (>20)، (20-24) برگزیده",
+     "confidence": "high"
+    }
+   ],
+   "speech": "برای ۲۵ تا ۵۴ ساله‌ها بیکاری تکان نخورده است.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": false,
+    "note": "حرف از ۲۵ تا ۵۴؛ صفحه در حال عوض‌کردن سری"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_05m55.0s",
+   "t": 355.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 5,
+     "time": "05:55",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Unemployment Rate (25-54 Yrs)",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "area",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 3.6,
+     "confidence": "medium",
+     "from": "image",
+     "how": "بالاترین تیک کامل؛ تیک بالاتر زیر راهنما"
+    },
+    "bottom": {
+     "value": 2.8,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Latest: 3.6% (2026-09-01، Updated 2026-10-02، Expected 2026-11-06)",
+     "confidence": "high"
+    },
+    {
+     "text": "01 July '26 · S&P 500 Price 7.48K · Unemployment Rate (25-54 Yrs) 3.6% — راهنمای نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "در چند گزارش اخیر روی ۳.۶ درصد مانده و از فوریه ۲۰۲۶ پایین آمده؛ این گروه S&P را در سقف نگه داشته.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۳.۶٪؛ صفحه آخرین 3.6٪"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_06m13.0s",
+   "t": 373.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 5,
+     "time": "05:55",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Unemployment Rate (25-54 Yrs)",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "area",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 12,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "01 December '23 · S&P 500 Price 4.59K · Unemployment Rate (25-54 Yrs) 3.3% — راهنمای نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "حالا گزارش کل اشتغال غیرکشاورزی که ضعیف‌تر از انتظار آمد: فقط ۲۹ هزار.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": false,
+    "note": "حرف از اشتغال غیرکشاورزی؛ صفحه هنوز بیکاری ۲۵ تا ۵۴"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_06m26.5s",
+   "t": 386.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 6,
+     "time": "06:34",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Employment Level: Total Nonfarm",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "area",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 159,
+     "confidence": "high",
+     "from": "image",
+     "how": "میلیون نفر"
+    },
+    "bottom": {
+     "value": 153,
+     "confidence": "high",
+     "from": "image",
+     "how": "میلیون نفر"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Latest: 159.04M +29K (2026-09-01، Updated 2026-10-02، Expected 2026-11-06)؛ Survey Type: Establishment",
+     "confidence": "high"
+    }
+   ],
+   "speech": "کل اشتغال غیرکشاورزی فقط ۲۹ هزار آمد، در حالی که انتظار خیلی بالاتر بود.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۲۹ هزار؛ صفحه +29K"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_06m33.0s",
+   "t": 393.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 6,
+     "time": "06:34",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Employment Level: Total Nonfarm",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "area",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 159,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 153,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "01 January '24 · S&P 500 Price 4.77K · Total Nonfarm 157.03M — راهنمای کم‌رنگ نشانگر",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "در تقویم: ۲۹ هزار، قبلی ۱۳۳ هزار که اصلاح شده بود، اجماع ۹۰ هزار.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۲۹ هزار؛ صفحه +29K؛ ۱۳۳ و ۹۰ هزار در تقویم 07:04"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_07m04.5s",
+   "t": 424.5,
+   "is_chart": false,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 6,
+     "time": "06:34",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 7,
+     "time": "06:44",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "texts": [
+    {
+     "text": "ITC Economic Indicators، Fri Oct 02 2026: Non Farm Payrolls Sep واقعی 29K، قبلی 133K، اجماع 90.0K، پیش‌بینی 90K",
+     "confidence": "high"
+    },
+    {
+     "text": "Unemployment Rate 4.2% / 4.1% / 4.1% / 4.1%؛ Participation Rate 61.8% / 61.6% / 61.4%",
+     "confidence": "high"
+    },
+    {
+     "text": "Average Hourly Earnings MoM 0.1% / 0.3% / 0.2% / 0.3%؛ YoY 3% / 3.1% / 3.1% / 3.2%",
+     "confidence": "high"
+    },
+    {
+     "text": "Government Payrolls −17K / 44K / 15.0K؛ Nonfarm Payrolls Private 46K / 89K / 75.0K / 85K؛ U-6 7.6% / 7.7% / 7.7%",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بیکاری کمی بالا رفت، بیشتر از ورود مردم به بازار کار تا اخراج؛ اشتغال غیرکشاورزی ضعیف بود و فصل‌به‌فصل فقط ۱۵۲ هزار.",
+   "method_notes": [
+    "وارسی متقاطع با کریپتوسیتی ۳ اکتبر: Forex Factory پیش‌بینی 89K و قبلی 133K؛ ITC اجماع 90.0K و قبلی 133K — داده یکی، اجماع دو منبع یک هزار فرق دارد"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۲۹ و ۱۳۳ و ۹۰ هزار؛ صفحه 29K، 133K و 90.0K"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_08m29.0s",
+   "t": 509.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Employment Level: Total Nonfarm — Yearly Change",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1M",
+    "confidence": "medium",
+    "from": "image",
+    "how": "تغییر سالانه داده ماهانه"
+   },
+   "chart_type": {
+    "value": "area",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 15,
+     "confidence": "high",
+     "from": "image",
+     "how": "میلیون نفر"
+    },
+    "bottom": {
+     "value": -25,
+     "confidence": "high",
+     "from": "image",
+     "how": "میلیون نفر"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Latest: 496K −47K (2026-09-01، Updated 2026-10-02)",
+     "confidence": "high"
+    },
+    {
+     "text": "01 May '24 · S&P 500 Price 5.02K · Total Nonfarm Difference 1.95M — راهنمای نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "گزارش اشتغال با خیلی از سنجه‌ها بد نیست، ولی برای جوان‌ها بد است؛ کسی که کار دارد آن را نگه می‌دارد.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف کلی؛ وارسی‌شدنی نیست"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_10m02.0s",
+   "t": 602.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T17:06:32+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "seen": "17:06:32 UTC+1"
+   },
+   "coin": {
+    "value": "US10Y",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: US Government Bonds 10 YR Yield · TVC"
+   },
+   "venue": {
+    "value": "TVC",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image",
+    "how": "حدود ۲۰۰ شمع میان دسامبر و اکتبر"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 0.050 همه حدود 31 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 5.35,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 3.9,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "US10Y 5.268% +0.025 +0.48%؛ Day's range 5.157؛ 52wk range 3.926",
+     "confidence": "high"
+    },
+    {
+     "text": "4.760% · Thu 07 Jan '27 — نشانگر موس در فضای آینده",
+     "confidence": "high"
+    },
+    {
+     "text": "واچ‌لیست بازده: US01MY 3.951، US03MY 4.098، US02Y 4.823، US05Y 5.046، US20Y 5.670، US30Y 5.624، US10Y-US03MY 1.170",
+     "confidence": "high"
+    },
+    {
+     "text": "خبر: Playing it cool: Weak jobs report dampens rate…",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بازده ۲۰ و ۳۰ ساله امروز بالاست، با اینکه دو گزارش نرم داشتیم — PCE و بازار کار.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف از بالا ماندن بازده؛ صفحه US10Y +0.48٪"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_11m14.0s",
+   "t": 674.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T17:07:44+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "seen": "17:07:44 UTC+1"
+   },
+   "coin": {
+    "value": "US30Y",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: United States 30 Year Government Bonds Yield"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 5.7,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 4.55,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "US30Y 5.621% +0.008 +0.14%؛ Day's range 5.553؛ 52wk range 4.522",
+     "confidence": "high"
+    },
+    {
+     "text": "5.167% · Thu 24 Dec '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "خبر: Treasury Yields Resume Their Rise",
+     "confidence": "high"
+    }
+   ],
+   "speech": "آیا تورم در شهرهای بزرگ دیگر هم برمی‌گردد؟ گزارش «نرم» PCE را با تغییر روش محاسبه‌اش بسنج.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف از PCE؛ صفحه بازده ۳۰ ساله"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_12m26.5s",
+   "t": 746.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Credit Spreads — US CCC & Lower",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image",
+    "how": "Source: ICE Data Indices via FRED"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «Daily»"
+   },
+   "chart_type": {
+    "value": "line",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 45,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Latest (US CCC & Lower): 12.15% +0.360% (2026-10-01، Updated 2026-10-02، Expected 2026-10-05)",
+     "confidence": "high"
+    }
+   ],
+   "speech": "ریزش‌های بزرگ بازار سهام با بالا رفتن اسپرد اعتباری همراه بوده و این بار هنوز نه؛ بازار در سقف است و فکر نمی‌کنم مدت زیادی همین‌جا بماند.",
+   "method_notes": [],
+   "claims": [
+    "S&P 500 — یا به‌زودی سقف را می‌شکند و خیلی بالاتر می‌رود، یا مثل سه سال میان‌دوره‌ای قبل می‌ریزد — مهلت «خیلی زود»، بی‌آستانه — به گفته او"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف از اسپرد اعتباری؛ صفحه اسپرد CCC"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_12m55.0s",
+   "t": 775.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 10,
+     "time": "12:55",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Credit Spreads — US CCC & Lower",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "line",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 45,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "همان صفحه اسپرد CCC، 12.15%",
+     "confidence": "high"
+    }
+   ],
+   "speech": "دلیل اینکه فکر می‌کنم چیزی باید بشکند: راسل ۲۰۰۰ خیلی افت کرده، حدود ۱۰ درصد، و امروز کمی بالاست.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": false,
+    "note": "حرف از راسل؛ صفحه اسپرد اعتباری"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_12m58.0s",
+   "t": 778.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 10,
+     "time": "12:55",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-02T17:09:29+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "seen": "17:09:29 UTC+1"
+   },
+   "coin": {
+    "value": "US10Y",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "TVC",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 5.3,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 3.6,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "US10Y 5.260% +0.017 +0.32%؛ نمای ۲۰۲۴ تا ۲۰۲۶",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بازده امروز زیاد بالا نرفته و این به راسل کمی نفس داده.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف از بازده؛ صفحه US10Y +0.32٪"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_14m58.5s",
+   "t": 898.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T17:11:29+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "seen": "17:11:29 UTC+1"
+   },
+   "coin": {
+    "value": "RTY",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: US Russel 2000 · CAPITALCOM"
+   },
+   "venue": {
+    "value": "CAPITALCOM",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 50 همه حدود 29 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 2450.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 900.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "RTY 2,837.1 USD +24.0 +0.85%؛ نمودار به ۲۰۱۶ تا ۲۰۲۵ برگشته",
+     "confidence": "high"
+    },
+    {
+     "text": "1,630.0 · Wed 30 Mar '22 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "واچ‌لیست: BTCUSD 85,16x، ETHUSD 2,69x، QQQ 750.64، NDQ 30,86x",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "اگر بازده بی‌دردسر پایین بیاید، راسل به S&P می‌رسد؛ راسل به نرخ بهره وابسته‌تر از هفت غول است که شاخص را نگه داشته‌اند.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف از راسل؛ صفحه RTY"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_17m42.5s",
+   "t": 1062.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Credit Spreads — US Investment Grade",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "line",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 1.3,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 0.6,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Latest (US Investment Grade): 0.860% +0.0200% (2026-10-01، Updated 2026-10-02)",
+     "confidence": "high"
+    },
+    {
+     "text": "28 September '26 · S&P 500 Price 7.68K · US Investment Grade 0.830% — راهنمای نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اسپرد درجه سرمایه‌گذاری هنوز پایین است؛ نرخ تغییر اگر ادامه یابد نگران‌کننده می‌شود.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف: درجه سرمایه‌گذاری پایین؛ صفحه 0.860٪"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_18m36.5s",
+   "t": 1116.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "Credit Spreads — US High Yield",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Into The Cryptoverse",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "line",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 22,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Latest (US High Yield): 3.24% +0.120% (2026-10-01، Updated 2026-10-02)",
+     "confidence": "high"
+    },
+    {
+     "text": "24 August '26 · S&P 500 Price 7.65K · US High Yield 2.69% — راهنمای نشانگر موس",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اسپرد به دلایل زیادی گشاد می‌شود — بازده بلندمدت یا ضعف بازار کار؛ فعلاً ریسکی برای پاییدن است، نه زنگ خطر.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف از گشادشدن اسپرد؛ صفحه پربازده از 2.69٪ به 3.24٪"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_21m27.5s",
+   "t": 1287.5,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-02T17:17:58+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "seen": "17:17:58 UTC+1"
+   },
+   "coin": {
+    "value": "QQQ",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: Invesco QQQ Trust, Series 1 · NASDAQ"
+   },
+   "venue": {
+    "value": "NASDAQ",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 03:42:01 تا 20:00 UTC — بسته بازار آمریکا"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 20 همه حدود 26 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 760.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 60.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "QQQ 750.69 USD +8.65 +1.17%؛ 52wk range 555.60",
+     "confidence": "high"
+    },
+    {
+     "text": "378.08 · Mon 12 May '25 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "خبر: October rate hike odds collapse after cooler pa…",
+     "confidence": "high"
+    }
+   ],
+   "speech": "«فقط صبر کن» تز ابطال‌ناپذیر می‌سازد؛ شاید درست باشد، ولی تا شاخص‌های اصلی واقعاً پایین نرفته‌اند سخت است.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف از شاخص‌های اصلی؛ صفحه QQQ نزدیک سقف"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_24m52.5s",
+   "t": 1492.5,
+   "refs": [],
+   "is_chart": false,
+   "texts": [
+    {
+     "text": "ITC Recession Risk Dashboard: Summary 0.039؛ Employment 0.016؛ National Income And Product 0.028؛ Production And Business 0.010",
+     "confidence": "high"
+    },
+    {
+     "text": "Interest Rates 0.352 — Treasury Spread 10Y3M 0.704 قرمز، 10Y2Y 0.000؛ Credit Spreads 0.002",
+     "confidence": "high"
+    }
+   ],
+   "speech": "سنجه‌ای که مثبت کاذب بیشتری دارد چون زودتر واکنش می‌دهد، ریسک نرخ بهره است، و دوباره بالا می‌رود.",
+   "method_notes": [
+    "داشبورد ریسک رکود سایت خود او؛ نمره‌ها نرمال‌شده‌اند — روش ساختشان روی صفحه نیست"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف: ریسک نرخ بهره بالا می‌رود؛ صفحه Interest Rates 0.352 و 10Y3M 0.704"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_27m40.5s",
+   "t": 1660.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 20,
+     "time": "28:27",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 21,
+     "time": "28:35",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-02T17:24:11+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "seen": "17:24:11 UTC+1"
+   },
+   "coin": {
+    "value": "SPX",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: S&P 500 · SPCFD"
+   },
+   "venue": {
+    "value": "SPCFD",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 50 همه حدود 29 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 7800.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 6250.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "SPX 7,721.64 USD +55.19 +0.72%؛ Day's range 7,700.51",
+     "confidence": "high"
+    },
+    {
+     "text": "7,136.79 · Thu 19 Nov '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "خبر: Midday Need to Know: Payrolls data, factory o…",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به نظر او، نه توصیه مالی: بهترین کار داشتن استراتژی است و تکیه نکردن زیاد به داده کلان؛ بازار مدت‌ها بی‌اعتناست تا روزی که فقط به آن اهمیت بدهد.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف کلی؛ صفحه S&P 500"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_29m05.0s",
+   "t": 1745.0,
+   "refs": [],
+   "is_chart": false,
+   "texts": [
+    {
+     "text": "ITC National Income & Product Charts: فهرست نمودارهای GDP، GNP، GDI، تجارت خارجی",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اگر نخواهند نرخ را بالا ببرند، شاید انقباض کمی را از سر بگیرند؛ کوین وارش طرفدار کوچک‌کردن ترازنامه است.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "صفحه فهرست نمودار"
+   }
+  },
+  {
+   "frame_id": "kDJcse482Eo_32m12.5s",
+   "t": 1932.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 25,
+     "time": "32:06",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-10-02_benjamin_cowen_kDJcse48",
+     "row": 26,
+     "time": "32:18",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-02T17:28:43+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "seen": "17:28:43 UTC+1"
+   },
+   "coin": {
+    "value": "JP02Y",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: Japan 2 Year LSEG Government Bonds Yield"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 0.100 همه حدود 38 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 2.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": -0.3,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "JP02Y 1.927% −0.007 −0.36%؛ 52wk range 0.882",
+     "confidence": "high"
+    },
+    {
+     "text": "پله بنفش با برچسب 1.250% — احتمالاً نرخ سیاستی بانک ژاپن؛ معنا از تصویر نامعلوم",
+     "confidence": "medium"
+    },
+    {
+     "text": "خبر: Japan 10-Year Yield Eases from 30-Year High",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بانک ژاپن را برای افزایش نرخ نه فقط در اکتبر، که در دسامبر هم زیر نظر بگیر؛ فدرال‌رزرو ظاهراً در اکتبر صبر می‌کند — مثل ۲۰۱۸.",
+   "method_notes": [],
+   "claims": [
+    "بانک ژاپن — افزایش نرخ بهره در اکتبر و دسامبر 2026 محتمل؛ فدرال‌رزرو در اکتبر احتمالاً نگه می‌دارد — به گفته او"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف از بانک ژاپن؛ صفحه بازده دوساله ژاپن با پله بنفش"
+   }
+  }
+ ]
+}
