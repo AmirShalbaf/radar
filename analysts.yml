@@ -10,15 +10,24 @@
 # قانون خاموشی: هر منبع با enabled: false باید disabled_reason داشته باشد.
 #   دلیل در خروجی و INDEX می‌آید تا خاموشی بی‌صدا نباشد.
 #
+# فهرست رصد — نشست ۷ب، تصمیم کاربر ۳ و ۴ اکتبر ۲۰۲۶. هر منبع watch صریح دارد:
+#   full          دیدن کامل با radar_video.py --new — فریم، کارت، snap، گزارش
+#   crypto_title  دیدن کامل فقط وقتی عنوان یکی از watch_keywords را دارد
+#   text          فقط متن با radar_intake.py
+#   مقدار ناشناخته، میدان غایب، یا منبع خاموش در فهرست رصد خطای بلند است.
+#   آزمون: tests/test_watch_list.py
+#
 # قانون هم‌خطی: دو منبع از یک مکتب = یک رأی، نه دو رأی.
 #   جدول مکاتب پایین فایل آمده است.
 # =====================================================================
 
 meta:
-  version: "1.6"
+  version: "1.7"
   framework: "Radar 7"
-  updated: "2026-09-29"
+  updated: "2026-10-04"
   changelog: >
+    ۱.۷ — نشست ۷ب: میدان watch برای همه منابع — دیدن کامل برای کریپتوسیتی،
+    تکرارگر و کوون؛ سالووی فقط با عنوان کریپتویی و فهرست کلیدواژه؛ بقیه فقط متن.
     ۱.۶ — نشست ۴: شناسه و هندل واقعی چهار کانال؛ باب الیوت با خوراک
     Nonconsensus روشن شد؛ وانگ و کایکو خاموش با دلیل؛ الگوی پیوند اسکی.
 
@@ -38,6 +47,7 @@ sources:
     lang: ["en"]
     scores: true
     enabled: false   # ۱.۶ — نشست ۴
+    watch: "text"
     disabled_reason: >
       خوراک از ۲۳ فوریه ۲۰۲۶ تازه نشده و فقط خلاصه با «[…]» می‌دهد — متن
       کامل نه. صفحه اصلی سایت از لپ‌تاپ ۴۰۳ داد. سنجش ۲۹ سپتامبر ۲۰۲۶.
@@ -59,6 +69,7 @@ sources:
     lang: ["en"]
     scores: true
     enabled: false   # ۱.۶ — نشست ۴
+    watch: "text"
     disabled_reason: >
       research.kaiko.com با ۳۰۱ به app.kaiko.com می‌رود و صفر پیوند دارد، با هر
       عامل کاربر. جایگزین kaiko.com/resources/categories/data-blog سنجیده شد:
@@ -80,6 +91,7 @@ sources:
     lang: ["en"]
     scores: true
     enabled: true    # ۱.۶ — نشست ۴، تصمیم کاربر
+    watch: "text"
     notes: >
       مدیر سابق بریج‌واتر. تنها صدای ساختاراً بدبین در مجموعه.
       خوراک رسمی: خبرنامه Nonconsensus روی سابستک، از ژوئن ۲۰۲۵.
@@ -102,6 +114,7 @@ sources:
     lang: ["en"]
     scores: false
     enabled: true
+    watch: "text"
     notes: >
       افق دهه‌ای، نه هفته‌ای. فقط سقف واقع‌بینانه سناریوها در گام ۸.
       هم‌خانواده با باب الیوت (بریج‌واتر) ← حق رأی ندارد تا دوباره‌شماری نشود.
@@ -124,6 +137,7 @@ sources:
     lang: ["fa"]
     scores: false
     enabled: true
+    watch: "text"
     notes: >
       سری آموزش رایگان: پرایس اکشن، رسم حمایت و مقاومت، کندل‌شناسی، مدیریت ریسک.
       دروازه ورود هر تکنیک به رادار = قانون بازگشت فهرست ردشده‌ها:
@@ -142,6 +156,7 @@ sources:
     lang: ["en"]
     scores: false
     enabled: true
+    watch: "text"
     notes: >
       ارزش او در رویه است نه نتیجه: جدول غربال با ستون‌های
       واجد شرایط بودن، درآمد، نقدشوندگی، واگذاری ۱۲ ماهه، آزادسازی ۹۰ روزه.
@@ -165,6 +180,7 @@ sources:
     lang: ["fa"]
     scores: false
     enabled: true
+    watch: "full"              # ۱.۷ — نشست ۷ب
     notes: >
       هم‌خطی تأییدشده با تریدسیتی پرو — هر دو از ارشیا عزیزپور.
       شاهد: عنوان ویدئو «تحلیل بیت کوین و آلت کوین ها | از دفتر ارشیا».
@@ -186,6 +202,7 @@ sources:
     lang: ["fa"]
     scores: false              # حق رأی از کالیبراسیون می‌آید، نه از حس ما
     enabled: true              # ۱.۱ — روشن شد برای آزمون
+    watch: "full"              # ۱.۷ — نشست ۷ب
     notes: >
       تناقض ثبت‌شده و حل‌نشده — همین دلیل روشن‌کردن اوست:
         توضیحات کانال (خوانده‌شده ۶ اوت ۲۰۲۶): معامله‌گر نیست، ترجمه آزاد از
@@ -223,6 +240,7 @@ sources:
     lang: ["en"]
     scores: true
     enabled: true
+    watch: "full"              # ۱.۷ — نشست ۷ب
     notes: >
       کارت لنز موجود: تسلط بدون استیبل‌کوین، پهنای بازار، بازده کاهشی.
       خطای ثبت‌شده در ممیزی ۲۹ ژوئیه: ترکیب اشتغال، نمونه‌گیری گزینشی فصلی.
@@ -241,6 +259,13 @@ sources:
     lang: ["en"]
     scores: true
     enabled: true
+    # ۱.۷ — نشست ۷ب: دیدن کامل فقط وقتی عنوان کریپتویی است. مرز کلمه اسکی، «s» جمع
+    # اختیاری، بی‌حساسیت به بزرگی حرف. دوپهلوها عمداً بیرون: SOL، ADA، LINK، gold.
+    watch: "crypto_title"
+    watch_keywords: [bitcoin, btc, crypto, cryptocurrency, cryptocurrencies, ethereum, eth,
+                     ether, xrp, ripple, solana, altcoin, altseason, blockchain, coinbase,
+                     microstrategy, mstr, saylor, stablecoin, dogecoin, doge, cardano,
+                     chainlink, binance, halving, ibit, defi]
     notes: >
       کارت لنز موجود: خط روند لگاریتمی چندساله، تأیید شکست با بسته روزانه،
       ورود پله‌ای، تفکیک افق‌ها. قوی‌ترین لنز از نظر انضباط اجرا.
@@ -258,6 +283,7 @@ sources:
     lang: ["en"]
     scores: true
     enabled: true
+    watch: "text"
     notes: >
       کارت لنز موجود: نقدینگی جهانی محرک اصلی. جهت قوی، **لگ ضعیف**.
       نمونه نقض پاییز ۲۰۲۵ ثبت شده. لگ هرگز برای زمان‌بندی استفاده نشود.
@@ -277,6 +303,7 @@ sources:
     lang: ["en"]
     scores: false
     enabled: true
+    watch: "text"
     notes: >
       جایگاه پایین‌تر از سه تای بالا — دو خطای ساختاری ثبت‌شده:
       برچسب غلط انبساط کمی، و فرض بی‌پشتوانه چرخش رئیس فدرال‌رزرو.
@@ -302,6 +329,7 @@ sources:
     lang: ["fa"]
     scores: false
     enabled: true
+    watch: "text"
     notes: >
       ترتیب قسمت‌ها حفظ می‌شود و شماره در عنوان می‌آید — «پارت ۳» بدون
       «پارت ۱» معنا ندارد.

@@ -452,6 +452,9 @@ class Source:
     playlist_id: str = ""             # فقط برای kind=playlist
     collinear_with: str = ""          # هم‌خانواده با کدام منبع (یک رأی، نه دو)
     disabled_reason: str = ""         # چرا خاموش است — در خروجی و INDEX می‌آید
+    # فهرست رصد radar_video — نشست ۷ب. تهی یعنی «اعلام نشده» و خطای بلند است، نه پیش‌فرض
+    watch: str = ""                   # full | crypto_title | text
+    watch_keywords: list[str] = field(default_factory=list)   # فقط برای crypto_title
 
     @classmethod
     def from_dict(cls, key: str, d: dict) -> "Source":

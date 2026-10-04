@@ -235,6 +235,78 @@ def resolve_source(sources: list[I.Source], info: dict, playlist_id: str = "") -
                     notes="کانال ناشناخته — radar_video؛ افزودن دائمی فقط با تأیید کاربر")
 
 
+# ═══════════════ ۳ب — فهرست رصد، نشست ۷ب ═══════════════
+
+WATCH_MODES = ("full", "crypto_title", "text")
+WATCH_FA = {"full": "دیدن کامل", "crypto_title": "دیدن کامل اگر عنوان کریپتویی", "text": "فقط متن"}
+# کلیدواژه یک واژه انگلیسی کوچک اسکی است — نه \w، که حرف فارسی را هم می‌گیرد
+_KEYWORD = re.compile(r"[a-z0-9]+")
+
+
+class WatchConfigError(ValueError):
+    """فهرست رصد analysts.yml نامعتبر است. کد ۲ — هیچ‌چیز امتحان نمی‌شود."""
+
+
+def watch_errors(sources: list[I.Source]) -> list[str]:
+    """
+    هر منبع باید watch صریح داشته باشد. خاموش در فهرست رصد، دیدن کامل غیر یوتیوب،
+    یا کلیدواژه بیرون از crypto_title خطاست — هیچ‌کدام پیش‌فرض بی‌صدا نمی‌گیرد.
+    """
+    errs = []
+    for s in sources:
+        w, kws = s.watch, s.watch_keywords
+        if not w:
+            errs.append(f"{s.key}: میدان watch نیست — یکی از {WATCH_MODES} را صریح بنویس")
+            continue
+        if w not in WATCH_MODES:
+            errs.append(f"{s.key}: watch={w!r} ناشناخته — باید یکی از {WATCH_MODES} باشد")
+            continue
+        if w == "text":
+            if kws:
+                errs.append(f"{s.key}: watch_keywords فقط برای crypto_title")
+            continue
+        if not s.enabled:
+            errs.append(f"{s.key}: منبع خاموش در فهرست رصد — watch={w}؛ یا روشنش کن یا text")
+        if s.kind != "youtube":
+            errs.append(f"{s.key}: دیدن کامل فقط برای منبع youtube — kind={s.kind}")
+        if w == "full" and kws:
+            errs.append(f"{s.key}: watch_keywords فقط برای crypto_title")
+        if w == "crypto_title":
+            if not isinstance(kws, list) or not kws:
+                errs.append(f"{s.key}: crypto_title بی فهرست watch_keywords")
+            else:
+                bad = [k for k in kws if not (isinstance(k, str) and _KEYWORD.fullmatch(k))]
+                if bad:
+                    errs.append(f"{s.key}: کلیدواژه باید واژه انگلیسی کوچک اسکی باشد — {bad!r}")
+    return errs
+
+
+def watch_list(config: Path) -> list[I.Source]:
+    """منابع دیدن کامل به ترتیب analysts.yml. پیکربندی نامعتبر — WatchConfigError."""
+    sources = I.load_sources(config)
+    errs = watch_errors(sources)
+    if errs:
+        raise WatchConfigError("فهرست رصد نامعتبر — " + "؛ ".join(errs))
+    return [s for s in sources if s.watch in ("full", "crypto_title")]
+
+
+def title_matches(title: str, keywords: list[str]) -> bool:
+    """
+    عنوان درباره کریپتوست؟ بزرگی و کوچکی حرف مهم نیست؛ مرز کلمه فقط با نویسه
+    اسکی؛ «s» جمع اختیاری — «Altcoins». «Ethics» و «Cryptoverse» نمی‌خورند.
+    """
+    if not keywords or not title:
+        return False
+    words = "|".join(re.escape(k) for k in keywords)
+    return re.search(rf"(?<![A-Za-z0-9])(?:{words})s?(?![A-Za-z0-9])", title, re.IGNORECASE) is not None
+
+
+def wants_full_view(src: I.Source, title: str) -> bool:
+    if src.watch == "full":
+        return True
+    return src.watch == "crypto_title" and title_matches(title, src.watch_keywords)
+
+
 def analysts_suggestion(src: I.Source) -> list[str]:
     """پیشنهاد ردیف analysts.yml — چاپ می‌شود، نوشته نمی‌شود."""
     return [

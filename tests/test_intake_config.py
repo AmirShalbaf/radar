@@ -29,9 +29,9 @@ def _src() -> dict:
 
 def test_meta_version_and_framework() -> None:
     meta = _raw()["meta"]
-    assert meta["version"] == "1.6"
+    assert meta["version"] == "1.7"             # ۱.۷ — نشست ۷ب، میدان watch
     assert meta["framework"] == "Radar 7"
-    assert meta["updated"] == "2026-09-29"      # وقت جهانی، مثل بقیه مخزن
+    assert meta["updated"] == "2026-10-04"      # وقت جهانی، مثل بقیه مخزن
 
 
 def test_confirmed_channel_ids_and_handles() -> None:
