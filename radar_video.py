@@ -35,12 +35,23 @@ analysts.yml نیست — و رادار آن را کامل می‌بیند.
 محیط اجرا: فقط لپ‌تاپ — یوتیوب آی‌پی مرکز داده را می‌بندد. متن کامل و فریم
 فقط محلی؛ سند عمومی، کارت نمودار و گزارش عمومی‌اند.
 
+رصد تازه --new — نشست ۷ب:
+    ویدیوهای ندیده منابع فهرست رصد analysts.yml — watch: full، یا crypto_title با
+    عنوان کریپتویی — تا سقف روزی ۳، به وقت جهانی. ترتیب: اول صف پیشنهاد کاربر،
+    سپس نوبت‌دهی — از هر منبع یکی پیش از دومیِ هر منبع، میان منابع تازه‌تر اول.
+    کوتاه — ف۸ — سهمیه نمی‌گیرد و شمرده می‌شود. ویدیوی منبع رصد بیش از ۷ روز پس
+    از انتشار «کهنه» است و یک بار شمرده می‌شود؛ پیشنهاد کاربر هرگز کهنه نمی‌شود.
+    بیش از سقف «ماند برای فردا». وضعیت هر ویدیو در intake/.video_state.json — عمومی،
+    بی یادداشت کاربر؛ دیده‌شده هرگز دوباره دیده نمی‌شود. --report آن را «دیده‌شده»
+    می‌کند.
+
 اجرا:
     python radar_video.py <پیوند ویدیو>
     python radar_video.py <پیوند پلی‌لیست>                # فهرست و برآورد، بی‌اجرا
     python radar_video.py <پیوند پلی‌لیست> --limit 3      # سه قسمت تازه
     python radar_video.py <پیوند> --max-frames 15
     python radar_video.py --report intake/charts/<منبع>/<video_id>.json
+    python radar_video.py --new                           # رصد تازه، نشست ۷ب
 
 کد خروج: ۰ سالم؛ ۲ پیش‌نیاز، پیوند یا کارت نامعتبر؛ ۳ دست‌کم یک قسمت شکست خورد.
 """
@@ -51,10 +62,12 @@ import argparse
 import importlib.util
 import json
 import math
+import os
 import re
 import sys
+import tempfile
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Callable
 from urllib.parse import urlparse
@@ -366,11 +379,13 @@ class Deps:
     frames: Callable
     whisper: Callable | None = None
     missing: Callable = None
+    feed: Callable | None = None       # منبع → آیتم‌های خوراک یوتیوب، تازه‌ترین اول — --new
 
     @classmethod
     def real(cls, whisper: bool) -> "Deps":
         return cls(meta=YtMeta(), transcript=I.fetch_transcript, frames=run_frames,
-                   whisper=I.whisper_fallback if whisper else None, missing=missing_deps)
+                   whisper=I.whisper_fallback if whisper else None, missing=missing_deps,
+                   feed=lambda src: I.fetch_youtube_items(src, I.make_session()))
 
 
 def missing_deps(listing_only: bool, whisper: bool = False) -> list[str]:
@@ -408,6 +423,8 @@ class Episode:
     detail: str = ""
     failed: bool = False
     single: I.Source | None = None
+    channel_id: str = ""               # برای شمار پیشنهاد هر کانال — نشست ۷ب
+    published: str = ""
 
 
 def _done(ctx: Ctx, vid: str) -> str:
@@ -433,6 +450,7 @@ def see_video(ctx: Ctx, vid: str, *, pos: int | None = None, playlist_id: str = 
     info = info or ctx.deps.meta.video(vid)
     item = item_from_info(info, f"[{pos:02d}] " if pos else "")
     ep.title = item["title"]
+    ep.channel_id, ep.published = info.get("channel_id") or "", item["published"]
     src = resolve_source(ctx.sources, info, playlist_id)
     ep.source, ep.role = src.key, src.role
     if src.role == SINGLE_ROLE:
@@ -613,6 +631,402 @@ def render_summary(head: str, eps: list[Episode], untried: list[dict]) -> str:
         for s in singles.values():
             lines += analysts_suggestion(s) + [""]
     return "\n".join(lines) + "\n"
+
+
+# ═══════════════ ۶ب — رصد تازه --new، نشست ۷ب ═══════════════
+
+VIDEO_STATE_NAME = ".video_state.json"
+DAILY_CAP = 3                     # تصمیم کاربر، ۳ اکتبر ۲۰۲۶ — جزو آن پیشنهادها
+STALE_DAYS = 7                    # تصمیم کاربر، ایستگاه ۱ — فقط ویدیوی منابع رصد
+SUGGEST_DIR = "suggest"           # صف پیشنهاد، زیر intake/_local/ — محلی، بیرون از مخزن
+SUGGEST_LABEL = "پیشنهاد امیر"
+WATCH_LABEL = "رصد"
+STATUS_FA = {"ready": "آماده — منتظر خواندن مدل", "seen": "دیده‌شده", "short": "کوتاه — ف۸",
+             "failed": "شکست", "stale": "کهنه — دیده نشد", "off_topic": "عنوان غیرکریپتویی — فقط متن"}
+# این وضعیت‌ها برای همیشه بسته‌اند — نه از خوراک دوباره، نه با پیشنهاد دوباره
+CLOSED = ("ready", "seen", "short")
+
+
+class StateError(Exception):
+    """فایل وضعیت یا صف خوانا نیست. کد ۲ — هیچ‌چیز امتحان و هیچ‌چیز بازنویسی نمی‌شود."""
+
+
+def _iso(t: datetime) -> str:
+    return t.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _pub_dt(s: str) -> datetime | None:
+    """تاریخ انتشار خوراک یا فراداده؛ بی‌منطقه زمانی یعنی وقت جهانی. ناخوانا None."""
+    try:
+        d = datetime.fromisoformat(str(s).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return d if d.tzinfo else d.replace(tzinfo=UTC)
+
+
+_OLDEST = datetime(1970, 1, 1, tzinfo=UTC)
+
+
+def atomic_write(path: Path, text: str) -> None:
+    """فایل موقت در همان پوشه و سپس جابه‌جایی — نیمه‌نوشته هرگز جای فایل درست نمی‌نشیند."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=path.name + ".", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
+            f.write(text)
+        os.replace(tmp, path)
+    except BaseException:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+        raise
+
+
+def load_video_state(path: Path) -> dict:
+    """
+    حافظه «دیده‌شده‌ها»ی دیدن کامل. نبودش یعنی حافظه خالی؛ خرابی‌اش خطای صریح —
+    همان درس load_state جمع‌آوری متن، نشست ۴.
+    """
+    if not path.exists():
+        return {"schema": 1, "videos": {}, "runs": {}}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as e:
+        raise StateError(
+            f"{path} خوانا نیست — {type(e).__name__}: {e}. این حافظه «دیده‌شده‌ها»ی دیدن کامل است؛ "
+            "بازنویسی‌اش یعنی دیدن دوباره. از گیت برگردان یا دستی درست کن.") from e
+    if not (isinstance(data, dict) and isinstance(data.get("videos", {}), dict)
+            and isinstance(data.get("runs", {}), dict)):
+        raise StateError(f"{path} ساختار نادرست دارد — انتظار شیء با videos و runs")
+    data.setdefault("schema", 1)
+    data.setdefault("videos", {})
+    data.setdefault("runs", {})
+    return data
+
+
+def save_video_state(path: Path, st: dict) -> None:
+    atomic_write(path, json.dumps(st, ensure_ascii=False, indent=1) + "\n")
+
+
+def mark_seen(path: Path, cards: dict, report: Path, now: datetime) -> None:
+    """--report: ویدیو «دیده‌شده» است. میدان‌های پیشین — مثل پیشنهاد — می‌مانند."""
+    st = load_video_state(path)
+    vid = str(cards.get("video_id") or "")
+    e = st["videos"].setdefault(vid, {})
+    e.setdefault("source", cards.get("source") or "")
+    e.setdefault("title", cards.get("title") or "")
+    e.update(status="seen", seen_at=_iso(now), report=report.as_posix())
+    save_video_state(path, st)
+
+
+@dataclass
+class Cand:
+    """نامزد دیدن کامل — از صف پیشنهاد یا خوراک یک منبع رصد."""
+    video_id: str
+    source: str = ""                  # پیشنهاد: تا فراداده تهی
+    title: str = ""
+    published: str = ""
+    suggested: bool = False
+    queue_file: Path | None = None
+    queued_at: str = ""
+
+    def brief(self) -> dict:
+        return {"video_id": self.video_id, "source": self.source, "title": self.title,
+                "published": self.published, "suggested": self.suggested}
+
+
+def queue_dir(intake: Path) -> Path:
+    return intake / I.LOCAL_DIR / SUGGEST_DIR
+
+
+def read_queue(intake: Path) -> list[Cand]:
+    """صف به ترتیب ورود. فایل خراب خطای بلند است، نه نادیده — یادداشت کاربر در آن است."""
+    d = queue_dir(intake)
+    out = []
+    for p in sorted(d.glob("*.json")) if d.is_dir() else []:
+        try:
+            q = json.loads(p.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as e:
+            raise StateError(f"فایل صف {p} خوانا نیست — {type(e).__name__}: {e}") from e
+        v = q.get("video_id") if isinstance(q, dict) else None
+        if not (isinstance(v, str) and _BARE_VIDEO.fullmatch(v) and p.stem == v):
+            raise StateError(f"فایل صف {p} شناسه ویدیوی هم‌نام ندارد")
+        out.append(Cand(v, suggested=True, queue_file=p, queued_at=str(q.get("queued_at") or "")))
+    return sorted(out, key=lambda c: (c.queued_at, c.video_id))
+
+
+def finish_queue(c: Cand, outcome: str, now: datetime) -> Path:
+    """پیشنهاد از صف به done/ با نتیجه‌اش — اول نوشتن، بعد برداشتن؛ هیچ‌چیز بی‌رد پاک نمی‌شود."""
+    q = json.loads(c.queue_file.read_text(encoding="utf-8"))
+    q.update(outcome=outcome, done_at=_iso(now))
+    done = c.queue_file.parent / "done"
+    stamp = now.astimezone(UTC).strftime("%Y%m%dT%H%M%SZ")
+    target, n = done / f"{c.video_id}__{stamp}.json", 1
+    while target.exists():
+        n += 1
+        target = done / f"{c.video_id}__{stamp}_{n}.json"
+    atomic_write(target, json.dumps(q, ensure_ascii=False, indent=1) + "\n")
+    c.queue_file.unlink()
+    return target
+
+
+def _card_paths(ctx: Ctx, vid: str, folder: str) -> dict:
+    vdir = ctx.frames_root / vid
+    return {"frames_md": (vdir / "FRAMES.md").as_posix(),
+            "template": (vdir / "card_template.json").as_posix(),
+            "cards": (ctx.intake / F.CHARTS_DIR.name / folder / f"{vid}.json").as_posix()}
+
+
+def _new_run(now: datetime) -> dict:
+    return {"at": _iso(now), "picked": [], "deferred": [], "short": [], "stale": [], "off_topic": [],
+            "failed": [], "untried": [], "feed_failures": [], "queue": [], "blocked": ""}
+
+
+def gather(ctx: Ctx, watched: list[I.Source], vstate: dict, now: datetime,
+           run: dict) -> tuple[list[Cand], list[Cand]]:
+    """
+    (صف، نامزدهای منابع به ترتیب نوبت). کوتاهِ شناخته از جمع‌آوری متن، عنوان
+    غیرکریپتویی و کهنه همین‌جا یک بار در وضعیت ثبت و شمرده می‌شوند.
+    """
+    videos = vstate["videos"]
+    queue = read_queue(ctx.intake)
+    queued = {c.video_id for c in queue}
+    stamp = _iso(now)
+    per: dict[str, list[Cand]] = {}
+    for src in watched:
+        try:
+            items = ctx.deps.feed(src)
+        except Exception as e:          # SourceFailure یا پیش‌بینی‌نشده — هر دو با نوعش، کد ۳
+            run["feed_failures"].append({"source": src.key, "error": f"{type(e).__name__}: {e}"})
+            ctx.log(f"  ⛔ خوراک {src.key}: {e}")
+            continue
+        cands = []
+        for it in items:
+            v = it.get("id") or ""
+            if not v or v in videos or v in queued:
+                continue
+            title, pub = it.get("title") or "", it.get("published") or ""
+            base = {"source": src.key, "title": title, "published": pub, "first_at": stamp}
+            why = _done(ctx, v)
+            if why == "کارت هست":
+                videos[v] = {**base, "status": "seen", "detail": "کارت پیشین — پیش از رصد"}
+                continue
+            if why == "فریم هست":
+                doc = find_doc(ctx.intake, v)
+                videos[v] = {**base, "status": "ready", "detail": "فریم پیشین",
+                             **_card_paths(ctx, v, doc.parent.name if doc else src.key)}
+                continue
+            if why:
+                continue
+            if (ctx.state.get("seen", {}).get(src.key, {}).get(v) or {}).get("rejected") == "کوتاه":
+                videos[v] = {**base, "status": "short", "detail": "کوتاه از جمع‌آوری متن"}
+                run["short"].append(v)
+                continue
+            if not wants_full_view(src, title):
+                videos[v] = {**base, "status": "off_topic"}
+                run["off_topic"].append({"video_id": v, "source": src.key, "title": title})
+                continue
+            d = _pub_dt(pub)
+            if d is not None and now - d > timedelta(days=STALE_DAYS):
+                videos[v] = {**base, "status": "stale"}
+                run["stale"].append({"video_id": v, "source": src.key, "title": title, "published": pub})
+                continue
+            cands.append(Cand(v, src.key, title, pub))
+        cands.sort(key=lambda c: _pub_dt(c.published) or _OLDEST, reverse=True)
+        per[src.key] = cands
+    order: list[Cand] = []
+    r = 0
+    while any(len(cs) > r for cs in per.values()):
+        rnd = [cs[r] for cs in per.values() if len(cs) > r]
+        order += sorted(rnd, key=lambda c: _pub_dt(c.published) or _OLDEST, reverse=True)
+        r += 1
+    return queue, order
+
+
+def _status_of(ep: Episode) -> str:
+    if ep.status == "رد شد — کوتاه":
+        return "short"
+    if ep.status in ("سالم", "فریم ناقص", "پیشین — فریم هست"):
+        return "ready"
+    if ep.status == "پیشین — کارت هست":
+        return "seen"
+    return "failed"
+
+
+def see_new(ctx: Ctx, watched: list[I.Source], vstate: dict, state_path: Path,
+            now: datetime) -> tuple[dict, list[tuple[Cand, Episode]]]:
+    """یک دور رصد تازه. وضعیت پس از هر ویدیو ذخیره می‌شود تا قطع اجرا چیزی را گم نکند."""
+    videos = vstate["videos"]
+    today = now.astimezone(UTC).strftime("%Y-%m-%d")
+    run = _new_run(now)
+    queue, order = gather(ctx, watched, vstate, now, run)
+    taken = sum(1 for e in videos.values() if str(e.get("picked_at") or "")[:10] == today)
+    run["taken_before"] = taken
+    cap_left = DAILY_CAP - taken
+    done: list[tuple[Cand, Episode]] = []
+    blocked = False
+    for c in queue + order:
+        prev = videos.get(c.video_id, {}).get("status")
+        if c.suggested and (prev in CLOSED or _done(ctx, c.video_id) in ("کارت هست", "سند قدیمی")):
+            outcome = f"پیشین — {STATUS_FA.get(prev, _done(ctx, c.video_id))}"
+            finish_queue(c, outcome, now)
+            run["queue"].append({"video_id": c.video_id, "outcome": outcome})
+            continue
+        if blocked:
+            run["untried"].append(c.brief())
+            continue
+        if cap_left <= 0:
+            run["deferred"].append(c.brief())
+            continue
+        ctx.log(f"▶ {SUGGEST_LABEL if c.suggested else c.source} — {c.video_id}")
+        ep, b = _attempt(ctx, c.video_id)
+        done.append((c, ep))
+        if b:
+            blocked = True
+            run["blocked"] = f"{c.video_id} — {ep.detail}"
+            continue
+        st = _status_of(ep)
+        e = {"source": ep.source or c.source, "title": ep.title or c.title,
+             "published": ep.published or c.published, "channel_id": ep.channel_id,
+             "status": st, "first_at": _iso(now), "detail": ep.detail}
+        if c.suggested:
+            e["suggested"] = True
+        if st == "ready":
+            e.update(picked_at=_iso(now), doc=ep.doc, frames_md=ep.frames_md, template=ep.template,
+                     cards=ep.cards)
+            cap_left -= 1
+            run["picked"].append(c.video_id)
+        elif st == "short":
+            run["short"].append(c.video_id)
+        elif st == "failed":
+            run["failed"].append({"video_id": c.video_id, "detail": f"{ep.status} — {ep.detail}"})
+        elif st == "seen":
+            e["seen_at"] = _iso(now)
+        videos[c.video_id] = e
+        if c.suggested:
+            finish_queue(c, st, now)
+            run["queue"].append({"video_id": c.video_id, "outcome": st})
+        save_video_state(state_path, vstate)
+    vstate["runs"].setdefault(today, []).append(run)
+    save_video_state(state_path, vstate)
+    return run, done
+
+
+def _label(suggested: bool) -> str:
+    return SUGGEST_LABEL if suggested else WATCH_LABEL
+
+
+def render_new(run: dict, done: list[tuple[Cand, Episode]], vstate: dict, today: str) -> str:
+    """خروجی --new برای ادامه کار مدل: چه آماده خواندن است، با مسیر فریم و فرمان‌ها."""
+    videos = vstate["videos"]
+    picked = set(run["picked"])
+    lines = [f"# رصد تازه — {today}", "",
+             "| مورد | مقدار |", "|---|---|",
+             f"| سقف امروز، وقت جهانی | {DAILY_CAP} — گرفته‌شده پیش از این اجرا: {run['taken_before']} |",
+             f"| آماده خواندن از این اجرا | {len(picked)} |",
+             f"| ماند برای فردا | {len(run['deferred'])} |",
+             f"| کوتاه ردشده — ف۸ | {len(run['short'])} |",
+             f"| کهنه — دیده نشد | {len(run['stale'])} |",
+             f"| عنوان غیرکریپتویی — فقط متن | {len(run['off_topic'])} |",
+             f"| شکست | {len(run['failed'])} |"]
+    if done:
+        lines += ["", "## این اجرا", "", "| ویدیو | منبع | برچسب | فریم | وضعیت |", "|---|---|---|---|---|"]
+        for c, ep in done:
+            status = ep.status + (f" — {I._cell(ep.detail)}" if ep.detail else "")
+            lines.append(f"| `{c.video_id}` {I._cell(ep.title or c.title)[:50]} | {ep.source or c.source or '—'} "
+                         f"| {_label(c.suggested)} | {ep.nframes} | {status} |")
+
+    def reading(vid: str, e: dict) -> list[str]:
+        return [f"- `{vid}` {I._cell(e.get('title') or '')[:60]} — {e.get('source') or '—'} — "
+                f"{_label(bool(e.get('suggested')))}",
+                f"  - فریم‌ها: `{e.get('frames_md')}` — قالب کارت `{e.get('template')}`",
+                f"  - کارت: `{e.get('cards')}`",
+                f"  - سپس به ترتیب: `python radar_frames.py --validate {e.get('cards')}`، "
+                f"`python radar_history.py cards {e.get('cards')}`، "
+                f"`python radar_video.py --report {e.get('cards')}`"]
+
+    ready_now = [(v, videos[v]) for v in run["picked"]]
+    ready_old = [(v, e) for v, e in videos.items() if e.get("status") == "ready" and v not in picked]
+    if ready_now or ready_old:
+        lines += ["", "## برای خواندن — کار مدل در نشست", "",
+                  "پیش از خواندن: `references/chart-reading.md`.", ""]
+        for v, e in ready_now:
+            lines += reading(v, e)
+        if ready_old:
+            lines += ["", "### آماده از پیش — هنوز خوانده نشده", ""]
+            for v, e in ready_old:
+                lines += reading(v, e)
+    if run["deferred"]:
+        lines += ["", "## ماند برای فردا", "", "| ویدیو | منبع | برچسب | انتشار | عنوان |", "|---|---|---|---|---|"]
+        lines += [f"| `{d['video_id']}` | {d['source'] or '—'} | {_label(d['suggested'])} "
+                  f"| {(d['published'] or '—')[:10]} | {I._cell(d['title'])[:50] or '—'} |" for d in run["deferred"]]
+    if run["short"]:
+        lines += ["", f"## کوتاه ردشده — ف۸: {len(run['short'])}", "",
+                  "، ".join(f"`{v}`" for v in run["short"])]
+    if run["stale"]:
+        lines += ["", f"## کهنه — بیش از {fa(STALE_DAYS)} روز پس از انتشار، دیده نشد", ""]
+        lines += [f"- `{d['video_id']}` {d['source']} — {(d['published'] or '—')[:10]} — "
+                  f"{I._cell(d['title'])[:50]}" for d in run["stale"]]
+    if run["off_topic"]:
+        lines += ["", "## عنوان غیرکریپتویی — فقط متن", ""]
+        lines += [f"- `{d['video_id']}` {d['source']} — {I._cell(d['title'])[:60]}" for d in run["off_topic"]]
+    if run["failed"]:
+        lines += ["", "## شکست", ""]
+        lines += [f"- `{d['video_id']}` — {I._cell(d['detail'])}" for d in run["failed"]]
+    if run["feed_failures"]:
+        lines += ["", "## خوراک ناموفق", ""]
+        lines += [f"- **{d['source']}** — {I._cell(d['error'])}" for d in run["feed_failures"]]
+    if run["untried"]:
+        lines += ["", f"## امتحان نشد — پس از مسدودی: {I._cell(run['blocked'])}", ""]
+        lines += [f"- `{d['video_id']}` {d['source'] or SUGGEST_LABEL}" for d in run["untried"]]
+    if run["queue"]:
+        lines += ["", "## صف پیشنهاد — نتیجه", ""]
+        lines += [f"- `{d['video_id']}` — {STATUS_FA.get(d['outcome'], d['outcome'])}" for d in run["queue"]]
+    singles = {ep.single.key: ep.single for _, ep in done if ep.single is not None}
+    if singles:
+        lines += ["", "## کانال ناشناخته — پیشنهاد، نه ثبت", "",
+                  f"برچسب «{SINGLE_ROLE}»، بدون حق رأی. افزودن دائمی به `analysts.yml` "
+                  "فقط با تأیید کاربر.", ""]
+        for s in singles.values():
+            lines += analysts_suggestion(s) + [""]
+    return "\n".join(lines) + "\n"
+
+
+def new_cli(a, deps: Deps, now: datetime) -> int:
+    intake, frames_root = Path(a.intake), Path(a.frames)
+    try:
+        watched = watch_list(Path(a.config))
+    except WatchConfigError as e:
+        print(f"⛔ {e}", file=sys.stderr)
+        return 2
+    miss = deps.missing(False, a.whisper)
+    if miss:
+        print(f"⛔ پیش‌نیاز نیست: {'، '.join(miss)} — pip install -r requirements-intake.txt؛ "
+              "ffmpeg و ffprobe جدا", file=sys.stderr)
+        return 2
+    state_path = intake / VIDEO_STATE_NAME
+    try:
+        state = I.load_state(intake / STATE_NAME)
+        vstate = load_video_state(state_path)
+        read_queue(intake)                   # صف خراب پیش از هر کاری
+    except (I.IntakeError, StateError) as e:
+        print(f"⛔ {e}", file=sys.stderr)
+        return 2
+    ctx = Ctx(deps=deps, sources=I.load_sources(Path(a.config)), intake=intake,
+              frames_root=frames_root, state=state, max_frames=a.max_frames, force=False)
+    run, done = see_new(ctx, watched, vstate, state_path, now)
+    problems: list[str] = []
+    if ctx.wrote_docs:
+        I.save_state(intake / STATE_NAME, ctx.state)
+        problems = I.rebuild_index(intake)
+    print()
+    print(render_new(run, done, vstate, now.astimezone(UTC).strftime("%Y-%m-%d")), end="")
+    for p in problems:
+        print(f"⛔ سند ناخوانا در INDEX: {p}")
+    bad = (any(ep.failed for _, ep in done) or run["feed_failures"] or run["untried"]
+           or run["blocked"] or problems)
+    return 3 if bad else 0
 
 
 # ═══════════════ ۷ — گزارش ویدیو از کارت ═══════════════
@@ -975,11 +1389,16 @@ def report_path(intake: Path, cards: dict) -> Path:
     return intake / I.REPORTS_DIR / str(cards.get("source")) / f"{cards.get('video_id')}.md"
 
 
-def report_cli(cards_path: Path, intake: Path, frames_root: Path) -> int:
+def report_cli(cards_path: Path, intake: Path, frames_root: Path, now: datetime | None = None) -> int:
     try:
         cards = json.loads(cards_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as e:
         print(f"⛔ کارت خوانده نشد: {cards_path} — {type(e).__name__}: {e}", file=sys.stderr)
+        return 2
+    try:
+        load_video_state(intake / VIDEO_STATE_NAME)      # خراب؟ پیش از نوشتن گزارش بایست
+    except StateError as e:
+        print(f"⛔ {e}", file=sys.stderr)
         return 2
     man_path = frames_root / str(cards.get("video_id", "")) / "frames.json"
     man = json.loads(man_path.read_text(encoding="utf-8")) if man_path.exists() else None
@@ -1003,15 +1422,20 @@ def report_cli(cards_path: Path, intake: Path, frames_root: Path) -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(render_report(cards, meta, man, voice), encoding="utf-8")
     print(f"✅ گزارش: {out.as_posix()}")
+    mark_seen(intake / VIDEO_STATE_NAME, cards, out, now or datetime.now(UTC))
+    print(f"✅ وضعیت: {cards.get('video_id')} دیده‌شده — {(intake / VIDEO_STATE_NAME).as_posix()}")
     return 0
 
 
 # ═══════════════ ۸ — خط فرمان ═══════════════
 
-def main(argv: list[str] | None = None, deps: Deps | None = None) -> int:
+def main(argv: list[str] | None = None, deps: Deps | None = None, now: datetime | None = None) -> int:
+    """now فقط برای آزمون؛ خط فرمان ساعت واقعی را می‌خواند — درس رویداد ۵۵."""
     F._utf8_console()
     ap = argparse.ArgumentParser(description="دیدن کامل یک ویدیو یا پلی‌لیست — رادار، نشست ۶ب")
     ap.add_argument("link", nargs="?", help="پیوند ویدیو یا پلی‌لیست یوتیوب")
+    ap.add_argument("--new", action="store_true",
+                    help="رصد تازه: ویدیوهای ندیده فهرست رصد، سقف روزی ۳ — نشست ۷ب")
     ap.add_argument("--limit", type=int, help="پلی‌لیست: چند قسمت تازه، به ترتیب")
     ap.add_argument("--max-frames", type=int, default=F.DEFAULT_MAX_FRAMES)
     ap.add_argument("--force", action="store_true",
@@ -1023,10 +1447,17 @@ def main(argv: list[str] | None = None, deps: Deps | None = None) -> int:
     ap.add_argument("--frames", default=F.FRAMES_DIR, help="پوشه ریشه فریم‌ها — پوشه، نه فایل")
     a = ap.parse_args(argv)
     intake, frames_root = Path(a.intake), Path(a.frames)
+    now = now or datetime.now(UTC)
+    if sum(map(bool, (a.link, a.report, a.new))) > 1:
+        ap.error("فقط یکی: پیوند، --report یا --new")
     if a.report:
-        return report_cli(Path(a.report), intake, frames_root)
+        return report_cli(Path(a.report), intake, frames_root, now)
+    if a.max_frames < 1:
+        ap.error("--max-frames دست‌کم ۱")
+    if a.new:
+        return new_cli(a, deps or Deps.real(a.whisper), now)
     if not a.link:
-        ap.error("پیوند لازم است، یا --report")
+        ap.error("پیوند لازم است، یا --report یا --new")
     if a.limit is not None and a.limit < 1:
         ap.error("--limit دست‌کم ۱")
     if a.max_frames < 1:
