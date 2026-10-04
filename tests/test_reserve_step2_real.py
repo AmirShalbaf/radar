@@ -50,7 +50,8 @@ def test_optcost_followup_from_fill_day() -> None:
     assert x["qty"] == SALE["qty"] and x["price"] == SALE["price"]
 
 
-def test_watch_mark_and_two_steps_left() -> None:
+def test_watch_mark_and_no_step_left() -> None:
+    """پس از لغو ۴ اکتبر هیچ پله‌ای نمانده — پیش از آن دو پله، ETH 2940 و SOL 125.5."""
     w, h = _load("watch.json"), _load("holdings.json")
     W.validate_watch(w)
     rp = w["reserve_plan"]
@@ -58,8 +59,24 @@ def test_watch_mark_and_two_steps_left() -> None:
     ex = step["executed"]
     assert ex["order_id"] == SALE["order_id"] and ex["at"] == SALE["at"]
     assert (ex["avg_price"], ex["gross"], ex["fee"]) == (SALE["price"], SALE["gross"], SALE["fee"])
-    assert W.unfilled_steps(rp, h) == [{"symbol": "ETH", "qty": 0.0472, "price": 2940},
-                                       {"symbol": "SOL", "qty": 0.749, "price": 125.5}]
+    assert W.unfilled_steps(rp, h) == []
+
+
+def test_two_steps_cancelled_on_oct4() -> None:
+    """
+    تصمیم کاربر، ۴ اکتبر ۲۰۲۶ — رویداد ۸۱: باند با هیسترزیس رژیم سازنده شد، هدف ذخیره
+    ۱۵٪ و ذخیره ۱۵.۱٪؛ دو پله مانده در LBank لغو شدند، نه فروش بازار در مهلت. پله
+    پاک نشد؛ میدان cancelled با زمان کامل و دلیل، مثل پله 131.5.
+    """
+    rp = _load("watch.json")["reserve_plan"]
+    cut = [s for s in rp["steps"] if "cancelled" in s and s["cancelled"]["at"].startswith("2026-10-04")]
+    assert [(s["symbol"], s["qty"], s["price"]) for s in cut] == [("ETH", 0.0472, 2940), ("SOL", 0.749, 125.5)]
+    for s in cut:
+        c = s["cancelled"]
+        assert datetime.fromisoformat(c["at"]).tzinfo is not None
+        assert "رویداد ۳۶" in c["reason"] and "سازنده" in c["reason"] and "LBank" in c["reason"]
+        assert "executed" not in s
+    assert "پله‌ای نمانده" in rp["note"]
 
 
 def test_progress_fill_price_and_time() -> None:

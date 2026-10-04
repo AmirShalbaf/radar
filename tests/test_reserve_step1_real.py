@@ -94,7 +94,9 @@ def test_sol_131_5_cancelled_with_reason() -> None:
     c = sol[2]["cancelled"]
     assert datetime.fromisoformat(c["at"]).tzinfo is not None and c["at"].startswith("2026-09-29")
     assert "withdraw" in c["reason"] and "ETH" in c["reason"]
-    assert all("cancelled" not in s for s in rp["steps"] if s is not sol[2])
+    # ۴ اکتبر دو پله دیگر هم لغو شدند — test_reserve_step2_real؛ لغو ۲۹ سپتامبر فقط همین یکی است
+    assert [s["price"] for s in rp["steps"]
+            if "cancelled" in s and s["cancelled"]["at"].startswith("2026-09-29")] == [131.5]
     assert "لغو" in rp["note"] and "سه پله" in rp["note"]
 
 
