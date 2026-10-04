@@ -1,0 +1,2559 @@
+{
+ "schema": 1,
+ "kind": "radar-chart-cards",
+ "video_id": "hEKhT4uIg08",
+ "doc_id": "2026-10-02_tekrargar_hEKhT4uI",
+ "doc": "intake/tekrargar/2026-10-02_آلتسیزن-تحلیل-داده-های-اقتصادی-تحلیل-بیت_hEKhT4.md",
+ "source": "tekrargar",
+ "url": "https://www.youtube.com/watch?v=hEKhT4uIg08",
+ "title": "آلتسیزن | تحلیل داده های اقتصادی | تحلیل بیت کوین",
+ "read_by": "مدل — نشست ۷ب رادار",
+ "read_at": "2026-10-04",
+ "guide": "references/chart-reading.md",
+ "frames_tool": "radar_frames 1.1",
+ "methods": [
+  {
+   "area": "منبع",
+   "rule": "متن تحلیل داده اشتغال را از پاسخ هوش مصنوعی Gemini روی صفحه خواند، تقریباً واژه‌به‌واژه",
+   "where": "04:30",
+   "library": "تازه — در تنش با ج۴، راستی‌آزمایی متقاطع منبع"
+  },
+  {
+   "area": "ورود",
+   "rule": "خرید پله‌ای طلا: در هر پله پایین‌تر دو برابر پله قبل",
+   "where": "13:17 تا 13:30",
+   "library": "تازه — در تنش با مدیریت ریسک"
+  },
+  {
+   "area": "ساختار",
+   "rule": "پرچم صعودی ۴ ساعته الگوی ادامه‌دهنده است؛ سقف حرکت را خط روند صعودی تعیین می‌کند",
+   "where": "20:19",
+   "library": "تازه"
+  },
+  {
+   "area": "خروج",
+   "rule": "از سیو سود کسی فقیر نمی‌شود",
+   "where": "08:31",
+   "library": "نزدیک ک۵"
+  },
+  {
+   "area": "جریان",
+   "rule": "کاهش ورود و افزایش خروج صف استیک اتر یعنی فشار فروش احتمالی",
+   "where": "17:42",
+   "library": "تازه"
+  },
+  {
+   "area": "جریان",
+   "rule": "ناحیه نقدینگی لیکوئیدیشن هدف حرکت است؛ ورود و خروج صندوق‌های قابل معامله را روزانه می‌خواند",
+   "where": "22:46 تا 23:22",
+   "library": "تازه"
+  }
+ ],
+ "cards": [
+  {
+   "frame_id": "hEKhT4uIg08_02m06.5s",
+   "t": 126.5,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "own",
+    "who": "tekrargar_research — گروه تحقیقاتی خود او",
+    "evidence": "استوری اینستاگرام tekrargar_research با امضای «گروه تحقیقاتی تکرارگر»"
+   },
+   "texts": [
+    {
+     "text": "استوری: آمار جدید اشتغال؛ تیر خلاص به افزایش نرخ بهره آمریکا — بیکاری 4.2٪، اشتغال 29 هزار در برابر انتظار 90 هزار و 162 هزار ماه قبل",
+     "confidence": "high"
+    },
+    {
+     "text": "برش Forex Factory در استوری: Average Hourly Earnings 0.1%، Non-Farm Employment Change 29K، Unemployment Rate 4.2%",
+     "confidence": "high"
+    },
+    {
+     "text": "Seen by 625 — 2 h",
+     "confidence": "high"
+    }
+   ],
+   "speech": "متن استوری گروه خودش را می‌خواند: بیکاری به ۴.۲ رسید، اشتغال ۲۹ هزار در برابر انتظار ۹۰ هزار و ۱۶۲ هزار ماه قبل.",
+   "method_notes": [
+    "استوری می‌گوید ماه قبل 162 هزار؛ Forex Factory در 05:09 قبلی را 133K و اصلاح‌شده نشان می‌دهد"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف همان متن استوری روی صفحه"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_04m13.0s",
+   "t": 253.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_tekrargar_hEKhT4uI",
+     "row": 1,
+     "time": "04:12",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "تریدینگ‌ویو خود او با چیدمان «4H No Log»، پنل معامله و واچ‌لیست"
+   },
+   "recorded_at": {
+    "value": "2026-10-02T17:13:15+02:00",
+    "confidence": "medium",
+    "from": "image",
+    "seen": "17:13:15 UTC+2"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "how": "Bitcoin / U.S. Dollar"
+   },
+   "venue": {
+    "value": "Coinbase",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «4h»؛ شمارش 46:45 تا 16:00 UTC"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 2,000 از 47 پیکسل بالا تا حدود 56 پایین؛ نام چیدمان «4H No Log» با فاصله تیک‌ها نمی‌خواند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 90000.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 70450.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 76653.75,
+      "confidence": "high",
+      "from": "image",
+      "how": "خط برگزیده با برچسب بزرگ — استثنای د۱"
+     },
+     "kind": "horizontal",
+     "label": "Support II — خط مشکی",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 76653.75,
+      "cutoff": "2026-10-02T16:30:04+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-10-02T12:00:00+00:00",
+      "atr": 981.2269653039075,
+      "touches": null,
+      "nearest": 76285.93544372293,
+      "nearest_touches": 7,
+      "distance_atr": 0.3748516594864938,
+      "distance_pct": 0.4798389593164927,
+      "chance_pct": 32.43378310844578,
+      "strong_min_touches": 6,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 76653.75,
+       "cutoff": "2026-10-02T16:30:04+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-10-01T00:00:00+00:00",
+       "atr": 2258.125466845037,
+       "touches": 4,
+       "nearest": 76315.95411507647,
+       "nearest_touches": 4,
+       "distance_atr": 0.1495912826294299,
+       "distance_pct": 0.4406775727521866,
+       "chance_pct": 30.784607696151923,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 21.189405297351325,
+       "reason": null,
+       "cutoff_basis": "publish"
+      },
+      "cutoff_basis": "publish"
+     }
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-09-21",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 87600,
+       "confidence": "low",
+       "from": "image",
+       "how": "آغاز خط بالای کانال"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-03",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 85800,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "trend",
+     "label": "خط بالای کانال نارنجی نزولی"
+    },
+    {
+     "p1": {
+      "time": {
+       "value": "2026-09-21",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 84100,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-03",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 82400,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "trend",
+     "label": "خط پایین کانال — Support I"
+    }
+   ],
+   "zones": [
+    {
+     "low": {
+      "value": 83700,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی میان 84,000 و 82,000"
+     },
+     "high": {
+      "value": 84250,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "نوار خاکستری افقی"
+    },
+    {
+     "low": {
+      "value": 80730,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی میان 82,000 و 80,000"
+     },
+     "high": {
+      "value": 81310,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "مستطیل سبز، ۲۰ اوت تا ۱ اکتبر"
+    }
+   ],
+   "patterns": [
+    {
+     "name": {
+      "value": "کانال نزولی — پرچم صعودی",
+      "confidence": "medium",
+      "from": "image",
+      "how": "دو خط موازی نارنجی پس از جهش"
+     }
+    }
+   ],
+   "indicators": [
+    {
+     "name": {
+      "value": "RSI با برچسب واگرایی Bear و Bull",
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب‌های Bear، H Bear و H Bull روی اسیلاتور"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "O86,412.21 H87,249.05 L85,339.08 C85,487.41 −924.80 (−1.07%)",
+     "confidence": "high"
+    },
+    {
+     "text": "85,487.41 · 46:45 — قیمت زنده؛ SELL 85,498.56 / BUY 85,498.57",
+     "confidence": "high"
+    },
+    {
+     "text": "واچ‌لیست: BTCUSDT 85,519.92، ETHUSDT 2,703.84، XAUUSD 4,143.920، SILVER 60.352، SPX 7,711.32، OILUSD 90.490",
+     "confidence": "high"
+    },
+    {
+     "text": "خطوط مشکی واگرایی نزولی روی اسیلاتور، رسم خود او",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "گفته بودیم تا ۸۹ هزار، تا این خط روندی که کشیدیم؛ انتظار داشتیم بازار تا آنجا برود؛ بازار پس از خبر بالا رفت و فعلاً برگشته.",
+   "method_notes": [
+    "نام چیدمان «4H No Log» است ولی فاصله تیک‌ها لگاریتمی است — مقیاس را از تیک بسنج، نه از نام"
+   ],
+   "claims": [
+    "BTC — صعود تا حدود 89,000 تا خط روند — گفته دیروز خود او، «گفتیم» — بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف ۸۹ هزار و خط روند؛ روی صفحه خطی با برچسب ۸۹ هزار نیست"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_04m18.5s",
+   "t": 258.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_tekrargar_hEKhT4uI",
+     "row": 1,
+     "time": "04:12",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "همان نمودار خود او"
+   },
+   "recorded_at": {
+    "value": "2026-10-02T17:13:22+02:00",
+    "confidence": "medium",
+    "from": "image",
+    "seen": "17:13:22 UTC+2"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Coinbase",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 46:38"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 90000.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 70450.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 76653.75,
+      "confidence": "high",
+      "from": "image",
+      "how": "خط برگزیده با برچسب بزرگ"
+     },
+     "kind": "horizontal",
+     "label": "Support II — خط مشکی",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 76653.75,
+      "cutoff": "2026-10-02T16:30:04+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-10-02T12:00:00+00:00",
+      "atr": 981.2269653039075,
+      "touches": null,
+      "nearest": 76285.93544372293,
+      "nearest_touches": 7,
+      "distance_atr": 0.3748516594864938,
+      "distance_pct": 0.4798389593164927,
+      "chance_pct": 32.43378310844578,
+      "strong_min_touches": 6,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 76653.75,
+       "cutoff": "2026-10-02T16:30:04+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-10-01T00:00:00+00:00",
+       "atr": 2258.125466845037,
+       "touches": 4,
+       "nearest": 76315.95411507647,
+       "nearest_touches": 4,
+       "distance_atr": 0.1495912826294299,
+       "distance_pct": 0.4406775727521866,
+       "chance_pct": 30.784607696151923,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 21.189405297351325,
+       "reason": null,
+       "cutoff_basis": "publish"
+      },
+      "cutoff_basis": "publish"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": 83700,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "high": {
+      "value": 84250,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "نوار خاکستری افقی"
+    },
+    {
+     "low": {
+      "value": 80730,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "high": {
+      "value": 81310,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "مستطیل سبز"
+    }
+   ],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "O86,412.21 H87,249.05 L85,339.08 C85,483.13 −929.08 (−1.08%)؛ 85,483.13 · 46:38",
+     "confidence": "high"
+    }
+   ],
+   "speech": "این را آورده بودم تا کمی آموزش بدهم که نسبت این داده‌ها به هم چیست.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف کلی"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_04m34.5s",
+   "t": 274.5,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "other",
+    "who": "Gemini — هوش مصنوعی گوگل",
+    "evidence": "gemini.google.com؛ پاسخ فارسی با سرخط «این داده به چه معناست؟»"
+   },
+   "texts": [
+    {
+     "text": "پاسخ Gemini: Non-Farm پیش‌بینی 89K، قبلی 133K، اعلام‌شده 29K؛ بیکاری پیش‌بینی 4.1%، قبلی 4.1%، اعلام‌شده 4.2%",
+     "confidence": "high"
+    },
+    {
+     "text": "پاسخ Gemini، اثر بر بازارها: شاخص دلار شدیداً نزولی؛ طلا شدیداً صعودی؛ بیت‌کوین صعودی یا نوسانی مثبت؛ سهام آمریکا صعودی در کوتاه‌مدت",
+     "confidence": "high"
+    },
+    {
+     "text": "پانویس: Your tekrargar.com chats aren't used to improve our models",
+     "confidence": "high"
+    }
+   ],
+   "speech": "این گزارش نشان‌دهنده تضعیف غیرمنتظره و شدید بازار کار آمریکاست: ۲۹ هزار شغل در برابر انتظار ۸۹ هزار، همراه با افزایش بیکاری.",
+   "method_notes": [
+    "جمله حرف همان جمله پاسخ Gemini روی صفحه است — خواندن پاسخ ماشین، نه تحلیل خود او"
+   ],
+   "claims": [
+    "به نقل او از پاسخ Gemini: شاخص دلار شدیداً نزولی، طلا شدیداً صعودی، بیت‌کوین صعودی، سهام آمریکا صعودی در کوتاه‌مدت — بی‌آستانه، بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف تقریباً واژه‌به‌واژه متن پاسخ Gemini است"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_05m09.5s",
+   "t": 309.5,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "own",
+    "who": "Forex Factory — ابزار داده",
+    "evidence": "forexfactory.com، تقویم امروز ۲ اکتبر"
+   },
+   "texts": [
+    {
+     "text": "Forex Factory، Today: Oct 2: Non-Farm Employment Change واقعی 29K، پیش‌بینی 89K، قبلی 133K؛ Unemployment Rate 4.2% / 4.1% / 4.1%",
+     "confidence": "high"
+    },
+    {
+     "text": "Average Hourly Earnings m/m 0.1% / 0.3% / 0.3%؛ Factory Orders پیش‌بینی 0.1%، قبلی 0.9%",
+     "confidence": "high"
+    },
+    {
+     "text": "خبر: US adds disappointing 29,000 jobs and unemployment ticks up to 4.2% in Sep — apnews.com؛ firstpost: انتظار 90,000 و 162,000 در اوت",
+     "confidence": "high"
+    }
+   ],
+   "speech": "از هر ۱۰۰ آمریکایی ۴.۲ نفر بیکارند، قبلاً ۴.۱؛ انتظار ۸۹ هزار شغل بود و نشد؛ بیکاری بیشتر یعنی فدرال‌رزرو نمی‌تواند نرخ را طولانی بالا نگه دارد.",
+   "method_notes": [],
+   "claims": [
+    "به گفته او: با بیکاری بالاتر، فدرال‌رزرو نمی‌تواند نرخ بهره را طولانی‌مدت بالا نگه دارد — بی‌آستانه، بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۴.۲ و ۴.۱ و ۸۹ هزار؛ صفحه 4.2%، 4.1% و 89K"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_07m15.5s",
+   "t": 435.5,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "other",
+    "who": "Crypto Banter",
+    "evidence": "youtube.com/@CryptoBanterGroup؛ پخش زنده «This Is NOT Altseason.»"
+   },
+   "texts": [
+    {
+     "text": "کانال Crypto Banter، 1.18M subscribers؛ This Is NOT Altseason. — 35:19، Streamed 1h ago",
+     "confidence": "high"
+    }
+   ],
+   "speech": "او گفت این اصلاً آلت‌سیزن نیست، ولی صبور باشید، آلت‌سیزن بزرگی در راه است؛ به داده بیکاری اشاره می‌کند.",
+   "method_notes": [],
+   "claims": [
+    "به نقل او از Crypto Banter: این آلت‌سیزن نیست ولی آلت‌سیزن بزرگی در راه است — بی‌آستانه، بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف همان عنوان پخش «This Is NOT Altseason.»"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_08m25.5s",
+   "t": 505.5,
+   "refs": [],
+   "is_chart": true,
+   "screen_source": {
+    "kind": "tweet",
+    "who": "Frank @FrankAFetter — در ویدیوی Crypto Banter",
+    "evidence": "پست X با نمودار checkonchain درون پخش Crypto Banter"
+   },
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "ساعت روی صفحه نیست"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "how": "$BTC و عنوان Long Term Holder Bitcoin Realized Profit"
+   },
+   "venue": {
+    "value": "checkonchain",
+    "confidence": "high",
+    "from": "image",
+    "how": "واترمارک"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "chart_type": {
+    "value": "line",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "محور قیمت دیده نمی‌شود"
+   },
+   "price_axis": {
+    "top": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    },
+    "bottom": {
+     "value": null,
+     "confidence": null,
+     "from": "image",
+     "note": "ناخوانا"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Very little profits being taken by long term holders during the recovery off the bottom. It appears they want higher prices. $BTC",
+     "confidence": "high"
+    },
+    {
+     "text": "برچسب قیمت $83k روی خط بیت‌کوین؛ 3:12 PM · Oct 1, 2026 · 4,875 Views",
+     "confidence": "high"
+    }
+   ],
+   "speech": "کسانی که در کف خریدند حالا در صعود کمی سود برمی‌دارند؛ هولدرهای بلندمدت شروع به سیو سود کرده‌اند؛ از سیو سود کسی فقیر نمی‌شود.",
+   "method_notes": [
+    "توییت می‌گوید سود بسیار کمی برداشته شده و نتیجه می‌گیرد قیمت بالاتر می‌خواهند؛ حرف «یه مقداری سود» را گفت و نتیجه را در این تکه نیاورد"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف همان توییت؛ «بسیار کم» به «یه مقداری» ترجمه شد"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_08m57.5s",
+   "t": 537.5,
+   "refs": [],
+   "is_chart": true,
+   "screen_source": {
+    "kind": "other",
+    "who": "x0-Nas — در ویدیوی Crypto Banter",
+    "evidence": "نمودار تریدینگ‌ویو «x0-Nas created with TradingView.com, Sep 23, 2026 13:06 UTC»"
+   },
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "AIQ vs BTC vs TOTAL",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «AIQ vs BTC vs Total Crypto Market»"
+   },
+   "venue": {
+    "value": "NASDAQ، Bitstamp، CRYPTOCAP",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "راهنما «1D»"
+   },
+   "chart_type": {
+    "value": "line",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "محور درصد با گام برابر"
+   },
+   "price_axis": {
+    "top": {
+     "value": 120.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "درصد"
+    },
+    "bottom": {
+     "value": -20.0,
+     "confidence": "high",
+     "from": "image",
+     "how": "درصد"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "AIQ +103.35%، BTCUSD +35.88%، TOTAL +29.11%",
+     "confidence": "high"
+    }
+   ],
+   "speech": "نظریه او درباره آلت‌ها: رشد خیلی زیاد در این چرخه؛ واگرایی میان بیت‌کوین و S&P زیاد است؛ S&P در سقف و بیت‌کوین عقب مانده و باید بالا برود.",
+   "method_notes": [],
+   "claims": [
+    "به نقل او از Crypto Banter: بیت‌کوین از S&P عقب مانده و باید بالا برود — بی‌آستانه، بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": false,
+    "note": "حرف S&P؛ صفحه AIQ — صندوق هوش مصنوعی و فناوری، نه S&P"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_10m42.0s",
+   "t": 642.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_tekrargar_hEKhT4uI",
+     "row": 2,
+     "time": "10:46",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "screen_source": {
+    "kind": "other",
+    "who": "گرت سالووی — Verified Investing",
+    "evidence": "ویدیوی کانال Verified Investing؛ واترمارک V"
+   },
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "ساعت 09:09:47 UTC-4 مال ویدیوی سالووی است"
+   },
+   "coin": {
+    "value": "USOIL",
+    "confidence": "high",
+    "from": "image",
+    "how": "CFDs on WTI Crude Oil · 1D · TVC"
+   },
+   "venue": {
+    "value": "TVC",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 2.00 همه حدود 27 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 108.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 66.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 88.9,
+      "confidence": "medium",
+      "from": "image",
+      "how": "خط نارنجی افقی؛ درون‌یابی میان 90.00 و 88.00"
+     },
+     "kind": "horizontal",
+     "label": "خط نارنجی افقی سالووی",
+     "drawn_by": "other",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "USOIL/USDT",
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 88.9,
+      "cutoff": "2026-10-02T16:30:04+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Dutc USOIL-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 1d USOIL_USDT: INVALID_CURRENCY_PAIR Invalid currency pair USOIL_USDT",
+      "cutoff_basis": "publish"
+     }
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-06",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 107,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-13",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 77.4,
+       "confidence": "low",
+       "from": "image",
+       "how": "سر خط سفید نزدیک 78.00"
+      }
+     },
+     "kind": "trend",
+     "label": "خط روند سفید نزولی سالووی"
+    },
+    {
+     "p1": {
+      "time": {
+       "value": "2026-06",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 85,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 108,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "trend",
+     "label": "خط روند نارنجی صعودی سالووی"
+    },
+    {
+     "p1": {
+      "time": {
+       "value": "2026-10-02",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 88,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-13",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 79,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "projection",
+     "label": "مسیر سفید دستی سالووی تا خط روند"
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "O93.46 H93.51 L88.06 C88.97 −3.93 (−4.23%)",
+     "confidence": "high"
+    },
+    {
+     "text": "زیرنویس ویدیو: a barrel level by the midterms. that's in the next month.",
+     "confidence": "high"
+    },
+    {
+     "text": "عنوان: Jobs Report Miss Sends Stocks Surging, Yields Falling, Oil Collapses As Bull Thesis Remains Intact — Verified Investing",
+     "confidence": "high"
+    },
+    {
+     "text": "ساعت ویدیوی سالووی 09:09:47 UTC-4",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به نفت اشاره می‌کند؛ نفت امروز اصلاح کرد؛ انتظار دارد نفت به خط روندش برگردد، حدود ۷۸ دلار برای هر بشکه.",
+   "method_notes": [
+    "ویدیوی سالووی از کانال Verified Investing است، نه کانال شخصی ثبت‌شده در analysts.yml"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۷۸ دلار و خط روند؛ سر خط سفید نزدیک 78"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_10m46.0s",
+   "t": 646.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_tekrargar_hEKhT4uI",
+     "row": 2,
+     "time": "10:46",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "screen_source": {
+    "kind": "other",
+    "who": "گرت سالووی — Verified Investing",
+    "evidence": "همان ویدیو"
+   },
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "USOIL",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "TVC",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 108.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 66.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 88.9,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "kind": "horizontal",
+     "label": "خط نارنجی افقی سالووی",
+     "drawn_by": "other",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "USOIL/USDT",
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 88.9,
+      "cutoff": "2026-10-02T16:30:04+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Dutc USOIL-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 1d USOIL_USDT: INVALID_CURRENCY_PAIR Invalid currency pair USOIL_USDT",
+      "cutoff_basis": "publish"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "همان نمای نفت؛ زیرنویس: a barrel level by the midterms. that's in the next month.",
+     "confidence": "high"
+    }
+   ],
+   "speech": "انتظار دارد نفت به خط روند برگردد، حدود ۷۸ دلار؛ دلیل اصلاح امروز آزادسازی ذخیره استراتژیک فرانسه است.",
+   "method_notes": [],
+   "claims": [
+    "USOIL — بازگشت به خط روند حدود 78 دلار — به نقل او از سالووی؛ زیرنویس صفحه «by the midterms… in the next month» — مهلت حدود یک ماه"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۷۸ دلار؛ صفحه خط روند نزدیک 78"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_10m53.5s",
+   "t": 653.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_tekrargar_hEKhT4uI",
+     "row": 2,
+     "time": "10:46",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "screen_source": {
+    "kind": "other",
+    "who": "گرت سالووی — Verified Investing",
+    "evidence": "همان ویدیو، با مسیر قرمز دستی که خود تکرارگر روی تصویر کشید"
+   },
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "USOIL",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "TVC",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 108.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 66.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 88.9,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "kind": "horizontal",
+     "label": "خط نارنجی افقی سالووی",
+     "drawn_by": "other",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "USOIL/USDT",
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 88.9,
+      "cutoff": "2026-10-02T16:30:04+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Dutc USOIL-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 1d USOIL_USDT: INVALID_CURRENCY_PAIR Invalid currency pair USOIL_USDT",
+      "cutoff_basis": "publish"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "مسیر قرمز دستی تکرارگر از حدود 104 تا حدود 66 و پیکان رو به خط روند سفید نزدیک 78 — معنا نامعلوم",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "فرانسه ذخیره استراتژیک را آزاد می‌کند؛ از آن طرف ترامپ تنگه هرمز را کامل در کنترل دارد.",
+   "method_notes": [
+    "ابزار رسم روی صفحه: خود تکرارگر روی نمودار سالووی خط قرمز کشید"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف از خبر نفت؛ وارسی‌شدنی نیست"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_11m15.5s",
+   "t": 675.5,
+   "refs": [],
+   "is_chart": true,
+   "screen_source": {
+    "kind": "other",
+    "who": "گرت سالووی — Verified Investing",
+    "evidence": "همان ویدیو"
+   },
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "USOIL",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "TVC",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 108.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 66.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 88.9,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "kind": "horizontal",
+     "label": "خط نارنجی افقی سالووی",
+     "drawn_by": "other",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "USOIL/USDT",
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 88.9,
+      "cutoff": "2026-10-02T16:30:04+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Dutc USOIL-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 1d USOIL_USDT: INVALID_CURRENCY_PAIR Invalid currency pair USOIL_USDT",
+      "cutoff_basis": "publish"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "همان نمای نفت بی رسم قرمز",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بحث سیاسی ندارم؛ بر اساس داده خروجی تنگه هرمز، ایران نمی‌تواند نفت صادر کند.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف از صادرات نفت؛ صفحه نمودار نفت"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_12m09.0s",
+   "t": 729.0,
+   "refs": [],
+   "is_chart": true,
+   "screen_source": {
+    "kind": "other",
+    "who": "گرت سالووی — Verified Investing",
+    "evidence": "همان ویدیو، با منحنی قرمز دستی تکرارگر"
+   },
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "ساعت 09:10:35 UTC-4 مال ویدیوی سالووی است"
+   },
+   "coin": {
+    "value": "GOLD",
+    "confidence": "high",
+    "from": "image",
+    "how": "CFDs on Gold (US$ / OZ) · 1D · TVC"
+   },
+   "venue": {
+    "value": "TVC",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 200 همه حدود 35 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 5800.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 2600.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2025-06",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 3150,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-09-23",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 4140,
+       "confidence": "medium",
+       "from": "image",
+       "how": "نشانگر 4,140.232 روی سر خط"
+      }
+     },
+     "kind": "trend",
+     "label": "خط روند نارنجی صعودی سالووی"
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "O4,359.150 H4,369.260 L4,274.885 C4,287.000 −72.500 (−1.66%)",
+     "confidence": "high"
+    },
+    {
+     "text": "4,140.232 · Wed 23 Sep '26 — نشانگر موس",
+     "confidence": "high"
+    },
+    {
+     "text": "زیرنویس: always say? Respect the charts or respect the support or resistance until",
+     "confidence": "high"
+    }
+   ],
+   "speech": "طلا را به این خط روند اشاره می‌کند: چند برخورد، و حالا در نقطه برخوردیم؛ اگر حمایت ببینیم کف بالاتر و ادامه صعود.",
+   "method_notes": [
+    "منحنی قرمز زیر خط روند و پیکان رو به نقطه برخورد را خود تکرارگر کشید"
+   ],
+   "claims": [
+    "طلا — اگر خط روند صعودی حمایت کند، کف بالاتر و ادامه صعود — به نقل او از سالووی — بی‌آستانه، بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف از خط روند و برخورد؛ صفحه خط نارنجی و نشانگر روی آن"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_13m15.0s",
+   "t": 795.0,
+   "refs": [],
+   "is_chart": true,
+   "screen_source": {
+    "kind": "other",
+    "who": "گرت سالووی — Verified Investing",
+    "evidence": "همان ویدیو، با خط شکسته قرمز دستی تکرارگر"
+   },
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "ساعت 09:10:51 UTC-4 مال ویدیوی سالووی است"
+   },
+   "coin": {
+    "value": "GOLD",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "TVC",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 40 همه حدود 29 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 4720.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 3920.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-06-17",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 3900,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 4130,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "trend",
+     "label": "خط روند نارنجی صعودی سالووی"
+    },
+    {
+     "p1": {
+      "time": {
+       "value": "2026-10-06",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 4200,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-14",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 3900,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "projection",
+     "label": "خط شکسته قرمز تکرارگر — درجا و سپس ریزش زیر خط روند"
+    }
+   ],
+   "zones": [],
+   "patterns": [
+    {
+     "name": {
+      "value": "پرچم نزولی",
+      "confidence": "low",
+      "from": "image",
+      "how": "خط شکسته قرمز افقی و سپس ریزش"
+     }
+    }
+   ],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "O4,174.890 H4,227.850 L4,133.920 C4,203.510 +25.710 (+0.62%)",
+     "confidence": "high"
+    },
+    {
+     "text": "4,167.449 · Wed 14 Oct '26 — نشانگر موس در فضای آینده",
+     "confidence": "high"
+    },
+    {
+     "text": "زیرنویس: continue like this I would start to get nervous maybe mid next",
+     "confidence": "high"
+    }
+   ],
+   "speech": "روی طلا، کندل روزانه: اگر هفته آینده همین‌جا درجا بزند پرچم نزولی می‌شود؛ آن‌وقت در پله‌های پایین‌تر خرید بیشتر — مثلاً هر پله دو برابر.",
+   "method_notes": [
+    "خرید پله‌ای با دوبرابر کردن در هر پله پایین‌تر — به گفته او"
+   ],
+   "claims": [
+    "طلا — اگر هفته آینده درجا بزند، پرچم نزولی و ریزش زیر خط روند — به نقل او از سالووی، با رسم قرمز خود او — بی‌آستانه چاپ‌شده"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف درجا و پرچم نزولی؛ زیرنویس «nervous maybe mid next» و خط قرمز"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_15m26.5s",
+   "t": 926.5,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "other",
+    "who": "رایول پال و Ran Neuner",
+    "evidence": "ویدیوی Crypto, AI Agents, And The Next Big Cycle — Raoul Pal The Journey Man"
+   },
+   "texts": [
+    {
+     "text": "Crypto, AI Agents, And The Next Big Cycle w/ Ran Neuner / Raoul Pal The Journey Man",
+     "confidence": "high"
+    }
+   ],
+   "speech": "منتظر نظر شماست برای تهیه محتوا؛ حال‌وهوای بازار خیلی مثبت است؛ بازار گاوی بیت‌کوین صددرصد تأیید شد، در اکتبریم.",
+   "method_notes": [],
+   "claims": [
+    "بیت‌کوین — بازار گاوی ۱۰۰٪ تأیید شد، در اکتبر — به گفته او — بی‌آستانه"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف کلی؛ صفحه گفتگوی پال"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_17m40.5s",
+   "t": 1060.5,
+   "refs": [],
+   "is_chart": true,
+   "screen_source": {
+    "kind": "own",
+    "who": "ValidatorQueue.com — ابزار داده",
+    "evidence": "validatorqueue.com"
+   },
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "ETH — Validator Queue",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "ValidatorQueue.com",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "low",
+    "from": "image",
+    "how": "بازه All؛ دانه داده دیده نمی‌شود"
+   },
+   "chart_type": {
+    "value": "line",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 500k برابر"
+   },
+   "price_axis": {
+    "top": {
+     "value": 4500,
+     "confidence": "high",
+     "from": "image",
+     "how": "هزار ETH"
+    },
+    "bottom": {
+     "value": 0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Network: Active Validators 876,389؛ Staked ETH 43.7M (35.76%)؛ APR 2.64%",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اتریومی که وارد استیک می‌شود کم می‌شود و اتریومی که از استیک خارج می‌شود زیاد می‌شود.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "خط ورود آبی رو به پایین و خط خروج قرمز در انتها بالا"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_17m46.0s",
+   "t": 1066.0,
+   "refs": [],
+   "is_chart": true,
+   "screen_source": {
+    "kind": "own",
+    "who": "ValidatorQueue.com — ابزار داده",
+    "evidence": "همان صفحه با دایره قرمز دستی او دور راهنما"
+   },
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "ETH — Validator Queue",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "ValidatorQueue.com",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "low",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "line",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 4500,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "دایره قرمز دستی دور راهنمای Entry و Exit",
+     "confidence": "high"
+    }
+   ],
+   "speech": "پس دارندگان بزرگ اتریوم و ولیدیتورها از استیک خارج می‌شوند.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف از ورود و خروج صف؛ صفحه همان راهنما"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_20m34.0s",
+   "t": 1234.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_tekrargar_hEKhT4uI",
+     "row": 3,
+     "time": "20:32",
+     "role": "claim",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "تریدینگ‌ویو خود او با چیدمان «Daily Log»، برچسب‌های Support I تا III"
+   },
+   "recorded_at": {
+    "value": "2026-10-02T17:32:52+02:00",
+    "confidence": "medium",
+    "from": "image",
+    "seen": "17:32:52 UTC+2"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "how": "Bitcoin / Tether SPOT"
+   },
+   "venue": {
+    "value": "Bitunix",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان نمودار"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "عنوان «1D»؛ شمارش 08:27:07 تا 00:00 UTC"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 4,000 همه 50 پیکسل؛ نام چیدمان «Daily Log» با فاصله تیک‌ها نمی‌خواند"
+   },
+   "price_axis": {
+    "top": {
+     "value": 80000.0,
+     "confidence": "medium",
+     "from": "image",
+     "how": "بالاترین تیک کامل؛ بالاتر زیر دوربین چهره"
+    },
+    "bottom": {
+     "value": 52000.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-02",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 59800,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-06",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 89100,
+       "confidence": "low",
+       "from": "image",
+       "how": "سر خط مشکی؛ درون‌یابی از گام 4,000"
+      }
+     },
+     "kind": "trend",
+     "label": "خط روند مشکی صعودی خود او"
+    }
+   ],
+   "zones": [
+    {
+     "low": {
+      "value": 80960,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "high": {
+      "value": 81520,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "Support I — مستطیل سبز"
+    },
+    {
+     "low": {
+      "value": 76000,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "high": {
+      "value": 76560,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "Support II — مستطیل سبز"
+    },
+    {
+     "low": {
+      "value": 66400,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "high": {
+      "value": 66800,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "Support III — مستطیل سبز"
+    }
+   ],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "دو میانگین متحرک قرمز و بنفش",
+      "confidence": "medium",
+      "from": "image"
+     },
+     "settings": [
+      {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا",
+       "how": "تنظیم روی تصویر نیست",
+       "label": "دوره"
+      }
+     ]
+    },
+    {
+     "name": {
+      "value": "RSI با برچسب واگرایی",
+      "confidence": "medium",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "MACD",
+      "confidence": "low",
+      "from": "image",
+      "how": "هیستوگرام و دو خط زیر نمودار"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "…80.05 H87,219.99 L84,520.00 C85,442.05 +562.00 (+0.66%)؛ SELL 85,447.87 / BUY 85,447.88",
+     "confidence": "high"
+    },
+    {
+     "text": "ابزار اندازه‌گیری: 16,391.66 (29.23%) 1,639,166",
+     "confidence": "high"
+    },
+    {
+     "text": "لوزی سبز میان حدود 56,000 و 80,000 — معنا نامعلوم",
+     "confidence": "medium"
+    },
+    {
+     "text": "Tue 06 Oct '26 — نشانگر موس در فضای آینده",
+     "confidence": "high"
+    }
+   ],
+   "speech": "دیروز در ۴ ساعته پرچم صعودی ادامه‌دهنده شکل گرفت؛ ولی با این خط روند، بیت‌کوین حتی می‌تواند تا ناحیه ۸۸ تا ۸۹ هزار دلار رشد کند.",
+   "method_notes": [
+    "وارسی، محاسبه‌شده: 16,391.66 ÷ 0.2923 = 56,078 — پایه ابزار اندازه‌گیری حدود 56,078 و سرش حدود 72,470"
+   ],
+   "claims": [
+    "BTC — رشد تا ناحیه 88,000 تا 89,000 دلار تا خط روند صعودی، سپس پرچم نزولی — بی‌مهلت — خود او"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۸۸ تا ۸۹ هزار و خط روند؛ سر خط مشکی حدود 89,100 در اکتبر"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_21m03.0s",
+   "t": 1263.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_tekrargar_hEKhT4uI",
+     "row": 4,
+     "time": "21:07",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "همان نمودار خود او، با منحنی قرمز دستی"
+   },
+   "recorded_at": {
+    "value": "2026-10-02T17:33:27+02:00",
+    "confidence": "medium",
+    "from": "image",
+    "seen": "17:33:27 UTC+2"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Bitunix",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "شمارش 08:26:33"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 4,000 همه 50 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 92000.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 60000.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-02",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 59800,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-02",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 89000,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "trend",
+     "label": "خط روند مشکی صعودی خود او"
+    }
+   ],
+   "zones": [
+    {
+     "low": {
+      "value": 80960,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "high": {
+      "value": 81440,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "Support I"
+    },
+    {
+     "low": {
+      "value": 76000,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "high": {
+      "value": 76480,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "Support II"
+    },
+    {
+     "low": {
+      "value": 66400,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "high": {
+      "value": 66800,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "Support III"
+    }
+   ],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "O8?,880.05 H87,219.99 L84,520.00 C85,466.00 +585.95 (+0.69%)؛ 85,466.00 · 08:26:33",
+     "confidence": "high"
+    },
+    {
+     "text": "منحنی قرمز دستی تا نزدیک خط روند و برگشت",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "این خط روند می‌تواند نقطه خیلی مهمی باشد؛ گرت هم درباره همین صحبت می‌کند و دیروز هم گفت.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف از خط روند؛ صفحه همان خط"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_21m06.5s",
+   "t": 1266.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_tekrargar_hEKhT4uI",
+     "row": 4,
+     "time": "21:07",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "screen_source": {
+    "kind": "other",
+    "who": "گرت سالووی — Verified Investing",
+    "evidence": "همان ویدیوی Verified Investing؛ نمودار BTCUSD"
+   },
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "ساعت 09:12:42 UTC-4 مال ویدیوی سالووی است"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "how": "Bitcoin / U.S. Dollar · 1D · CRYPTO"
+   },
+   "venue": {
+    "value": "CRYPTO",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 2,000 همه حدود 26 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 100000.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 56000.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-02",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 60706.3,
+       "confidence": "medium",
+       "from": "image",
+       "how": "نشانگر 60,706.30 روی سر خط"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 89300,
+       "confidence": "low",
+       "from": "image",
+       "how": "سر خط زرد میان 90,000 و 88,000"
+      }
+     },
+     "kind": "trend",
+     "label": "خط روند زرد صعودی سالووی"
+    },
+    {
+     "p1": {
+      "time": {
+       "value": "2026-01",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 100000,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-09",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 57500,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "trend",
+     "label": "خط روند نارنجی نزولی سالووی"
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "O69,776.22 H70,943.04 L68,047.35 C68,791.05 −985.17 (−1.41%) — شمع زیر نشانگر",
+     "confidence": "high"
+    },
+    {
+     "text": "زیرنویس: My near-term resistance is around 89,000 here. This is the ascending",
+     "confidence": "high"
+    }
+   ],
+   "speech": "گرت هم درباره همین صحبت می‌کند: ناحیه ۸۹ هزار دلار می‌تواند مقاومت باشد و بازار ممکن است تا آنجا بالا بیاید.",
+   "method_notes": [
+    "خط روند صعودی خود او از کف فوریه تا حدود 89,000 همان خط زرد سالووی است — تحلیل «خود او» با سالووی هم‌جاست"
+   ],
+   "claims": [
+    "BTC — مقاومت نزدیک حدود 89,000 روی خط روند صعودی — به نقل او از سالووی؛ زیرنویس صفحه همین را می‌گوید — بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۸۹ هزار مقاومت به نقل از گرت؛ زیرنویس «near-term resistance is around 89,000»"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_21m09.5s",
+   "t": 1269.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-02_tekrargar_hEKhT4uI",
+     "row": 4,
+     "time": "21:07",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "screen_source": {
+    "kind": "other",
+    "who": "گرت سالووی — Verified Investing",
+    "evidence": "همان نمودار، با پیکان قرمز دستی تکرارگر زیر زیرنویس"
+   },
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "CRYPTO",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "price_axis": {
+    "top": {
+     "value": 100000.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 56000.0,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "پیکان قرمز دستی زیر «around 89,000»",
+     "confidence": "high"
+    }
+   ],
+   "speech": "انتظار داریم بازار تا این ناحیه بالا بیاید، با اینکه انتظار ریزشی داریم؛ بعد از رسیدن به خط روند باید ببینیم.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف همان ناحیه؛ پیکان زیر 89,000"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_22m56.5s",
+   "t": 1376.5,
+   "is_chart": false,
+   "refs": [
+    {
+     "doc": "2026-10-02_tekrargar_hEKhT4uI",
+     "row": 7,
+     "time": "23:03",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "screen_source": {
+    "kind": "own",
+    "who": "Coinglass — ابزار داده",
+    "evidence": "coinglass.com/liquidations؛ خط قرمز دستی زیر 24h Rekt"
+   },
+   "texts": [
+    {
+     "text": "Coinglass: 24h Volume $236,417,675,412 +28.56%؛ Open Interest $153,675,787,134 +3.46%؛ 24h Liquidation $390,829,354 +135.54%؛ L/S 50.19%/49.81%",
+     "confidence": "high"
+    },
+    {
+     "text": "24h Rekt $390.83M — Long $115.21M، Short $275.62M؛ 12h Rekt $294.56M؛ BTC $155.44M، ETH $76.95M",
+     "confidence": "high"
+    },
+    {
+     "text": "78,620 traders liquidated؛ بزرگ‌ترین سفارش Binance BTCUSDT $11.72M؛ تبلیغ Bitunix",
+     "confidence": "high"
+    }
+   ],
+   "speech": "نقدینگی تا سطح ۸۸ هزار دلار داریم؛ در ۲۴ ساعت گذشته حدود ۳۹۱ میلیون دلار پوزیشن لانگ و شورت لیکوئید شد.",
+   "method_notes": [],
+   "claims": [
+    "BTC — نقدینگی تا 88,000 دلار؛ بازار می‌تواند تا آنجا حرکت کند — خود او — بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۳۹۱ میلیون؛ صفحه $390.83M"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_23m01.0s",
+   "t": 1381.0,
+   "is_chart": false,
+   "refs": [
+    {
+     "doc": "2026-10-02_tekrargar_hEKhT4uI",
+     "row": 7,
+     "time": "23:03",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "screen_source": {
+    "kind": "own",
+    "who": "Coinglass — ابزار داده",
+    "evidence": "همان صفحه"
+   },
+   "texts": [
+    {
+     "text": "همان صفحه؛ 12h Rekt $294.48M — شورت $213.66M",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بیشتر شورت‌ها لیکوئید شدند؛ دیروز ورود پول به صندوق بیت‌کوین بود و از صندوق اتر پول خارج شد.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف: شورت بیشتر؛ صفحه شورت 275.62M در برابر لانگ 115.21M"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_23m07.0s",
+   "t": 1387.0,
+   "is_chart": false,
+   "refs": [
+    {
+     "doc": "2026-10-02_tekrargar_hEKhT4uI",
+     "row": 7,
+     "time": "23:03",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "screen_source": {
+    "kind": "own",
+    "who": "Farside — ابزار داده",
+    "evidence": "farside.co.uk/btc؛ پیکان قرمز دستی روی ۱ اکتبر"
+   },
+   "texts": [
+    {
+     "text": "Farside، جریان صندوق‌های بیت‌کوین: 01 Oct 2026 جمع 102.7؛ 30 Sep (148.7)؛ 29 Sep 66.2؛ 28 Sep 31.0",
+     "confidence": "high"
+    },
+    {
+     "text": "Total 57,667؛ Average 84.4؛ Maximum 1,373.8؛ Minimum (1,113.7)",
+     "confidence": "high"
+    }
+   ],
+   "speech": "ورود حدود ۱۳ میلیون دلار به صندوق بیت‌کوین و خروج از صندوق اتر؛ اتریوم برای فروش خارج می‌شود و می‌تواند فشار فروش ببیند.",
+   "method_notes": [
+    "حرف «۱۳ میلیون»؛ صفحه 102.7 در ۱ اکتبر — احتمالاً ۱۰۳ با صفر افتاده، د۲۰"
+   ],
+   "claims": [
+    "ETH — فشار فروش در این منطقه، چون پول از صندوق اتر خارج می‌شود — خود او — بی‌آستانه، بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ورود به صندوق بیت‌کوین؛ صفحه 102.7 مثبت — رقم حرف صفر انداخته"
+   }
+  },
+  {
+   "frame_id": "hEKhT4uIg08_23m54.0s",
+   "t": 1434.0,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "none",
+    "who": null,
+    "evidence": "صفحه کانال یوتیوب خود او، @tekrargar"
+   },
+   "texts": [
+    {
+     "text": "کانال HamiD Reza Barzegar — @tekrargar، 31.7K subscribers، 3.8K videos؛ Tekrargar Crypto Research",
+     "confidence": "high"
+    }
+   ],
+   "speech": "هیچ‌کدام توصیه اقتصادی نیست؛ بر اساس حرف من و امثال من در شبکه اجتماعی خرید و فروش نکنید.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "پایان ویدیو"
+   }
+  }
+ ]
+}

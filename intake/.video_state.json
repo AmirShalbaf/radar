@@ -341,14 +341,16 @@
    "title": "آلتسیزن | تحلیل داده های اقتصادی | تحلیل بیت کوین",
    "published": "2026-10-02T16:30:04Z",
    "channel_id": "UCg7VGpxh_RQrYL5nLyF-V0g",
-   "status": "ready",
+   "status": "seen",
    "first_at": "2026-10-04T07:40:01Z",
    "detail": "",
    "picked_at": "2026-10-04T07:40:01Z",
    "doc": "intake/tekrargar/2026-10-02_آلتسیزن-تحلیل-داده-های-اقتصادی-تحلیل-بیت_hEKhT4.md",
    "frames_md": "frames/hEKhT4uIg08/FRAMES.md",
    "template": "frames/hEKhT4uIg08/card_template.json",
-   "cards": "intake/charts/tekrargar/hEKhT4uIg08.json"
+   "cards": "intake/charts/tekrargar/hEKhT4uIg08.json",
+   "seen_at": "2026-10-04T09:10:29Z",
+   "report": "intake/reports/tekrargar/hEKhT4uIg08.md"
   }
  },
  "runs": {
