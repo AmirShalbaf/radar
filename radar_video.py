@@ -1129,6 +1129,218 @@ def new_cli(a, deps: Deps, now: datetime) -> int:
     return 3 if bad else 0
 
 
+# ═══════════════ ۶ج — خلاصه روزانه --daily، نشست ۷ب ═══════════════
+
+DAILY_PREFIX = "DAILY-"
+_DAY = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")       # اسکی — \d رقم فارسی را هم می‌گیرد
+CANDIDATE_SHOWN = 120
+SCHOOL_RULE = ("قانون افزودن جدول مکاتب `analysts.yml`: منبع تازه فقط وقتی پذیرفته می‌شود که ستون "
+               "خالی را پر کند. ستون مکتب این کانال را کاربر پر کند؛ افزودن فقط با تأیید کاربر.")
+
+
+def daily_path(intake: Path, day: str) -> Path:
+    return intake / I.REPORTS_DIR / f"{DAILY_PREFIX}{day}.md"
+
+
+def _strongest_candidate(doc: Path) -> str:
+    """قوی‌ترین نامزد ادعای سند عمومی — نخستینِ بیشترین ستاره. تهی یعنی نامزدی نبود."""
+    best, text = -1, ""
+    for line in doc.read_text(encoding="utf-8").splitlines():
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) != 6 or not cells[2] or set(cells[2]) - {"★", "☆"}:
+            continue                  # سرخط، جداکننده یا سطر دیگر
+        if cells[2].count("★") > best:
+            best, text = cells[2].count("★"), cells[5]
+    return text[:CANDIDATE_SHOWN] + ("…" if len(text) > CANDIDATE_SHOWN else "")
+
+
+def _numeric(claim: str) -> bool:
+    return VOICE_NUMBER.search(claim) is not None
+
+
+def _video_block(n: int, vid: str, e: dict, names: dict[str, str], intake: Path) -> list[str]:
+    src = e.get("source") or "—"
+    speaker = names.get(src) or e.get("channel") or src
+    title = I._cell(e.get("title") or vid)
+    lines = ["", f"### {n}. {title}", "",
+             f"- گوینده: {I._cell(speaker)} — `{src}` — {_label(bool(e.get('suggested')))}",
+             f"- انتشار: {(e.get('published') or '—')[:10]} — `{vid}`",
+             f"- گزارش کامل: `{e.get('report') or '—'}`"]
+    cpath = Path(e.get("cards") or intake / F.CHARTS_DIR.name / src / f"{vid}.json")
+    try:
+        cards = json.loads(cpath.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as err:
+        return lines + [f"- ⛔ کارت خوانده نشد: `{cpath.as_posix()}` — {type(err).__name__}"]
+    cs = cards.get("cards") or []
+    charts = [c for c in cs if c.get("is_chart", True) is not False]
+    claims = [(c, cl) for c in cs for cl in (c.get("claims") or [])]
+    num_claims = [(c, cl) for c, cl in claims if _numeric(cl)]
+    lines += ["", "**ادعاهای عددی** — به بیان ما، با جهت و مهلت:", ""]
+    lines += [f"- {F.fmt_t(c.get('t', 0))} — {I._cell(cl)[:CLAIM_MAX]}" for c, cl in num_claims] \
+        or ["- ادعای عددی ثبت نشد."]
+    if len(claims) > len(num_claims):
+        lines.append(f"- ادعای بی‌عدد: {len(claims) - len(num_claims)}")
+
+    rows: dict[tuple, int] = {}
+    pairs = []
+    for c in charts:
+        for lv in c.get("levels") or []:
+            if not isinstance(lv, dict):
+                continue
+            snap_txt, daily_txt = _snap_cells(lv)
+            k = (_val(c.get("coin")), _val(c.get("timeframe")), _val(lv.get("price")) + (lv.get("unit") or ""),
+                 snap_txt, daily_txt)
+            rows[k] = rows.get(k, 0) + 1
+            if isinstance(lv.get("snap"), dict):
+                pairs.append((_level_origin(c, lv), lv["snap"]))
+    lines += ["", "**سطح‌ها و حکم snap:**", ""]
+    if rows:
+        lines += ["| نماد | تایم‌فریم | قیمت | حکم کندل | روزانه |", "|---|---|---|---|---|"]
+        lines += [f"| {I._cell(a)} | {I._cell(b)} | {I._cell(p)} | {I._cell(s)} | {I._cell(d)} |"
+                  for (a, b, p, s, d) in rows]
+        lines.append("")
+        for key, head in (("speaker", "خود گوینده"), ("other", "تصویر دیگران"), (None, "بی‌منشأ")):
+            group = [s for o, s in pairs if o == key]
+            if group:
+                sm = H.summarize(group)
+                lines.append(f"- {head}: {sm['confirmed']} واقعی از {sm['n']} سطح یکتا با داده "
+                             f"— قوی {sm['strong']}، بی‌داده {sm['no_data']}")
+    else:
+        lines.append("- سطحی خوانده نشد.")
+
+    if src == "tekrargar":
+        lines += ["", "**ترجمه یا تحلیل؟**", ""]
+        srcs = [c["screen_source"] for c in cs if isinstance(c.get("screen_source"), dict)]
+        if srcs:
+            parts = [f"{label}: {sum(1 for s in srcs if s['kind'] == kind)}"
+                     for kind, label in SCREEN_LABEL if any(s["kind"] == kind for s in srcs)]
+            lines.append(f"- از صفحه، {len(srcs)} فریم — " + "، ".join(parts))
+        else:
+            lines.append("- از صفحه: ثبت نشده — کارت `screen_source` ندارد.")
+        meta = {}
+        doc = Path(str(cards.get("doc") or ""))
+        if doc.is_file():
+            meta = I._front_matter(doc.read_text(encoding="utf-8"))
+        local = intake / meta["متن محلی"] if meta.get("متن محلی") else None
+        voice = voice_counts(local.read_text(encoding="utf-8")) if local and local.is_file() else None
+        if voice is None:
+            lines.append("- از حرف: متن محلی نیست — شمارش نشد.")
+        else:
+            lines.append(f"- از حرف: «فلانی می‌گوید / میگه»: {voice['reported']}؛ «به نظر من»: {voice['own']} "
+                         f"— با عدد {voice['own_number']}، با عدد و زمان {voice['own_number_time']}")
+        lines.append("- حکم پس از چند ویدیو — ک۶۹.")
+
+    fresh = [m for m in (cards.get("methods") or []) if str(m.get("library", "")).startswith("تازه")]
+    lines += ["", "**روش تازه:**", ""]
+    lines += [f"- {I._cell(m['area'])}: {I._cell(m['rule'])} — {I._cell(m['library'])}" for m in fresh] \
+        or ["- روش تازه‌ای ثبت نشد."]
+    return lines
+
+
+def render_daily(day: str, vstate: dict, istate: dict, sources: list[I.Source], intake: Path) -> str:
+    videos = vstate.get("videos", {})
+    names = {s.key: s.name_fa for s in sources}
+    by_key = {s.key: s for s in sources}
+    seen = [(v, e) for v, e in videos.items()
+            if e.get("status") == "seen" and str(e.get("seen_at") or "")[:10] == day]
+    ready = [(v, e) for v, e in videos.items() if e.get("status") == "ready"]
+    runs = vstate.get("runs", {}).get(day, [])
+    deferred: dict[str, dict] = {}
+    for r in runs:
+        for d in r.get("deferred", []):
+            deferred[d["video_id"]] = d
+    deferred = {v: d for v, d in deferred.items() if v not in videos}
+    union = lambda k: list(dict.fromkeys(x if isinstance(x, str) else json.dumps(x, ensure_ascii=False)
+                                         for r in runs for x in r.get(k, [])))
+    shorts = union("short")
+    imports = [x for x in istate.get("imports", []) if str(x.get("at") or "")[:10] == day]
+
+    lines = [f"# خلاصه روزانه رصد — {day}", "",
+             "> ساده و کوتاه، وقت جهانی. هر عدد نقل‌شده است، نه داده — هیچ‌کدام مستقیم وارد موتور",
+             "> نمی‌شود. حرف گوینده نقل نمی‌شود؛ ادعاها به بیان ما. جزئیات در گزارش هر ویدیو.", "",
+             "| مورد | مقدار |", "|---|---|",
+             f"| ویدیوی دیده‌شده | {len(seen)} |",
+             f"| آماده، هنوز خوانده نشده | {len(ready)} |",
+             f"| ماند برای فردا | {len(deferred)} |",
+             f"| کوتاه ردشده — ف۸ | {len(shorts)} |",
+             f"| اجرای شبانه متن، واردشده امروز | {len(imports)} |", ""]
+    if imports:
+        for x in imports:
+            lines.append(f"- اجرای شبانه {x.get('started') or '—'} — کد خروج {x.get('exit_code')} — "
+                         f"سند تازه {len(x.get('docs') or [])}")
+            lines += [f"  - ⛔ {I._cell(f)}" for f in x.get("failures") or []]
+    else:
+        lines.append("- **اجرای شبانه ثبت نشد** — لپ‌تاپ خاموش، فیلترشکن قطع، یا کار زمان‌بندی‌شده "
+                     "نیست؛ یا پوشه انتظار هنوز وارد نشده.")
+
+    lines += ["", "## ویدیوهای دیده‌شده"]
+    if not seen:
+        lines += ["", "امروز ویدیویی کامل دیده نشد."]
+    for i, (v, e) in enumerate(sorted(seen, key=lambda x: x[1].get("seen_at") or ""), 1):
+        lines += _video_block(i, v, e, names, intake)
+
+    if ready:
+        lines += ["", "## آماده، هنوز خوانده نشده", ""]
+        lines += [f"- `{v}` {I._cell(e.get('title') or '')[:60]} — {e.get('source') or '—'} — "
+                  f"کارت: `{e.get('cards') or '—'}`" for v, e in ready]
+
+    lines += ["", "## منابع فقط‌متن — سند تازه", ""]
+    text_lines = []
+    for x in imports:
+        for rel in x.get("docs") or []:
+            key = rel.split("/", 1)[0]
+            src = by_key.get(key)
+            doc = intake / rel
+            if src is None or not doc.is_file():
+                continue
+            meta = I._front_matter(doc.read_text(encoding="utf-8"))
+            title = meta.get("عنوان") or rel
+            if src.watch not in ("text", "crypto_title") or wants_full_view(src, title):
+                continue
+            cand = _strongest_candidate(doc)
+            text_lines.append(f"- {(meta.get('تاریخ انتشار') or '—')[:10]} — {I._cell(src.name_fa)} — "
+                              f"{I._cell(title)[:60]} — {('«' + I._cell(cand) + '»') if cand else 'نامزدی نبود'}")
+    lines += text_lines or ["سند تازه‌ای از منابع فقط‌متن وارد نشد."]
+
+    lines += ["", "## پایان روز", "", "### ماند برای فردا", ""]
+    lines += [f"- `{v}` {d.get('source') or SUGGEST_LABEL} — {(d.get('published') or '—')[:10]} — "
+              f"{I._cell(d.get('title') or '')[:50]} — {_label(bool(d.get('suggested')))}"
+              for v, d in deferred.items()] or ["هیچ."]
+    lines += ["", f"### کوتاه ردشده — ف۸: {len(shorts)}"]
+    for key, head in (("stale", "کهنه — دیده نشد"), ("off_topic", "عنوان غیرکریپتویی — فقط متن"),
+                      ("failed", "شکست"), ("feed_failures", "خوراک ناموفق")):
+        items = [json.loads(x) for x in union(key)]
+        if items:
+            lines += ["", f"### {head}: {len(items)}", ""]
+            lines += [f"- {' — '.join(I._cell(str(it.get(f))) for f in ('video_id', 'source', 'title', 'detail', 'error') if it.get(f))}"
+                      for it in items]
+    cands = channel_candidates(vstate)
+    if cands:
+        lines += ["", "### نامزد فهرست رصد", ""]
+        lines += [f"- {I._cell(c['channel'])} — `{c['channel_id']}` — {c['count']} ویدیوی پیشنهادی" for c in cands]
+        lines += ["", SCHOOL_RULE]
+    lines += ["", f"> ساخته‌شده با radar_video {VERSION} از فایل وضعیت و کارت‌های اعتبارسنجی‌شده."]
+    return "\n".join(lines) + "\n"
+
+
+def daily_cli(a, now: datetime) -> int:
+    day = a.date or now.astimezone(UTC).strftime("%Y-%m-%d")
+    intake = Path(a.intake)
+    try:
+        vstate = load_video_state(intake / VIDEO_STATE_NAME)
+        istate = I.load_state(intake / STATE_NAME)
+    except (StateError, I.IntakeError) as e:
+        print(f"⛔ {e}", file=sys.stderr)
+        return 2
+    sources = I.load_sources(Path(a.config))
+    out = daily_path(intake, day)
+    existed = out.exists()
+    atomic_write(out, render_daily(day, vstate, istate, sources, intake))
+    note = " — بازسازی شد، شامل همه اجراهای همین روز" if existed else ""
+    print(f"✅ خلاصه روزانه: {out.as_posix()}{note}")
+    return 0
+
+
 # ═══════════════ ۷ — گزارش ویدیو از کارت ═══════════════
 
 CONF_FA = {"high": "بالا", "medium": "متوسط", "low": "پایین"}
@@ -1539,6 +1751,9 @@ def main(argv: list[str] | None = None, deps: Deps | None = None, now: datetime 
     ap.add_argument("--suggest", metavar="LINK",
                     help="پیوند ویدیو فوری در صف پیشنهاد — بی‌شبکه؛ پیش از منابع رصد دیده می‌شود")
     ap.add_argument("--note", help="یادداشت پیشنهاد — فقط محلی، به مخزن نمی‌رود")
+    ap.add_argument("--daily", action="store_true",
+                    help="خلاصه روزانه در intake/reports/DAILY-<تاریخ>.md — نشست ۷ب")
+    ap.add_argument("--date", help="روز خلاصه، YYYY-MM-DD به وقت جهانی؛ پیش‌فرض امروز")
     ap.add_argument("--limit", type=int, help="پلی‌لیست: چند قسمت تازه، به ترتیب")
     ap.add_argument("--max-frames", type=int, default=F.DEFAULT_MAX_FRAMES)
     ap.add_argument("--force", action="store_true",
@@ -1551,10 +1766,14 @@ def main(argv: list[str] | None = None, deps: Deps | None = None, now: datetime 
     a = ap.parse_args(argv)
     intake, frames_root = Path(a.intake), Path(a.frames)
     now = now or datetime.now(UTC)
-    if sum(map(bool, (a.link, a.report, a.new, a.suggest is not None))) > 1:
-        ap.error("فقط یکی: پیوند، --report، --new یا --suggest")
+    if sum(map(bool, (a.link, a.report, a.new, a.suggest is not None, a.daily))) > 1:
+        ap.error("فقط یکی: پیوند، --report، --new، --suggest یا --daily")
     if a.note is not None and a.suggest is None:
         ap.error("--note فقط همراه --suggest")
+    if a.date is not None and not (a.daily and _DAY.fullmatch(a.date)):
+        ap.error("--date فقط همراه --daily و به شکل YYYY-MM-DD با رقم لاتین")
+    if a.daily:
+        return daily_cli(a, now)
     if a.suggest is not None:
         res = enqueue(intake, a.suggest, a.note or "", now)
         print(res.message, file=sys.stderr if res.rc == 2 else sys.stdout)
