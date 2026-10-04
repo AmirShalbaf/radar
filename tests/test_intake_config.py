@@ -29,7 +29,7 @@ def _src() -> dict:
 
 def test_meta_version_and_framework() -> None:
     meta = _raw()["meta"]
-    assert meta["version"] == "1.7"             # ۱.۷ — نشست ۷ب، میدان watch
+    assert meta["version"] == "1.8"             # ۱.۸ — ک۷۲، تعارض منافع کریپتوسیتی
     assert meta["framework"] == "Radar 7"
     assert meta["updated"] == "2026-10-04"      # وقت جهانی، مثل بقیه مخزن
 
@@ -88,6 +88,12 @@ def test_link_patterns_are_ascii() -> None:
         if s.link_pattern:
             assert r"\w" not in s.link_pattern and r"\d" not in s.link_pattern, key
     assert "[A-Za-z0-9_-]" in _src()["kaiko"].link_pattern
+
+
+def test_cryptocity_conflict_names_exchange_referral() -> None:
+    """ک۷۲، تصمیم کاربر ۴ اکتبر ۲۰۲۶: تبلیغ پاداش WEEX با پیوند زیرمجموعه کانال."""
+    c = _src()["cryptocity_pro"].conflict
+    assert "تلگرام" in c and "WEEX" in c and "زیرمجموعه" in c
 
 
 def test_scores_field_untouched_until_session_8() -> None:
