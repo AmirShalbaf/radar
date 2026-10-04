@@ -31,8 +31,10 @@ radar_intake.py  —  نسخه ۱.۶
 کار شبانه — نشست ۷ب:
     radar_nightly.cmd با زمان‌بند ویندوز همان --pending را می‌زند. فقط در
     intake/_local/_pending/<زمان>/ می‌نویسد؛ درخت گیت تمیز می‌ماند و هیچ دستور گیتی
-    نیست. شکست منبع کد ۳ و در run.json همان پوشه. radar_video.py --new پیش از هر
-    کار واردش می‌کند؛ رکورد ورود در .state.json برای خلاصه روزانه.
+    نیست. شکست منبع کد ۳ و در run.json همان پوشه. یوتیوب در دسترس نبود؟ تا ۳ بار
+    دیگر با فاصله ۲۰ دقیقه، بعد کد ۳ ثبت‌شده و هیچ منبعی امتحان نمی‌شود.
+    radar_video.py --new پیش از هر کار واردش می‌کند؛ رکورد ورود در .state.json
+    برای خلاصه روزانه.
 """
 
 from __future__ import annotations
@@ -1500,6 +1502,23 @@ PENDING_DIR = "_pending"
 PARTIAL_SUFFIX = ".partial"
 RUN_FILE = "run.json"
 _PENDING_META = (".state.json", RUN_FILE, "RUN.md")
+# یوتیوب در دسترس نبود — مثلاً فیلترشکن هنوز وصل نشده: تا ۳ بار دیگر با فاصله ۲۰ دقیقه،
+# بعد کد ۳ ثبت‌شده. تصمیم کاربر، ایستگاه ۲ نشست ۷ب. سقف زمان کار زمان‌بندی‌شده ۲ ساعت.
+NIGHTLY_RETRIES = 3
+RETRY_WAIT_S = 20 * 60
+
+
+def _wait(seconds: float) -> None:
+    time.sleep(seconds)
+
+
+def youtube_reachable(src: Source, session) -> str:
+    """پیش‌سنجی: تهی یعنی خوراک یوتیوب همین منبع ۲۰۰ داد؛ وگرنه دلیل، با نوع خطا."""
+    try:
+        r = session.get(YT_FEED.format(cid=src.channel_id), timeout=20)
+    except Exception as e:
+        return f"{type(e).__name__}: {str(e)[:120]}"
+    return "" if r.status_code == 200 else f"وضعیت {r.status_code}"
 
 
 class ImportConflict(IntakeError):
@@ -1655,7 +1674,32 @@ def run_pending(sources: list[Source], chosen: list[Source], outdir: Path, state
     started = now.astimezone(UTC).strftime("%Y-%m-%d %H:%M UTC")
     report = RunReport(started=started, disabled=[s for s in chosen if not s.enabled and not args.source])
     log(f"  پوشه انتظار: {final.as_posix()} — هیچ فایل ردیابی‌شده‌ای نوشته نمی‌شود")
-    for src in sources:
+    probe: dict = {"attempts": 0, "reasons": []}
+    probe_src = next((s for s in sources if s.kind == "youtube" and s.channel_id), None)
+    reachable = True
+    if probe_src is not None:
+        session = make_session()
+        total = NIGHTLY_RETRIES + 1
+        for i in range(total):
+            probe["attempts"] += 1
+            why = youtube_reachable(probe_src, session)
+            if not why:
+                break
+            probe["reasons"].append(why)
+            log(f"  ⚠ یوتیوب در دسترس نیست — تلاش {i + 1} از {total}: {why}")
+            if i + 1 < total:
+                log(f"    {fa(RETRY_WAIT_S // 60)} دقیقه دیگر دوباره")
+                _wait(RETRY_WAIT_S)
+        else:
+            reachable = False
+    if not reachable:
+        report.sources.append(SourceRun(
+            "youtube", "یوتیوب — پیش‌سنجی",
+            failure=(f"یوتیوب پس از {fa(probe['attempts'])} تلاش در "
+                     f"{fa(NIGHTLY_RETRIES * RETRY_WAIT_S // 60)} دقیقه در دسترس نبود — شاید فیلترشکن "
+                     f"وصل نیست؛ هیچ منبعی امتحان نشد. آخرین دلیل: {probe['reasons'][-1]}")))
+        log(f"    ! {report.sources[-1].failure}")
+    for src in sources if reachable else []:
         try:
             report.sources.append(process_source(src, make_session(), work, base, args))
         except KeyboardInterrupt:
@@ -1671,7 +1715,8 @@ def run_pending(sources: list[Source], chosen: list[Source], outdir: Path, state
     code = 3 if report.failed else 0
     (work / RUN_FILE).write_text(json.dumps(
         {"started": started, "finished": datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC"),
-         "exit_code": code, "report": _report_dict(report)}, ensure_ascii=False, indent=1), encoding="utf-8")
+         "exit_code": code, "probe": probe, "report": _report_dict(report)},
+        ensure_ascii=False, indent=1), encoding="utf-8")
     summary = run_summary(report)
     (work / "RUN.md").write_text("\n".join(summary) + "\n", encoding="utf-8")
     os.replace(work, final)

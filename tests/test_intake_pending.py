@@ -51,6 +51,9 @@ class Net:
     def __init__(self):
         self.feeds: dict[str, list | Exception] = {}
         self.transcripts: list[str] = []
+        self.unreachable: list[str] = []      # دلیل هر پیش‌سنجی ناموفق، به ترتیب
+        self.probes: list[str] = []
+        self.waits: list[float] = []
 
     def item(self, src, vid, day="2026-10-03"):
         self.feeds.setdefault(src, []).append(
@@ -68,11 +71,17 @@ class Net:
             self.transcripts.append(vid)
             return [{"text": SECRET, "start": 0.0}, {"text": "bitcoin to 90000 by december", "start": 5.0}], "زیرنویس"
 
+        def reachable(src, session):
+            self.probes.append(src.key)
+            return self.unreachable.pop(0) if self.unreachable else ""
+
         mp.setattr(I, "fetch_items", fetch_items)
         mp.setattr(I, "video_duration", lambda vid, s: (900, "itemprop"))
         mp.setattr(I, "fetch_transcript", transcript)
         mp.setattr(I, "make_session", lambda: object())
         mp.setattr(I, "missing_deps", lambda whisper: [])
+        mp.setattr(I, "youtube_reachable", reachable)
+        mp.setattr(I, "_wait", lambda s: self.waits.append(s))     # بی خواب واقعی
 
 
 @pytest.fixture
@@ -141,6 +150,51 @@ def test_nightly_source_failure_is_exit_3_and_recorded(env) -> None:
     assert run["exit_code"] == 3
     assert any("404" in s["failure"] for s in run["report"]["sources"])
     assert "404" in (d / "RUN.md").read_text(encoding="utf-8")
+
+
+# ─────────── یوتیوب در دسترس نیست — تصمیم کاربر، ایستگاه ۲ ───────────
+# مثلاً فیلترشکن هنوز وصل نشده: تا ۳ بار با فاصله ۲۰ دقیقه دوباره، بعد کد ۳ ثبت‌شده.
+
+def test_unreachable_youtube_retries_three_times_then_exit_3(env) -> None:
+    env.unreachable = ["ConnectTimeout"] * 4
+    env.item("tekrargar", "tk00000001a")
+    assert nightly() == 3
+    assert len(env.probes) == 4 and env.waits == [1200, 1200, 1200]
+    assert env.transcripts == []                                  # منبعی امتحان نشد
+    (d,) = pending().iterdir()
+    run = json.loads((d / I.RUN_FILE).read_text(encoding="utf-8"))
+    assert run["exit_code"] == 3 and run["probe"]["attempts"] == 4
+    fails = [s["failure"] for s in run["report"]["sources"] if s["failure"]]
+    assert len(fails) == 1 and "یوتیوب" in fails[0] and "ConnectTimeout" in fails[0]
+    res = I.import_pending(Path("intake"), Path("intake/.state.json"), now=T2)
+    assert any("یوتیوب" in f for f in res.imported[0]["failures"])  # در خلاصه روزانه هم
+
+
+def test_youtube_back_on_second_try_runs_normally(env) -> None:
+    env.unreachable = ["ConnectionError"]
+    env.item("tekrargar", "tk00000001a")
+    assert nightly() == 0
+    assert env.waits == [1200] and env.transcripts == ["tk00000001a"]
+    (d,) = pending().iterdir()
+    run = json.loads((d / I.RUN_FILE).read_text(encoding="utf-8"))
+    assert run["probe"] == {"attempts": 2, "reasons": ["ConnectionError"]}
+
+
+def test_reachable_first_time_waits_nothing(env) -> None:
+    env.item("tekrargar", "tk00000001a")
+    assert nightly() == 0
+    assert env.probes == ["tekrargar"] and env.waits == []
+
+
+def test_no_youtube_source_no_probe(env) -> None:
+    Path("analysts.yml").write_text(CONFIG + """  bob_elliott:
+    name_fa: "باب الیوت"
+    kind: "rss"
+    url: "https://example.com/feed"
+    watch: "text"
+""", encoding="utf-8")
+    assert I.main(["--pending", "--sleep", "0", "--source", "bob_elliott"], now=T1) == 0
+    assert env.probes == []
 
 
 def test_pending_with_dry_run_is_refused(env) -> None:
