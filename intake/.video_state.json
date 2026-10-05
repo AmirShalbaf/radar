@@ -61,7 +61,9 @@
    "published": "2026-10-03T16:30:00+00:00",
    "first_at": "2026-10-04T07:40:01Z",
    "status": "seen",
-   "detail": "کارت پیشین — پیش از رصد"
+   "detail": "کارت پیشین — پیش از رصد",
+   "seen_at": "2026-10-03T20:24:57Z",
+   "report": "intake/reports/tekrargar/K38x-_np1TI.md"
   },
   "kNImyvqpZn8": {
    "source": "tekrargar",
