@@ -554,18 +554,26 @@ def snap(symbol: str, tf: str, level, cutoff: datetime, *, history_fn=None, dail
     return out
 
 
+# برچسب حکم — تصمیم کاربر ۵ اکتبر ۲۰۲۶: «واقعی» و «خط دلخواه» حکم کیفیت خط می‌دادند که این
+# سنجش نمی‌تواند بدهد. تا سنجش با روش خود گوینده ابزار دائمی شود — ک۸۰ — فقط «جور با تعریف رادار».
+MATCH = "با تعریف رادار جور است"
+NO_MATCH = "با تعریف رادار جور نیست"
+RADAR_NOTE = ("تعریف رادار با سایه است و بسیاری از تحلیل‌گرها روی بدنه می‌کشند؛ «جور نیست» "
+              "حکم کیفیت خط نیست — ف۱۷.")
+
+
 def snap_label(s: dict) -> str:
-    """یک خط برای گزارش: «واقعی با N برخورد»، «خط دلخواه» یا «داده کافی نیست»."""
+    """یک خط برای گزارش: «با تعریف رادار جور است»، «… جور نیست» یا «داده کافی نیست»."""
     v = s.get("verdict")
     unknown = " — زمان نمودار نامعلوم" if s.get("cutoff_basis") == "chart_end_unknown" else ""
     if v == "confirmed":
         strength = "قوی" if s.get("strength") == "strong" else "ضعیف"
         trig = " — ماشه‌ای، نه ساختاری" if s.get("class") == "trigger" else ""
-        return f"واقعی با {s['touches']} برخورد — {strength}{trig}{unknown}"
+        return f"{MATCH} — {s['touches']} برخورد، {strength}{trig}{unknown}"
     if v == "not_near":
         if s.get("nearest") is None:
-            return f"خط دلخواه — هیچ سطح ساختاری در پنجره نیست{unknown}"
-        return (f"خط دلخواه — نزدیک‌ترین سطح {s['nearest']:.7g} با {s['nearest_touches']} برخورد، "
+            return f"{NO_MATCH} — هیچ سطح رادار در پنجره نیست{unknown}"
+        return (f"{NO_MATCH} — نزدیک‌ترین سطح رادار {s['nearest']:.7g} با {s['nearest_touches']} برخورد، "
                 f"{s['distance_atr']:.2f} دامنه واقعی دورتر{unknown}")
     return f"داده کافی نیست — {s.get('reason') or '—'}{unknown}"
 
@@ -697,9 +705,9 @@ def summary_lines(s: dict) -> list[str]:
              f"| سطح یکتا | {s['unique']} |",
              f"| داده کافی نیست | {s['no_data']} |",
              f"| سطح یکتا با داده | {s['n']} |",
-             f"| واقعی — قوی / همه | {s['strong']} / {s['confirmed']} |",
-             f"| خط دلخواه | {s['not_near']} |",
-             f"| سهم واقعی | {pct(s['observed_pct'])} |",
+             f"| جور با تعریف رادار — قوی / همه | {s['strong']} / {s['confirmed']} |",
+             f"| {NO_MATCH} | {s['not_near']} |",
+             f"| سهم جور | {pct(s['observed_pct'])} |",
              f"| شانس تصادفی همان پنجره‌ها | {pct(s['expected_pct'])} |",
              f"| احتمال این‌همه تأیید از شانس | {pv} |",
              ""]
@@ -707,9 +715,9 @@ def summary_lines(s: dict) -> list[str]:
         lines.append(f"**نمونه کم** — {s['n']} سطح یکتا با داده، دست‌کم {fa(MIN_SAMPLE)} لازم. "
                      "فقط عدد؛ حکمی داده نمی‌شود.")
     elif s["verdict"] == "above":
-        lines.append("**بالاتر از شانس تصادفی** — سطح‌ها بیش از خط دلخواه با ساختار قیمت می‌خوانند.")
+        lines.append("**با تعریف رادار، بالاتر از شانس تصادفی** — سطح‌ها بیش از خط تصادفی با سطح رادار جورند.")
     else:
-        lines.append("**از شانس تصادفی جدا نیست** — سطح‌ها بیش از خط دلخواه با ساختار قیمت نمی‌خوانند.")
+        lines.append("**با تعریف رادار، از شانس تصادفی جدا نیست** — سطح‌ها بیش از خط تصادفی با سطح رادار جور نیستند.")
     lines.append("> سطح‌های یک نماد در یک پنجره مستقل نیستند؛ احتمال بالا خوش‌بینانه است. "
                  "استدلال — محاسبه‌نشده.")
     return lines
@@ -824,11 +832,12 @@ def cards_cmd(paths, *, history_fn=None, dry_run: bool = False, venue: str = "au
               f"برش با پایان نمودار {early}، زمان نمودار نامعلوم {unknown}")
     for src, snaps in by_source.items():
         print(f"\n## {src}\n")
+        print(f"> {RADAR_NOTE}\n")
         print("\n".join(summary_lines(summarize(snaps))))
         daily = [s["daily"] for s in snaps if isinstance(s.get("daily"), dict)]
         if daily:
             d = summarize(daily)
-            print(f"\nستون روزانه، سطح‌های زیر روزانه: {d['confirmed']} واقعی از {d['n']} با داده؛ "
+            print(f"\nستون روزانه، سطح‌های زیر روزانه: {d['confirmed']} جور با تعریف رادار از {d['n']} با داده؛ "
                   f"{d['no_data']} بی‌داده.")
     return rc
 

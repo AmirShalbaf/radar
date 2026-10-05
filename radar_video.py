@@ -1205,9 +1205,9 @@ def _video_block(n: int, vid: str, e: dict, names: dict[str, str], intake: Path)
     lines += ["", "**سطح‌ها و حکم snap:**", ""]
     if rows:
         # خلاصه کوتاه است — اجرای واقعی ۴ اکتبر جدول ۴۵ ردیفی ساخت. فقط سطحی که در یکی از
-        # دو ستون «واقعی» است ردیف می‌گیرد؛ بقیه شمرده می‌شوند و جدول کامل در گزارش ویدیو است.
-        # آغاز برچسب، نه هر جای آن — «خط دلخواه … دامنه واقعی دورتر» هم واژه «واقعی» دارد
-        real = [k for k in rows if k[3].startswith("واقعی") or k[4].startswith("واقعی")]
+        # دو ستون «جور» است ردیف می‌گیرد؛ بقیه شمرده می‌شوند و جدول کامل در گزارش ویدیو است.
+        # آغاز برچسب، نه هر جای آن — «… جور نیست» هم با «با تعریف رادار جور» شروع می‌شود؛ پس پیشوند کامل
+        real = [k for k in rows if k[3].startswith(H.MATCH) or k[4].startswith(H.MATCH)]
         unsnapped = sum(1 for k in rows if k[3] == NOT_SNAPPED)
         rest = len(rows) - len(real) - unsnapped
         if real:
@@ -1216,14 +1216,14 @@ def _video_block(n: int, vid: str, e: dict, names: dict[str, str], intake: Path)
                       for (a, b, p, s, d) in real]
             lines.append("")
         if rest:
-            lines.append(f"- سطح دیگر — خط دلخواه یا بی‌داده: {rest} — جدول کامل در گزارش ویدیو")
+            lines.append(f"- سطح دیگر — جور نیست یا بی‌داده: {rest} — جدول کامل در گزارش ویدیو")
         if unsnapped:
             lines.append(f"- {NOT_SNAPPED}: {unsnapped}")
         for key, head in (("speaker", "خود گوینده"), ("other", "تصویر دیگران"), (None, "بی‌منشأ")):
             group = [s for o, s in pairs if o == key]
             if group:
                 sm = H.summarize(group)
-                lines.append(f"- {head}: {sm['confirmed']} واقعی از {sm['n']} سطح یکتا با داده "
+                lines.append(f"- {head}: {sm['confirmed']} جور با تعریف رادار از {sm['n']} سطح یکتا با داده "
                              f"— قوی {sm['strong']}، بی‌داده {sm['no_data']}")
     else:
         lines.append("- سطحی خوانده نشد.")
@@ -1277,7 +1277,8 @@ def render_daily(day: str, vstate: dict, istate: dict, sources: list[I.Source], 
 
     lines = [f"# خلاصه روزانه رصد — {day}", "",
              "> ساده و کوتاه، وقت جهانی. هر عدد نقل‌شده است، نه داده — هیچ‌کدام مستقیم وارد موتور",
-             "> نمی‌شود. حرف گوینده نقل نمی‌شود؛ ادعاها به بیان ما. جزئیات در گزارش هر ویدیو.", "",
+             "> نمی‌شود. حرف گوینده نقل نمی‌شود؛ ادعاها به بیان ما. جزئیات در گزارش هر ویدیو.",
+             f"> حکم سطح‌ها: {H.RADAR_NOTE}", "",
              "| مورد | مقدار |", "|---|---|",
              f"| ویدیوی دیده‌شده | {len(seen)} |",
              f"| آماده، هنوز خوانده نشده | {len(ready)} |",
@@ -1524,7 +1525,8 @@ def _snap_section(charts: list[dict]) -> list[str]:
     """جمع‌بندی وارسی سطح این ویدیو، در برابر شانس تصادفی همان پنجره‌ها — ف۲۱."""
     lines = ["", "## وارسی سطح با کندل", "",
              "> هر سطح با کندل واقعی پیش از انتشار ویدیو سنجیده شد — `radar_history.py cards`.",
-             "> ناحیه و خط روند وارسی نمی‌شوند. زیر روزانه «ماشه‌ای، نه ساختاری» است — قاعده ۴.", ""]
+             "> ناحیه و خط روند وارسی نمی‌شوند. زیر روزانه «ماشه‌ای، نه ساختاری» است — قاعده ۴.",
+             f"> {H.RADAR_NOTE}", ""]
     pairs = [(_level_origin(c, lv), lv["snap"]) for c in charts for lv in (c.get("levels") or [])
              if isinstance(lv, dict) and isinstance(lv.get("snap"), dict)]
     snaps = [s for _, s in pairs]
@@ -1534,7 +1536,7 @@ def _snap_section(charts: list[dict]) -> list[str]:
     daily = [s["daily"] for s in snaps if isinstance(s.get("daily"), dict)]
     if daily:
         d = H.summarize(daily)
-        lines += ["", f"ستون روزانه، برای سطح‌های زیر روزانه: {d['confirmed']} واقعی از {d['n']} "
+        lines += ["", f"ستون روزانه، برای سطح‌های زیر روزانه: {d['confirmed']} جور با تعریف رادار از {d['n']} "
                       f"سطح یکتا با داده؛ {d['no_data']} بی‌داده."]
     # «سطوح این تحلیل‌گر» یعنی سطح‌هایی که خودش کشید، نه خط تصویر دیگرانی که نشان داد
     if any(o is not None for o, _ in pairs):

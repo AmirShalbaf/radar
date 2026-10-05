@@ -150,8 +150,10 @@ def test_seen_video_section(env) -> None:
     assert "تکرارگر — حمیدرضا برزگر" in rep and V.SUGGEST_LABEL in rep
     assert "BTC — صعود — بالای 85,000 — تا پایان اکتبر — نقل از سالووی" in rep
     assert "بازار هیجانی است" not in rep and "ادعای بی‌عدد: 1" in rep
-    assert "واقعی با 3 برخورد — ضعیف" in rep
-    assert "سطح دیگر — خط دلخواه یا بی‌داده: 1" in rep               # خلاصه کوتاه است
+    assert "با تعریف رادار جور است — 3 برخورد، ضعیف" in rep
+    assert "سطح دیگر — جور نیست یا بی‌داده: 1" in rep               # خلاصه کوتاه است
+    assert "دلخواه" not in rep and "واقعی با" not in rep
+    assert V.H.RADAR_NOTE in rep                                     # یک خط توضیح، تصمیم کاربر
     assert "## ترجمه یا تحلیل؟" in rep or "ترجمه یا تحلیل؟" in rep
     assert "«فلانی می‌گوید / میگه»: 1" in rep and "«به نظر من»: 1" in rep
     assert "توییت یا پست: 1" in rep
@@ -184,7 +186,7 @@ def test_level_table_lists_only_confirmed_and_counts_the_rest(env) -> None:
     assert "| 82,000 |" in rep                         # واقعی روی تایم خود نمودار
     assert "| 70,000 |" in rep                         # واقعی فقط در ستون روزانه
     assert "| 90,000 |" not in rep and "| 60,000 |" not in rep
-    assert "سطح دیگر — خط دلخواه یا بی‌داده: 2 — جدول کامل در گزارش ویدیو" in rep
+    assert "سطح دیگر — جور نیست یا بی‌داده: 2 — جدول کامل در گزارش ویدیو" in rep
 
 
 def test_translation_section_only_for_tekrargar(env) -> None:

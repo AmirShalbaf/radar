@@ -441,8 +441,9 @@ def test_many_touches_can_still_be_weak():
 
 def test_snap_label_texts():
     df = zigzag(THREE, T0)
-    assert H.snap_label(H.snap_frame(df, 110.2, "1D", FAR)) == "واقعی با 3 برخورد — قوی"
-    assert H.snap_label(H.snap_frame(df, 117.0, "1D", FAR)).startswith("خط دلخواه")
+    assert H.snap_label(H.snap_frame(df, 110.2, "1D", FAR)) == "با تعریف رادار جور است — 3 برخورد، قوی"
+    assert H.snap_label(H.snap_frame(df, 117.0, "1D", FAR)).startswith("با تعریف رادار جور نیست")
+    assert "دلخواه" not in H.snap_label(H.snap_frame(df, 117.0, "1D", FAR))
     assert H.snap_label(H.snap_frame(df.head(30), 110.2, "1D", FAR)).startswith("داده کافی نیست")
     assert "ماشه" in H.snap_label(H.snap_frame(zigzag(THREE, T0, tf="4H"), 110.2, "4H", FAR))
 
@@ -731,8 +732,8 @@ def test_video_report_splits_speaker_levels_from_others():
     assert "### سطح‌های خود گوینده" in sec and "### سطح‌های تصویر دیگران" in sec
     mine = sec.split("### سطح‌های خود گوینده")[1].split("###")[0]
     theirs = sec.split("### سطح‌های تصویر دیگران")[1]
-    assert "| سطح یکتا با داده | 2 |" in mine and "| واقعی — قوی / همه | 1 / 1 |" in mine
-    assert "| سطح یکتا با داده | 1 |" in theirs and "| خط دلخواه | 1 |" in theirs
+    assert "| سطح یکتا با داده | 2 |" in mine and "| جور با تعریف رادار — قوی / همه | 1 / 1 |" in mine
+    assert "| سطح یکتا با داده | 1 |" in theirs and "| با تعریف رادار جور نیست | 1 |" in theirs
 
 
 def test_video_report_has_one_line_per_level():
@@ -745,7 +746,9 @@ def test_video_report_has_one_line_per_level():
     cards = {"schema": 1, "video_id": "vid", "doc_id": "d", "source": "src", "title": "آزمون",
              "cards": [card]}
     md = V.render_report(cards, {})
-    assert "واقعی با 3 برخورد — قوی" in md
-    assert "خط دلخواه" in md
+    assert "با تعریف رادار جور است — 3 برخورد، قوی" in md
+    assert "با تعریف رادار جور نیست" in md
+    assert "دلخواه" not in md and "واقعی با" not in md
+    assert H.RADAR_NOTE in md                                       # یک خط توضیح، تصمیم کاربر
     assert "وارسی نشده" in md
     assert "## وارسی سطح با کندل" in md and "نمونه کم" in md
