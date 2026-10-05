@@ -29,9 +29,16 @@ def _src() -> dict:
 
 def test_meta_version_and_framework() -> None:
     meta = _raw()["meta"]
-    assert meta["version"] == "1.8"             # ۱.۸ — ک۷۲، تعارض منافع کریپتوسیتی
+    assert meta["version"] == "1.9"             # ۱.۹ — تکرارگر: خلاصه و آموزش، نه رأی مستقل
     assert meta["framework"] == "Radar 7"
-    assert meta["updated"] == "2026-10-04"      # وقت جهانی، مثل بقیه مخزن
+    assert meta["updated"] == "2026-10-05"      # وقت جهانی، مثل بقیه مخزن
+
+
+def test_tekrargar_note_says_summary_and_teaching_not_a_vote() -> None:
+    """تصمیم کاربر ۴ اکتبر: ارزش تکرارگر خلاصه و آموزش است؛ ادعای نقل‌شده به نام گوینده اصلی."""
+    t = _raw()["sources"]["tekrargar"]
+    assert "ارزش او خلاصه و آموزش است، نه رأی مستقل" in t["notes"]
+    assert t["scores"] is False
 
 
 def test_confirmed_channel_ids_and_handles() -> None:

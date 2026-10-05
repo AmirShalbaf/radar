@@ -1169,7 +1169,54 @@ def _numeric(claim: str) -> bool:
     return VOICE_NUMBER.search(claim) is not None
 
 
-def _video_block(n: int, vid: str, e: dict, names: dict[str, str], intake: Path) -> list[str]:
+# ─── تکرارگر — تصمیم کاربر ۴ اکتبر، کار ویژه ۵ اکتبر: نکته‌های آموزشی با زمان، و منبع اصلی
+# هر ادعای نقل‌شده. ارزش تکرارگر خلاصه و آموزش است، نه رأی مستقل — analysts.yml.
+TEKRARGAR = "tekrargar"
+LESSON_KEYS = ("at", "text")
+LESSON_AT = re.compile(r"(?:[0-9]{1,2}:)?[0-9]{1,2}:[0-9]{2}")   # اسکی — \d رقم فارسی را هم می‌گیرد
+LESSONS_SHOWN = 8                  # خلاصه روزانه کوتاه است؛ بقیه در گزارش کامل
+QUOTED_NOTE = ("ادعای نقل‌شده به نام گوینده اصلی ثبت می‌شود، نه تکرارگر. ارزش تکرارگر خلاصه و "
+               "آموزش است، نه رأی مستقل.")
+
+
+def claim_text(cl) -> str:
+    """متن ادعا — متن ساده، یا text ادعای نقل‌شده {text, origin, url}."""
+    return cl if isinstance(cl, str) else str(cl.get("text") or "")
+
+
+def claim_origin(cl) -> str:
+    """گوینده اصلی ادعای نقل‌شده؛ تهی یعنی ادعای خود گوینده ویدیو."""
+    return "" if isinstance(cl, str) else str(cl.get("origin") or "").strip()
+
+
+def claim_url(cl) -> str:
+    return "" if isinstance(cl, str) else str(cl.get("url") or "")
+
+
+def validate_lessons(cards: dict) -> list[str]:
+    """فهرست اختیاری lessons: {at: «MM:SS» با رقم لاتین، text: نکته به بیان ما، تا سقف متن}."""
+    m = cards.get("lessons")
+    if m is None:
+        return []
+    if not isinstance(m, list):
+        return ["lessons: باید فهرست باشد"]
+    errs = []
+    for i, x in enumerate(m):
+        if not (isinstance(x, dict) and set(x) == set(LESSON_KEYS) and isinstance(x["at"], str)
+                and LESSON_AT.fullmatch(x["at"]) and isinstance(x["text"], str) and x["text"].strip()):
+            errs.append(f"lessons[{i}]: باید {{at: «MM:SS» با رقم لاتین، text: متن ناتهی}} باشد")
+        elif len(x["text"]) > F.TEXT_MAX:
+            errs.append(f"lessons[{i}].text: بالای {F.TEXT_MAX} نویسه")
+    return errs
+
+
+def _lessons(cards: dict) -> list[dict]:
+    return [x for x in (cards.get("lessons") or []) if isinstance(x, dict)
+            and isinstance(x.get("at"), str) and isinstance(x.get("text"), str)]
+
+
+def _video_block(n: int, vid: str, e: dict, names: dict[str, str], intake: Path,
+                 quoted_urls: dict[str, int] | None = None) -> list[str]:
     src = e.get("source") or "—"
     speaker = names.get(src) or e.get("channel") or src
     title = I._cell(e.get("title") or vid)
@@ -1185,10 +1232,15 @@ def _video_block(n: int, vid: str, e: dict, names: dict[str, str], intake: Path)
     cs = cards.get("cards") or []
     charts = [c for c in cs if c.get("is_chart", True) is not False]
     claims = [(c, cl) for c in cs for cl in (c.get("claims") or [])]
-    num_claims = [(c, cl) for c, cl in claims if _numeric(cl)]
+    num_claims = [(c, cl) for c, cl in claims if _numeric(claim_text(cl))]
+
+    def who(cl) -> str:              # تکرارگر: ادعای نقل‌شده به نام گوینده اصلی
+        if src != TEKRARGAR:
+            return ""
+        return f"{I._cell(claim_origin(cl))} — نقل تکرارگر — " if claim_origin(cl) else "تکرارگر — "
     lines += ["", "**ادعاهای عددی** — به بیان ما، با جهت و مهلت:", ""]
-    lines += [f"- {F.fmt_t(c.get('t', 0))} — {I._cell(cl)[:CLAIM_MAX]}" for c, cl in num_claims] \
-        or ["- ادعای عددی ثبت نشد."]
+    lines += [f"- {F.fmt_t(c.get('t', 0))} — {who(cl)}{I._cell(claim_text(cl))[:CLAIM_MAX]}"
+              for c, cl in num_claims] or ["- ادعای عددی ثبت نشد."]
     if len(claims) > len(num_claims):
         lines.append(f"- ادعای بی‌عدد: {len(claims) - len(num_claims)}")
 
@@ -1251,12 +1303,47 @@ def _video_block(n: int, vid: str, e: dict, names: dict[str, str], intake: Path)
             lines.append(f"- از حرف: «فلانی می‌گوید / میگه»: {voice['reported']}؛ «به نظر من»: {voice['own']} "
                          f"— با عدد {voice['own_number']}، با عدد و زمان {voice['own_number_time']}")
         lines.append("- حکم پس از چند ویدیو — ک۶۹.")
+        ls = _lessons(cards)
+        lines += ["", "**نکته‌های آموزشی:**", ""]
+        lines += [f"- {x['at']} — {I._cell(x['text'])}" for x in ls[:LESSONS_SHOWN]] or ["- ثبت نشده."]
+        if len(ls) > LESSONS_SHOWN:
+            lines.append(f"- و {len(ls) - LESSONS_SHOWN} نکته دیگر — گزارش کامل")
+        by: dict[str, list] = {}
+        for _, cl in claims:
+            if claim_origin(cl):
+                by.setdefault(claim_origin(cl), []).append(cl)
+        lines += ["", "**منبع اصلی:**", ""]
+        if not by:
+            lines.append("- ادعای نقل‌شده با گوینده اصلی ثبت نشد.")
+        for o, cls in by.items():
+            lines.append(f"- {I._cell(o)} — {len(cls)} ادعا")
+            for u in dict.fromkeys(claim_url(c) for c in cls if claim_url(c)):
+                if (quoted_urls or {}).get(u, 0) >= 2:
+                    lines.append(f"  - نشانی ویدیوی اصلی: {u} — امروز {quoted_urls[u]} بار نقل شد")
 
     fresh = [m for m in (cards.get("methods") or []) if str(m.get("library", "")).startswith("تازه")]
     lines += ["", "**روش تازه:**", ""]
     lines += [f"- {I._cell(m['area'])}: {I._cell(m['rule'])} — {I._cell(m['library'])}" for m in fresh] \
         or ["- روش تازه‌ای ثبت نشد."]
     return lines
+
+
+def _day_quoted_urls(seen: list[tuple[str, dict]], intake: Path) -> dict[str, int]:
+    """شمار نقل هر ویدیوی اصلی در ویدیوهای تکرارگرِ دیده‌شده همین روز — نشانی از دو بار به بعد."""
+    out: dict[str, int] = {}
+    for v, e in seen:
+        if e.get("source") != TEKRARGAR:
+            continue
+        cpath = Path(e.get("cards") or intake / F.CHARTS_DIR.name / TEKRARGAR / f"{v}.json")
+        try:
+            cs = json.loads(cpath.read_text(encoding="utf-8")).get("cards") or []
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+            continue                 # _video_block همان خطا را با نام فایل می‌گوید
+        for c in cs:
+            for cl in c.get("claims") or []:
+                if claim_url(cl):
+                    out[claim_url(cl)] = out.get(claim_url(cl), 0) + 1
+    return out
 
 
 def render_daily(day: str, vstate: dict, istate: dict, sources: list[I.Source], intake: Path) -> str:
@@ -1299,8 +1386,9 @@ def render_daily(day: str, vstate: dict, istate: dict, sources: list[I.Source], 
     lines += ["", "## ویدیوهای دیده‌شده"]
     if not seen:
         lines += ["", "امروز ویدیویی کامل دیده نشد."]
+    quoted_urls = _day_quoted_urls(seen, intake)
     for i, (v, e) in enumerate(sorted(seen, key=lambda x: x[1].get("seen_at") or ""), 1):
-        lines += _video_block(i, v, e, names, intake)
+        lines += _video_block(i, v, e, names, intake, quoted_urls)
 
     if ready:
         lines += ["", "## آماده، هنوز خوانده نشده", ""]
@@ -1598,6 +1686,24 @@ def _methods_section(cards: dict) -> list[str]:
     return lines
 
 
+def _tekrargar_sections(cards: dict, cs: list[dict]) -> list[str]:
+    """دو بخش گزارش تکرارگر: نکته‌های آموزشی با زمان ویدیو، و منبع اصلی ادعاهای نقل‌شده."""
+    lines = ["", "## نکته‌های آموزشی", ""]
+    ls = _lessons(cards)
+    lines += [f"- {x['at']} — {I._cell(x['text'])}" for x in ls] \
+        or ["ثبت نشده — سند کارت فهرست `lessons` ندارد."]
+    allc = [(c, cl) for c in cs for cl in (c.get("claims") or [])]
+    q = [(c, cl) for c, cl in allc if claim_origin(cl)]
+    lines += ["", "## منبع اصلی ادعاهای نقل‌شده", "", f"> {QUOTED_NOTE}", ""]
+    if not q:
+        return lines + ["هیچ ادعای نقل‌شده‌ای با گوینده اصلی ثبت نشد."]
+    lines += [f"نقل‌شده: {len(q)} از {len(allc)} ادعا.", "",
+              "| زمان | گوینده اصلی | نشانی | ادعا |", "|---|---|---|---|"]
+    lines += [f"| {F.fmt_t(c.get('t', 0))} | {I._cell(claim_origin(cl))} | {claim_url(cl) or '—'} "
+              f"| {I._cell(claim_text(cl))[:CLAIM_MAX]} |" for c, cl in q]
+    return lines
+
+
 def render_report(cards: dict, meta: dict, man: dict | None = None, voice: dict | None = None) -> str:
     """
     گزارش ساده فارسی یک ویدیو، فقط از کارت اعتبارسنجی‌شده. عمومی است: هیچ
@@ -1689,7 +1795,9 @@ def render_report(cards: dict, meta: dict, man: dict | None = None, voice: dict 
             for c, cl in claim_rows:
                 refs = "، ".join(str(r.get("row")) for r in c.get("refs") or [] if r.get("role") == "claim")
                 coin = _val(c.get("coin")) if c.get("is_chart", True) is not False else "—"
-                lines.append(f"| {t(c)} | {I._cell(coin)} | {refs or '—'} | {I._cell(cl)[:CLAIM_MAX]} |")
+                origin = f" — گوینده اصلی: {I._cell(claim_origin(cl))}" if claim_origin(cl) else ""
+                lines.append(f"| {t(c)} | {I._cell(coin)} | {refs or '—'} | "
+                             f"{I._cell(claim_text(cl))[:CLAIM_MAX]}{origin} |")
         else:
             lines.append("هیچ ادعای قابل‌تسویه‌ای در کارت‌ها ثبت نشد.")
     else:
@@ -1697,6 +1805,9 @@ def render_report(cards: dict, meta: dict, man: dict | None = None, voice: dict 
     if man and (man.get("selection") or {}).get("unframed_candidates"):
         un = man["selection"]["unframed_candidates"]
         lines += ["", "نامزد ادعای بی‌فریم: " + "، ".join(str(r) for r in un)]
+
+    if cards.get("source") == TEKRARGAR:
+        lines += _tekrargar_sections(cards, cs)
 
     # حرف و صفحه
     lines += ["", "## حرف و صفحه", ""]
@@ -1738,7 +1849,7 @@ def report_cli(cards_path: Path, intake: Path, frames_root: Path, now: datetime 
         return 2
     man_path = frames_root / str(cards.get("video_id", "")) / "frames.json"
     man = json.loads(man_path.read_text(encoding="utf-8")) if man_path.exists() else None
-    errs = F.validate_cards(cards, man) + validate_methods(cards)
+    errs = F.validate_cards(cards, man) + validate_methods(cards) + validate_lessons(cards)
     if errs:
         print(f"⛔ کارت نامعتبر — {len(errs)} خطا؛ گزارش ساخته نشد:", file=sys.stderr)
         for e in errs:

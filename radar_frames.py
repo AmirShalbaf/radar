@@ -982,6 +982,17 @@ def _walk(x, where: str, errs: list[str]) -> None:
                 _walk(v, f"{where}[{i}]", errs)
 
 
+QUOTED_KEYS = {"text", "origin", "url"}
+
+
+def _quoted_ok(c) -> bool:
+    """ادعای نقل‌شده: متن به بیان ما، نام گوینده اصلی، و نشانی منبع اصلی یا null."""
+    return (isinstance(c, dict) and {"text", "origin"} <= set(c) <= QUOTED_KEYS
+            and isinstance(c["text"], str) and c["text"].strip()
+            and isinstance(c["origin"], str) and c["origin"].strip()
+            and (c.get("url") is None or isinstance(c["url"], str)))
+
+
 def validate_card(card: dict, where: str = "card") -> list[str]:
     errs: list[str] = []
     if not isinstance(card, dict):
@@ -1039,10 +1050,11 @@ def validate_card(card: dict, where: str = "card") -> list[str]:
     # دو میدان اختیاری نشست ۶ب — گزارش ویدیو از همین‌ها می‌خواند، نه از متن آزاد
     cl = card.get("claims")
     if cl is not None:
-        if not (isinstance(cl, list) and all(isinstance(c, str) for c in cl)):
-            errs.append(f"{where}.claims: باید فهرست متن ساده باشد — ادعا به بیان ما؛ "
-                        "عدد حرف فقط به شکل متن")
-        elif any(len(c) > TEXT_MAX for c in cl):
+        # ادعای نقل‌شده — کار ویژه ۵ اکتبر، تکرارگر: {text, origin, url}؛ به نام گوینده اصلی
+        if not (isinstance(cl, list) and all(isinstance(c, str) or _quoted_ok(c) for c in cl)):
+            errs.append(f"{where}.claims: باید فهرست متن ساده باشد، یا ادعای نقل‌شده {{text, origin, url}} "
+                        "— ادعا به بیان ما؛ عدد حرف فقط به شکل متن")
+        elif any(len(c if isinstance(c, str) else c["text"]) > TEXT_MAX for c in cl):
             errs.append(f"{where}.claims: ادعای بالای {TEXT_MAX} نویسه")
     sv = card.get("speech_vs_screen")
     if sv is not None:
