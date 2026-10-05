@@ -752,3 +752,35 @@ def test_video_report_has_one_line_per_level():
     assert H.RADAR_NOTE in md                                       # یک خط توضیح، تصمیم کاربر
     assert "وارسی نشده" in md
     assert "## وارسی سطح با کندل" in md and "نمونه کم" in md
+
+
+# ─── ک۸۲: سند قدیمی بی‌تاریخ انتشار — تاریخ از .video_state.json، سند دست نمی‌خورد ───
+
+def legacy_card(tmp_path, state_published=None):
+    path = write_card(tmp_path, [level_obj(110.2)])
+    doc = tmp_path / "intake" / "src" / "doc.md"
+    doc.write_text("---\nمنبع: آزمون\nتاریخ انتشار: \n---\n\n## متن کامل\n", encoding="utf-8")
+    if state_published is not None:
+        (tmp_path / "intake" / H.VIDEO_STATE_NAME).write_text(json.dumps(
+            {"schema": 1, "runs": {}, "videos": {"vid": {"published": state_published}}}), encoding="utf-8")
+    return path, doc
+
+
+def test_legacy_doc_publish_date_comes_from_video_state(tmp_path, capsys):
+    path, doc = legacy_card(tmp_path, "2026-01-10T08:00:00+00:00")
+    before = doc.read_bytes()
+    calls = []
+    assert H.cards_cmd([path], history_fn=fake_history_fn(calls)) == 0
+    assert calls and all(end == PUBLISHED for _, _, end in calls)
+    assert doc.read_bytes() == before                                 # سند قدیمی دست نخورد — ف۱۶
+    assert ".video_state.json" in capsys.readouterr().out
+
+
+def test_no_publish_date_anywhere_still_refuses(tmp_path):
+    path, _ = legacy_card(tmp_path)
+    assert H.cards_cmd([path], history_fn=fake_history_fn([])) == 2
+    assert "snap" not in json.loads(path.read_text(encoding="utf-8"))["cards"][0]["levels"][0]
+
+
+def test_video_state_has_one_name():
+    assert H.VIDEO_STATE_NAME == V.VIDEO_STATE_NAME

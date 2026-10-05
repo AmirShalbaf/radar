@@ -674,3 +674,22 @@ def test_report_cli_counts_voice_from_local_text(env):
     rep = Path("intake", I.REPORTS_DIR, "single_UCx", f"{VID}.md").read_text(encoding="utf-8")
     assert "| «به نظر من» و هم‌خانواده | 3 | 1 | 1 |" in rep
     assert "سالووی" not in rep                       # حرف گوینده نقل نمی‌شود
+
+
+def test_report_header_takes_publish_date_from_state_for_legacy_doc(env) -> None:
+    """ک۸۲: سند پیش از نشست ۴ تاریخ انتشار ندارد و دست نمی‌خورد — تاریخ از وضعیت دیدن."""
+    cards = report_cards()
+    doc = Path("intake/single_UCx/doc.md")
+    doc.parent.mkdir(parents=True)
+    doc.write_text("---\nمنبع: دوره\nتاریخ انتشار: \n---\n\n## متن کامل\n", encoding="utf-8")
+    before = doc.read_bytes()
+    Path("intake", V.VIDEO_STATE_NAME).write_text(json.dumps(
+        {"schema": 1, "runs": {}, "videos": {VID: {"published": "2025-10-21T12:45:20+00:00"}}}),
+        encoding="utf-8")
+    p = Path("intake/charts/single_UCx") / f"{VID}.json"
+    p.parent.mkdir(parents=True)
+    p.write_text(json.dumps(cards, ensure_ascii=False), encoding="utf-8")
+    assert V.main(["--report", p.as_posix(), "--intake", "intake", "--frames", "frames"]) == 0
+    md = Path("intake", I.REPORTS_DIR, "single_UCx", f"{VID}.md").read_text(encoding="utf-8")
+    assert "| تاریخ انتشار | 2025-10-21 |" in md
+    assert doc.read_bytes() == before

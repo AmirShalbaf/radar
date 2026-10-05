@@ -773,6 +773,24 @@ def _is_price(x) -> bool:
     return isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x) and x > 0
 
 
+VIDEO_STATE_NAME = ".video_state.json"      # همان radar_video.VIDEO_STATE_NAME — آزمون برابری قفلش می‌کند
+
+
+def state_published(cards_path: Path, video_id: str) -> str:
+    """
+    تاریخ انتشار از intake/.video_state.json — ک۸۲. سند پیش از نشست ۴ تاریخ ندارد و دست
+    نمی‌خورد؛ radar_video هنگام دیدن، تاریخ را از فراداده yt-dlp در وضعیت نوشته است.
+    کارت در intake/charts/<منبع>/ است، پس intake سه پوشه بالاتر. نبود یا خرابی یعنی تهی.
+    """
+    state = Path(cards_path).parents[2] / VIDEO_STATE_NAME
+    try:
+        data = json.loads(state.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return ""
+    e = (data.get("videos") or {}).get(video_id) if isinstance(data, dict) else None
+    return str(e.get("published") or "") if isinstance(e, dict) else ""
+
+
 def cards_cmd(paths, *, history_fn=None, dry_run: bool = False, venue: str = "auto",
               cache_dir=CACHE_DIR) -> int:
     """
@@ -800,12 +818,18 @@ def cards_cmd(paths, *, history_fn=None, dry_run: bool = False, venue: str = "au
         doc = json.loads(path.read_text(encoding="utf-8"))
         src_doc = Path(str(doc.get("doc") or ""))
         meta = I._front_matter(src_doc.read_text(encoding="utf-8")) if src_doc.is_file() else {}
-        if not meta.get("تاریخ انتشار"):
+        raw = meta.get("تاریخ انتشار") or ""
+        if not raw:
+            raw = state_published(path, str(doc.get("video_id") or ""))
+            if raw:
+                print(f"ℹ️ {path.as_posix()}: تاریخ انتشار از {VIDEO_STATE_NAME} — سند {src_doc.as_posix()} "
+                      "بی‌تاریخ است و دست نمی‌خورد، ف۱۶ و ک۸۲")
+        if not raw:
             print(f"⛔ {path}: زمان انتشار سند {src_doc} پیدا نشد — snap بی برش زمانی ممنوع",
                   file=sys.stderr)
             rc = 2
             continue
-        published = parse_time(meta["تاریخ انتشار"])
+        published = parse_time(raw)
         snaps = []
         for card in doc.get("cards") or []:
             if card.get("is_chart", True) is False:

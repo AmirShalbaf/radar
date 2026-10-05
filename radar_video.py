@@ -725,7 +725,9 @@ def mark_seen(path: Path, cards: dict, report: Path, now: datetime) -> None:
     e = st["videos"].setdefault(vid, {})
     e.setdefault("source", cards.get("source") or "")
     e.setdefault("title", cards.get("title") or "")
-    e.update(status="seen", seen_at=_iso(now), report=report.as_posix())
+    # نخستین زمان دیدن می‌ماند: ساخت دوباره گزارش ویدیو را به خلاصه روز دیگر نمی‌برد
+    e.setdefault("seen_at", _iso(now))
+    e.update(status="seen", report=report.as_posix())
     save_video_state(path, st)
 
 
@@ -1730,7 +1732,7 @@ def report_cli(cards_path: Path, intake: Path, frames_root: Path, now: datetime 
         print(f"⛔ کارت خوانده نشد: {cards_path} — {type(e).__name__}: {e}", file=sys.stderr)
         return 2
     try:
-        load_video_state(intake / VIDEO_STATE_NAME)      # خراب؟ پیش از نوشتن گزارش بایست
+        vstate = load_video_state(intake / VIDEO_STATE_NAME)      # خراب؟ پیش از نوشتن گزارش بایست
     except StateError as e:
         print(f"⛔ {e}", file=sys.stderr)
         return 2
@@ -1750,6 +1752,10 @@ def report_cli(cards_path: Path, intake: Path, frames_root: Path, now: datetime 
         meta = I._front_matter(doc.read_text(encoding="utf-8"))
     else:
         print(f"⚠️ سند {doc} نیست — شناسنامه گزارش فقط از کارت")
+    if not meta.get("تاریخ انتشار"):          # سند قدیمی بی‌تاریخ — ک۸۲؛ سند دست نمی‌خورد
+        e = vstate["videos"].get(str(cards.get("video_id") or ""), {})
+        if e.get("published"):
+            meta["تاریخ انتشار"] = e["published"]
     local = intake / meta["متن محلی"] if meta.get("متن محلی") else None
     voice = voice_counts(local.read_text(encoding="utf-8")) if local and local.is_file() else None
     out = report_path(intake, cards)

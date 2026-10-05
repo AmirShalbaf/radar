@@ -455,3 +455,13 @@ def test_mark_seen_updates_or_creates_entry(env) -> None:
     V.mark_seen(p, cards, Path("intake/reports/tekrargar/a.md"), NOW)
     e = state()["videos"][vid("a")]
     assert e["status"] == "seen" and e["suggested"] is True
+
+
+def test_mark_seen_keeps_first_seen_time(env) -> None:
+    """ساخت دوباره گزارش ویدیو را به خلاصه روز دیگر نمی‌برد — کار ویژه ۵ اکتبر."""
+    p = Path("intake", V.VIDEO_STATE_NAME)
+    cards = {"video_id": vid("a"), "source": "tekrargar", "title": "t"}
+    V.mark_seen(p, cards, Path("intake/reports/tekrargar/a.md"), NOW)
+    V.mark_seen(p, cards, Path("intake/reports/tekrargar/b.md"), NOW + timedelta(days=1))
+    e = state()["videos"][vid("a")]
+    assert e["seen_at"][:10] == "2026-10-04" and e["report"].endswith("b.md")
