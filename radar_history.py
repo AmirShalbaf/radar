@@ -78,6 +78,7 @@ STRONG_CHANCE = 0.10              # «قوی»: خط تصادفی در ۱۰٪ م
 GRID = 2001                       # خط‌های هم‌فاصله برای شانس تصادفی
 MIN_SAMPLE = 20                   # جمع‌بندی تحلیل‌گر: کمتر یعنی فقط عدد — ف۲۱
 ALPHA = 0.05                      # «به‌روشنی بالاتر از شانس» — ف۲۱
+DEDUPE_REL = 0.001                # خط یکتا: ۰.۱٪ قیمت — ک۸۱، ف۲۹. تکرار ۰.۰۲۵٪ تا ۰.۰۸٪، خط جدا از ۰.۲۳٪
 SUB_DAILY = ("15m", "1H", "4H")
 INDEX_NAMES = {"TOTAL", "TOTAL2", "TOTAL3", "OTHERS"}
 
@@ -639,15 +640,41 @@ def _tail(ps: list[float], k: int) -> float:
     return float(sum(dist[k:]))
 
 
+def unique_levels(snaps: list[dict]) -> list[dict]:
+    """
+    یک snap برای هر خط یکتا — ک۸۱، ف۲۹. یکتا با نماد، تایم‌فریم و قیمت، نه با برش:
+    chart_end هر فریم چند ثانیه فرق دارد و همان خط را چند بار می‌شمرد. رواداری نسبی
+    DEDUPE_REL، خوشه محدود از کوچک‌ترین قیمت — نه زنجیره‌ای. نماینده نخستین رخداد به
+    ترتیب ورودی است. قیمت ناخوانا با برش جدا می‌ماند، چون قیمتی برای یکی‌کردن ندارد.
+    """
+    cluster: dict = {}
+    by_key: dict = {}
+    for s in snaps:
+        if _is_price(s.get("level")):
+            by_key.setdefault((s.get("symbol"), s.get("tf")), set()).add(float(s["level"]))
+    for key, prices in by_key.items():
+        first = None
+        for p in sorted(prices):
+            if first is None or p > first * (1 + DEDUPE_REL):
+                first = p
+            cluster[(key, p)] = first
+    out: dict = {}
+    for s in snaps:
+        lv = s.get("level")
+        if _is_price(lv):
+            k = ("line", s.get("symbol"), s.get("tf"), cluster[((s.get("symbol"), s.get("tf")), float(lv))])
+        else:
+            k = ("loose", s.get("symbol"), s.get("tf"), s.get("cutoff"), lv)
+        out.setdefault(k, s)
+    return list(out.values())
+
+
 def summarize(snaps: list[dict]) -> dict:
     """
-    سهم سطح‌های تأییدشده در برابر شانس تصادفی همان پنجره‌ها — ف۲۱. خط تکراری
-    کارت‌ها یک سطح است. حکم فقط با دست‌کم ۲۰ سطح یکتا با داده.
+    سهم سطح‌های تأییدشده در برابر شانس تصادفی همان پنجره‌ها — ف۲۱. هر خط یکتا یک
+    بار — unique_levels، ک۸۱. حکم فقط با دست‌کم ۲۰ سطح یکتا با داده.
     """
-    uniq: dict = {}
-    for s in snaps:
-        uniq.setdefault((s.get("symbol"), s.get("tf"), s.get("cutoff"), s.get("level")), s)
-    vals = list(uniq.values())
+    vals = unique_levels(snaps)
     data = [s for s in vals if s.get("verdict") in ("confirmed", "not_near")
             and s.get("chance_pct") is not None]
     conf = [s for s in data if s["verdict"] == "confirmed"]

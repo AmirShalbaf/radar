@@ -481,6 +481,42 @@ def test_summary_dedupes_repeated_lines_and_skips_no_data():
     assert s["n"] == 1 and s["no_data"] == 1
 
 
+# ─── ک۸۱: خط یکتا با نماد، تایم‌فریم و قیمت — نه با برش. ف۲۹ ───
+
+def at(snap, cutoff):
+    return {**snap, "cutoff": cutoff}
+
+
+def test_same_line_in_frames_seconds_apart_is_one_level():
+    """chart_end هر فریم چند ثانیه فرق دارد؛ «صفر تا ۱۰۰» ۷۰ سطح شمرد، در واقع ۴۱."""
+    snaps = [at(fake_snap("confirmed", 30.0, 2, 100.0), f"2026-09-16T18:4{i}:00+00:00") for i in range(5)]
+    s = H.summarize(snaps)
+    assert s["rows"] == 5 and s["unique"] == 1 and s["n"] == 1 and s["confirmed"] == 1
+
+
+def test_dedupe_tolerance_is_relative_and_bounded():
+    near = [fake_snap("not_near", 30.0, None, 100.0), fake_snap("not_near", 30.0, None, 100.05)]
+    assert H.summarize(near)["unique"] == 1                         # ۰.۰۵٪ — همان خط
+    far = [fake_snap("not_near", 30.0, None, 100.0), fake_snap("not_near", 30.0, None, 100.3)]
+    assert H.summarize(far)["unique"] == 2                          # ۰.۳٪ — دو خط
+    chain = [fake_snap("not_near", 30.0, None, p) for p in (100.0, 100.08, 100.16)]
+    assert H.summarize(chain)["unique"] == 2                        # خوشه محدود، نه زنجیره‌ای
+
+
+def test_dedupe_never_merges_across_symbol_or_timeframe():
+    a = fake_snap("confirmed", 30.0, 2, 100.0)
+    snaps = [a, {**a, "tf": "1D"}, {**a, "symbol": "ETH-USDT"}]
+    assert H.summarize(snaps)["unique"] == 3
+
+
+def test_first_occurrence_represents_the_line_and_stats_use_unique_levels():
+    first = fake_snap("confirmed", 20.0, 2, 100.0)
+    later = at(fake_snap("not_near", 40.0, None, 100.05), "2026-02-01T00:00:00+00:00")
+    s = H.summarize([first, later] + [fake_snap("not_near", 30.0, None, 200.0)])
+    assert s["n"] == 2 and s["confirmed"] == 1
+    assert abs(s["expected_pct"] - 25.0) < 1e-9                    # (20 + 30) ÷ 2
+
+
 # ═══════════════ ۶ — کارت، اعتبارسنج، گزارش ═══════════════
 
 def good_snap():
