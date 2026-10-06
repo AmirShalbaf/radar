@@ -9,6 +9,11 @@
 ردشده». هیچ حکم کاهش یا خروج، هیچ ردیف اقدام اجباری و هیچ اثری در ترتیب
 فروش. در دفتر روزانه و هفتگی هر دو — هر دو همین build_report هستند؛
 هفتگی با --candidates. ابطال با بسته هفتگی دست نمی‌خورد.
+
+همان روز، تصمیم دوم کاربر: خود امتیاز هم. حکم «ضعیف — نامزد فروش» با امتیاز
+زیر ‎-0.5 و آزمون جانشینی هم اطلاعی‌اند، با همان برچسب؛ هیچ حکم، ردیف اقدام
+یا دلیل فروشی از امتیاز ساخته نمی‌شود. «داده ناکافی» می‌ماند: آن حکم از
+نیامدن کندل است، نه از مقدار امتیاز.
 """
 import json
 import sys
@@ -27,6 +32,9 @@ LABEL = "اطلاعی — مبنای امتیاز ردشده"
 # هر نشانه حکم یا اقدامی که پیش از این از ضربه ساخته می‌شد
 STRIKE_ACTS = ("کاهش ۵۰٪ اجباری", "خروج کامل (۴ ضربه)", "آماده‌سازی کاهش",
                "کاهش حداقل ۵۰٪", "سه ضربه متوالی", "ضربه متوالی")
+# هر نشانه حکم یا اقدامی که پیش از این از امتیاز و جانشینی ساخته می‌شد
+SCORE_ACTS = ("نامزد فروش", "چرخش به", "✅ اجرا", "تأیید هفته بعد", "آستانه اجرا",
+              "تعویض در هفته")
 
 
 def _h() -> dict:
@@ -35,13 +43,14 @@ def _h() -> dict:
             "ledger": []}
 
 
-def _row(sym: str, strikes: int, inv=1.0, weekly=None, score=0.5, rs30=0.05) -> dict:
+def _row(sym: str, strikes: int, inv=1.0, weekly=None, score=0.5, rs30=0.05,
+         swap_edge=None, swap_to=None) -> dict:
     pos = {"symbol": sym, "book": "position", "status": "open", "invalidation": inv,
            "lots": [{"qty": 1.0, "account": "A", "entry": None}]}
     return {"pos": pos, "qty": 1.0, "price": 500.0, "value": 500.0, "dust": False,
             "avg_entry": None, "score": score, "rsi": 55.0, "rs30": rs30,
             "strikes": strikes, "weekly": weekly, "weekly_why": [],
-            "swap_edge": None, "swap_to": None}
+            "swap_edge": swap_edge, "swap_to": swap_to}
 
 
 def _wk(close: float) -> dict:
@@ -63,10 +72,62 @@ def test_invalidation_still_exits() -> None:
         assert v.startswith("⛔ خروج ۱۰۰٪ — بسته هفتگی زیر ابطال")
 
 
+def test_weak_score_makes_no_verdict() -> None:
+    """امتیاز زیر ‎-0.5 دیگر «ضعیف — نامزد فروش» نیست."""
+    assert B._verdict(_row("AAA", 0, score=-1.5, weekly=_wk(600.0))) == "نگه‌دار"
+
+
+def test_swap_edge_makes_no_verdict() -> None:
+    """مزیت جانشینی بالای آستانه پیشین هم حکم چرخش نمی‌سازد."""
+    r = _row("AAA", 0, weekly=_wk(600.0), swap_edge=0.9, swap_to="BBB")
+    assert B._verdict(r) == "نگه‌دار"
+
+
+def test_missing_data_still_flagged() -> None:
+    """قفل: «داده ناکافی» از نیامدن کندل است، نه از مقدار امتیاز — می‌ماند."""
+    assert B._verdict(_row("AAA", 0, score=None, weekly=_wk(600.0))) == "داده ناکافی"
+
+
 # ═══════════════ گزارش ═══════════════
 
 def _report(rows, candidates=()) -> str:
     return B.build_report(_h(), rows, None, list(candidates), "آزمون")
+
+
+def _score_rows() -> list[dict]:
+    return [_row("AAA", 0, score=-1.2, rs30=0.10, swap_edge=2.55, swap_to="CCC"),
+            _row("BBB", 0, score=0.8, rs30=-0.05)]
+
+
+def test_score_column_labeled() -> None:
+    book = _report(_score_rows()).split("## ۲")[1].split("## ۳")[0]
+    head = [c.strip() for c in
+            [l for l in book.splitlines() if l.startswith("| نماد")][0].split("|")]
+    assert "امتیاز — اطلاعی" in head
+
+
+def test_swap_section_is_advisory() -> None:
+    rep = _report(_score_rows(), [{"symbol": "CCC", "score": 1.5}])
+    swap = rep.split("## ۴")[1].split("## ۵")[0]
+    assert LABEL in swap
+    # مزیت هنوز نشان داده می‌شود: ۱.۵ − (−۱.۲) − ۰.۱۵ = ۲.۵۵
+    assert "+2.55" in swap
+    for s in SCORE_ACTS:
+        assert s not in rep, s
+
+
+def test_action_list_ignores_score() -> None:
+    rep = _report(_score_rows(), [{"symbol": "CCC", "score": 1.5}])
+    act = rep.split("## ۶")[1]
+    assert "AAA" not in act and "CCC" not in act
+
+
+def test_sell_reasons_ignore_score() -> None:
+    rep = _report(_score_rows())
+    sell = rep.split("## ۵")[1].split("## ۶")[0]
+    lines = [l for l in sell.splitlines() if l.startswith("| ") and l[2].isdigit()]
+    assert "BBB" in lines[0] and "AAA" in lines[1]
+    assert "امتیاز" not in "".join(lines)
 
 
 def test_column_kept_with_label() -> None:
@@ -131,13 +192,23 @@ def run_book(tmp_path, monkeypatch):
                        "invalidation": None}]}),
         encoding="utf-8")
 
-    def run(extra: list[str]) -> tuple[dict, str]:
+    def run(extra: list[str], scores: dict | None = None) -> tuple[dict, str]:
         # امتیاز امروز با این کندل حدود ۱.۱ است؛ چهار کاهش پیاپی پیش از آن
         hist = [{"date": _day(i - 4), "score": s} for i, s in enumerate((4.0, 3.5, 3.0, 2.0))]
         (tmp_path / B.STATE_FILE).write_text(json.dumps(
             {"reviews": {"AAA": hist}, "swaps": [], "score_basis": B.SCORE_BASIS}),
             encoding="utf-8")
-        monkeypatch.setattr(B, "candles", lambda sym, *a, **k: _frame())
+
+        def candles(sym, *a, **k):
+            df = _frame()
+            df.attrs["sym"] = sym
+            return df
+        monkeypatch.setattr(B, "candles", candles)
+        if scores is not None:
+            # امتیاز دلخواه هر نماد؛ بیت‌کوین مرجع است و امتیاز نمی‌خواهد
+            monkeypatch.setattr(B, "score_position", lambda df, btc, *a, **k: {
+                "price": 100.0, "score": scores[df.attrs["sym"]], "rsi": 50.0,
+                "rs30": 0.01})
         monkeypatch.setattr(sys, "argv", ["radar_book.py", "--regime", "-0.6",
                                           "--out", "out.md", *extra])
         assert B.main() == 0
@@ -156,3 +227,15 @@ def test_main_counts_but_does_not_act(run_book, extra) -> None:
     for s in STRIKE_ACTS:
         assert s not in rep, s
     assert LABEL in rep
+
+
+def test_main_weekly_weak_score_and_swap_do_not_act(run_book) -> None:
+    """
+    هفتگی با نامزد: AAA امتیاز ‎-1.2 — پیش از این «نامزد فروش» — و نامزد BBB
+    با ۱.۵، مزیت ۲.۵۵ — پیش از این حکم و ردیف «چرخش به BBB».
+    """
+    saved, rep = run_book(["--candidates", "BBB"], scores={"AAA": -1.2, "BBB": 1.5})
+    assert saved["reviews"]["AAA"][-1]["score"] == -1.2
+    for s in SCORE_ACTS + STRIKE_ACTS:
+        assert s not in rep, s
+    assert "+2.55" in rep.split("## ۴")[1].split("## ۵")[0]
