@@ -183,17 +183,29 @@ def test_main_basis_change_counts_no_strike(run_book) -> None:
     assert saved["score_basis"] == B.SCORE_BASIS
     assert len(saved["reviews"]["AAA"]) == 1
     assert saved["archive"][-1]["reviews"] == st["reviews"]
-    assert "آماده‌سازی کاهش" not in rep
+    assert _strike_cell(rep, "AAA") == "0"
     assert "خط پایه تازه" in rep
 
 
+def _strike_cell(rep: str, sym: str) -> str:
+    """خانه ستون «ض» سطر یک نماد در جدول دفتر موقعیت."""
+    book = rep.split("## ۲")[1].split("## ۳")[0].splitlines()
+    head = [c.strip() for c in next(l for l in book if l.startswith("| نماد")).split("|")]
+    row = [c.strip() for c in next(l for l in book if l.startswith(f"| {sym} ")).split("|")]
+    return row[next(i for i, c in enumerate(head) if c.startswith("ض"))]
+
+
 def test_main_same_basis_still_counts(run_book) -> None:
-    """قفل: دور عادی با همان مبنا مثل قبل ضربه می‌شمارد."""
+    """
+    قفل: دور عادی با همان مبنا مثل قبل ضربه می‌شمارد. از ۶ اکتبر ضربه فقط
+    اطلاعی است — شمار در ستون «ض» می‌آید، حکمی نمی‌سازد؛ ک۸۵.
+    """
     st = _state(2.0, 1.5)
     st["score_basis"] = B.SCORE_BASIS
     saved, rep = run_book(st)
     assert len(saved["reviews"]["AAA"]) == 3
-    assert "آماده‌سازی کاهش" in rep
+    assert _strike_cell(rep, "AAA") == "2"
+    assert "آماده‌سازی کاهش" not in rep
     assert "خط پایه تازه" not in rep
 
 
