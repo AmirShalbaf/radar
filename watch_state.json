@@ -37,5 +37,8 @@
   "wk_ONDO_2026-10-05T00:00:00+00:00": true,
   "wk_TAO_2026-10-05T00:00:00+00:00": true,
   "mkt_BTC_2026-10-05T00:00:00+00:00": true,
-  "warn_SOL_119.53": true
+  "warn_SOL_119.53": true,
+  "warn_ETH_2615.52": true,
+  "warn_LINK_13.66": true,
+  "warn_TAO_295.35": true
 }
