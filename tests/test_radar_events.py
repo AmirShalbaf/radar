@@ -163,6 +163,21 @@ def test_window_unlocks_by_category_and_cliffs() -> None:
     assert w["cover_end"] > NOW + timedelta(days=30)
 
 
+def test_cliff_time_floored_to_hour() -> None:
+    """
+    زمان پله DefiLlama ثانیه‌دار و تقریبی است — 02:15:55. لرزش چندثانیه‌ای فردا نباید
+    «بازنگری» بسازد و قیمت‌ها را صفر کند؛ قیمت از کندل ساعتی است، پس گرد به ساعت
+    سنجش را عوض نمی‌کند — یافته اجرای واقعی ۸ اکتبر.
+    """
+    d = _doc(cliff=1000.0, reward_per_day=0)
+    u = d["metadata"]["unlockEvents"][0]
+    u["timestamp"] += 2 * 3600 + 15 * 60 + 55
+    w = E.window_unlocks(d, NOW, 30)
+    assert w["cliffs"][0]["at"] == "2026-10-13T11:00:00Z"
+    u["timestamp"] += 3
+    assert E.window_unlocks(d, NOW, 30)["cliffs"][0]["at"] == "2026-10-13T11:00:00Z"
+
+
 def test_single_cliff_vetoes() -> None:
     v = E.unlock_verdict("ZRO", _entry(), _doc(cliff=1000.0, reward_per_day=0), 100_000.0, NOW)
     assert v["status"] == "veto" and v["single_max"] == pytest.approx(1.0)

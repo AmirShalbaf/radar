@@ -292,7 +292,9 @@ def window_unlocks(doc: dict, now: datetime, days: int) -> dict:
             amt = float(a.get("amount") or 0.0)
             if cat in EMISSION_CATEGORIES or amt <= 0:
                 continue
-            d = datetime.fromtimestamp(t, UTC)
+            # زمان پله تقریبی و ثانیه‌دار است؛ گرد به ساعت — قیمت دفتر هم از کندل
+            # ساعتی است، پس سنجش عوض نمی‌شود و لرزش ثانیه‌ای «بازنگری» نمی‌سازد
+            d = datetime.fromtimestamp(t, UTC).replace(minute=0, second=0, microsecond=0)
             rec = days_.setdefault(d.strftime("%Y-%m-%d"),
                                    {"day": d.strftime("%Y-%m-%d"), "at": iso(d), "tokens": 0.0,
                                     "cats": set()})
