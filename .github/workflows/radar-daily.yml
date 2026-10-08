@@ -172,6 +172,24 @@ jobs:
             echo "holdings.json نیست — سطوح ساختاری سبد رد شد."
           fi
 
+      # تقویم کلان، وتوی آزادسازی و دفتر رویداد — نشست ۱۰. کد ۲ یعنی منبعی نیامد
+      # ولی گزارش نوشته شد؛ هر کد جز صفر خطای صریح است، نه بلعیده. خط تلگرام و بخش
+      # خلاصه از /tmp به گام بعد می‌روند.
+      - name: تقویم رویداد و آزادسازی
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          D=$(date -u +%Y-%m-%d)
+          if ! python radar_events.py --holdings holdings.json \
+                 --out "reports/events-$D.md" --section /tmp/events_section.md \
+                 --line /tmp/events_line.txt > /tmp/events.log 2>&1; then
+            echo "::error::تقویم رویداد خطا داد — reports/events-error-$D.md"
+            { echo "# خطای تقویم رویداد — $D"; echo
+              echo "تقویم رویداد کامل ساخته نشد. ته گزارش خطا:"; echo; echo '```'
+              tail -c 4000 /tmp/events.log; echo '```'; } > "reports/events-error-$D.md"
+            echo "⚠️ تقویم رویداد خطا داد — reports/events-error-$D.md" > /tmp/events_line.txt
+          fi
+
       - name: به‌روزرسانی پیگیری دفتر هزینه فرصت
         env:
           PYTHONUTF8: "1"
@@ -204,7 +222,25 @@ jobs:
             echo
             echo "تولیدشده خودکار توسط گردش‌کار گیت‌هاب."
             echo
+            # یک خط ساده رویداد — نشست ۱۰. همین خط به پیام تلگرام می‌رود؛ بازطراحی
+            # پیام مال نشست ۱۱ است.
+            if [ -s /tmp/events_line.txt ]; then
+              cat /tmp/events_line.txt
+            else
+              echo "⚠️ تقویم رویداد: خط ساخته نشد"
+            fi
+            echo
             cat /tmp/staleness.md
+            echo
+            # بخش کامل رویداد میان دو نشانه — گام تلگرام آن را برمی‌دارد
+            echo "<!-- رویداد-آغاز -->"
+            if [ -s /tmp/events_section.md ]; then
+              cat /tmp/events_section.md
+            else
+              echo "## رویدادهای ۱۴ روز آینده"; echo
+              echo "⚠️ ساخته نشد — فایل events-error امروز را ببین."
+            fi
+            echo "<!-- رویداد-پایان -->"
             echo
             echo "## فایل‌های امروز"
             echo
@@ -230,7 +266,7 @@ jobs:
           git add reports/ radar_optcost.json book_state.json 2>/dev/null || true
           # رژیم و تاریخچه‌اش — خط git add جدا، بدون || true. فایل غایب
           # اعلام می‌شود، نه بلعیده؛ تاریخچه تا نخستین ساخت موفق نیست.
-          for f in regime.json regime_history.json; do
+          for f in regime.json regime_history.json events_ledger.json; do
             if [ -f "$f" ]; then
               git add "$f"
             else
@@ -252,7 +288,8 @@ jobs:
           TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           if [ -n "$TG_TOKEN" ] && [ -n "$TG_CHAT" ]; then
-            MSG=$(head -c 3500 reports/LATEST.md)
+            # بخش رویداد در پیام نمی‌آید، فقط خط ساده بالای خلاصه — نشست ۱۰
+            MSG=$(sed '/<!-- رویداد-آغاز -->/,/<!-- رویداد-پایان -->/d' reports/LATEST.md | head -c 3500)
             curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
               -d chat_id="${TG_CHAT}" \
               -d parse_mode="Markdown" \

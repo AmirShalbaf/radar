@@ -42,6 +42,7 @@
 | `radar_intake.py` / `radar_digest.py` | خط لوله محتوای تحلیل‌گران. `--pending` کار شبانه فقط در `intake/_local/_pending/`، بیرون از مخزن؛ `--import-pending` ورودش |
 | `radar_video.py` | «دیدن کامل» با یک پیوند ویدیو یا پلی‌لیست: سند نشست ۴، فریم، قالب کارت؛ و `--report` گزارش ساده از کارت در `intake/reports/`. کانال ناشناخته «تک‌ویدیو»، بدون حق رأی. `--new` رصد تازه فهرست رصد `analysts.yml`، سقف روزی ۳؛ `--suggest` صف پیشنهاد محلی؛ `--daily` خلاصه روزانه. وضعیت در `intake/.video_state.json`. فقط محلی |
 | `radar_history.py` | کندل آزاد در هر تایم‌فریم و بازه با `--symbol --tf --from --to`؛ اوکی‌اکس اول، گیت پشتیبان، صرافی‌ها ترکیب نمی‌شوند؛ نهان‌گاه `.radar_cache/`. و snap: وارسی سطح کارت با کندل بسته پیش از برش — کمینه انتشار و `chart_end`. تعریف سطح از `radar_levels.structural_levels` |
+| `radar_events.py` | تقویم کلان — فدرال‌رزرو، FRED، وارسی متقاطع BEA؛ وتوی آزادسازی از DefiLlama عمومی و عرضه در گردش CoinGecko، ف۳۱؛ دفتر رویداد `events_ledger.json` با قیمت پیش، ۲۴ ساعت و ۷ روز. گزارش `reports/events-<تاریخ>.md`، بخش و خط LATEST.md. شرط آزادسازی `radar_fetch3` هم از همین. نشست ۱۰ |
 | `radar_probe.py` | سنجش دسترسی منابع از همان محیط اجرا — کد پاسخ، اندازه، نشانه محتوا؛ هیچ داده‌ای ذخیره نمی‌شود. نشست ۱۰ |
 | `radar_frames.py` | استخراج فریم نمودار از ویدئو. فقط محلی؛ `yt-dlp`، `ffmpeg` و `ffprobe` لازم دارد. فریم در `frames/` محلی؛ کارت نمودار عمومی در `intake/charts/`. خواندن فریم کار مدل است: `references/chart-reading.md` |
 

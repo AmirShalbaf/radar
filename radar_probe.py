@@ -91,7 +91,7 @@ def targets(now: datetime) -> list[Target]:
                "bot", "BEGIN:VCALENDAR"),
         Target("bls-ics-browser", M, "https://www.bls.gov/schedule/news_release/bls.ics",
                "browser", "BEGIN:VCALENDAR"),
-        # نشانی کنونی radar_fetch3.fetch_unlocks — از لپ‌تاپ ۴۰۲
+        # نشانی پیشین radar_fetch3.fetch_unlocks — ۴۰۲؛ از نشست ۱۰ کنار رفت، ک۸۷
         Target("llama-emissions-api", U, "https://api.llama.fi/emissions", "bot", "gecko_id"),
         Target("llama-ds-list", U,
                "https://defillama-datasets.llama.fi/emissionsProtocolsList", "bot",

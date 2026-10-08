@@ -1446,31 +1446,27 @@ def fetch_fundamental(base: str, out: dict[str, Field]) -> None:
 
 
 def fetch_unlocks(base: str, out: dict[str, Field]) -> None:
-    """تقویم آزادسازی توکن — شرط سخت شماره ۶ رادار."""
-    em = http_get("https://api.llama.fi/emissions", label="فهرست آزادسازی")
-    if not isinstance(em, list):
+    """
+    تقویم آزادسازی توکن — شرط سخت شماره ۶ رادار. منبع و قاعده همان radar_events:
+    داده عمومی DefiLlama، عرضه در گردش CoinGecko، وتوی ف۳۱. پیش از ک۸۷ نشانی پولی‌شده
+    می‌خواند و از ۹ اوت فقط «داده ندارم» می‌داد. نامعلوم و خطا هر دو در FAILURES.
+    """
+    import radar_events as EV              # دیر: radar_events از همین فایل CG_IDS می‌خواند
+    from radar_text import fa              # تنها منبع کمک‌تابع رقم فارسی
+    try:
+        v = EV.symbol_unlock(base.upper(), get=SESSION.get)
+    except Exception as exc:
+        FAILURES.append(f"تقویم آزادسازی {base}: {type(exc).__name__} — {str(exc)[:120]}")
         return
-    target = None
-    for p in em:
-        names = {str(p.get("name", "")).lower(), str(p.get("token", "")).lower(),
-                 str(p.get("gecko_id", "")).lower()}
-        if base.lower() in names or CG_IDS.get(base.upper(), "") in names:
-            target = p
-            break
-    if not target:
-        FAILURES.append(f"تقویم آزادسازی {base} در دیفای‌لاما پیدا نشد — دستی بررسی شود")
-        return
-
-    ts = datetime.now(UTC)
-    for key, label in [("nextEvent", "رویداد بعدی"), ("upcomingEvent", "رویداد پیش‌رو")]:
-        ev = target.get(key)
-        if ev:
-            out["next_unlock"] = Field(ev, "DefiLlama", ts, label)
-            break
-    if target.get("mcap") and target.get("maxSupply"):
-        out["unlock_meta"] = Field(
-            {k: target.get(k) for k in ("name", "token", "mcap", "maxSupply")},
-            "DefiLlama", ts)
+    if v["status"] == "unknown":
+        FAILURES.append(f"تقویم آزادسازی {base}: نامعلوم — {v['why']}")
+        text = f"نامعلوم — {v['why']}"
+    else:
+        big = max(v["cliffs"], key=lambda c: c["pct"], default=None)
+        head = (f"{big['day']}: {big['pct']:.2f}٪ عرضه در گردش" if big
+                else f"هیچ پله‌ای در {fa(EV.HORIZON_DAYS)} روز")
+        text = f"{head} — {EV.VERDICT[v['status']]} ({EV.RULE}، ف۳۱)"
+    out["next_unlock"] = Field(text, "DefiLlama و CoinGecko", datetime.now(UTC), v["why"])
 
 
 def fetch_coinglass(base: str, out: dict[str, Field]) -> None:
