@@ -1,0 +1,2884 @@
+{
+ "schema": 1,
+ "kind": "radar-chart-cards",
+ "video_id": "cXE2cVgo2-0",
+ "doc_id": "2026-10-07_tekrargar_cXE2cVgo",
+ "doc": "intake/tekrargar/2026-10-07_چرا-بیت-کوین-سقوط-کرد؟-پشت-پرده-ریزش_cXE2cV.md",
+ "source": "tekrargar",
+ "url": "https://www.youtube.com/watch?v=cXE2cVgo2-0",
+ "title": "چرا بیت کوین سقوط کرد؟ پشت پرده ریزش",
+ "frames_tool": "radar_frames 1.1",
+ "guide": "references/chart-reading.md",
+ "read_by": "مدل — روال «اول فهرست»، انتخاب کاربر",
+ "read_at": "2026-10-08",
+ "cards": [
+  {
+   "frame_id": "cXE2cVgo2-0_00m00.0s",
+   "t": 0.0,
+   "refs": [
+    {
+     "doc": "2026-10-07_tekrargar_cXE2cVgo",
+     "row": 1,
+     "time": "00:00",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "نقشه حرارتی coin360 در مرورگر خود او — ابزار داده، ف۲۲"
+   },
+   "texts": [
+    {
+     "text": "BTC $83,014 −3.97% — Dominance 58.99%",
+     "confidence": "high"
+    },
+    {
+     "text": "ETH $2,562.85 −5.72%",
+     "confidence": "high"
+    },
+    {
+     "text": "XRP $1.4265 −6.15%",
+     "confidence": "high"
+    },
+    {
+     "text": "SOL $115.85 −4.73%",
+     "confidence": "high"
+    },
+    {
+     "text": "ZEC $1,319.39 −3.84%",
+     "confidence": "high"
+    },
+    {
+     "text": "BNB $766.61 −2.39%",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بازار پس از ریزش دیشب سرخ است؛ به گفته او بیت‌کوین حدود ۸۲ هزار و ۹۸۰ دلار و حدود منفی ۴٪. دیروز از اصلاح پیش رو گفته بود.",
+   "method_notes": [
+    "آغاز ویدیو با نقشه حرارتی کل بازار"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف حدود منفی ۴٪؛ صفحه −3.97٪ و 83,014"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_00m02.5s",
+   "t": 2.5,
+   "refs": [
+    {
+     "doc": "2026-10-07_tekrargar_cXE2cVgo",
+     "row": 1,
+     "time": "00:00",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "نقشه حرارتی coin360 در مرورگر خود او — ابزار داده، ف۲۲"
+   },
+   "texts": [
+    {
+     "text": "BTC $83,014.01 −3.98% — Dominance 58.99%",
+     "confidence": "high"
+    },
+    {
+     "text": "ETH $2,562.78 −5.73%",
+     "confidence": "high"
+    },
+    {
+     "text": "XRP $1.4263 −6.17%",
+     "confidence": "high"
+    }
+   ],
+   "speech": "همان آغاز: بیت‌کوین پس از ریزش دیشب حدود منفی ۴٪؛ می‌خواهد ببیند تحلیل‌گران چه می‌گویند.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف حدود منفی ۴٪؛ صفحه −3.98٪"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_01m45.0s",
+   "t": 105.0,
+   "refs": [
+    {
+     "doc": "2026-10-07_tekrargar_cXE2cVgo",
+     "row": 3,
+     "time": "01:45",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-07T16:57:23+02:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نوار پایین؛ شمارش 01:02:37 تا بسته چهارساعته 16:00 UTC می‌خواند؛ روز از انتشار همان روز",
+    "seen": "16:57:23 UTC+2"
+   },
+   "coin": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "venue": {
+    "value": "Coinbase",
+    "confidence": "medium",
+    "from": "image",
+    "how": "سرخط زیر نوار ابزار رسم پنهان است؛ همان نما در 01:51 «Coinbase»"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "chart_type": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 86000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 74500,
+     "confidence": "high",
+     "from": "image",
+     "how": "73,700 زیر برچسب نشانگر نیمه‌پنهان"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 76653.75,
+      "confidence": "high",
+      "from": "image",
+      "how": "یادداشت قیمت آبی چاپ‌شده روی خط"
+     },
+     "kind": "horizontal",
+     "label": "Support II — خط مشکی، یادداشت قیمت آبی",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": null,
+      "venue": null,
+      "tf": null,
+      "class": null,
+      "level": 76653.75,
+      "cutoff": "2026-10-07T14:57:23+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "شاخص تریدینگ‌ویو یا نماد ناخوانا — نماد صرافی نیست",
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-09-20",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 80200,
+       "confidence": "low",
+       "from": "image",
+       "how": "کف ۲۰ سپتامبر نزدیک 80,000"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-10",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 85900,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "trend",
+     "label": "خط روند صعودی مشکی — به گفته او شکسته شد"
+    },
+    {
+     "p1": {
+      "time": {
+       "value": "2026-09-21",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 83750,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-08",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 81500,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "trend",
+     "label": "خط پایین کانال نارنجی نزولی — «Support I»"
+    }
+   ],
+   "zones": [
+    {
+     "low": {
+      "value": 82629.27,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور، لبه پایین مستطیل برگزیده — د۱"
+     },
+     "high": {
+      "value": 82946.35,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور، لبه بالا — د۱"
+     },
+     "label": "مستطیل سبز باریک زیر قیمت — برگزیده، ۲۱ سپتامبر تا ۸ اکتبر"
+    },
+    {
+     "low": {
+      "value": 80648,
+      "confidence": "medium",
+      "from": "image",
+      "how": "لبه پایین از برچسب آبی 01:51"
+     },
+     "high": {
+      "value": 81503,
+      "confidence": "medium",
+      "from": "image",
+      "how": "لبه بالا از برچسب نشانگر 01:51"
+     },
+     "label": "مستطیل سبز پهن — حمایت بعدی به گفته او؛ در 01:51 برگزیده"
+    },
+    {
+     "low": {
+      "value": 83750,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 84,000 و 85,000"
+     },
+     "high": {
+      "value": 84200,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "نوار خاکستری افقی"
+    }
+   ],
+   "patterns": [
+    {
+     "name": {
+      "value": "کانال نزولی نارنجی — پرچم صعودی",
+      "confidence": "medium",
+      "from": "image",
+      "how": "دو خط موازی نارنجی پس از جهش ۲۰ سپتامبر"
+     }
+    }
+   ],
+   "indicators": [
+    {
+     "name": {
+      "value": "RSI با برچسب واگرایی Bear، H Bear و H Bull",
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب‌های روی اسیلاتور؛ بازه 25 تا 100"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "برچسب آبی 82,946.35 و 82,629.27 — لبه‌های مستطیل برگزیده، د۱",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده BTCUSD 82,889.31، شمارش 01:02:37",
+     "confidence": "high"
+    },
+    {
+     "text": "سرخط نیمه‌پنهان: L82,717.30 C82,889.31 −820.23 (−0.98%)",
+     "confidence": "high"
+    },
+    {
+     "text": "خط‌چین نشانگر 73,472.41 و زمان Sun 11 Oct '26 18:00 — نشانگر موس، د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "واچ‌لیست: BTCUSD 82,889.31 −3.10%؛ ETHUSDT 2,562.00 −5.02%؛ XAUUSD 4,107.39 −1.36%",
+     "confidence": "high"
+    },
+    {
+     "text": "سه نماد رویداد اقتصادی آمریکا زیر نمودار",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "به گفته او اگر ناحیه فعلی از دست برود، حمایت بعدی، حمایت یک، ناحیه ۸۰ هزار و ۵۰۰ تا ۸۱ هزار و ۵۰۰ است، چون خط روند اصلی شکسته شده.",
+   "method_notes": [
+    "حمایت را مستطیل افقی سبز می‌کشد، نه خط",
+    "شکست خط روند صعودی را دلیل افت تا ناحیه حمایت بعدی می‌گیرد"
+   ],
+   "claims": [
+    "BTC — اگر ناحیه فعلی از دست برود، حمایت بعدی حدود 80,500 تا 81,500 دلار، چون خط روند اصلی شکسته — خود او — بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۸۰٬۵۰۰ تا ۸۱٬۵۰۰؛ صفحه مستطیل سبز 80,648 تا حدود 81,503"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "تریدینگ‌ویو خود او با چیدمان «4H No Log»، پنل معامله و واچ‌لیست"
+   },
+   "chart_end": {
+    "value": "2026-10-07T14:57:23+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده؛ ضبط حدود ۱.۵ ساعت پیش از انتشار — د۳۱",
+    "seen": "16:57:23 UTC+2"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_01m51.5s",
+   "t": 111.5,
+   "refs": [
+    {
+     "doc": "2026-10-07_tekrargar_cXE2cVgo",
+     "row": 3,
+     "time": "01:45",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-07T16:57:31+02:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نوار پایین؛ شمارش 01:02:29 تا 16:00 UTC",
+    "seen": "16:57:31 UTC+2"
+   },
+   "coin": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "venue": {
+    "value": "Coinbase",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط «Bitcoin / U.S. Dollar · 4h · Coinbase»"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "chart_type": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "scale": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "price_axis": {
+    "top": {
+     "value": 86000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 73700,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 76653.75,
+      "confidence": "high",
+      "from": "image",
+      "how": "یادداشت قیمت آبی چاپ‌شده روی خط"
+     },
+     "kind": "horizontal",
+     "label": "Support II — خط مشکی، یادداشت قیمت آبی",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": null,
+      "venue": null,
+      "tf": null,
+      "class": null,
+      "level": 76653.75,
+      "cutoff": "2026-10-07T14:57:31+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "شاخص تریدینگ‌ویو یا نماد ناخوانا — نماد صرافی نیست",
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-09-21",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 80100,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-10",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 85900,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "trend",
+     "label": "خط روند صعودی مشکی — شکسته"
+    }
+   ],
+   "zones": [
+    {
+     "low": {
+      "value": 80648,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب آبی محور، لبه پایین مستطیل برگزیده — د۱"
+     },
+     "high": {
+      "value": 81503,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب سیاه نشانگر موس روی لبه بالا، که برچسب آبی لبه را پوشاند — د۲"
+     },
+     "label": "مستطیل سبز «Support I» — برگزیده، ۲۰ اوت تا ۸ اکتبر"
+    },
+    {
+     "low": {
+      "value": 82630,
+      "confidence": "medium",
+      "from": "image",
+      "how": "از برچسب آبی 01:45"
+     },
+     "high": {
+      "value": 82950,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "مستطیل سبز باریک — همان 01:45، این بار برگزیده نیست"
+    },
+    {
+     "low": {
+      "value": 83750,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 84,000 و 85,000"
+     },
+     "high": {
+      "value": 84200,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "نوار خاکستری افقی"
+    }
+   ],
+   "patterns": [
+    {
+     "name": {
+      "value": "کانال نزولی نارنجی — پرچم صعودی",
+      "confidence": "medium",
+      "from": "image",
+      "how": "دو خط موازی نارنجی"
+     }
+    }
+   ],
+   "indicators": [
+    {
+     "name": {
+      "value": "RSI با برچسب واگرایی Bear و Bull",
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب‌های روی اسیلاتور"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "برچسب آبی 80,648.00 — لبه پایین مستطیل برگزیده؛ برچسب سیاه 81,503.00 — نشانگر موس روی لبه بالا",
+     "confidence": "high"
+    },
+    {
+     "text": "سرخط O77,105.27 H77,394.95 L77,104.84 C77,253.72 +148.45 (+0.19%) — شمع زیر نشانگر، د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "نوار آبی محور زمان: Thu 20 Aug '26 02:00 تا Thu 08 Oct '26 14:00 — بازه مستطیل برگزیده",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده BTCUSD 82,883.75، شمارش 01:02:29",
+     "confidence": "high"
+    }
+   ],
+   "speech": "خط روند اصلی از دست رفت و قیمت زیرش نفوذ کرد؛ الگوی صعودی هنوز سر جایش است. یک حمایت ایستا اینجا، یک حمایت پویا، و میانگین متحرکی که به گفته او حدود ۸۰ هزار است؛ بازار هنوز جای افت دارد.",
+   "method_notes": [
+    "حمایت ایستا را با مستطیل، حمایت پویا را با خط روند و میانگین متحرک می‌سنجد؛ میانگین متحرک روی صفحه نیست"
+   ],
+   "claims": [
+    "BTC — هنوز جای افت دارد؛ میانگین متحرک حدود 80,000 حمایت پویاست — خود او — بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ناحیه حمایت و خط روند؛ صفحه همان مستطیل و خط. عدد میانگین فقط از حرف"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "تریدینگ‌ویو خود او با چیدمان «4H No Log»، پنل معامله و واچ‌لیست"
+   },
+   "chart_end": {
+    "value": "2026-10-07T14:57:31+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده؛ ضبط پیش از انتشار — د۳۱",
+    "seen": "16:57:31 UTC+2"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_02m47.0s",
+   "t": 167.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "ساعت نمودار دیده نمی‌شود"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "how": "BTCUSDT در جعبه نماد"
+   },
+   "venue": {
+    "value": "BingX",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط «Bitcoin/USD Tether Spot · 4h · BingX»"
+   },
+   "timeframe": {
+    "value": "4h",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط «4h» و دکمه 4h روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 1,000 همه حدود 39 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 88000,
+     "confidence": "high",
+     "from": "image",
+     "how": "89,0… بریده"
+    },
+    "bottom": {
+     "value": 73000,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 86700,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی میان 86,000 و 88,000"
+     },
+     "kind": "horizontal",
+     "label": "سقف افقی مثلث صعودی — Crypto Rover",
+     "drawn_by": "other",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "4H",
+      "class": "trigger",
+      "level": 86700.0,
+      "cutoff": "2026-10-07T16:30:37+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-10-07T12:00:00+00:00",
+      "atr": 789.4608833489019,
+      "touches": null,
+      "nearest": 87099.50750426378,
+      "nearest_touches": 5,
+      "distance_atr": 0.5060510440606772,
+      "distance_pct": 0.4607929691623718,
+      "chance_pct": 29.33533233383308,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 86700.0,
+       "cutoff": "2026-10-07T16:30:37+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-10-06T00:00:00+00:00",
+       "atr": 2142.528853624662,
+       "touches": null,
+       "nearest": 87317.51248391248,
+       "nearest_touches": 2,
+       "distance_atr": 0.2882166477561264,
+       "distance_pct": 0.7122404658736753,
+       "chance_pct": 31.384307846076965,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "publish"
+      },
+      "cutoff_basis": "publish"
+     }
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-09-20",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 80200,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-09",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 85800,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "trend",
+     "label": "ضلع صعودی مثلث — Crypto Rover"
+    },
+    {
+     "p1": {
+      "time": {
+       "value": "2026-10-08",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 84500,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-12",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 89000,
+       "confidence": "low",
+       "from": "image",
+       "how": "مسیر از قاب ویدیو بیرون می‌رود تا نوار مرورگر"
+      }
+     },
+     "kind": "projection",
+     "label": "مسیر قرمز دستی خود او روی تصویر — بالا رفتن پس از شکست"
+    }
+   ],
+   "zones": [],
+   "patterns": [
+    {
+     "name": {
+      "value": "مثلث صعودی",
+      "confidence": "medium",
+      "from": "image",
+      "how": "سقف افقی و ضلع صعودی"
+     }
+    }
+   ],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "86,932.01 خاکستری با خط‌چین — نشانگر موس ضبط Crypto Rover، د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده 84,117.96، شمارش 03:13:41",
+     "confidence": "high"
+    },
+    {
+     "text": "زیرنویس: breaks out like 70 to 80% towards the direction",
+     "confidence": "high"
+    },
+    {
+     "text": "عنوان: THIS IS WHY BITCOIN IS DUMPING... — Crypto Rover، 223K subscribers",
+     "confidence": "high"
+    },
+    {
+     "text": "نشانی: فایل Screenshot 2026-10-07 at 16.43… — تصویر ذخیره‌شده، نه ویدیوی زنده",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به نقل از Crypto Rover: الگوی فشردگی با گارد صعودی ادامه‌دهنده است، ۷۰ تا ۸۰٪ در جهت روند و ۲۰ تا ۳۰٪ سقوط؛ دلیل ریزش را شکست خط روند می‌داند و هدف را حدود ۷۸ هزار و ۸۰۰ دلار.",
+   "method_notes": [
+    "مسیر قرمز را خود او روی تصویر دیگران کشید — ابزار رسم صفحه، چپ تصویر",
+    "عدد ۷۸٬۸۰۰ فقط از حرف، ۰۳:۰۳؛ فریمی برای آن نیست"
+   ],
+   "claims": [
+    {
+     "text": "به نقل او از Crypto Rover: مثلث صعودی ۷۰ تا ۸۰٪ رو به بالا می‌شکند؛ با شکست خط روند، هدف حدود 78,800 دلار — بی‌مهلت",
+     "origin": "Crypto Rover",
+     "url": null
+    }
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۷۰ تا ۸۰٪؛ زیرنویس صفحه همان. هدف ۷۸٬۸۰۰ روی صفحه نیست"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "Crypto Rover",
+    "evidence": "تصویر ذخیره‌شده صفحه یوتیوب «THIS IS WHY BITCOIN IS DUMPING...» کانال Crypto Rover"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_04m18.5s",
+   "t": 258.5,
+   "refs": [
+    {
+     "doc": "2026-10-07_tekrargar_cXE2cVgo",
+     "row": 5,
+     "time": "04:22",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "ساعت روی صفحه نیست"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "how": "BTC Liquidation Heatmap"
+   },
+   "venue": {
+    "value": "Coinglass — Model 2",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه نقشه 2 week؛ تایم شمع نوشته نشده"
+   },
+   "chart_type": {
+    "value": "heatmap",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 3,000 همه حدود 97 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 94939,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 78000,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌تر بریده"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": 87300,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی میان 87000 و 90000"
+     },
+     "high": {
+      "value": 87600,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "نوار زرد پرنور بالای قیمت — Coinglass"
+    },
+    {
+     "low": {
+      "value": 82300,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی میان 84000 و 81000"
+     },
+     "high": {
+      "value": 82500,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "نوار زرد پرنور زیر قیمت — Coinglass"
+    }
+   ],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Liquidity Threshold = 1",
+     "confidence": "high"
+    },
+    {
+     "text": "بیشینه نوار رنگ 316.20M",
+     "confidence": "high"
+    },
+    {
+     "text": "Pair و Symbol — Symbol روشن",
+     "confidence": "high"
+    }
+   ],
+   "speech": "واگرایی صعودی کوتاه‌مدت داریم؛ پوزیشن‌های شورت این منطقه، بازار را به خلاف جهت می‌برد.",
+   "method_notes": [
+    "نقشه نقدینگی لیکوئیدیشن را می‌خواند تا هدف حرکت را ببیند"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف نقدینگی شورت؛ صفحه نوار پرنور بالای قیمت"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "ابزار Coinglass، نقشه حرارتی لیکوئیدیشن Model 2، با تنظیم خودش — داده، ف۲۲"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_04m23.0s",
+   "t": 263.0,
+   "refs": [
+    {
+     "doc": "2026-10-07_tekrargar_cXE2cVgo",
+     "row": 5,
+     "time": "04:22",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "ساعت روی صفحه نیست"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "how": "BTC Liquidation Heatmap"
+   },
+   "venue": {
+    "value": "Coinglass — Model 2",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "بازه نقشه 2 week؛ تایم شمع نوشته نشده"
+   },
+   "chart_type": {
+    "value": "heatmap",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 3,000 همه حدود 97 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 94939,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 78000,
+     "confidence": "high",
+     "from": "image",
+     "how": "پایین‌تر بریده"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": 87300,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی میان 87000 و 90000"
+     },
+     "high": {
+      "value": 87600,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "نوار زرد پرنور بالای قیمت — Coinglass"
+    },
+    {
+     "low": {
+      "value": 82300,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی میان 84000 و 81000"
+     },
+     "high": {
+      "value": 82500,
+      "confidence": "medium",
+      "from": "image"
+     },
+     "label": "نوار زرد پرنور زیر قیمت — Coinglass"
+    }
+   ],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Liquidity Threshold = 0.84",
+     "confidence": "high"
+    },
+    {
+     "text": "برچسب «4 Oct 2026, 10:00 · Price 93132.55 · Liquidation Leverage 9.98M» — زیر نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بازار تمایل دارد به سمت پوزیشن‌های شورت برود و نقدینگی را بگیرد؛ ناحیه مهم ۸۴ هزار که به آن اشاره شده بود فعلاً از دست رفته.",
+   "method_notes": [
+    "آستانه نقدینگی را پایین آورد تا خوشه‌ها پررنگ‌تر شوند"
+   ],
+   "claims": [
+    "BTC — بازار تمایل دارد بالا برود تا نقدینگی شورت‌ها را بگیرد؛ روی نقشه نوار پرنور حدود 87,300 تا 87,600 — خود او — بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۸۴ هزار — صفر افتاده، د۲۰؛ صفحه قیمت زیر 84000 و نوار پرنور بالا"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "ابزار Coinglass، نقشه حرارتی لیکوئیدیشن Model 2، با تنظیم خودش — داده، ف۲۲"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_04m25.5s",
+   "t": 265.5,
+   "refs": [
+    {
+     "doc": "2026-10-07_tekrargar_cXE2cVgo",
+     "row": 5,
+     "time": "04:22",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-10-07_tekrargar_cXE2cVgo",
+     "row": 6,
+     "time": "04:29",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "ساعت نمودار دیده نمی‌شود"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "how": "BTCUSDT"
+   },
+   "venue": {
+    "value": "Binance",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط «Bitcoin / TetherUS · 1h · Binance»"
+   },
+   "timeframe": {
+    "value": "1h",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط و دکمه 1h روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 400 همه حدود 29 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 88000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 79600,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 83950,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی میان 84,000 و 83,600"
+     },
+     "kind": "horizontal",
+     "label": "خط افقی قرمز — Crypto Rover",
+     "drawn_by": "other",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1H",
+      "class": "trigger",
+      "level": 83950.0,
+      "cutoff": "2026-10-07T16:30:37+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-10-07T15:00:00+00:00",
+      "atr": 416.12721135788587,
+      "touches": null,
+      "nearest": 83482.51056014694,
+      "nearest_touches": 4,
+      "distance_atr": 1.1234291512145314,
+      "distance_pct": 0.556866515608171,
+      "chance_pct": 33.33333333333333,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 83950.0,
+       "cutoff": "2026-10-07T16:30:37+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "not_near",
+       "strength": null,
+       "bars": 200,
+       "last_bar": "2026-10-06T00:00:00+00:00",
+       "atr": 2142.528853624662,
+       "touches": null,
+       "nearest": 82204.19170771757,
+       "nearest_touches": 4,
+       "distance_atr": 0.8148353705150445,
+       "distance_pct": 2.0795810509617927,
+       "chance_pct": 31.384307846076965,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": null,
+       "reason": null,
+       "cutoff_basis": "publish"
+      },
+      "cutoff_basis": "publish"
+     }
+    },
+    {
+     "price": {
+      "value": 87150,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی میان 87,200 و 86,800"
+     },
+     "kind": "horizontal",
+     "label": "سقف محدوده — خط سفید، Crypto Rover",
+     "drawn_by": "other",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1H",
+      "class": "trigger",
+      "level": 87150.0,
+      "cutoff": "2026-10-07T16:30:37+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-10-07T15:00:00+00:00",
+      "atr": 416.12721135788587,
+      "touches": null,
+      "nearest": 86821.31236802414,
+      "nearest_touches": 4,
+      "distance_atr": 0.7898729595291355,
+      "distance_pct": 0.3771516144301313,
+      "chance_pct": 33.33333333333333,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 87150.0,
+       "cutoff": "2026-10-07T16:30:37+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-10-06T00:00:00+00:00",
+       "atr": 2142.528853624662,
+       "touches": 2,
+       "nearest": 87317.51248391248,
+       "nearest_touches": 2,
+       "distance_atr": 0.07818447048173198,
+       "distance_pct": 0.1922116854991124,
+       "chance_pct": 31.384307846076965,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 31.384307846076965,
+       "reason": null,
+       "cutoff_basis": "publish"
+      },
+      "cutoff_basis": "publish"
+     }
+    },
+    {
+     "price": {
+      "value": 82550,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی میان 82,800 و 82,400"
+     },
+     "kind": "horizontal",
+     "label": "کف محدوده — خط سفید، Crypto Rover",
+     "drawn_by": "other",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1H",
+      "class": "trigger",
+      "level": 82550.0,
+      "cutoff": "2026-10-07T16:30:37+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-10-07T15:00:00+00:00",
+      "atr": 416.12721135788587,
+      "touches": null,
+      "nearest": 83018.84630177515,
+      "nearest_touches": 3,
+      "distance_atr": 1.1266898414194855,
+      "distance_pct": 0.5679543328590542,
+      "chance_pct": 33.33333333333333,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "daily": {
+       "from": "candles",
+       "tool": "radar_history 1.1",
+       "symbol": "BTC/USDT",
+       "venue": "okx",
+       "tf": "1D",
+       "class": "structural",
+       "level": 82550.0,
+       "cutoff": "2026-10-07T16:30:37+00:00",
+       "lookback": 200,
+       "width_atr": 0.25,
+       "verdict": "confirmed",
+       "strength": "weak",
+       "bars": 200,
+       "last_bar": "2026-10-06T00:00:00+00:00",
+       "atr": 2142.528853624662,
+       "touches": 4,
+       "nearest": 82204.19170771757,
+       "nearest_touches": 4,
+       "distance_atr": 0.16140193010581755,
+       "distance_pct": 0.4189076829587221,
+       "chance_pct": 31.384307846076965,
+       "strong_min_touches": 5,
+       "chance_at_touches_pct": 20.089955022488756,
+       "reason": null,
+       "cutoff_basis": "publish"
+      },
+      "cutoff_basis": "publish"
+     }
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-09-23",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 81400,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-09",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 85200,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "trend",
+     "label": "خط روند صعودی سفید — «مهم‌ترین حمایت» به گفته Crypto Rover"
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "پروفایل حجم VRVP",
+      "confidence": "high",
+      "from": "image",
+      "how": "متن «VRVP Number Of Rows 110 Up/Down»"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "زیرنویس: indeed the most important support in this upward sloping range on Bitcoin.",
+     "confidence": "high"
+    },
+    {
+     "text": "81,552.98 خاکستری روی محور — معنا نامعلوم، د۹",
+     "confidence": "high"
+    },
+    {
+     "text": "برچسب قرمز قیمت زنده نزدیک 84,000 با شمارش 11:53",
+     "confidence": "medium"
+    },
+    {
+     "text": "نشانی: فایل Screenshot 2026-10-07 at 16.44.2…",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او بازار می‌خواهد نقدینگی آن سمت را بگیرد؛ ناحیه ۸۴ هزار فعلاً از دست رفته و بیت‌کوین وارد کانال ۸۲ هزار شده.",
+   "method_notes": [
+    "تصویر ویدیوی دیگری را با زیرنویس انگلیسی نشان می‌دهد و حرف خودش را کنارش می‌گذارد"
+   ],
+   "claims": [
+    {
+     "text": "به نقل او از Crypto Rover: خط روند صعودی مهم‌ترین حمایت محدوده صعودی بیت‌کوین است — بی‌آستانه، بی‌مهلت",
+     "origin": "Crypto Rover",
+     "url": null
+    }
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۸۴ هزار و ۸۲ هزار — صفرها افتاده، د۲۰؛ صفحه خط قرمز حدود 83,950"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "Crypto Rover",
+    "evidence": "تصویر ذخیره‌شده صفحه یوتیوب «THIS IS WHY BITCOIN IS DUMPING...» کانال Crypto Rover"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_04m31.0s",
+   "t": 271.0,
+   "refs": [
+    {
+     "doc": "2026-10-07_tekrargar_cXE2cVgo",
+     "row": 6,
+     "time": "04:29",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "نقشه حرارتی coin360 در مرورگر خود او — ابزار داده، ف۲۲"
+   },
+   "texts": [
+    {
+     "text": "BTC $82,944 −4.28% — Dominance 58.96%",
+     "confidence": "high"
+    },
+    {
+     "text": "ETH $2,561.12 −5.96%",
+     "confidence": "high"
+    },
+    {
+     "text": "XRP $1.425 −6.45%",
+     "confidence": "high"
+    }
+   ],
+   "speech": "الان که صحبت می‌کنیم بیت‌کوین وارد کانال ۸۲ هزار شده و از آن مهم‌تر این ناحیه حمایتی است.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۸۲۰۰ یعنی ۸۲ هزار — د۲۰؛ صفحه 82,944"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_04m35.5s",
+   "t": 275.5,
+   "refs": [
+    {
+     "doc": "2026-10-07_tekrargar_cXE2cVgo",
+     "row": 6,
+     "time": "04:29",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": true,
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "ساعت نمودار دیده نمی‌شود"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "how": "BTCUSD"
+   },
+   "venue": {
+    "value": "Binance",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط «Bitcoin / U.S. Dollar · 1D · Binance»"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط و دکمه D روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 4,000 همه حدود 35 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 124000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 52000,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 82050,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی میان 84,000 و 80,000"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — مقاومت پیشین، اکنون حمایت، به گفته Crypto Rover",
+     "drawn_by": "other",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 82050.0,
+      "cutoff": "2026-10-07T16:30:37+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-10-06T00:00:00+00:00",
+      "atr": 2142.528853624662,
+      "touches": 4,
+      "nearest": 82204.19170771757,
+      "nearest_touches": 4,
+      "distance_atr": 0.07196715575462066,
+      "distance_pct": 0.1879240800945459,
+      "chance_pct": 31.384307846076965,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 20.089955022488756,
+      "reason": null,
+      "cutoff_basis": "publish"
+     }
+    },
+    {
+     "price": {
+      "value": 60000,
+      "confidence": "medium",
+      "from": "image",
+      "how": "خط سفید روی تیک 60,000"
+     },
+     "kind": "horizontal",
+     "label": "کف محدوده — خط سفید، Crypto Rover",
+     "drawn_by": "other",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 60000.0,
+      "cutoff": "2026-10-07T16:30:37+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-10-06T00:00:00+00:00",
+      "atr": 2142.528853624662,
+      "touches": null,
+      "nearest": 58322.22663605052,
+      "nearest_touches": 3,
+      "distance_atr": 0.7830808724517665,
+      "distance_pct": 2.796288939915806,
+      "chance_pct": 31.384307846076965,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "publish"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "زیرنویس: of support, this previous level of resistance",
+     "confidence": "high"
+    },
+    {
+     "text": "81,215.79 خاکستری روی محور، حدود ۷ پیکسل زیر خط سفید — معنا نامعلوم، د۹",
+     "confidence": "high"
+    },
+    {
+     "text": "Wed 22 Apr '26 روی محور زمان — نشانگر",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "اگر بیت‌کوین را در تایم روزانه یا هفتگی نگاه کنیم و این خط را دقیق بکشیم، همین‌جا را حمایت می‌گیریم.",
+   "method_notes": [
+    "سطح را در تایم روزانه یا هفتگی دقیق می‌کند — حرف او روی نمودار دیگری"
+   ],
+   "claims": [
+    {
+     "text": "به نقل او از Crypto Rover: مقاومت پیشین حدود 82,000 اکنون حمایت روزانه بیت‌کوین است — بی‌مهلت",
+     "origin": "Crypto Rover",
+     "url": null
+    }
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف «این خط حمایت»؛ زیرنویس صفحه مقاومت پیشین که حمایت شده"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "Crypto Rover",
+    "evidence": "تصویر ذخیره‌شده صفحه یوتیوب «THIS IS WHY BITCOIN IS DUMPING...» کانال Crypto Rover"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_05m54.0s",
+   "t": 354.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-07T10:44:00-04:00",
+    "confidence": "high",
+    "from": "image",
+    "how": "امضای بالای نمودار",
+    "seen": "Oct 07, 2026 10:44 UTC-4"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "how": "BTC / Tether PERPETUAL FUTURES"
+   },
+   "venue": {
+    "value": "MEXC",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط «· 1D · MEXC»"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط؛ شمارش 09:15:45 تا 00:00 UTC"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمع‌های باریک در بزرگ‌نمایی کم"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 5,000 همه حدود 38 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 120000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 35000,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 81300,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی میان 85,000 و 75,000"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی افقی — usman890",
+     "drawn_by": "other",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 81300.0,
+      "cutoff": "2026-10-07T14:44:15+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-10-06T00:00:00+00:00",
+      "atr": 2142.528853624662,
+      "touches": null,
+      "nearest": 82204.19170771757,
+      "nearest_touches": 4,
+      "distance_atr": 0.42202078454527797,
+      "distance_pct": 1.1121669221618387,
+      "chance_pct": 31.384307846076965,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-10-09",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 82000,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-28",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 70500,
+       "confidence": "low",
+       "from": "image",
+       "how": "کف مسیر روی تیک 70,000"
+      }
+     },
+     "kind": "projection",
+     "label": "مسیر آبی پیش‌بینی — ریزش تا حدود 70,000"
+    },
+    {
+     "p1": {
+      "time": {
+       "value": "2026-10-28",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 70500,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-12-15",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 110500,
+       "confidence": "low",
+       "from": "image",
+       "how": "سقف مسیر نزدیک تیک 110,000"
+      }
+     },
+     "kind": "projection",
+     "label": "مسیر آبی پیش‌بینی — صعود تا حدود 110,000"
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "سرخط O85,513.2 H85,559.5 L82,729.2 C82,950.0 −2,563.3 (−3.00%)",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده 82,950.0، شمارش 09:15:45",
+     "confidence": "high"
+    },
+    {
+     "text": "پیکان قرمز دستی خود او روی خط آبی، از سپتامبر تا اکتبر",
+     "confidence": "medium"
+    },
+    {
+     "text": "ستون پاسخ‌ها: CarlitosWay «Nah / yeah» با میم",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته این تحلیل، بازار این ناحیه حمایتی را از دست می‌دهد و تا ۷۰ هزار سقوط می‌کند؛ ۷۰ هزار کفی بالاتر از کف قبلی می‌سازد و خط روند صعودی تازه از آنجاست.",
+   "method_notes": [
+    "توییت دیگران را با پیکان قرمز دستی خودش نشان می‌دهد"
+   ],
+   "claims": [
+    {
+     "text": "به نقل او از توییت cryptoknight890: بیت‌کوین این حمایت را از دست می‌دهد و تا حدود 70,000 می‌ریزد، کف بالاتر می‌سازد و سپس بالا می‌رود — بی‌مهلت",
+     "origin": "cryptoknight890 — نمودار usman890",
+     "url": "https://x.com/cryptoknight890/status/2107844525880410176"
+    }
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۷۰ هزار؛ مسیر آبی صفحه تا تیک 70,000"
+   },
+   "screen_source": {
+    "kind": "tweet",
+    "who": "cryptoknight890 — نمودار usman890",
+    "evidence": "x.com/cryptoknight890، عکس توییت با امضای «usman890 created with TradingView.com»"
+   },
+   "chart_end": {
+    "value": "2026-10-07T14:44:15+00:00",
+    "confidence": "high",
+    "from": "image",
+    "how": "امضای 10:44 UTC-4 و شمارش 09:15:45 تا بسته روزانه 00:00 UTC می‌خوانند",
+    "seen": "Oct 07, 2026 10:44 UTC-4"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_06m45.0s",
+   "t": 405.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "ساعت نمودار دیده نمی‌شود؛ زمان توییت 2:10 PM · Oct 7, 2026 به وقت بیننده"
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "how": "BTC/USDT Perp"
+   },
+   "venue": {
+    "value": "Binance",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط «BTC/USDT Perp · 1D · Binance»"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "high",
+    "from": "image",
+    "how": "گام 2,500 همه حدود 39 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 92500,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 57500,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "Aggregated CVD Spot",
+      "confidence": "high",
+      "from": "image",
+      "how": "متن «Aggregated CVD Spot 0 −186.062K»"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "خط سفید افقی با برچسب «$64,000» از کف ۱۹ اوت — مبدأ مقایسه CVD، نه حمایت اعلام‌شده",
+     "confidence": "high"
+    },
+    {
+     "text": "سرخط O85507.60 H85559.50 L83500.00 C83745.40 −1762.10 (−2.06%)",
+     "confidence": "high"
+    },
+    {
+     "text": "CVD نقدی −186.062K؛ خط سفید افقی روی CVD تا کف ۱۹ اوت",
+     "confidence": "high"
+    },
+    {
+     "text": "متن توییت نیمه‌پنهان زیر دوربین: «…levels … at $64,… Spot buyers ne… to support Bitcoin.»",
+     "confidence": "medium"
+    },
+    {
+     "text": "زیر «support Bitcoin» خط قرمز دستی خود او",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او CVD نقدی آن‌قدر پایین آمده که وقتی قیمت ۶۴ هزار بود دیدیم؛ خریداران نقدی باید در این سطح بخرند، وگرنه احتمال افت بیشتر است.",
+   "method_notes": [
+    "CVD نقدی را با گذشته مقایسه می‌کند — نزدیک ر۹ و ر۱۰ کتابخانه روش"
+   ],
+   "claims": [
+    {
+     "text": "به نقل او از Crypto Rover: CVD نقدی به سطح روزهای بیت‌کوین 64,000 برگشته؛ خریداران نقدی باید وارد شوند، وگرنه افت بیشتر — بی‌آستانه قیمتی، بی‌مهلت",
+     "origin": "Crypto Rover — @cryptorover",
+     "url": "https://x.com/cryptorover/status/2107805639275946307"
+    }
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۶۴ هزار؛ صفحه برچسب $64,000 و خط CVD"
+   },
+   "screen_source": {
+    "kind": "tweet",
+    "who": "Crypto Rover — @cryptorover",
+    "evidence": "x.com/cryptorover، عکس توییت با نشان @cryptorover"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_07m03.5s",
+   "t": 423.5,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "tweet",
+    "who": "VirtualBacon — @virtualbacon",
+    "evidence": "x.com/virtualbacon، پست ۷ اکتبر 1:37 PM"
+   },
+   "texts": [
+    {
+     "text": "JUST IN: Robinhood added $25 million of Bitcoin to its balance sheet, crypto chief Johann Kerbrat said.",
+     "confidence": "high"
+    },
+    {
+     "text": "He called $25 million small for a company worth about $100 billion",
+     "confidence": "high"
+    }
+   ],
+   "speech": "کف و سقف را نگیرید؛ در دارایی‌ای که باور دارید پله‌ای بخرید و نقطه ورود را تنظیم کنید.",
+   "method_notes": [
+    "خرید پله‌ای در دارایی باورمند — نزدیک ورود پلکانی رادار ۷"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف درباره روش خرید؛ صفحه خبر رابین‌هود"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_07m25.5s",
+   "t": 445.5,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "tweet",
+    "who": "VirtualBacon — @virtualbacon",
+    "evidence": "x.com/virtualbacon، پست ۷ اکتبر 1:37 PM"
+   },
+   "texts": [
+    {
+     "text": "همان پست؛ خط قرمز دستی خود او زیر جمله اول",
+     "confidence": "high"
+    },
+    {
+     "text": "1:37 PM · Oct 7, 2026 · 12.6K Views",
+     "confidence": "high"
+    }
+   ],
+   "speech": "رابین‌هود ۲۵ میلیون دلار بیت‌کوین خرید و به ترازنامه افزود؛ شرکت‌های بزرگ یکی‌یکی به ذخیره بیت‌کوین می‌روند.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۲۵ میلیون دلار؛ صفحه $25 million"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_09m18.0s",
+   "t": 558.0,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "tweet",
+    "who": "Cointelegraph",
+    "evidence": "x.com/Cointelegraph، پست ۷ اکتبر درباره TOKEN2049"
+   },
+   "texts": [
+    {
+     "text": "TOKEN2049: Cameron Winklevoss on monetary privacy: «Bitcoin is decentralized, public. Zcash is decentralized, private.»",
+     "confidence": "high"
+    },
+    {
+     "text": "9:50 AM · Oct 7, 2026 · 42.1K Views",
+     "confidence": "high"
+    }
+   ],
+   "speech": "در کنفرانس توکن ۲۰۴۹ کامرون وینکلواس می‌گوید بیت‌کوین غیرمتمرکز و عمومی است و زی‌کش غیرمتمرکز و خصوصی.",
+   "method_notes": [
+    "قاب با بزرگ‌نمایی ویرایش ویدیو"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ترجمه متن پست"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_09m51.0s",
+   "t": 591.0,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "tweet",
+    "who": "Cointelegraph",
+    "evidence": "x.com/Cointelegraph، پست ۷ اکتبر درباره TOKEN2049"
+   },
+   "texts": [
+    {
+     "text": "همان پست Cointelegraph",
+     "confidence": "high"
+    },
+    {
+     "text": "پاسخ Chikun: Litecoin is decentralized, private and used 40x more than ZEC",
+     "confidence": "high"
+    }
+   ],
+   "speech": "زی‌کش پروژه تازه‌ای نیست؛ روزی در صرافی‌ای حدود ۲۰۰۰ دلار معامله شد. توکن‌ها روایت‌محورند.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "تاریخچه قیمت زی‌کش روی صفحه نیست"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_10m32.5s",
+   "t": 632.5,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "tweet",
+    "who": "Cointelegraph",
+    "evidence": "x.com/Cointelegraph، پست ۷ اکتبر درباره TOKEN2049"
+   },
+   "texts": [
+    {
+     "text": "همان پست؛ جمله نقل‌شده با موس برگزیده — قاب با بزرگ‌نمایی ویرایش",
+     "confidence": "high"
+    }
+   ],
+   "speech": "هر چیزی که به‌عنوان ارزش معامله می‌شود — طلا، نقره، بیت‌کوین، اتریوم — آدم‌ها برایش روایت و کاربرد می‌سازند؛ برای زی‌کش این روایت دارد شکل می‌گیرد.",
+   "method_notes": [
+    "توکن را روایت‌محور می‌داند"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف درباره همان روایت زی‌کش"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_11m21.5s",
+   "t": 681.5,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "tweet",
+    "who": "Ran Neuner — @cryptomanran",
+    "evidence": "x.com/cryptomanran، عکس چهار نفره، 11:29 AM · Oct 7, 2026"
+   },
+   "texts": [
+    {
+     "text": "@blknoiz06 @MustStopMurad @paulerlanger — 105.1K Views",
+     "confidence": "high"
+    }
+   ],
+   "speech": "روایت‌ها را گروه‌ها و جامعه‌ها می‌سازند؛ میم‌کوین‌ها هم روایت خودشان را دارند.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "صفحه فقط عکس"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_11m55.0s",
+   "t": 715.0,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "tweet",
+    "who": "Cointelegraph",
+    "evidence": "x.com/Cointelegraph، پست ۷ اکتبر درباره TOKEN2049"
+   },
+   "texts": [
+    {
+     "text": "همان پست Winklevoss — متن برگزیده",
+     "confidence": "high"
+    },
+    {
+     "text": "در Live on X: Bitcoin News «Trump Just Dropped A $40T…»",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "برای زی‌کش، اتریوم و سولانا روایت می‌سازند و جامعه‌شان پشتش می‌ایستد؛ در کنفرانس ۲۰۴۹ سنگاپور از آن می‌گویند.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف همان کنفرانس"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_12m17.5s",
+   "t": 737.5,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "tweet",
+    "who": "Cointelegraph",
+    "evidence": "x.com/Cointelegraph، پست ۷ اکتبر درباره TOKEN2049"
+   },
+   "texts": [
+    {
+     "text": "TOKEN2049: Eric Trump says «we're winning, because stablecoins are being adopted,» pointing to credit card companies as the proof.",
+     "confidence": "high"
+    },
+    {
+     "text": "8:54 AM · Oct 7, 2026 · 44.8K Views",
+     "confidence": "high"
+    }
+   ],
+   "speech": "این تکنولوژی برای از بین رفتن نیامده؛ ولی توسعه محصول ساده نیست و هر روز بازیکن تازه می‌آید.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف کلی؛ صفحه پست اریک ترامپ"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_13m17.0s",
+   "t": 797.0,
+   "refs": [],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "تقویم و خبر forexfactory.com در مرورگر خود او — ابزار داده، ف۲۲"
+   },
+   "texts": [
+    {
+     "text": "Hot Story: Spot Gold Extends Losses, Last Down Nearly 2% At $4,081.01/oz",
+     "confidence": "high"
+    },
+    {
+     "text": "Today Oct 7: Crude Oil Inventories −3.2M در برابر پیش‌بینی 1.9M؛ President Trump Speaks 7:00pm؛ 10-y Bond Auction 7:01pm؛ FOMC Meeting Minutes 8:00pm",
+     "confidence": "high"
+    },
+    {
+     "text": "ساعت سایت 4:53pm",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "بازار دوباره نوسانی شد چون ویدیو پیش از خبر ضبط شد و ساعت ۸ شب تهران منتشر می‌شود. بیت‌کوین در منطقه خیلی مهمی است و نباید این ناحیه حمایتی را از دست بدهد.",
+   "method_notes": [
+    "فاصله ضبط تا انتشار را خودش می‌گوید — د۳۱"
+   ],
+   "claims": [
+    "BTC — اگر این ناحیه حمایتی از دست برود، شکست بالای ناحیه جعلی می‌شود — خود او — بی‌آستانه، بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "صفحه تقویم؛ ناحیه حمایت روی آن نیست"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_13m52.0s",
+   "t": 832.0,
+   "refs": [
+    {
+     "doc": "2026-10-07_tekrargar_cXE2cVgo",
+     "row": 10,
+     "time": "13:57",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "جدول ورود و خروج صندوق‌ها در farside.co.uk — ابزار داده، ف۲۲"
+   },
+   "texts": [
+    {
+     "text": "BTC، ستون جمع: 06 Oct 2026 118.8؛ 05 Oct (89.8)؛ 02 Oct 189.9",
+     "confidence": "high"
+    },
+    {
+     "text": "06 Oct 2026: IBIT 122.0",
+     "confidence": "high"
+    },
+    {
+     "text": "07 Oct 2026 هنوز خالی",
+     "confidence": "high"
+    }
+   ],
+   "speech": "دیروز با وجود ریزش، صندوق‌های بیت‌کوین نزدیک ۱۲۰ میلیون دلار ورود داشتند و صندوق‌های اتریوم خروج سنگین.",
+   "method_notes": [
+    "ورود و خروج روزانه صندوق‌ها را از Farside می‌خواند"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف حدود ۱۲۰ میلیون؛ صفحه 118.8"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_13m56.0s",
+   "t": 836.0,
+   "refs": [
+    {
+     "doc": "2026-10-07_tekrargar_cXE2cVgo",
+     "row": 10,
+     "time": "13:57",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "جدول ورود و خروج صندوق‌ها در farside.co.uk — ابزار داده، ف۲۲"
+   },
+   "texts": [
+    {
+     "text": "BTC، ستون جمع 06 Oct 2026: 118.8 — پیکان قرمز دستی خود او",
+     "confidence": "high"
+    }
+   ],
+   "speech": "روی صندوق اتریوم خروج سه‌رقمی دیدیم.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۱۲۰ میلیون بیت‌کوین؛ صفحه 118.8"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_13m59.0s",
+   "t": 839.0,
+   "refs": [
+    {
+     "doc": "2026-10-07_tekrargar_cXE2cVgo",
+     "row": 10,
+     "time": "13:57",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "is_chart": false,
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "جدول ورود و خروج صندوق‌ها در farside.co.uk — ابزار داده، ف۲۲"
+   },
+   "texts": [
+    {
+     "text": "ETH، ستون جمع 06 Oct 2026: (201.9)؛ 05 Oct (50.8)؛ 02 Oct (37.4)",
+     "confidence": "high"
+    }
+   ],
+   "speech": "سه‌رقمی، به گفته او «۲۲» میلیون دلار از صندوق اتریوم خارج شد؛ بازار هنوز در منطقه طمع است و چون ریزش امروز شروع شده، فردا شاید به کرانه پایین طمع یا خنثی بیاید.",
+   "method_notes": [
+    "شاخص ترس و طمع را روزانه دنبال می‌کند"
+   ],
+   "claims": [
+    "شاخص ترس و طمع کریپتو — فردا، ۸ اکتبر، به کرانه پایین طمع یا خنثی می‌آید — خود او"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف «سه‌رقمی ۲۲» — رقم افتاده، د۲۰؛ صفحه (201.9)"
+   }
+  },
+  {
+   "frame_id": "cXE2cVgo2-0_15m08.0s",
+   "t": 908.0,
+   "refs": [],
+   "is_chart": true,
+   "recorded_at": {
+    "value": "2026-10-07T17:13:27+02:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نوار پایین؛ شمارش 05:46:33 تا بسته روزانه اواندا 21:00 UTC می‌خواند",
+    "seen": "17:13:27 UTC+2"
+   },
+   "coin": {
+    "value": "XAUUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "جعبه نماد XAUUSD؛ سرخط «Gold Spot / U.S. Dollar»"
+   },
+   "venue": {
+    "value": "OANDA",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط «· 1D · OANDA»"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D روشن؛ شمارش 05:46:33 تا 21:00 UTC"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 200 همه حدود 43 پیکسل؛ نام چیدمان «Daily Log» با فاصله تیک‌ها نمی‌خواند، د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 5600,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 3200,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 4697.76,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب چاپ‌شده فیبوناچی"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "XAU/USDT",
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 4697.76,
+      "cutoff": "2026-10-07T15:13:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Dutc XAU-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 1d XAU_USDT: INVALID_CURRENCY_PAIR Invalid currency pair XAU_USDT",
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 4534.394,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب چاپ‌شده فیبوناچی"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.236",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "XAU/USDT",
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 4534.394,
+      "cutoff": "2026-10-07T15:13:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Dutc XAU-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 1d XAU_USDT: INVALID_CURRENCY_PAIR Invalid currency pair XAU_USDT",
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 4433.33,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب چاپ‌شده فیبوناچی"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.382",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "XAU/USDT",
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 4433.33,
+      "cutoff": "2026-10-07T15:13:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Dutc XAU-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 1d XAU_USDT: INVALID_CURRENCY_PAIR Invalid currency pair XAU_USDT",
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 4351.647,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب چاپ‌شده فیبوناچی"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.5",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "XAU/USDT",
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 4351.647,
+      "cutoff": "2026-10-07T15:13:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Dutc XAU-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 1d XAU_USDT: INVALID_CURRENCY_PAIR Invalid currency pair XAU_USDT",
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 4269.964,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب چاپ‌شده فیبوناچی"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.618",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "XAU/USDT",
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 4269.964,
+      "cutoff": "2026-10-07T15:13:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Dutc XAU-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 1d XAU_USDT: INVALID_CURRENCY_PAIR Invalid currency pair XAU_USDT",
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 4153.67,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب چاپ‌شده فیبوناچی"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 0.786",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "XAU/USDT",
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 4153.67,
+      "cutoff": "2026-10-07T15:13:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Dutc XAU-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 1d XAU_USDT: INVALID_CURRENCY_PAIR Invalid currency pair XAU_USDT",
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 4005.534,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب چاپ‌شده فیبوناچی"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 1",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "XAU/USDT",
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 4005.534,
+      "cutoff": "2026-10-07T15:13:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Dutc XAU-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 1d XAU_USDT: INVALID_CURRENCY_PAIR Invalid currency pair XAU_USDT",
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 3577.739,
+      "confidence": "high",
+      "from": "image",
+      "how": "برچسب چاپ‌شده فیبوناچی"
+     },
+     "kind": "fibonacci",
+     "label": "فیبوناچی 1.618",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "XAU/USDT",
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 3577.739,
+      "cutoff": "2026-10-07T15:13:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Dutc XAU-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 1d XAU_USDT: INVALID_CURRENCY_PAIR Invalid currency pair XAU_USDT",
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-07-16",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 3960,
+       "confidence": "low",
+       "from": "image",
+       "how": "کف ژوئیه نزدیک 4,000"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-10-06",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 4300,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "trend",
+     "label": "خط روند صعودی مشکی از کف ژوئیه"
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "دو میانگین متحرک قرمز و بنفش",
+      "confidence": "medium",
+      "from": "image",
+      "how": "تنظیم ناخوانا — د۷"
+     }
+    },
+    {
+     "name": {
+      "value": "RSI با برچسب Bear و Bull",
+      "confidence": "medium",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "MACD — دو خط و هیستوگرام",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "سرخط O4,166.640 H4,170.000 L4,066.535 C4,106.900 −56.955 (−1.37%) — آخرین شمع، نشانگر در فضای آینده، د۱۶",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده XAUUSD 4,106.900، شمارش 05:46:33",
+     "confidence": "high"
+    },
+    {
+     "text": "نشانگر 3,760.363 و Tue 17 Nov '26 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "درباره پاترون خودش. به گفته او طلا در حدود ۴۱۰۰ جذاب است و هرچه پایین‌تر برود جذاب‌تر؛ اگر ۴۱۰۰ از دست برود، به گفته او «تا ۴۰۰ دلار» پایین‌تر هم می‌تواند بیاید.",
+   "method_notes": [
+    "فیبوناچی خطی: 0.618 = 4,697.760 − 0.618 × 692.226 = 4,269.964، همان برچسب — د۱۲",
+    "خرید پله‌ای طلا در افت — نزدیک ورود پلکانی رادار ۷"
+   ],
+   "claims": [
+    "طلا — در حدود 4,100 جذاب برای خرید؛ هرچه پایین‌تر، جذاب‌تر — خود او — بی‌مهلت",
+    "طلا — اگر 4,100 از دست برود، افت بیشتر؛ حرف «۴۰۰ دلار»، مقیاس نامعلوم — افت ۴۰۰ یا سطح ۴۰۰۰، د۲۰ — خود او — بی‌مهلت"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۴۱۰۰؛ صفحه قیمت 4,106.900 و فیبوناچی ۱ در 4,005.534"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "تکرارگر",
+    "evidence": "تریدینگ‌ویو خود او با چیدمان «Daily Log»، پنل معامله و واچ‌لیست"
+   },
+   "chart_end": {
+    "value": "2026-10-07T15:13:27+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده؛ ضبط پیش از انتشار — د۳۱",
+    "seen": "17:13:27 UTC+2"
+   }
+  }
+ ],
+ "methods": [
+  {
+   "area": "سطح",
+   "rule": "حمایت را مستطیل افقی می‌کشد، نه خط؛ پس از شکست خط روند صعودی، ناحیه بعدی پایین‌تر را هدف می‌گیرد",
+   "where": "01:45 تا 02:00",
+   "library": "نزدیک ج۳ — سطح ساختاری بر سطح قیمتی"
+  },
+  {
+   "area": "جریان",
+   "rule": "نقشه حرارتی لیکوئیدیشن: نقدینگی شورت‌های بالای قیمت را هدف حرکت می‌گیرد",
+   "where": "04:11 تا 04:24",
+   "library": "تکرار — کارت hEKhT4uIg08"
+  },
+  {
+   "area": "جریان",
+   "rule": "ورود و خروج روزانه صندوق‌های بیت‌کوین و اتریوم را از Farside می‌خواند",
+   "where": "13:51",
+   "library": "تکرار — کارت hEKhT4uIg08"
+  },
+  {
+   "area": "ورود",
+   "rule": "کف و سقف را نگیر؛ در دارایی باورمند پله‌ای بخر تا میانگین ورود بهتر شود",
+   "where": "06:53 تا 07:19",
+   "library": "نزدیک ورود پلکانی رادار ۷"
+  },
+  {
+   "area": "منبع",
+   "rule": "بیشتر صفحه ویدیو و توییت دیگران است؛ رسم دستی خودش رویشان",
+   "where": "02:47 تا 06:45",
+   "library": "ج۶ — نام گوینده جدا از نام کانال"
+  }
+ ],
+ "lessons": [
+  {
+   "at": "06:56",
+   "text": "کف و سقف را نگیر؛ در دارایی باورمند پله‌ای بخر و میانگین ورود را بهتر کن"
+  },
+  {
+   "at": "09:59",
+   "text": "توکن‌ها روایت‌محورند؛ قیمت با روایتی که جامعه می‌سازد بالا می‌رود"
+  },
+  {
+   "at": "13:08",
+   "text": "ضبط و انتشار ویدیو هم‌زمان نیستند؛ خبر میان این دو تحلیل را کهنه می‌کند"
+  }
+ ]
+}
