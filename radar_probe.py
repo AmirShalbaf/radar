@@ -191,6 +191,9 @@ def render(rows: list[dict], where: str, country: str, now: datetime, env) -> st
          f"| زمان | {now:%Y-%m-%d %H:%M} UTC |"]
     if env.get("GITHUB_RUN_ID"):
         o.append(f"| اجرای گردش‌کار | `{env['GITHUB_RUN_ID']}` |")
+    if env.get("ImageOS"):
+        # متغیرهای خود اجراکننده گیت‌هاب — رویداد ۹۰
+        o.append(f"| تصویر اجراکننده | `{env['ImageOS']}` {env.get('ImageVersion', '')} |")
     n_open = sum(r["verdict"] == "open" for r in rows)
     o += ["", f"{fa(n_open)} از {fa(len(rows))} منبع باز. «پاسخ بی‌نشانه» یعنی پاسخ آمد "
           "ولی نشانه محتوای درست در آن نبود — مثل پیام «کلید لازم است». ستون توضیح "

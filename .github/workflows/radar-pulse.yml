@@ -28,7 +28,8 @@ concurrency:
 
 jobs:
   pulse:
-    runs-on: ubuntu-latest
+    # ثابت روی 24.04 — برچسب شناور گیت‌هاب از ۱۹ اکتبر ۲۰۲۶ به 26.04 می‌رود؛ رویداد ۹۰
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
 
     steps:

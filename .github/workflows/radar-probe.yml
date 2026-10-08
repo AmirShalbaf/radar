@@ -15,6 +15,15 @@ name: رادار — سنجش دسترسی منابع
 
 on:
   workflow_dispatch:
+    inputs:
+      # آزمایش اجراکننده تازه پیش از جابه‌جایی — رویداد ۹۰. گردش‌کارهای زمان‌بندی‌شده
+      # روی 24.04 ثابت‌اند؛ 26.04 فقط با اجرای دستی همین‌جا سنجیده می‌شود.
+      runner:
+        description: "اجراکننده"
+        required: false
+        default: "ubuntu-24.04"
+        type: choice
+        options: [ubuntu-24.04, ubuntu-26.04]
 
 permissions:
   contents: write
@@ -25,8 +34,8 @@ concurrency:
 
 jobs:
   probe:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    runs-on: ${{ inputs.runner || 'ubuntu-24.04' }}
+    timeout-minutes: 20
 
     steps:
       - name: برداشت مخزن
@@ -63,3 +72,12 @@ jobs:
             git commit -m "سنجش دسترسی منابع — $D"
             git push
           fi
+
+      # پس از کامیت، تا گزارش سنجش در هر حال بماند. شکست آزمون گام را می‌اندازد —
+      # همان نشانه‌ای که پیش از جابه‌جایی به 26.04 لازم است.
+      - name: آزمون مخزن روی همین اجراکننده
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          pip install -r requirements-dev.txt
+          python -m pytest -q tests
