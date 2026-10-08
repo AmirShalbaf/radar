@@ -656,7 +656,7 @@ def sell_order(rows: list[dict]) -> list[dict]:
 
 
 def reserve_view(rp: dict | None, h: dict, prices: dict, val: dict,
-                 now: datetime) -> dict | None:
+                 now: datetime, band: str | None = None) -> dict | None:
     """
     نقشه ذخیره watch.json برای بخش ۶ — نشست ۳ب، بند ۶. پیش از این سبد نقشه را
     نمی‌دید و «فروش به ترتیب بخش ۵» می‌گفت، در حالی که نقشه آگاهانه از آن ترتیب
@@ -670,6 +670,10 @@ def reserve_view(rp: dict | None, h: dict, prices: dict, val: dict,
     کاربر پس از ایستگاه ۲ نشست ۳ب روشن کرد: با 2631.20 و قیمت‌های 05:01، کل
     2768.82 و ذخیره 24.67٪ — همان ک۴۲. قیمت زنده نیامده، یا مقدار نگه‌داشته
     کمتر از پله‌های مانده، یعنی آن عدد «داده ندارم» با دلیل — نه تخمین.
+
+    band باند با هیسترزیس امروز است — شرط مهلت on_deadline از radar_watch.
+    plan_rule_state، یک تعریف با پایشگر. بازخرید rebuy فقط تا مقدار پله‌های
+    پرشده همان نماد — رویداد ۸۹.
     """
     if not rp:
         return None
@@ -703,7 +707,20 @@ def reserve_view(rp: dict | None, h: dict, prices: dict, val: dict,
             after = {"stable": st, "total": tot, "pct": 100 * st / tot if tot else 0.0}
     deadline = datetime.fromisoformat(rp["deadline"])
     total = val["total"]
-    return {"steps": steps, "left": left,
+    sold: dict[str, float] = {}
+    for s in steps:
+        if s["filled"]:
+            sold[s["symbol"]] = sold.get(s["symbol"], 0.0) + s["qty"]
+    rebuy = []
+    for s in (rp.get("rebuy") or {}).get("steps", []):
+        p = prices.get(s["symbol"])
+        rebuy.append({"symbol": s["symbol"], "qty": s["qty"], "floor": s["floor"],
+                      "sold": min(s["qty"], sold.get(s["symbol"], 0.0)), "price": p,
+                      "dist_pct": None if p is None else 100 * (p / s["floor"] - 1)})
+    return {"title": rp.get("title") or "نقشه ذخیره",
+            "rule": rp.get("on_deadline"), "rule_state": RW.plan_rule_state(rp, band),
+            "band": band, "rebuy": rebuy, "rebuy_note": (rp.get("rebuy") or {}).get("note"),
+            "steps": steps, "left": left,
             "cancelled": [s for s in steps if s.get("cancelled")],
             "stray": [s for s in steps if s.get("executed") and not s["filled"]],
             "deadline": deadline, "now": now, "expired": now >= deadline,
@@ -718,10 +735,12 @@ def _n(x) -> str:
 
 
 def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
-    """زیربخش نقشه ذخیره در بخش ۶: اجراشده، مانده، مهلت، ذخیره امروز و پس از پرشدن."""
-    o = ["### نقشه ذخیره — رویداد ۳۶", "",
-         "انحراف آگاهانه از ترتیب بخش ۵. پرشدن فقط از دفتر کل `holdings.json` خوانده "
-         "می‌شود، نه از علامت `watch.json`.", ""]
+    """
+    زیربخش نقشه ذخیره در بخش ۶: اجراشده، مانده، مهلت، شرط مهلت و وضع امروزش،
+    ذخیره امروز و پس از پرشدن، و نقشه بازخرید. سرتیتر از میدان title نقشه.
+    """
+    o = [f"### {rv['title']}", "",
+         "پرشدن فقط از دفتر کل `holdings.json` خوانده می‌شود، نه از علامت `watch.json`.", ""]
     done = [s for s in rv["steps"] if s["filled"]]
     if done:
         o += ["**اجراشده**", "", "| نماد | مقدار | قیمت محدود | قیمت پرشدن | زمان پرشدن |",
@@ -749,8 +768,18 @@ def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
     rest = rv["deadline"] - rv["now"]
     dl += (f" — {rest.total_seconds() / 86400:.1f} روز مانده" if not rv["expired"]
            else " — **گذشت**")
-    o += ["| مورد | مقدار |", "|---|---|", f"| مهلت | {dl} |",
-          f"| ذخیره امروز | {rv['stable']:,.0f} دلار ({rv['pct']:.1f}٪) |"]
+    o += ["| مورد | مقدار |", "|---|---|", f"| مهلت | {dl} |"]
+    rule = rv.get("rule")
+    if rule:
+        floor = rule["cancel_if_band_at_least"]
+        o.append(f"| شرط مهلت | لغو پله‌های پرنشده اگر باند با هیسترزیس دست‌کم {floor} شد؛ "
+                 "وگرنه در مهلت، باقی‌مانده در بازار |")
+        st = rv["rule_state"]
+        now_txt = {"cancel": f"{rv['band']} — **شرط لغو برقرار است**",
+                   "keep": f"{rv['band']} — زیر {floor}؛ شرط لغو برقرار نیست",
+                   "unknown": "نامعلوم — رژیم کهنه؛ شرط سنجیده نشد"}[st]
+        o.append(f"| باند با هیسترزیس امروز | {now_txt} |")
+    o.append(f"| ذخیره امروز | {rv['stable']:,.0f} دلار ({rv['pct']:.1f}٪) |")
     if rv["left"]:
         if rv["after"] is None:
             o.append(f"| ذخیره اگر همه پر شوند | داده ندارم — {rv['after_why']} |")
@@ -763,6 +792,19 @@ def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
     if reg is not None:
         o.append(f"| هدف رژیم | {reg['stable']}٪ کل سرمایه |")
     o.append("")
+    if rv.get("rebuy"):
+        o += ["**نقشه بازخرید**", ""]
+        if rv.get("rebuy_note"):
+            o += [rv["rebuy_note"], ""]
+        o += ["فقط تا مقدار فروخته‌شده همان نماد. کف یعنی بالای سطح ابطال.", "",
+              "| نماد | مقدار نقشه | فروخته‌شده تا امروز | کف | قیمت امروز | فاصله تا کف |",
+              "|---|---|---|---|---|---|"]
+        for r in rv["rebuy"]:
+            px = _n(r["price"]) if r["price"] is not None else "—"
+            dist = f"{r['dist_pct']:+.1f}٪" if r["dist_pct"] is not None else "داده ندارم"
+            o.append(f"| {r['symbol']} | {_n(r['qty'])} | {_n(r['sold'])} | {_n(r['floor'])} | "
+                     f"{px} | {dist} |")
+        o.append("")
     for s in rv["stray"]:
         o.append(f"⚠️ {s['symbol']} {_n(s['qty'])} در `watch.json` علامت اجراشده دارد "
                  f"(سفارش {s['executed'].get('order_id', '—')}) ولی دفتر کل پوشش نمی‌دهد — "
@@ -770,6 +812,41 @@ def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
     if rv["stray"]:
         o.append("")
     return o
+
+
+def _plan_actions(rv: dict) -> list[str]:
+    """
+    ردیف اقدام نقشه ذخیره با پله مانده. حکم مهلت از شرط on_deadline — رویداد ۸۹؛
+    نقشه بی‌شرط پس از مهلت تصمیم می‌خواهد، بازگشت بی‌صدا به فهرست فروش نه.
+    """
+    t, n, acct = rv["title"], len(rv["left"]), rv["account"]
+    dl = f"{rv['deadline'].astimezone(UTC):%Y-%m-%d %H:%M} UTC"
+    st = rv["rule_state"]
+    out = []
+    if st == "cancel":
+        out.append(f"**{t}** — شرط لغو برقرار شد: باند با هیسترزیس {rv['band']}. لغو {n} "
+                   f"پله مانده در {acct}؛ ثبت در `watch.json`، میدان cancelled با زمان و دلیل")
+        back = [r for r in rv.get("rebuy") or [] if r["sold"] > 0]
+        if back:
+            out.append(f"**بازخرید — {t}** — همان مقدار فروخته‌شده: "
+                       + "، ".join(f"{r['symbol']} {_n(r['sold'])}" for r in back)
+                       + ". ثبت بازخرید در دفتر کل هنوز فرمان ندارد — ک۸۸")
+    elif not rv["expired"]:
+        out.append(f"**{t}** — {n} پله مانده، مهلت {dl}. هر پله پرشده: "
+                   "`radar_positions.py trim --reason reserve --at <زمان رسید>`")
+    elif st == "keep":
+        out.append(f"**{t}** — مهلت {dl} گذشت؛ باند با هیسترزیس {rv['band']}، زیر "
+                   f"{rv['rule']['cancel_if_band_at_least']}. طبق نقشه: فروش {n} پله مانده در "
+                   f"بازار از {acct}؛ ثبت با `radar_positions.py trim --reason reserve`")
+    elif st == "unknown":
+        out.append(f"⛔ **{t} — مهلت {dl} گذشت** و باند با هیسترزیس نامعلوم است — رژیم "
+                   f"کهنه. **تصمیم لازم است:** فروش {n} پله مانده در بازار، یا لغو")
+    else:
+        out.append(f"⛔ **{t} — مهلت {dl} گذشت** و {n} پله پر نشده، بالا در جدول «مانده». "
+                   "طبق نقشه پله مانده در قیمت بازار فروخته می‌شود. **تصمیم لازم است:** "
+                   "اجرای نقشه در بازار، یا نقشه تازه. بازگشت به فهرست فروش بخش ۵ بی‌تصمیم "
+                   "انجام نمی‌شود")
+    return out
 
 
 def _pnl(r: dict) -> str:
@@ -1059,12 +1136,20 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     W("و هیچ اطلاعاتی درباره آینده ندارد. **هرگز برنده را اول نفروش** (اثر تمایل).")
     W("پوزیشن ناچیز در این فهرست نیست.")
     W("")
+    order = sell_order(live)
     if plan_live:
-        W("نقشه فعال آگاهانه از این ترتیب منحرف است — رویداد ۳۶. پیشرفتش در بخش ۶؛ "
-          "این فهرست مرجع می‌ماند.")
+        # هم‌خوانی حساب می‌شود، نه نوشته: نمادهای نقشه همان نمادهای سر این فهرست‌اند؟
+        syms = list(dict.fromkeys(s["symbol"] for s in reserve["steps"]
+                                  if not s.get("cancelled")))
+        head = [r["pos"]["symbol"] for r in order[:len(syms)]]
+        if set(syms) == set(head):
+            W(f"نقشه فعال با همین ترتیب هم‌خوان است: {'، '.join(head)} سر فهرست‌اند. "
+              "پیشرفتش در بخش ۶.")
+        else:
+            W("نقشه فعال از این ترتیب منحرف است — دلیل در یادداشت نقشه `watch.json`. "
+              "پیشرفتش در بخش ۶؛ این فهرست مرجع می‌ماند.")
         W("")
 
-    order = sell_order(live)
     W("| اولویت | نماد | ارزش | دلیل |")
     W("|---|---|---|---|")
     for i, r in enumerate(order, 1):
@@ -1095,18 +1180,8 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
         if wk is not None and wk["close"] > e["state"]["level"]:
             actions.append(f"**{e['symbol']}** — ورود دوباره مجاز است؛ ثبت با "
                            "`radar_positions.py reenter`")
-    if plan_live and not reserve["expired"]:
-        dl = f"{reserve['deadline'].astimezone(UTC):%Y-%m-%d %H:%M} UTC"
-        actions.append(f"**نقشه ذخیره — رویداد ۳۶** — {len(reserve['left'])} پله مانده، "
-                       f"مهلت {dl}. هر پله پرشده: `radar_positions.py trim --reason "
-                       "reserve --at <زمان رسید>`")
-    elif plan_live:
-        # پس از مهلت: صریح و با تصمیم — بازگشت بی‌صدا به فهرست فروش نه
-        dl = f"{reserve['deadline'].astimezone(UTC):%Y-%m-%d %H:%M} UTC"
-        actions.append(f"⛔ **نقشه ذخیره — مهلت {dl} گذشت** و {len(reserve['left'])} پله "
-                       "پر نشده، بالا در جدول «مانده». طبق نقشه — رویداد ۳۶ — پله مانده در "
-                       "قیمت بازار فروخته می‌شود. **تصمیم لازم است:** اجرای نقشه در بازار، "
-                       "یا نقشه تازه. بازگشت به فهرست فروش بخش ۵ بی‌تصمیم انجام نمی‌شود")
+    if plan_live:
+        actions += _plan_actions(reserve)
     elif reg is not None:
         gap = reg["stable"] / 100 * total - stable
         if gap > 0 and reserve:
@@ -1322,7 +1397,9 @@ def main() -> int:
         import radar_watch as RW
         try:
             RW.validate_watch({"reserve_plan": rp})
-            rview = reserve_view(rp, h, prices, val, datetime.now(UTC))
+            # شرط مهلت با باند با هیسترزیس همین گزارش — رویداد ۸۹
+            rview = reserve_view(rp, h, prices, val, datetime.now(UTC),
+                                 band=tband["name"] if tband else None)
         except (RW.WatchError, KeyError, TypeError, ValueError) as exc:
             level_notes.append(f"⛔ نقشه ذخیره `watch.json` خوانا نیست — {exc}. بخش ۶ "
                                "بی‌نقشه ساخته شد؛ پیش از هر فروش، نقشه را درست کن.")

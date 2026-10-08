@@ -29,6 +29,8 @@ UTC = timezone.utc
 NOW = datetime(2026, 9, 27, 12, 0, tzinfo=UTC)
 
 PLAN = {
+    # سرتیتر بخش ۶ از title نقشه — از رویداد ۸۹؛ پیش از آن «رویداد ۳۶» ثابت بود
+    "title": "نقشه ذخیره ۲۵ سپتامبر — رویداد ۳۶",
     "created": "2026-09-25T16:00:00+00:00", "deadline": "2026-10-05T00:00:00+00:00",
     "account": "LBank",
     "steps": [
@@ -165,8 +167,9 @@ def test_section6_shows_plan_not_sell_order() -> None:
 
 
 def test_section5_stays_with_deviation_line() -> None:
+    """از رویداد ۸۹ هم‌خوانی حساب می‌شود؛ ETH و SOL سر فهرست خالی نیستند — انحراف."""
     s5 = _section(_report(_view()), "۵")
-    assert "نقشه فعال آگاهانه از این ترتیب منحرف است — رویداد ۳۶" in s5
+    assert "نقشه فعال از این ترتیب منحرف است" in s5 and "یادداشت نقشه" in s5
 
 
 def test_section1_points_to_plan() -> None:

@@ -32,6 +32,11 @@ def _load(name):
     return json.loads((ROOT / name).read_text(encoding="utf-8"))
 
 
+def _plan36(w: dict) -> dict:
+    """نقشه رویداد ۳۶ — از ۸ اکتبر در reserve_archive، رویداد ۸۹. داده همان است."""
+    return next(p for p in w["reserve_archive"] if p["created"] == "2026-09-25T16:00:00+00:00")
+
+
 def test_ledger_has_both_receipts() -> None:
     h = _load("holdings.json")
     rows = [r for r in h["ledger"] if r["action"] == "trim" and r["reason"] == "reserve"]
@@ -73,13 +78,13 @@ def test_optcost_followup_from_sale_day() -> None:
 def test_watch_marks_and_no_market_reminder() -> None:
     w, h = _load("watch.json"), _load("holdings.json")
     W.validate_watch(w)
-    steps = w["reserve_plan"]["steps"]
+    steps = _plan36(w)["steps"]
     marked = {s["executed"]["order_id"]: s for s in steps if s.get("executed")}
     for sym, sale in SALES.items():
         s = marked[sale["order_id"]]
         assert s["symbol"] == sym and s["price"] is None        # پله بازار
     # هیچ پله بازاری یادآوری «مانده» نمی‌گیرد؛ فهرست کامل مانده در پله دوم
-    assert all(s["price"] is not None for s in W.unfilled_steps(w["reserve_plan"], h))
+    assert all(s["price"] is not None for s in W.unfilled_steps(_plan36(w), h))
 
 
 def test_sol_131_5_cancelled_with_reason() -> None:
@@ -88,7 +93,7 @@ def test_sol_131_5_cancelled_with_reason() -> None:
     و لغو است. پله پاک نشد؛ میدان cancelled با زمان کامل و دلیل دارد.
     """
     from datetime import datetime
-    rp = _load("watch.json")["reserve_plan"]
+    rp = _plan36(_load("watch.json"))
     sol = [s for s in rp["steps"] if s["symbol"] == "SOL"]
     assert [s["price"] for s in sol] == [None, 125.5, 131.5]
     c = sol[2]["cancelled"]
@@ -109,7 +114,7 @@ def test_eth_step2_moved_below_utc_resistance() -> None:
     اصلاح ۲۹ سپتامبر: شب ۲۷ سپتامبر سفارشی در LBank نبود؛ 2755 قیمت نقشه بود،
     نه جابه‌جایی سفارش. note نباید جابه‌جایی سفارش ادعا کند.
     """
-    rp = _load("watch.json")["reserve_plan"]
+    rp = _plan36(_load("watch.json"))
     assert [s["price"] for s in rp["steps"] if s["symbol"] == "ETH"] == [None, 2755, 2940]
     assert "2760.76" in rp["note"] and "131.81" in rp["note"]
     assert "2790" in rp["note"]                      # قیمت پیشین نقشه ثبت شده، نه پاک

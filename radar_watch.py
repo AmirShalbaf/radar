@@ -64,6 +64,8 @@ from radar_text import fa
 import radar_positions as P
 # لنگر کندل وقت جهانی — کتابخانه استاندارد، نشست ۳ب
 import radar_anchor as A
+# ترتیب باندها — تنها منبع radar_budget، کتابخانه استاندارد؛ شرط مهلت نقشه ذخیره
+import radar_budget as BG
 
 try:
     import requests
@@ -539,29 +541,69 @@ def validate_watch(w: dict) -> None:
                              "میانگین از regime.json میدان btc_sma50w خوانده می‌شود")
     rp = w.get("reserve_plan")
     if rp is not None:
-        _aware(rp.get("created"), "reserve_plan.created")
-        _aware(rp.get("deadline"), "reserve_plan.deadline")
-        for i, s in enumerate(rp.get("steps") or [], 1):
-            price = s.get("price")
-            if (not isinstance(s.get("symbol"), str) or not _num(s.get("qty")) or s["qty"] <= 0
-                    or not (price is None or (_num(price) and price > 0))):
-                raise WatchError(f"reserve_plan پله {i}: نماد، مقدار یا قیمت نامعتبر")
-            ex = s.get("executed")
+        _validate_plan(rp, "reserve_plan")
+        if "closed" in rp:
+            raise WatchError("reserve_plan: نقشه فعال closed ندارد — نقشه بسته به reserve_archive "
+                             "می‌رود")
+    # نقشه‌های بسته — نقشه رویداد ۳۶ از ۸ اکتبر ۲۰۲۶، رویداد ۸۹. پاک نمی‌شوند؛
+    # زمان و دلیل بستن می‌گیرند، مثل پله لغوشده
+    arc = w.get("reserve_archive")
+    if arc is not None and not isinstance(arc, list):
+        raise WatchError("reserve_archive باید فهرست باشد")
+    for i, old in enumerate(arc or [], 1):
+        where = f"reserve_archive ردیف {i}"
+        if not isinstance(old, dict):
+            raise WatchError(f"{where}: نقشه نیست")
+        _validate_plan(old, where)
+        cl = old.get("closed")
+        if not isinstance(cl, dict) or not isinstance(cl.get("reason"), str) \
+                or not cl["reason"].strip():
+            raise WatchError(f"{where}: closed باید زمان و دلیل داشته باشد")
+        _aware(cl.get("at"), f"{where}: closed.at — {FULL}")
+
+
+def _validate_plan(rp: dict, where: str) -> None:
+    """یک نقشه ذخیره — فعال یا بسته. میدان‌های on_deadline و rebuy از رویداد ۸۹."""
+    _aware(rp.get("created"), f"{where}.created")
+    _aware(rp.get("deadline"), f"{where}.deadline")
+    if "title" in rp and (not isinstance(rp["title"], str) or not rp["title"].strip()):
+        raise WatchError(f"{where}.title: متن خالی")
+    for i, s in enumerate(rp.get("steps") or [], 1):
+        price = s.get("price")
+        if (not isinstance(s.get("symbol"), str) or not _num(s.get("qty")) or s["qty"] <= 0
+                or not (price is None or (_num(price) and price > 0))):
+            raise WatchError(f"{where} پله {i}: نماد، مقدار یا قیمت نامعتبر")
+        ex = s.get("executed")
+        if ex is not None:
+            if not isinstance(ex, dict) or not isinstance(ex.get("order_id"), str) \
+                    or not ex["order_id"]:
+                raise WatchError(f"{where} پله {i}: executed باید زمان و order_id داشته باشد")
+            _aware(ex.get("at"), f"{where} پله {i}: executed.at — {FULL}")
+        # لغو پله — تصمیم کاربر، ۲۹ سپتامبر ۲۰۲۶: پله پاک نمی‌شود، زمان و دلیل می‌گیرد
+        cx = s.get("cancelled")
+        if cx is not None:
+            if not isinstance(cx, dict) or not isinstance(cx.get("reason"), str) \
+                    or not cx["reason"].strip():
+                raise WatchError(f"{where} پله {i}: cancelled باید زمان و دلیل داشته باشد")
+            _aware(cx.get("at"), f"{where} پله {i}: cancelled.at — {FULL}")
             if ex is not None:
-                if not isinstance(ex, dict) or not isinstance(ex.get("order_id"), str) \
-                        or not ex["order_id"]:
-                    raise WatchError(f"reserve_plan پله {i}: executed باید زمان و order_id داشته باشد")
-                _aware(ex.get("at"), f"reserve_plan پله {i}: executed.at — {FULL}")
-            # لغو پله — تصمیم کاربر، ۲۹ سپتامبر ۲۰۲۶: پله پاک نمی‌شود، زمان و دلیل می‌گیرد
-            cx = s.get("cancelled")
-            if cx is not None:
-                if not isinstance(cx, dict) or not isinstance(cx.get("reason"), str) \
-                        or not cx["reason"].strip():
-                    raise WatchError(f"reserve_plan پله {i}: cancelled باید زمان و دلیل داشته باشد")
-                _aware(cx.get("at"), f"reserve_plan پله {i}: cancelled.at — {FULL}")
-                if ex is not None:
-                    raise WatchError(f"reserve_plan پله {i}: هم اجراشده هم لغوشده — پله لغوشده "
-                                     "اجرا نمی‌شود")
+                raise WatchError(f"{where} پله {i}: هم اجراشده هم لغوشده — پله لغوشده "
+                                 "اجرا نمی‌شود")
+    od = rp.get("on_deadline")
+    if od is not None:
+        if not isinstance(od, dict) or od.get("otherwise") != "market" \
+                or od.get("cancel_if_band_at_least") not in BG.BAND_ORDER:
+            raise WatchError(f"{where}.on_deadline: باید cancel_if_band_at_least یکی از "
+                             f"{'، '.join(BG.BAND_ORDER)} و otherwise برابر market باشد")
+    rb = rp.get("rebuy")
+    if rb is not None:
+        if not isinstance(rb, dict) or not isinstance(rb.get("steps"), list):
+            raise WatchError(f"{where}.rebuy: باید steps داشته باشد")
+        for i, s in enumerate(rb["steps"], 1):
+            if (not isinstance(s, dict) or not isinstance(s.get("symbol"), str)
+                    or not _num(s.get("qty")) or s["qty"] <= 0
+                    or not _num(s.get("floor")) or s["floor"] <= 0):
+                raise WatchError(f"{where}.rebuy پله {i}: نماد، مقدار یا کف نامعتبر")
 
 
 def unfilled_steps(rp: dict, h: dict) -> list[dict]:
@@ -652,23 +694,64 @@ def _week_of(now: datetime) -> str:
     return (now - timedelta(days=now.weekday())).strftime("%Y-%m-%d")
 
 
+def _regime_warn(regime: dict | None, now: datetime) -> str | None:
+    """regime.json نیست، مهر ندارد یا کهنه است — متن هشدار؛ تازه یعنی None."""
+    if not isinstance(regime, dict):
+        return "regime.json نیست یا خوانا نیست"
+    try:
+        gen = _aware(regime.get("generated_at"), "regime.json generated_at")
+    except WatchError as exc:
+        return str(exc)
+    from radar_book import REGIME_MAX_AGE_DAYS      # تنها منبع آستانه کهنگی رژیم
+    age = (now - gen).total_seconds() / 86_400
+    if age > REGIME_MAX_AGE_DAYS:
+        return (f"regime.json کهنه است — {age:.1f} روز، آستانه "
+                f"{fa(REGIME_MAX_AGE_DAYS)} روز")
+    return None
+
+
+def regime_trade_band(regime: dict | None, now: datetime) -> tuple[str | None, str | None]:
+    """
+    باند با هیسترزیس امروز — میدان trade_band در regime.json، قاعده ک۳۲. شرط مهلت
+    نقشه ذخیره از همین می‌خواند. فایل غایب، کهنه یا بی‌میدان یعنی نام خالی و هشدار.
+    """
+    warn = _regime_warn(regime, now)
+    if warn:
+        return None, warn
+    tb = regime.get("trade_band")
+    name = tb.get("name") if isinstance(tb, dict) else None
+    if name not in BG.BAND_ORDER:
+        return None, "میدان trade_band در regime.json نیست یا نامعتبر است"
+    return name, None
+
+
+def plan_rule_state(rp: dict, band: str | None) -> str:
+    """
+    حکم شرط مهلت نقشه ذخیره — میدان on_deadline، رویداد ۸۹. تنها تعریف؛ پایشگر و
+    سبد هر دو از همین می‌خوانند.
+        cancel   باند با هیسترزیس دست‌کم باند شرط است — پله‌های پرنشده لغو
+        keep     شرط برقرار نیست — در مهلت، باقی‌مانده در بازار
+        unknown  باند نامعلوم، مثلاً رژیم کهنه — نه بازار، نه لغو؛ تصمیم لازم
+        no_rule  نقشه شرط ندارد — رفتار نقشه رویداد ۳۶: پس از مهلت تصمیم لازم
+    """
+    rule = rp.get("on_deadline")
+    if not rule:
+        return "no_rule"
+    if band not in BG.BAND_ORDER:
+        return "unknown"
+    rank = BG.BAND_ORDER.index
+    return "cancel" if rank(band) >= rank(rule["cancel_if_band_at_least"]) else "keep"
+
+
 def regime_sma(regime: dict | None, now: datetime) -> tuple[dict | None, str | None]:
     """
     میانگین ساده ۵۰ هفته بیت‌کوین از regime.json — میدان btc_sma50w. خروجی
     دوم هشدار صریح است: فایل غایب، کهنه یا بی‌میدان. آستانه کهنگی همان
     آستانه سبد است، از radar_book.
     """
-    if not isinstance(regime, dict):
-        return None, "regime.json نیست یا خوانا نیست"
-    try:
-        gen = _aware(regime.get("generated_at"), "regime.json generated_at")
-    except WatchError as exc:
-        return None, str(exc)
-    from radar_book import REGIME_MAX_AGE_DAYS      # تنها منبع آستانه کهنگی رژیم
-    age = (now - gen).total_seconds() / 86_400
-    if age > REGIME_MAX_AGE_DAYS:
-        return None, (f"regime.json کهنه است — {age:.1f} روز، آستانه "
-                      f"{fa(REGIME_MAX_AGE_DAYS)} روز")
+    warn = _regime_warn(regime, now)
+    if warn:
+        return None, warn
     s = regime.get("btc_sma50w")
     if not isinstance(s, dict):
         return None, "میدان btc_sma50w در regime.json نیست"
@@ -866,12 +949,42 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                   f"نمی‌دهد — پر حساب نشدند:\n{rows}\n"
                   "ثبت با radar_positions.py trim --reason reserve --at <زمان رسید>")
 
-        if now >= deadline:
-            if left:
-                rows = "\n".join(f"- {s['symbol']} {_n(s['qty'])} — {label(s)}" for s in left)
+        # شرط مهلت — رویداد ۸۹. باند با هیسترزیس از regime.json؛ حکم از plan_rule_state
+        band, band_warn = (regime_trade_band(regime, now) if rp.get("on_deadline")
+                           else (None, None))
+        rule = plan_rule_state(rp, band)
+        title = rp.get("title") or "نقشه ذخیره"
+        dl = f"{deadline.astimezone(UTC):%Y-%m-%d %H:%M} UTC"
+        rows = "\n".join(f"- {s['symbol']} {_n(s['qty'])} — {label(s)}" for s in left)
+
+        if rule == "cancel" and left:
+            # شرط برقرار: پله پرنشده لغو می‌شود، پیش یا پس از مهلت؛ هشدار رسیدن قیمت نه
+            sold: dict[str, float] = {}
+            for s, filled in zip(rp.get("steps") or [], step_filled(rp, h)):
+                if filled:
+                    sold[s["symbol"]] = sold.get(s["symbol"], 0.0) + s["qty"]
+            rb = [(s["symbol"], min(s["qty"], sold.get(s["symbol"], 0.0)))
+                  for s in (rp.get("rebuy") or {}).get("steps", [])]
+            rb = [(sym, q) for sym, q in rb if q > 0]
+            tail = ("\nبازخرید همان مقدار فروخته‌شده — " + "، ".join(
+                f"{sym} {_n(q)}" for sym, q in rb) if rb else
+                    "\nهنوز پله‌ای پر نشده؛ بازخریدی نیست.") if rp.get("rebuy") else ""
+            _once(state, f"reserve_cancel_{rp['created']}", msgs,
+                  f"🟢 شرط لغو {title} برقرار شد — باند با هیسترزیس {band} (مهلت {dl}). "
+                  f"لغو پله‌های پرنشده در {acct}:\n{rows}\n"
+                  "ثبت لغو هر پله در watch.json، میدان cancelled با زمان و دلیل." + tail)
+        elif now >= deadline:
+            if left and rule == "unknown":
                 _once(state, f"reserve_deadline_{rp['deadline']}", msgs,
-                      f"⏰ مهلت نقشه ذخیره گذشت ({deadline.astimezone(UTC):%Y-%m-%d %H:%M} "
-                      f"UTC). پله‌های پرنشده — فروش در قیمت بازار از {acct}:\n{rows}\n"
+                      f"⏰ مهلت {title} گذشت ({dl}). باند با هیسترزیس نامعلوم — {band_warn}. "
+                      f"شرط لغو سنجیده نشد؛ تصمیم لازم: فروش باقی‌مانده در بازار یا لغو. "
+                      f"پله‌های پرنشده در {acct}:\n{rows}")
+            elif left:
+                why = (f" باند با هیسترزیس {band}، زیر "
+                       f"{rp['on_deadline']['cancel_if_band_at_least']}." if rule == "keep" else "")
+                _once(state, f"reserve_deadline_{rp['deadline']}", msgs,
+                      f"⏰ مهلت {title} گذشت ({dl}).{why} پله‌های پرنشده — فروش در قیمت "
+                      f"بازار از {acct}:\n{rows}\n"
                       "ثبت هر کدام: radar_positions.py trim --reason reserve")
         else:
             market = [s for s in left if s["price"] is None]
@@ -942,7 +1055,10 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
             n += 1
     scope = watch if h is not None else {"market": watch.get("market"),
                                          "updated": watch.get("updated")}
-    regime = _read_regime(regime_path) if watch.get("market") else None
+    # رژیم برای هشدار بازار، و برای شرط مهلت نقشه ذخیره — رویداد ۸۹
+    need = watch.get("market") or (h is not None and
+                                   (watch.get("reserve_plan") or {}).get("on_deadline"))
+    regime = _read_regime(regime_path) if need else None
     for msg in check_positions(scope, h or {"positions": [], "ledger": []}, state, now,
                                regime=regime):
         notify(msg, quiet=False)

@@ -28,6 +28,11 @@ def _load(name):
     return json.loads((ROOT / name).read_text(encoding="utf-8"))
 
 
+def _plan36(w: dict) -> dict:
+    """نقشه رویداد ۳۶ — از ۸ اکتبر در reserve_archive، رویداد ۸۹. داده همان است."""
+    return next(p for p in w["reserve_archive"] if p["created"] == "2026-09-25T16:00:00+00:00")
+
+
 def test_ledger_row_from_receipt() -> None:
     h, _ = P.load(str(ROOT / "holdings.json"), str(ROOT / "radar_journal.json"))
     rows = [r for r in h["ledger"] if r.get("order_id") == SALE["order_id"]]
@@ -54,7 +59,7 @@ def test_watch_mark_and_no_step_left() -> None:
     """پس از لغو ۴ اکتبر هیچ پله‌ای نمانده — پیش از آن دو پله، ETH 2940 و SOL 125.5."""
     w, h = _load("watch.json"), _load("holdings.json")
     W.validate_watch(w)
-    rp = w["reserve_plan"]
+    rp = _plan36(w)
     step = next(s for s in rp["steps"] if s["symbol"] == "ETH" and s["price"] == 2755)
     ex = step["executed"]
     assert ex["order_id"] == SALE["order_id"] and ex["at"] == SALE["at"]
@@ -68,7 +73,7 @@ def test_two_steps_cancelled_on_oct4() -> None:
     ۱۵٪ و ذخیره ۱۵.۱٪؛ دو پله مانده در LBank لغو شدند، نه فروش بازار در مهلت. پله
     پاک نشد؛ میدان cancelled با زمان کامل و دلیل، مثل پله 131.5.
     """
-    rp = _load("watch.json")["reserve_plan"]
+    rp = _plan36(_load("watch.json"))
     cut = [s for s in rp["steps"] if "cancelled" in s and s["cancelled"]["at"].startswith("2026-10-04")]
     assert [(s["symbol"], s["qty"], s["price"]) for s in cut] == [("ETH", 0.0472, 2940), ("SOL", 0.749, 125.5)]
     for s in cut:
@@ -82,7 +87,7 @@ def test_two_steps_cancelled_on_oct4() -> None:
 def test_progress_fill_price_and_time() -> None:
     """پله دوم ETH ردیف ۲ اکتبر را می‌گیرد، نه ردیف بازار ۲۵ سپتامبر."""
     w, h = _load("watch.json"), _load("holdings.json")
-    prog = W.reserve_progress(w["reserve_plan"], h)
+    prog = W.reserve_progress(_plan36(w), h)
     s = next(p for p in prog if p["symbol"] == "ETH" and p["price"] == 2755)
     assert s["filled"] and s["fill_price"] == SALE["price"]
     assert s["fill_at"] == datetime(2026, 10, 2, 8, 17, 19, tzinfo=timezone.utc)
