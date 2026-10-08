@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-radar_video.py  —  نسخه ۱.۲ — «دیدن کامل» با یک پیوند، نشست ۶ب؛ رصد همیشگی، نشست ۷ب؛
-                    اول فهرست، ۸ اکتبر ۲۰۲۶
+radar_video.py  —  نسخه ۱.۳ — «دیدن کامل» با یک پیوند، نشست ۶ب؛ رصد همیشگی، نشست ۷ب؛
+                    اول فهرست و هدف یادگیری، ۸ اکتبر ۲۰۲۶
 کاربر فقط پیوند می‌دهد — ویدیو یا پلی‌لیست، حتی از کانالی که در
 analysts.yml نیست — و رادار آن را کامل می‌بیند.
 
@@ -55,6 +55,14 @@ analysts.yml نیست — و رادار آن را کامل می‌بیند.
     «رد به انتخاب کاربر» می‌کند تا فردا دوباره نیایند. این وضعیت «دیده‌شده» نیست و
     بسته هم نیست: پیشنهاد صریح دوباره کاربر پذیرفته می‌شود.
 
+هدف یادگیری — تصمیم کاربر، ۸ اکتبر ۲۰۲۶:
+    کاربر ویدیو را بیشتر برای یادگیری رادار برمی‌گزیند، نه برای خلاصه. گزارش --report
+    سه بخش ثابت دارد، پیش از جزئیات خوانش: «رادار چه یاد گرفت»، «ادعاها» و «درس برای
+    امیر». از میدان‌های learned و amir_lesson کارت. هر یادگرفته باید در فایل نوعش با
+    نام و شناسه ویدیو آمده باشد — method-library.md، references/chart-tools.md یا
+    references/chart-reading.md — وگرنه گزارش ساخته نمی‌شود. --list عنوانی را که روش یا
+    ابزار یاد می‌دهد «آموزشی» برچسب می‌زند و در منابع رصد مقدم می‌کند.
+
 اجرا:
     python radar_video.py <پیوند ویدیو>
     python radar_video.py <پیوند پلی‌لیست>                # فهرست و برآورد، بی‌اجرا
@@ -100,7 +108,7 @@ import radar_intake as I
 from radar_one import video_id as _video_id     # تنها منبع الگوی شناسه ویدیو
 from radar_text import fa
 
-VERSION = "1.2"                   # ۱.۲: اول فهرست --list و --pick — ۸ اکتبر ۲۰۲۶
+VERSION = "1.3"                   # ۱.۳: هدف یادگیری — سه بخش ثابت گزارش و «آموزشی»، ۸ اکتبر ۲۰۲۶
 UTC = timezone.utc
 
 SINGLE_ROLE = "تک‌ویدیو"
@@ -1123,7 +1131,10 @@ def _reading_section(picked: list[str], videos: dict) -> list[str]:
     if not (ready_now or ready_old):
         return []
     lines = ["", "## برای خواندن — کار مدل در نشست", "",
-             "پیش از خواندن: `references/chart-reading.md`.", ""]
+             "پیش از خواندن: `references/chart-reading.md`.",
+             "هدف یادگیری: پیش از `--report`، یادگرفته در `method-library.md`، "
+             "`references/chart-tools.md` یا `references/chart-reading.md` با شناسه ویدیو؛ "
+             "و در کارت `learned` و `amir_lesson` — CLAUDE.md.", ""]
     for v, e in ready_now:
         lines += _reading(v, e)
     if ready_old:
@@ -1198,6 +1209,22 @@ LIST_MAX_AGE = timedelta(hours=24)
 TEHRAN = timezone(timedelta(hours=3, minutes=30), "Tehran")
 _PICK = re.compile(r"[0-9]+(?:\s*,\s*[0-9]+)*")      # اسکی — \d رقم فارسی را هم می‌گیرد
 _LIST_RUN_KEYS = ("short", "stale", "off_topic", "feed_failures")
+
+# «آموزشی» از عنوان — هدف یادگیری، تصمیم کاربر ۸ اکتبر ۲۰۲۶: ویدیویی که روش یا ابزار
+# یاد می‌دهد در منابع رصد مقدم است. فقط عنوان، داوری ماست — ف۳۷. اینجا \w عمدی است:
+# مرز واژه فارسی، تا «درست» درس و «روشن» روش خوانده نشود.
+EDU_LABEL = "آموزشی"
+_EDU_FA = re.compile(r"(?<!\w)(?:آموزش|یادگیری|یاد بگیر|استراتژی|اندیکاتور|ترفند|تکنیک|مبتدی"
+                     r"|صفر تا (?:صد|100)"
+                     r"|(?:دوره|درس|روش|ابزار|کلاس|چطور|چگونه|نحوه|راهنما)(?:‌ها|های|ی)?(?!\w))")
+_EDU_EN = re.compile(r"\b(?:how to|what is|tutorial|explained|explains?|guide|learn(?:ing)?|lessons?"
+                     r"|course|strateg(?:y|ies)|indicators?|beginners?|masterclass|step by step"
+                     r"|techniques?|methods?|teach(?:es|ing)?)\b", re.IGNORECASE)
+
+
+def is_educational(title: str) -> bool:
+    t = str(title or "")
+    return bool(_EDU_FA.search(t) or _EDU_EN.search(t))
 
 
 def list_path(intake: Path) -> Path:
@@ -1277,8 +1304,10 @@ def build_list(ctx: Ctx, watched: list[I.Source], vstate: dict,
             record[v] = e
             lst["run"]["short"].append(v)
             continue
+        it["educational"] = is_educational(it["title"])
         (sugg if c.suggested else watch).append(it)
     watch.sort(key=lambda x: _pub_dt(x["published"]) or _OLDEST, reverse=True)
+    watch.sort(key=lambda x: not x["educational"])   # آموزشی مقدم؛ پایدار، پس تازه‌تر اول می‌ماند
     lst["items"] = sugg + watch
     for n, it in enumerate(lst["items"], 1):
         it["n"] = n
@@ -1292,10 +1321,12 @@ def render_list(lst: dict, notes: dict[str, str], vstate: dict, names: dict[str,
     watch = [it for it in items if not it["suggested"]]
     lines = [f"# فهرست نامزدها — {today}", "",
              "> فقط فهرست. هیچ دانلود، فریم یا متن کاملی گرفته نشد. هیچ‌چیز «دیده‌شده» نشد.",
-             "> زمان انتشار به وقت تهران. سقفی نیست؛ همه نامزدها آمده‌اند.", "",
+             "> زمان انتشار به وقت تهران. سقفی نیست؛ همه نامزدها آمده‌اند.",
+             f"> «{EDU_LABEL}» یعنی عنوان نشان می‌دهد روش یا ابزار یاد می‌دهد؛ در منابع رصد مقدم است.", "",
              "| مورد | مقدار |", "|---|---|",
              f"| {SUGGEST_LABEL} — صف پیشنهاد | {len(sugg)} |",
              f"| نامزد منابع رصد | {len(watch)} |",
+             f"| {EDU_LABEL} — از عنوان | {sum(1 for it in items if it.get('educational'))} |",
              f"| کوتاه ردشده — ف۸ | {len(r['short'])} |",
              f"| کهنه — دیده نشد | {len(r['stale'])} |",
              f"| عنوان غیرکریپتویی — فقط متن | {len(r['off_topic'])} |",
@@ -1303,7 +1334,10 @@ def render_list(lst: dict, notes: dict[str, str], vstate: dict, names: dict[str,
 
     def row(it: dict) -> str:
         who = f"{it['channel']} — {SINGLE_ROLE}" if it.get("channel") else names.get(it["source"]) or "—"
-        cells = [str(it["n"]), I._cell(who), I._cell(it["title"])[:80] or "—",
+        title = I._cell(it["title"])[:80] or "—"
+        if it.get("educational"):
+            title = f"**{EDU_LABEL}** — {title}"
+        cells = [str(it["n"]), I._cell(who), title,
                  tehran_time(it["published"]), I.fmt_ts(it["seconds"]),
                  f"https://www.youtube.com/watch?v={it['video_id']}"]
         if it["suggested"]:
@@ -1760,6 +1794,18 @@ def _video_block(n: int, vid: str, e: dict, names: dict[str, str], intake: Path,
     lines += ["", "**روش تازه:**", ""]
     lines += [f"- {I._cell(m['area'])}: {I._cell(m['rule'])} — {I._cell(m['library'])}" for m in fresh] \
         or ["- روش تازه‌ای ثبت نشد."]
+
+    # هدف یادگیری، ۸ اکتبر — همان دو بخش گزارش، کوتاه
+    xs = _learned_items(cards)
+    lines += ["", "**رادار چه یاد گرفت:**", ""]
+    if xs is None:
+        lines.append("- ثبت نشده.")
+    else:
+        lines += [f"- {LEARN_KINDS[x['kind']][0]} {I._cell(x['name'])} — {_learn_status(x)} — "
+                  f"`{LEARN_KINDS[x['kind']][1]}`" for x in xs] or ["- هیچ."]
+    ls = _amir_lesson(cards)
+    lines += ["", "**درس برای امیر:**", ""]
+    lines += [f"- {I._cell(x)}" for x in ls] if ls is not None else ["- ثبت نشده."]
     return lines
 
 
@@ -2129,6 +2175,116 @@ def _methods_section(cards: dict) -> list[str]:
     return lines
 
 
+# ─── هدف یادگیری — تصمیم کاربر، ۸ اکتبر ۲۰۲۶: کاربر ویدیو را بیشتر برای یادگیری رادار
+# برمی‌گزیند، نه برای خلاصه. گزارش سه بخش ثابت دارد، پیش از جزئیات خوانش — ف۳۶.
+LEARNED_HEAD = "## رادار چه یاد گرفت"
+CLAIMS_HEAD = "## ادعاها — به بیان ما، نه نقل"
+LESSON_HEAD = "## درس برای امیر"
+LEARN_KEYS = ("kind", "name", "new", "note")
+# نوع ← (برچسب، فایلی که یادگرفته در آن نوشته می‌شود، نسبت به ریشه مخزن)
+LEARN_KINDS = {"method": ("روش", "method-library.md"),
+               "tool": ("ابزار یا نمودار", "references/chart-tools.md"),
+               "reading": ("نکته خواندن نمودار", "references/chart-reading.md")}
+LESSON_LINES = (3, 5)
+NAME_MAX = 80
+BEFORE_GOAL = "خوانده پیش از هدف یادگیری، ۸ اکتبر ۲۰۲۶"
+
+
+def validate_learned(cards: dict) -> list[str]:
+    """
+    دو میدان اختیاری سند کارت. learned: [{kind, name, new, note}] — name شناسه مدخل در
+    فایل همان نوع است، مثل «ر۵۰» یا نام ابزار؛ new یعنی مدخل تازه، وگرنه شاهد تازه.
+    amir_lesson: ۳ تا ۵ خط فارسی ساده. داوری ماست، نه خوانده از تصویر.
+    """
+    errs = []
+    m = cards.get("learned")
+    if m is not None and not isinstance(m, list):
+        errs.append("learned: باید فهرست باشد")
+    for i, x in enumerate(m if isinstance(m, list) else []):
+        if not (isinstance(x, dict) and set(x) == set(LEARN_KEYS) and x["kind"] in LEARN_KINDS
+                and isinstance(x["new"], bool)
+                and all(isinstance(x[k], str) and x[k].strip() for k in ("name", "note"))):
+            errs.append(f"learned[{i}]: باید {{kind: {'، '.join(LEARN_KINDS)}؛ name و note متن ناتهی؛ "
+                        "new: true یا false}} باشد")
+        elif len(x["note"]) > F.TEXT_MAX or len(x["name"]) > NAME_MAX:
+            errs.append(f"learned[{i}]: note بالای {F.TEXT_MAX} یا name بالای {NAME_MAX} نویسه")
+    ls = cards.get("amir_lesson")
+    if ls is None:
+        return errs
+    lo, hi = LESSON_LINES
+    if not (isinstance(ls, list) and lo <= len(ls) <= hi):
+        return errs + [f"amir_lesson: باید فهرست {lo} تا {hi} خط باشد"]
+    for i, x in enumerate(ls):
+        if not (isinstance(x, str) and x.strip()):
+            errs.append(f"amir_lesson[{i}]: متن ناتهی")
+        elif len(x) > F.TEXT_MAX:
+            errs.append(f"amir_lesson[{i}]: بالای {F.TEXT_MAX} نویسه")
+    return errs
+
+
+def learned_unwritten(cards: dict, root: Path) -> list[str]:
+    """
+    هر یادگرفته باید در فایل نوعش با نام و شناسه ویدیو آمده باشد. گزارشی که می‌گوید
+    «یاد گرفت» و فایل خالی است، دروغ می‌گوید. فقط پس از validate_learned.
+    """
+    vid = str(cards.get("video_id") or "")
+    errs: list[str] = []
+    texts: dict[str, str | None] = {}
+    for i, x in enumerate(cards.get("learned") or []):
+        rel = LEARN_KINDS[x["kind"]][1]
+        if rel not in texts:
+            p = root / rel
+            texts[rel] = p.read_text(encoding="utf-8") if p.is_file() else None
+        if texts[rel] is None:
+            errs.append(f"learned[{i}] «{x['name']}»: فایل {rel} نیست")
+        elif x["name"] not in texts[rel] or vid not in texts[rel]:
+            errs.append(f"learned[{i}] «{x['name']}»: در {rel} با شناسه {vid} نیامده — اول آنجا بنویس")
+    return errs
+
+
+def _learn_status(x: dict) -> str:
+    if not x["new"]:
+        return "شاهد تازه"
+    return "تازه — آزمون‌نشده" if x["kind"] == "method" else "تازه"
+
+
+def _learned_items(cards: dict) -> list[dict] | None:
+    """یادگرفته‌های خوش‌ساخت؛ None یعنی کارت میدان را ندارد. خلاصه روزانه کارت را اعتبارسنجی نمی‌کند."""
+    m = cards.get("learned")
+    if not isinstance(m, list):
+        return None
+    return [x for x in m if isinstance(x, dict) and x.get("kind") in LEARN_KINDS
+            and isinstance(x.get("name"), str) and isinstance(x.get("note"), str)]
+
+
+def _learned_section(cards: dict) -> list[str]:
+    lines = ["", LEARNED_HEAD, ""]
+    xs = _learned_items(cards)
+    if xs is None:
+        return lines + [f"ثبت نشده — کارت میدان `learned` ندارد؛ {BEFORE_GOAL}."]
+    if not xs:
+        return lines + ["هیچ — این ویدیو روش، ابزار یا نکته خواندن تازه‌ای به رادار نداد، و شاهد تازه‌ای هم نبود."]
+    fresh = sum(1 for x in xs if x.get("new") is True)
+    lines += [f"تازه: {fresh} از {len(xs)} — «شاهد تازه» یعنی مدخل از پیش بود و این ویدیو شاهدش شد.", "",
+              "| نوع | نام در فایل | تازه یا شاهد | فایل | چه یاد گرفت |", "|---|---|---|---|---|"]
+    for x in xs:
+        label, rel = LEARN_KINDS[x["kind"]]
+        lines.append(f"| {label} | {I._cell(x['name'])} | {_learn_status(x)} | `{rel}` | {I._cell(x['note'])} |")
+    return lines
+
+
+def _amir_lesson(cards: dict) -> list[str] | None:
+    ls = cards.get("amir_lesson")
+    return [x for x in ls if isinstance(x, str) and x.strip()] if isinstance(ls, list) else None
+
+
+def _lesson_section(cards: dict) -> list[str]:
+    ls = _amir_lesson(cards)
+    if ls is None:
+        return ["", LESSON_HEAD, "", f"ثبت نشده — کارت میدان `amir_lesson` ندارد؛ {BEFORE_GOAL}."]
+    return ["", LESSON_HEAD, ""] + [f"- {I._cell(x)}" for x in ls]
+
+
 def _tekrargar_sections(cards: dict, cs: list[dict]) -> list[str]:
     """دو بخش گزارش تکرارگر: نکته‌های آموزشی با زمان ویدیو، و منبع اصلی ادعاهای نقل‌شده."""
     lines = ["", "## نکته‌های آموزشی", ""]
@@ -2177,6 +2333,29 @@ def render_report(cards: dict, meta: dict, man: dict | None = None, voice: dict 
         f"| مقدار خوانده از تصویر / ناخوانا | {acc[0]} / {acc[1]} |",
         f"| فایل کارت | `intake/{F.CHARTS_DIR.name}/{cards.get('source')}/{cards.get('video_id')}.json` |",
     ]
+
+    # سه بخش ثابت، پیش از جزئیات خوانش — هدف یادگیری، ۸ اکتبر ۲۰۲۶
+    lines += _learned_section(cards)
+    lines += ["", CLAIMS_HEAD, ""]
+    if any("claims" in c for c in cs):
+        claim_rows = [(c, cl) for c in cs for cl in (c.get("claims") or [])]
+        if claim_rows:
+            lines += ["| زمان | نماد صفحه | نامزد | ادعا |", "|---|---|---|---|"]
+            for c, cl in claim_rows:
+                refs = "، ".join(str(r.get("row")) for r in c.get("refs") or [] if r.get("role") == "claim")
+                coin = _val(c.get("coin")) if c.get("is_chart", True) is not False else "—"
+                origin = f" — گوینده اصلی: {I._cell(claim_origin(cl))}" if claim_origin(cl) else ""
+                lines.append(f"| {t(c)} | {I._cell(coin)} | {refs or '—'} | "
+                             f"{I._cell(claim_text(cl))[:CLAIM_MAX]}{origin} |")
+        else:
+            lines.append("هیچ ادعای قابل‌تسویه‌ای در کارت‌ها ثبت نشد.")
+    else:
+        lines.append("کارت‌ها میدان `claims` ندارند — خوانده پیش از نشست ۶ب.")
+    if man and (man.get("selection") or {}).get("unframed_candidates"):
+        un = man["selection"]["unframed_candidates"]
+        lines += ["", "نامزد ادعای بی‌فریم: " + "، ".join(str(r) for r in un)]
+    lines += _lesson_section(cards)
+    lines += ["", "---", "", "> بقیه گزارش پیوست است: خوانش کامل فریم‌ها، برای وارسی."]
 
     # نمودارها — کارت‌های پیاپی با یک نما یک ردیف‌اند
     lines += ["", "## نمودارها", "", "| زمان | نماد | تایم‌فریم | مقیاس | کارت |", "|---|---|---|---|---|"]
@@ -2229,26 +2408,6 @@ def render_report(cards: dict, meta: dict, man: dict | None = None, voice: dict 
     lines += [f"- {I._cell(n)}" for n in notes] or ["- یادداشت روشی ثبت نشده."]
     lines += _methods_section(cards)
 
-    # ادعاها
-    lines += ["", "## ادعاها — به بیان ما، نه نقل", ""]
-    if any("claims" in c for c in cs):
-        claim_rows = [(c, cl) for c in cs for cl in (c.get("claims") or [])]
-        if claim_rows:
-            lines += ["| زمان | نماد صفحه | نامزد | ادعا |", "|---|---|---|---|"]
-            for c, cl in claim_rows:
-                refs = "، ".join(str(r.get("row")) for r in c.get("refs") or [] if r.get("role") == "claim")
-                coin = _val(c.get("coin")) if c.get("is_chart", True) is not False else "—"
-                origin = f" — گوینده اصلی: {I._cell(claim_origin(cl))}" if claim_origin(cl) else ""
-                lines.append(f"| {t(c)} | {I._cell(coin)} | {refs or '—'} | "
-                             f"{I._cell(claim_text(cl))[:CLAIM_MAX]}{origin} |")
-        else:
-            lines.append("هیچ ادعای قابل‌تسویه‌ای در کارت‌ها ثبت نشد.")
-    else:
-        lines.append("کارت‌ها میدان `claims` ندارند — خوانده پیش از نشست ۶ب.")
-    if man and (man.get("selection") or {}).get("unframed_candidates"):
-        un = man["selection"]["unframed_candidates"]
-        lines += ["", "نامزد ادعای بی‌فریم: " + "، ".join(str(r) for r in un)]
-
     if cards.get("source") == TEKRARGAR:
         lines += _tekrargar_sections(cards, cs)
 
@@ -2292,7 +2451,11 @@ def report_cli(cards_path: Path, intake: Path, frames_root: Path, now: datetime 
         return 2
     man_path = frames_root / str(cards.get("video_id", "")) / "frames.json"
     man = json.loads(man_path.read_text(encoding="utf-8")) if man_path.exists() else None
-    errs = F.validate_cards(cards, man) + validate_methods(cards) + validate_lessons(cards)
+    errs = (F.validate_cards(cards, man) + validate_methods(cards) + validate_lessons(cards)
+            + validate_learned(cards))
+    if not errs:
+        # ریشه مخزن پدر پوشه intake است — جای method-library.md و references/
+        errs = learned_unwritten(cards, intake.parent)
     if errs:
         print(f"⛔ کارت نامعتبر — {len(errs)} خطا؛ گزارش ساخته نشد:", file=sys.stderr)
         for e in errs:
@@ -2300,6 +2463,10 @@ def report_cli(cards_path: Path, intake: Path, frames_root: Path, now: datetime 
         return 2
     if man is None:
         print(f"⚠️ فهرست فریم {man_path} نیست — هم‌خوانی frame_id سنجیده نشد")
+    missing = [k for k in ("learned", "amir_lesson") if k not in cards]
+    if missing:
+        print(f"⚠️ کارت میدان {'، '.join(missing)} ندارد — بخش «رادار چه یاد گرفت» یا «درس برای امیر» "
+              "«ثبت نشده» می‌ماند. هدف یادگیری، ۸ اکتبر ۲۰۲۶: CLAUDE.md، روال ویدیو")
     meta = {}
     doc = Path(str(cards.get("doc") or ""))
     if doc.is_file():

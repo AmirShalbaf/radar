@@ -142,6 +142,41 @@ def test_list_keeps_todays_rules(env, capsys) -> None:
     assert gold in out and short in out                       # بی‌شماره، ولی گفته می‌شود
 
 
+@pytest.mark.parametrize("title,edu", [
+    ("آموزش تحلیل تکنیکال | صفر تا 100 استراتژی حمایت و مقاومت !", True),
+    ("[03] آموزش تحلیل‌ تکنیکال  - استراتژی ترید ارشیاعزیز پور پارت 3", True),
+    ("چطور سطح حمایت را رسم کنیم", True),
+    ("How to Read the Liquidation Heatmap", True),
+    ("Bitcoin: The Indicator Nobody Talks About", True),
+    ("چرا بیت کوین سقوط کرد؟ پشت پرده ریزش", False),
+    ("تحلیل درست بیت کوین", False),                  # «درست» درس نیست
+    ("آینده روشن اتریوم", False),                    # «روشن» روش نیست
+    ("Classic Bitcoin Cycle Top", False),             # Classic کلاس نیست
+    ("Payrolls Come in Weak, Unemployment Ticks Higher", False),
+])
+def test_educational_title(title, edu) -> None:
+    """هدف یادگیری، ۸ اکتبر: عنوانی که روش یا ابزار یاد می‌دهد «آموزشی» است."""
+    assert V.is_educational(title) is edu
+
+
+def test_educational_titles_are_labeled_and_come_first(env, capsys) -> None:
+    w = World()
+    news = w.add("tekrargar", "news", ago(1), title="Bitcoin price today")
+    edu_en = w.add("benjamin_cowen", "edu1", ago(3), title="How to Read the Liquidation Heatmap")
+    edu_fa = w.add("cryptocity_pro", "edu2", ago(2), title="آموزش اندیکاتور CVD")
+    q = w.add(None, "q", ago(5), title="پیشنهاد بی‌برچسب")
+    suggest_file(q, "2026-10-07T20:00:00Z")
+    assert run_list(w) == 0
+    # پیشنهاد کاربر اول می‌ماند؛ در منابع رصد آموزشی مقدم، هر گروه تازه‌تر اول
+    assert [it["video_id"] for it in listed()] == [q, edu_fa, edu_en, news]
+    out = capsys.readouterr().out
+    row = {v: next(line for line in out.splitlines() if f"watch?v={v}" in line)
+           for v in (news, edu_en, edu_fa)}
+    assert V.EDU_LABEL == "آموزشی"
+    assert V.EDU_LABEL in row[edu_en] and V.EDU_LABEL in row[edu_fa]
+    assert V.EDU_LABEL not in row[news]
+
+
 def test_suggestions_come_separately(env, capsys) -> None:
     w = World()
     a = w.add("tekrargar", "a", ago(1))
@@ -286,3 +321,28 @@ def test_resuggest_after_user_skip_is_accepted(env) -> None:
     assert run_pick(w, "none") == 0
     res = V.enqueue(Path("intake"), f"https://www.youtube.com/watch?v={a}", "", NOW)
     assert res.rc == 0
+
+
+def test_resuggested_skip_goes_through_list_and_pick(env) -> None:
+    """
+    پیشنهاد کاربر بر «رد به انتخاب کاربر» مقدم است — تصمیم کاربر، ۸ اکتبر ۲۰۲۶. تا
+    آخر راه، نه فقط ورود به صف؛ و هر دو حالت: ویدیوی رصد ردشده، و پیشنهادی که خودش
+    رد شد و نتیجه‌اش در done/ نشسته است.
+    """
+    w = World()
+    a = w.add("cryptocity_pro", "a", ago(1))
+    q = w.add(None, "q", ago(2))
+    suggest_file(q, "2026-10-07T20:00:00Z")
+    assert run_list(w) == 0
+    assert run_pick(w, "none") == 0
+    assert videos()[a]["status"] == videos()[q]["status"] == V.USER_SKIPPED
+    for v in (a, q):
+        assert V.enqueue(Path("intake"), f"https://www.youtube.com/watch?v={v}", "", NOW).rc == 0
+    later = NOW + timedelta(hours=1)
+    assert run_list(w, later) == 0
+    assert {it["video_id"] for it in listed() if it["suggested"]} == {a, q}
+    assert run_pick(w, f"{number_of(a)},{number_of(q)}", later) == 0
+    assert w.frames == [a, q]
+    st = videos()
+    assert st[a]["status"] == st[q]["status"] == "ready"
+    assert st[a]["suggested"] is True and st[a]["source"] == "cryptocity_pro"
