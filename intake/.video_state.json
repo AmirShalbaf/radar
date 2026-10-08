@@ -665,6 +665,52 @@
    "skipped_at": "2026-10-08T13:07:34Z",
    "first_at": "2026-10-08T13:07:34Z",
    "channel_id": "UCRvqjQPSeaWn-uEx-w0XOIg"
+  },
+  "xIUAb6nrv20": {
+   "source": "cryptocity_pro",
+   "title": "آموزش صفر تا صد ساخت واچ لیست هفتگی ارزدیجیتال !",
+   "published": "2026-07-12T14:32:11Z",
+   "channel_id": "UC2I0e9vRItuSE8-1ub_35AA",
+   "status": "seen",
+   "first_at": "2026-10-08T17:51:13Z",
+   "detail": "",
+   "suggested": true,
+   "picked_at": "2026-10-08T17:51:13Z",
+   "doc": "intake/cryptocity_pro/2026-07-12_آموزش-صفر-تا-صد-ساخت-واچ-لیست-هفتگی-ارزد_xIUAb6.md",
+   "frames_md": "frames/xIUAb6nrv20/FRAMES.md",
+   "template": "frames/xIUAb6nrv20/card_template.json",
+   "cards": "intake/charts/cryptocity_pro/xIUAb6nrv20.json",
+   "seen_at": "2026-10-08T18:24:15Z",
+   "report": "intake/reports/cryptocity_pro/xIUAb6nrv20.md"
+  },
+  "se6UlLbDTEo": {
+   "source": "benjamin_cowen",
+   "title": "Bitcoin: Q4 2026",
+   "published": "2026-10-08T16:59:27+00:00",
+   "channel_id": "",
+   "status": "seen",
+   "first_at": "2026-10-08T17:51:13Z",
+   "detail": "FramesError: yt-dlp: ERROR: \r[download] Got error: HTTPSConnectionPool(host='rr9---sn-n8v7znsy.googlevideo.com', port=443): Read timed out. (read timeout=20.0)",
+   "seen_at": "2026-10-08T18:31:48Z",
+   "report": "intake/reports/benjamin_cowen/se6UlLbDTEo.md"
+  },
+  "UPPCCKRm51U": {
+   "source": "tekrargar",
+   "title": "هشدار مهم بیت کوین! لایو ریسرچ بررسی بازار همراه با تکرارگر",
+   "published": "2026-10-08T15:43:49+00:00",
+   "status": "user_skipped",
+   "skipped_at": "2026-10-08T17:51:13Z",
+   "first_at": "2026-10-08T17:51:13Z",
+   "channel_id": "UCg7VGpxh_RQrYL5nLyF-V0g"
+  },
+  "7lBaoC08nEQ": {
+   "source": "benjamin_cowen",
+   "title": "NFA Live! Bond Yields Surge, Crypto Stalls, & is AI Overhyped?",
+   "published": "2026-10-08T13:40:13+00:00",
+   "status": "user_skipped",
+   "skipped_at": "2026-10-08T17:51:13Z",
+   "first_at": "2026-10-08T17:51:13Z",
+   "channel_id": "UCRvqjQPSeaWn-uEx-w0XOIg"
   }
  },
  "runs": {
@@ -1094,6 +1140,47 @@
      "5lGllMBT60k",
      "wJcattOSu-M",
      "-Mb-s09YdL0"
+    ]
+   },
+   {
+    "at": "2026-10-08T17:51:13Z",
+    "picked": [
+     "xIUAb6nrv20"
+    ],
+    "deferred": [],
+    "short": [],
+    "stale": [],
+    "off_topic": [],
+    "failed": [
+     {
+      "video_id": "se6UlLbDTEo",
+      "detail": "شکست — FramesError: yt-dlp: ERROR: \r[download] Got error: HTTPSConnectionPool(host='rr9---sn-n8v7znsy.googlevideo.com', port=443): Read timed out. (read timeout=20.0)"
+     }
+    ],
+    "untried": [],
+    "feed_failures": [],
+    "queue": [
+     {
+      "video_id": "xIUAb6nrv20",
+      "outcome": "ready"
+     }
+    ],
+    "blocked": "",
+    "mode": "pick",
+    "listed_at": "2026-10-08T17:40:53Z",
+    "listed": [
+     "xIUAb6nrv20",
+     "se6UlLbDTEo",
+     "UPPCCKRm51U",
+     "7lBaoC08nEQ"
+    ],
+    "chosen": [
+     "xIUAb6nrv20",
+     "se6UlLbDTEo"
+    ],
+    "user_skipped": [
+     "UPPCCKRm51U",
+     "7lBaoC08nEQ"
     ]
    }
   ]

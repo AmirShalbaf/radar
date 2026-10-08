@@ -1,0 +1,3349 @@
+{
+ "schema": 1,
+ "kind": "radar-chart-cards",
+ "video_id": "se6UlLbDTEo",
+ "doc_id": "2026-10-08_benjamin_cowen_se6UlLbD",
+ "doc": "intake/benjamin_cowen/2026-10-08_Bitcoin-Q4-2026_se6UlL.md",
+ "source": "benjamin_cowen",
+ "url": "https://www.youtube.com/watch?v=se6UlLbDTEo",
+ "title": "Bitcoin - Q4 2026",
+ "frames_tool": "radar_frames 1.1",
+ "guide": "references/chart-reading.md",
+ "read_by": "مدل — انتخاب کاربر، شماره ۲ فهرست، هدف یادگیری",
+ "read_at": "2026-10-08",
+ "cards": [
+  {
+   "frame_id": "se6UlLbDTEo_00m46.0s",
+   "t": 46.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 3,
+     "time": "00:46",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 2,
+     "time": "00:19",
+     "role": "claim",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 1,
+     "time": "00:02",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش «3d 9h» زیر قیمت زنده — بسته هفتگی، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 144000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 36050,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "قیمت زنده 81,598.55، شمارش 3d 9h؛ تغییر شمع −4,908.62 (−5.67%)",
+     "confidence": "high"
+    },
+    {
+     "text": "پنل نماد: BTCUSD 81,587.3؛ 81,301.63",
+     "confidence": "high"
+    },
+    {
+     "text": "BTCUSD شاخص؛ سرخط نمودار زیر قاب دوربین است",
+     "confidence": "high"
+    }
+   ],
+   "speech": "فصل چهارم ۲۰۲۶ را بررسی می‌کند؛ بیت‌کوین حدود ۸۱ تا ۸۲ هزار است؛ فصل چهارم سال‌های میان‌دوره‌ای تاریخی خوب نبوده.",
+   "method_notes": [
+    "تبلیغ اشتراک و همایش سایت خودش — Into The Cryptoverse"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف حدود 81 تا 82 هزار؛ صفحه 81,598.55"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_02m19.5s",
+   "t": 139.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 7,
+     "time": "02:30",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش «3d 9h» زیر قیمت زنده — بسته هفتگی، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 117000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 132,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "پیکان‌های زرد دستی زیر کف‌های ۲۰۱۸، ۲۰۲۲ و ۲۰۲۶ — کف فوریه، تابستان و فصل چهارم",
+     "confidence": "high"
+    },
+    {
+     "text": "برچسب‌های آبی محور 15,677.82 و 5,018.09 — لنگر ترسیم برگزیده، د۱",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده 81,430.41",
+     "confidence": "high"
+    }
+   ],
+   "speech": "الگو: بیت‌کوین معمولاً کف فوریه، کف تابستان و کف فصل چهارم دارد — ۲۰۱۸ و ۲۰۲۲.",
+   "method_notes": [
+    "فصلی بودن سال میان‌دوره‌ای: سه کف فوریه، تابستان و فصل چهارم — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "پیکان‌ها زیر همان کف‌های گفته‌شده‌اند"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_02m30.0s",
+   "t": 150.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 7,
+     "time": "02:30",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش «3d 9h» زیر قیمت زنده — بسته هفتگی، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 117000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 132,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "ابزار اندازه‌گیری ۲۰۱۹: −7,498.34 (−54.06%) −749,834؛ برچسب‌های آبی 13,870.34 و 6,372.01",
+     "confidence": "high"
+    },
+    {
+     "text": "107,935.33 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "مقایسه با ۲۰۱۹: سقف روی بی‌اعتنایی، بی رالی سرخوشانه؛ حدود ۵۴٪ افت هر دو بار.",
+   "method_notes": [
+    "وارسی، محاسبه‌شده: 7,498.34 ÷ 13,870.34 = 54.06٪ — د۳"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۵۴٪؛ ابزار −54.06٪"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_02m45.0s",
+   "t": 165.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 7,
+     "time": "02:30",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش «3d 9h» زیر قیمت زنده — بسته هفتگی، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 117000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 132,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "ابزار اندازه‌گیری ۲۰۲۵ تا ۲۰۲۶: −68,004.82 (−54.06%) −6,800,482؛ برچسب‌های آبی 125,794.56 و 57,789.75",
+     "confidence": "high"
+    },
+    {
+     "text": "ابزار ۲۰۱۹ همان −54.06٪ کنار آن",
+     "confidence": "high"
+    },
+    {
+     "text": "10,337.38 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "هر دو افت حدود ۵۴٪ بود؛ بی رالی سرخوشانه شاید افت کندتر باشد چون فروش وحشت‌زده کمتر است.",
+   "method_notes": [
+    "وارسی، محاسبه‌شده: 68,004.82 ÷ 125,794.56 = 54.06٪",
+    "دو اندازه برابر تا صدم درصد: لنگر پایین 57,789.75 زیر کف یادداشت‌شده 57,909.52 است؛ افت تا آن کف 53.97٪ — د۳۷"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف ۵۴٪؛ هر دو ابزار −54.06٪"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_03m48.5s",
+   "t": 228.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 10,
+     "time": "03:52",
+     "role": "before",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش «3d 9h» زیر قیمت زنده — بسته هفتگی، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 117000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 132,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "60,321.25 — نشانگر موس روی کف ۲۰۲۶، د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده 81,428.90",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بازده از کف تا کف: بازار نزولی ۲۰۱۹ پس از حدود ۶ ماه تمام شد، ولی با ریزش قیمتی همه‌گیری.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف درباره بازده کف تا کف است؛ آن نمودار روی صفحه نیست"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_03m52.0s",
+   "t": 232.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 10,
+     "time": "03:52",
+     "role": "claim",
+     "strength": 2,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش «3d 9h» زیر قیمت زنده — بسته هفتگی، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 117000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 132,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "پیکان زرد ۲۰۱۹ و پیکان زرد ۲۰۲۶ — دو حرکت هم‌شکل",
+     "confidence": "high"
+    },
+    {
+     "text": "برچسب‌های آبی 10,406.88 و 6,570.16 — لنگر پیکان، د۱",
+     "confidence": "high"
+    },
+    {
+     "text": "5,672.02 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "افت آن بار حدود ۲۵ هفته و این بار حدود ۳۸ هفته طول کشید؛ حرکت امروز شبیه آن جهش است، بی همه‌گیری.",
+   "method_notes": [
+    "قیاس زمانی: ۲۵ هفته در برابر ۳۸ هفته — از حرف"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_04m30.5s",
+   "t": 270.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 11,
+     "time": "04:32",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش «3d 9h» زیر قیمت زنده — بسته هفتگی، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 124000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 14320,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 62400,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 65,000 و 61,000"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید زیر کف‌های ۲۰۲۶ — کف محدوده",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 62400.0,
+      "cutoff": "2026-10-08T15:30:00+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-28T00:00:00+00:00",
+      "atr": 6236.883825279568,
+      "touches": null,
+      "nearest": 58256.1988246817,
+      "nearest_touches": 3,
+      "distance_atr": 0.6644024951246477,
+      "distance_pct": 6.640707011728049,
+      "chance_pct": 30.434782608695656,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "پیکان زرد رو به کف حدود ۵۷ هزار؛ برچسب‌های آبی 57,464.02 و 53,232.30 — لنگر پیکان، د۱",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده 81,512.26",
+     "confidence": "high"
+    }
+   ],
+   "speech": "جای امروز بیت‌کوین خطرناک است اگر اینجا ببندد؛ می‌شود گفت پایین فیک‌اوت بود.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "پیکان روی شکست زیر خط و برگشت"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_04m33.0s",
+   "t": 273.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 11,
+     "time": "04:32",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش «3d 9h» زیر قیمت زنده — بسته هفتگی، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 124000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 14320,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 62400,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 65,000 و 61,000"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید زیر کف‌های ۲۰۲۶ — کف محدوده",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 62400.0,
+      "cutoff": "2026-10-08T15:30:00+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-28T00:00:00+00:00",
+      "atr": 6236.883825279568,
+      "touches": null,
+      "nearest": 58256.1988246817,
+      "nearest_touches": 3,
+      "distance_atr": 0.6644024951246477,
+      "distance_pct": 6.640707011728049,
+      "chance_pct": 30.434782608695656,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "54,756.24 — نشانگر موس، د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده 81,515.27",
+     "confidence": "high"
+    }
+   ],
+   "speech": "کف پایین حدود ۵۷ هزار بود، شبیه کف تابستان ۲۰۱۸ حدود ۵۷۰۰ — ده برابر.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "پیکان زیر خط همان کف حدود ۵۷ هزار است"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_04m59.5s",
+   "t": 299.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 11,
+     "time": "04:32",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 13,
+     "time": "04:51",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 12,
+     "time": "04:41",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 14,
+     "time": "05:01",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش «3d 9h» زیر قیمت زنده — بسته هفتگی، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 121000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 475,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 61101.08,
+      "confidence": "high",
+      "from": "image",
+      "how": "متن یادداشت قیمت"
+     },
+     "kind": "horizontal",
+     "label": "یادداشت قیمت آبی — کف فوریه ۲۰۲۶",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 61101.08,
+      "cutoff": "2026-10-08T15:30:00+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-28T00:00:00+00:00",
+      "atr": 6236.883825279568,
+      "touches": null,
+      "nearest": 58256.1988246817,
+      "nearest_touches": 3,
+      "distance_atr": 0.45613823425527444,
+      "distance_pct": 4.656024370302952,
+      "chance_pct": 30.434782608695656,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 57909.52,
+      "confidence": "high",
+      "from": "image",
+      "how": "متن یادداشت قیمت"
+     },
+     "kind": "horizontal",
+     "label": "یادداشت قیمت آبی — کف تابستان ۲۰۲۶",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 57909.52,
+      "cutoff": "2026-10-08T15:30:00+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-09-28T00:00:00+00:00",
+      "atr": 6236.883825279568,
+      "touches": 3,
+      "nearest": 58256.1988246817,
+      "nearest_touches": 3,
+      "distance_atr": 0.055585262511469266,
+      "distance_pct": 0.5986560149034241,
+      "chance_pct": 30.434782608695656,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": 19.490254872563717,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 5928.66,
+      "confidence": "high",
+      "from": "image",
+      "how": "متن یادداشت قیمت"
+     },
+     "kind": "horizontal",
+     "label": "یادداشت قیمت آبی — کف فوریه ۲۰۱۸",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 5928.66,
+      "cutoff": "2026-10-08T15:30:00+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-28T00:00:00+00:00",
+      "atr": 6236.883825279568,
+      "touches": null,
+      "nearest": 23447.428070175436,
+      "nearest_touches": 4,
+      "distance_atr": 2.808897609919832,
+      "distance_pct": 295.49287815755054,
+      "chance_pct": 30.434782608695656,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "یادداشت دوم ۲۰۱۸ نیمه‌پنهان زیر پیکان: …53.98",
+     "confidence": "low"
+    },
+    {
+     "text": "قیمت زنده 81,427.80",
+     "confidence": "high"
+    }
+   ],
+   "speech": "هم ۲۰۱۸ و هم ۲۰۲۶ کف فوریه را زیر زدند؛ آمیزه‌ای از رالی ۲۰۱۸ و ۲۰۱۹؛ خودش در اندازه این رالی اشتباه کرده بود.",
+   "method_notes": [
+    "قیاس ده برابر، محاسبه‌شده: 61,101.08 ÷ 5,928.66 = 10.31",
+    "پذیرش اشتباه: در اندازه رالی اشتباه کرده بود — به گفته خودش"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "یادداشت‌ها همان کف فوریه و تابستان دو سال‌اند"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_06m28.5s",
+   "t": 388.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 16,
+     "time": "06:50",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش «3d 9h» زیر قیمت زنده — بسته هفتگی، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 152000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 24800,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 82500,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 88,000 و 78,000"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — سقف محدوده",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 82500.0,
+      "cutoff": "2026-10-08T15:30:00+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-28T00:00:00+00:00",
+      "atr": 6236.883825279568,
+      "touches": null,
+      "nearest": 77358.04994954591,
+      "nearest_touches": 3,
+      "distance_atr": 0.8244421724856491,
+      "distance_pct": 6.232666727823141,
+      "chance_pct": 30.434782608695656,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 62400,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 66,000 و 62,000"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — کف محدوده",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 62400.0,
+      "cutoff": "2026-10-08T15:30:00+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-09-28T00:00:00+00:00",
+      "atr": 6236.883825279568,
+      "touches": null,
+      "nearest": 58256.1988246817,
+      "nearest_touches": 3,
+      "distance_atr": 0.6644024951246477,
+      "distance_pct": 6.640707011728049,
+      "chance_pct": 30.434782608695656,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "دو دایره زرد: فیک‌اوت زیر کف محدوده و بالای سقف محدوده؛ مسیر زرد دستی",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده 81,293.38؛ تغییر شمع زیر نشانگر −9,669.38 (−11.17%)",
+     "confidence": "high"
+    },
+    {
+     "text": "52,737.40 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "همان‌طور که بیت‌کوین به پایین فیک زد، می‌تواند به بالا هم فیک بزند؛ اگر دوباره زیر محدوده بپذیرد، چرا به کف محدوده برنگردد.",
+   "method_notes": [
+    "تقارن فیک‌اوت: پذیرش دوباره زیر سقف محدوده یعنی شکست بالا تله بود — به گفته او"
+   ],
+   "claims": [
+    "BTC — اگر دوباره زیر سقف محدوده حدود 82,500 بپذیرد، برگشت به کف محدوده حدود 62,400 — خود او — مهلت: فصل چهارم ۲۰۲۶"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "دو دایره روی همان دو فیک‌اوت"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_08m10.5s",
+   "t": 490.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش «3d 9h» زیر قیمت زنده — بسته هفتگی، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 520000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 18250,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "US10Y — بازده ۱۰ ساله، محور چپ",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "هم‌پوشانی: بیت‌کوین شمعی، بازده ۱۰ ساله بنفش، محور چپ 0.400% تا 4.000%",
+     "confidence": "high"
+    },
+    {
+     "text": "دو خط عمودی سفید و دایره‌های زرد روی کف‌های بازده؛ مسیر زرد دستی روی بیت‌کوین",
+     "confidence": "high"
+    },
+    {
+     "text": "BTC 81,356.16 −5,151.01 (−5.95%)",
+     "confidence": "high"
+    },
+    {
+     "text": "2.596% و 86,356.78 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "کف‌های بیت‌کوین در فوریه و تابستان وقتی بود که بازده ۱۰ ساله پایین می‌آمد؛ بیت‌کوین پیش از سقف بازده درجا می‌زند، سپس می‌ریزد و نزدیک کف بازده کف می‌سازد.",
+   "method_notes": [
+    "بیت‌کوین در برابر بازده ۱۰ ساله: کف بیت‌کوین نزدیک کف بازده — به گفته او؛ ر۶۰"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "دایره‌ها روی کف‌های بازده، هم‌زمان کف‌های بیت‌کوین"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_08m36.0s",
+   "t": 516.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 20,
+     "time": "08:38",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "نمودار سایت، بی ساعت ضبط"
+   },
+   "coin": {
+    "value": "US10Y",
+    "confidence": "high",
+    "from": "image",
+    "how": "«US10Y · U.S. 10 Year…» در جعبه Asset"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "سایت Into The Cryptoverse"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "low",
+    "from": "image",
+    "how": "منحنی روزانه ژانویه تا دسامبر"
+   },
+   "chart_type": {
+    "value": "line",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "high",
+    "from": "image",
+    "how": "ROI Scale: Logarithmic روشن"
+   },
+   "price_axis": {
+    "top": {
+     "value": 2.75,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 1,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "US10Y Year-To-Date ROI؛ Latest Value 1.267 (2026)",
+     "confidence": "high"
+    },
+    {
+     "text": "سال‌های روشن: 2018، 2022، 2026؛ منحنی 2022 تا حدود 2.75",
+     "confidence": "high"
+    },
+    {
+     "text": "Data Sources: EOD Historical Data، CoinGecko",
+     "confidence": "high"
+    }
+   ],
+   "speech": "فصلی بودن، که به گفته او حدود ۷۰٪ کار می‌کند: بازده ۱۰ ساله در ۲۰۱۸ و ۲۰۲۲ حدود اکتبر تا نوامبر سقف زد؛ اگر ۲۰۲۶ هم چنین شود، ضعف فصل چهارم بیت‌کوین ممکن است.",
+   "method_notes": [
+    "بازده از ابتدای سال، سال‌ها روی هم — ابزار سایت خود او"
+   ],
+   "claims": [
+    "US10Y — سقف بازده در اکتبر تا نوامبر ۲۰۲۶، مثل ۲۰۱۸ و ۲۰۲۲؛ فصلی بودن به گفته او حدود ۷۰٪ — مهلت: نوامبر ۲۰۲۶"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "منحنی 2018 و 2022 حدود اکتبر و نوامبر سقف دارند"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "Into The Cryptoverse — سایت خود او",
+    "evidence": "صفحه Charts، Year-To-Date ROI، نوار Dashboard و Charts"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_09m25.5s",
+   "t": 565.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 24,
+     "time": "09:31",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "سه سری روی هم؛ شمارش دیده نمی‌شود"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 8250,
+     "confidence": "high",
+     "from": "image",
+     "how": "محور میانی USD"
+    },
+    "bottom": {
+     "value": 292,
+     "confidence": "high",
+     "from": "image",
+     "how": "محور میانی USD"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "US10Y — بنفش",
+      "confidence": "medium",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "طلا — خط سرخ، محور راست",
+      "confidence": "low",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "سه سری: بیت‌کوین شمعی، بازده ۱۰ ساله بنفش، طلا سرخ؛ دو محور USD راست",
+     "confidence": "high"
+    },
+    {
+     "text": "0.902%، 448.22 و 1,200.045 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "طلا و نقره برعکس‌اند و زودتر کف می‌زنند: ۲۰۲۲ طلا سپتامبر و اکتبر، بیت‌کوین نوامبر؛ ۲۰۱۸ طلا اوت، بیت‌کوین دسامبر. طلا حدود سقف بازده کف می‌زند.",
+   "method_notes": [
+    "طلا حدود سقف بازده ۱۰ ساله کف می‌زند، زودتر از بیت‌کوین — به گفته او؛ ر۶۰"
+   ],
+   "claims": [
+    "طلا — به کف نزدیک‌تر از بیت‌کوین است، اگر بیت‌کوین زیر محدوده بپذیرد — خود او — بی‌آستانه"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "سری سرخ بی برچسب نام است؛ طلا بودنش از حرف"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_11m03.0s",
+   "t": 663.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD/GOLD",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل نماد «BTCUSD/GOLD · Composite Symbols»"
+   },
+   "venue": {
+    "value": "TradingView composite",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش «3d 9h» زیر قیمت زنده — بسته هفتگی، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 68,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 1,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 38.1,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 40 و 35"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — سقف کانال نسبت",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTCUSDGOLD/USDT",
+      "venue": null,
+      "tf": "1W",
+      "class": "structural",
+      "level": 38.1,
+      "cutoff": "2026-10-08T15:30:00+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Wutc BTCUSDGOLD-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 7d BTCUSDGOLD_USDT: INVALID_CURRENCY_PAIR Invalid currency pair BTCUSDGOLD_USDT",
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 9.5,
+      "confidence": "low",
+      "from": "image",
+      "how": "زیر برچسب 10 نشانگر؛ برچسب 9 نیمه‌پنهان"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — کف کانال نسبت",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTCUSDGOLD/USDT",
+      "venue": null,
+      "tf": "1W",
+      "class": "structural",
+      "level": 9.5,
+      "cutoff": "2026-10-08T15:30:00+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "کندل نیامد — okx: اوکی‌اکس 1Wutc BTCUSDGOLD-USDT: کد 51001 Instrument ID, Instrument ID code, or Spread ID doesn't exist. ؛ gate: گیت 7d BTCUSDGOLD_USDT: INVALID_CURRENCY_PAIR Invalid currency pair BTCUSDGOLD_USDT",
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-09",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 20,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2027-03",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 9.5,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "projection",
+     "label": "مسیر سفید دستی: ریزش تا کف کانال و برگشت — د۱۸"
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "نسبت امروز 20، −0.5؛ کانال زرد صعودی کوتاه",
+     "confidence": "high"
+    },
+    {
+     "text": "10 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بیت‌کوین در چند ماه از طلا جلو زده؛ ولی شاید نسبت در این کانال است و دوباره به کف‌ها می‌شکند، کف می‌سازد و برمی‌گردد.",
+   "method_notes": [
+    "نسبت بیت‌کوین به طلا: محدوده چندساله و بازگشت به کف آن — به گفته او"
+   ],
+   "claims": [
+    "BTC/GOLD — اگر بیت‌کوین زیر محدوده بپذیرد، نسبت به کف کانال حدود 9.5 برمی‌گردد و آنجا کف می‌سازد — خود او — بی‌مهلت صریح"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "مسیر سفید همان ریزش به کف کانال است"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_11m33.5s",
+   "t": 693.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "شمارش دیده نمی‌شود"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 87000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 57120,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "خط سفید در حال رسم حدود 81,124 — نشانگر و ویرایش، د۲ و د۳۴؛ در 12:54 حدود 82,400 نشست",
+     "confidence": "medium"
+    },
+    {
+     "text": "برچسب آبی 81,154.65 — لنگر ترسیم، د۱",
+     "confidence": "high"
+    },
+    {
+     "text": "تغییر شمع −398.04 (−0.46%)",
+     "confidence": "high"
+    }
+   ],
+   "speech": "کل حرکتی که اشتباهش را ثابت کرد کاملاً برگشته؛ پس کی این فیک‌اوت است؟ در مه هم حرکتی بالای بخش قبلی محدوده بود.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_12m54.0s",
+   "t": 774.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "شمارش دیده نمی‌شود"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 98000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 56850,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 82400,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 84,000 و 82,000"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — سقف محدوده، پس از ویرایش 11:33",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTCUSD",
+      "venue": null,
+      "tf": null,
+      "class": null,
+      "level": 82400,
+      "cutoff": "2026-10-08T16:59:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "تایم‌فریم ناخوانا یا ناشناخته: None",
+      "cutoff_basis": "publish"
+     }
+    },
+    {
+     "price": {
+      "value": 79400,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 80,000 و 78,000"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید کوتاه — همانند مه",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTCUSD",
+      "venue": null,
+      "tf": null,
+      "class": null,
+      "level": 79400,
+      "cutoff": "2026-10-08T16:59:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "تایم‌فریم ناخوانا یا ناشناخته: None",
+      "cutoff_basis": "publish"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "قیمت زنده 80,956.66",
+     "confidence": "high"
+    },
+    {
+     "text": "تغییر شمع −398.04 (−0.46%)",
+     "confidence": "high"
+    }
+   ],
+   "speech": "در مه بیت‌کوین بالای سطح قبلی رفت، برگشت، دوباره بالا و سپس سقف پایین‌تر و ریزش؛ آیا همان تکرار می‌شود؟",
+   "method_notes": [
+    "همانندیابی: شکست مه ۲۰۲۶ و برگشت زیر آن — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "دو خط همان سطح مه و سقف محدوده امروزند"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_13m29.0s",
+   "t": 809.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-08T15:37:30+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش روزانه 08:22:30 زیر قیمت زنده تا بسته 00:00 وقت جهانی — د۴؛ روز انتشار ۸ اکتبر"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش ساعتی زیر قیمت زنده — بسته روزانه، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 94000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 52350,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 82500,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 84,000 و 82,000"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — سقف محدوده",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 82500.0,
+      "cutoff": "2026-10-08T15:37:30+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-10-07T00:00:00+00:00",
+      "atr": 2193.1553497825853,
+      "touches": 4,
+      "nearest": 82203.95799011532,
+      "nearest_touches": 4,
+      "distance_atr": 0.13498451439567577,
+      "distance_pct": 0.35883879986021905,
+      "chance_pct": 32.03398300849575,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 20.539730134932537,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 62400,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 63,400 و 62,200"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — کف محدوده",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 62400.0,
+      "cutoff": "2026-10-08T15:37:30+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-10-07T00:00:00+00:00",
+      "atr": 2193.1553497825853,
+      "touches": 5,
+      "nearest": 61952.70540888603,
+      "nearest_touches": 5,
+      "distance_atr": 0.2039502542117276,
+      "distance_pct": 0.7168182549903344,
+      "chance_pct": 32.03398300849575,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 9.44527736131934,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [
+    {
+     "p1": {
+      "time": {
+       "value": "2026-10-08",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 80500,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": "2026-11-20",
+       "confidence": "low",
+       "from": "image"
+      },
+      "price": {
+       "value": 71100,
+       "confidence": "low",
+       "from": "image"
+      }
+     },
+     "kind": "projection",
+     "label": "مسیر زرد دستی: ریزش تا حدود 71 هزار و برگشت — د۱۸"
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "دایره زرد روی شمع‌های برگشت زیر سقف محدوده",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده 81,109.83، شمارش 08:22:30",
+     "confidence": "high"
+    },
+    {
+     "text": "67,696.06 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "اگر نمودار پادشاه است، همان‌طور که بیت‌کوین به پایین فیک زد به بالا هم می‌تواند؛ اگر زیر بپذیرد، احتمالاً مثل همیشه در فصل چهارم پایین می‌رود.",
+   "method_notes": [],
+   "claims": [
+    "BTC — اگر زیر سقف محدوده حدود 82,500 بپذیرد، ریزش در فصل چهارم ۲۰۲۶ — خود او — مسیر دستی تا حدود 71 هزار"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "دایره روی همان برگشت زیر خط"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:37:30+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_15m22.5s",
+   "t": 922.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-08T15:39:04+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش روزانه 08:20:56 زیر قیمت زنده تا بسته 00:00 وقت جهانی — د۴؛ روز انتشار ۸ اکتبر"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش ساعتی زیر قیمت زنده — بسته روزانه، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 94000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 52350,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 82500,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 84,000 و 82,000"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — سقف محدوده",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 82500.0,
+      "cutoff": "2026-10-08T15:39:04+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-10-07T00:00:00+00:00",
+      "atr": 2193.1553497825853,
+      "touches": 4,
+      "nearest": 82203.95799011532,
+      "nearest_touches": 4,
+      "distance_atr": 0.13498451439567577,
+      "distance_pct": 0.35883879986021905,
+      "chance_pct": 32.03398300849575,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 20.539730134932537,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 62400,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 63,400 و 62,200"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — کف محدوده",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 62400.0,
+      "cutoff": "2026-10-08T15:39:04+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "strong",
+      "bars": 200,
+      "last_bar": "2026-10-07T00:00:00+00:00",
+      "atr": 2193.1553497825853,
+      "touches": 5,
+      "nearest": 61952.70540888603,
+      "nearest_touches": 5,
+      "distance_atr": 0.2039502542117276,
+      "distance_pct": 0.7168182549903344,
+      "chance_pct": 32.03398300849575,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 9.44527736131934,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "پیکان زرد روی سقف فیک‌اوت حدود 88 هزار و پیکان زرد روی کف حدود 58.9 هزار",
+     "confidence": "high"
+    },
+    {
+     "text": "برچسب‌های آبی 58,915.90 و 58,353.67 — لنگر پیکان، د۱",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده 81,170.56، شمارش 08:20:56",
+     "confidence": "high"
+    }
+   ],
+   "speech": "نمی‌شود فصل چهارم را فقط به خاطر یک سقف بالاتر کنار گذاشت؛ شانس غیرقابل‌چشم‌پوشی هست که این قرینه تابستان باشد.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "دو پیکان روی دو فیک‌اوت"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:39:04+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_15m50.0s",
+   "t": 950.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-08T15:39:32+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش روزانه 08:20:28 زیر قیمت زنده تا بسته 00:00 وقت جهانی — د۴؛ روز انتشار ۸ اکتبر"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش ساعتی زیر قیمت زنده — بسته روزانه، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 126000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 56300,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "خط زرد دستی حدود 83 هزار از سقف مه تا امروز",
+     "confidence": "high"
+    },
+    {
+     "text": "83,013.99 — نشانگر موس، د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده 81,147.98، شمارش 08:20:28",
+     "confidence": "high"
+    }
+   ],
+   "speech": "طلا به کف نزدیک‌تر است؛ اگر بیت‌کوین زیر این بپذیرد، نسبت بیت‌کوین به طلا به کف محدوده خونریزی می‌کند.",
+   "method_notes": [
+    "سقف مه و سقف امروز یک ناحیه‌اند — حدود 83 هزار، از نشانگر"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "خط زرد همان ناحیه حرف است"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:39:32+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_16m16.5s",
+   "t": 976.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 32,
+     "time": "16:20",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:39:58+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش روزانه 08:20:02 زیر قیمت زنده تا بسته 00:00 وقت جهانی — د۴؛ روز انتشار ۸ اکتبر"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش ساعتی زیر قیمت زنده — بسته روزانه، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 121000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 356,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "دایره زرد روی کف ۲۰۲۲ و خط زرد امروز حدود ۸۰ هزار",
+     "confidence": "high"
+    },
+    {
+     "text": "4,795.97 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "هر سال میان‌دوره‌ای یک ضربه غافلگیر دارد: چرخه قبل FTX بود؛ ۲۰۱۸ هم بسیاری کف تابستان را کف گرفتند و سپس ۵۰٪ ریزش آخر سال آمد.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "دایره روی کف FTX ۲۰۲۲"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:39:58+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_16m20.0s",
+   "t": 980.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 32,
+     "time": "16:20",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:40:02+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش روزانه 08:19:58 زیر قیمت زنده تا بسته 00:00 وقت جهانی — د۴؛ روز انتشار ۸ اکتبر"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش ساعتی زیر قیمت زنده — بسته روزانه، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 121000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 356,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "پیکان زرد ۲۰۱۸ زیر کف تابستان؛ 5,738.76 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "فصل چهارم تمام نشده تا تمام شود؛ نباید جزم‌اندیش بود.",
+   "method_notes": [
+    "کمتر جزم‌اندیش باش: تا پایان فصل چهارم حکم نده — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "پیکان روی کف ۲۰۱۸"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:40:02+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_16m33.0s",
+   "t": 993.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 32,
+     "time": "16:20",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-10-08_benjamin_cowen_se6UlLbD",
+     "row": 33,
+     "time": "16:46",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-08T15:40:15+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش روزانه 08:19:45 زیر قیمت زنده تا بسته 00:00 وقت جهانی — د۴؛ روز انتشار ۸ اکتبر"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش ساعتی زیر قیمت زنده — بسته روزانه، د۴"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 127500,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 36800,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "قیمت زنده 81,224.20، شمارش 08:19:45",
+     "confidence": "high"
+    },
+    {
+     "text": "59,522.85 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "بازار سخت است؛ نمودار نقره دهه ۲۰۰۰ را در ذهن داشته باش.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف مقدمه نمودار بعد است"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:40:15+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_17m56.0s",
+   "t": 1076.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "SILVER",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل نماد «SILVER · CFDs on Silver (US$)»"
+   },
+   "venue": {
+    "value": "CFD",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "شمارش دیده نمی‌شود"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 50.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 11.64,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 35.7,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 36.0 و 34.0"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — سقف محدوده نقره پس از ۲۰۱۱",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "SILVER",
+      "venue": null,
+      "tf": null,
+      "class": null,
+      "level": 35.7,
+      "cutoff": "2026-10-08T16:59:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "تایم‌فریم ناخوانا یا ناشناخته: None",
+      "cutoff_basis": "publish"
+     }
+    },
+    {
+     "price": {
+      "value": 26.3,
+      "confidence": "medium",
+      "from": "image",
+      "how": "درون‌یابی لگاریتمی میان 27.0 و 25.5"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — کف محدوده نقره",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "SILVER",
+      "venue": null,
+      "tf": null,
+      "class": null,
+      "level": 26.3,
+      "cutoff": "2026-10-08T16:59:27+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "تایم‌فریم ناخوانا یا ناشناخته: None",
+      "cutoff_basis": "publish"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "پیکان‌های زرد زیر سه کف و دایره زرد روی فیک‌اوت بالا؛ خطوط سفید زیگزاگ",
+     "confidence": "high"
+    },
+    {
+     "text": "نقره امروز 58.8965",
+     "confidence": "high"
+    },
+    {
+     "text": "39.5841 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "نقره پس از سقف ۲۰۱۱ در محدوده ماند و یک فیک‌اوت بزرگ رو به بالا داشت که همه را قانع کرد بازار گاوی برگشته؛ سپس ریخت.",
+   "method_notes": [
+    "همانند نقره ۲۰۱۱ تا ۲۰۱۳: فیک‌اوت بالای محدوده و ریزش — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "دایره روی همان فیک‌اوت"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_18m22.5s",
+   "t": 1102.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "SILVER",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل نماد «SILVER»"
+   },
+   "venue": {
+    "value": "CFD",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "شمارش دیده نمی‌شود"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 50.0,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 11.64,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "پیکان‌های زرد: کف فوریه، تابستان و فصل چهارم روی نقره",
+     "confidence": "high"
+    },
+    {
+     "text": "25.8564 — نشانگر موس، د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "سقف پایین‌تر و ریزش؛ فرسایش زمانی: پایین، بالا، پایین، با کف بالاتر — امیدوار است تکرار نشود.",
+   "method_notes": [
+    "فرسایش زمانی: پایین و بالا با کف بالاتر — به گفته او"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": ""
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   }
+  },
+  {
+   "frame_id": "se6UlLbDTEo_19m11.5s",
+   "t": 1151.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "شمارش هفتگی «3d 9h» تا دوشنبه 00:00 وقت جهانی: میان 15:00 و 16:00 وقت جهانی پنجشنبه ۸ اکتبر — د۱۱"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد «Bitcoin / U.S. Dollar · Index · Crypto»؛ سرخط زیر دوربین"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "medium",
+    "from": "image",
+    "how": "پنل نماد: Index"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "how": "شمارش ناخوانا"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "فاصله تیک‌ها رو به پایین بزرگ می‌شود — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 128000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 23900,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 82500,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب محور 82,500 روی خط"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — سقف محدوده",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTCUSD",
+      "venue": null,
+      "tf": null,
+      "class": null,
+      "level": 82500,
+      "cutoff": "2026-10-08T15:30:00+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "تایم‌فریم ناخوانا یا ناشناخته: None",
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 60450,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب نشانگر 60,513.92 دو پیکسل بالای خط، د۲"
+     },
+     "kind": "horizontal",
+     "label": "خط سفید — کف محدوده در این نما",
+     "drawn_by": "speaker",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTCUSD",
+      "venue": null,
+      "tf": null,
+      "class": null,
+      "level": 60450,
+      "cutoff": "2026-10-08T15:30:00+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "تایم‌فریم ناخوانا یا ناشناخته: None",
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "دایره و پیکان زرد روی شمع‌های بالای سقف محدوده",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده 81,105.14",
+     "confidence": "high"
+    }
+   ],
+   "speech": "یا ریزش دست‌کم تا کف محدوده، یا بسته دوباره بالای آن و صعود؛ میانه زیادی نمی‌بیند. اگر فیک‌اوت باشد، در راه پایین بسیاری را می‌سوزاند.",
+   "method_notes": [],
+   "claims": [
+    "BTC — یا ریزش دست‌کم تا کف محدوده حدود 60,500، یا بسته دوباره بالای حدود 82,500 و صعود؛ میانه کم — خود او — فصل چهارم ۲۰۲۶"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "دو خط همان کف و سقف محدوده‌اند"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "بنجامین کوون",
+    "evidence": "تریدینگ‌ویو خود او، واچ‌لیست با BTCUSD، رسم زرد دستی خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-08T15:30:00+00:00",
+    "confidence": "low",
+    "from": "image",
+    "how": "نمودار زنده؛ زمان ضبط"
+   }
+  }
+ ],
+ "methods": [
+  {
+   "area": "چرخه",
+   "rule": "سال میان‌دوره‌ای سه کف دارد: فوریه، تابستان و فصل چهارم — ۲۰۱۸ و ۲۰۲۲",
+   "where": "02:05 تا 02:44",
+   "library": "تازه — ر۵۹"
+  },
+  {
+   "area": "کلان",
+   "rule": "کف بیت‌کوین نزدیک کف بازده ۱۰ ساله؛ طلا حدود سقف بازده کف می‌زند، زودتر از بیت‌کوین",
+   "where": "07:39 تا 10:25",
+   "library": "تازه — ر۶۰"
+  },
+  {
+   "area": "محدوده",
+   "rule": "فیک‌اوت دو طرف دارد: پذیرش دوباره زیر سقف محدوده یعنی شکست بالا تله بود و کف محدوده هدف است",
+   "where": "06:11 تا 06:43، 13:33",
+   "library": "تازه — ر۶۱؛ نزدیک ج۲"
+  },
+  {
+   "area": "کلان",
+   "rule": "پس از افزایش نرخ سپتامبر در سال میان‌دوره‌ای، بیت‌کوین ۴۰ تا ۵۰ روز نگه داشت و سپس شکست",
+   "where": "14:02 تا 14:33",
+   "library": "تازه — ر۶۲"
+  }
+ ],
+ "learned": [
+  {
+   "kind": "method",
+   "name": "ر۵۹",
+   "new": true,
+   "note": "سال میان‌دوره‌ای: کف فوریه، تابستان و فصل چهارم؛ به گفته او حدود ۷۰٪"
+  },
+  {
+   "kind": "method",
+   "name": "ر۶۰",
+   "new": true,
+   "note": "کف بیت‌کوین نزدیک کف بازده ۱۰ ساله؛ طلا حدود سقف بازده کف می‌زند"
+  },
+  {
+   "kind": "method",
+   "name": "ر۶۱",
+   "new": true,
+   "note": "فیک‌اوت دو طرف دارد؛ پذیرش دوباره زیر سقف محدوده یعنی تله بالا"
+  },
+  {
+   "kind": "method",
+   "name": "ر۶۲",
+   "new": true,
+   "note": "پس از افزایش نرخ سپتامبر میان‌دوره‌ای، ۴۰ تا ۵۰ روز نگه‌داشت و سپس شکست"
+  },
+  {
+   "kind": "tool",
+   "name": "بازده ۱۰ ساله کنار بیت‌کوین",
+   "new": true,
+   "note": "رادار DGS10 را دارد؛ هم‌پوشانی و قاعده کف را نه"
+  },
+  {
+   "kind": "tool",
+   "name": "بازده از ابتدای سال، سال‌ها روی هم — Into The Cryptoverse",
+   "new": true,
+   "note": "سال جاری کنار سال‌های هم‌جای چرخه؛ ساختنی از داده رادار"
+  },
+  {
+   "kind": "tool",
+   "name": "نسبت بیت‌کوین به طلا",
+   "new": true,
+   "note": "نماد ترکیبی؛ ساختنی از بیت‌کوین و توکن طلا؛ رادار ندارد"
+  },
+  {
+   "kind": "reading",
+   "name": "د۳۷",
+   "new": true,
+   "note": "دو اندازه با درصد برابر تا صدم: لنگر دستی جفت شده؛ کف از یادداشت قیمت"
+  },
+  {
+   "kind": "reading",
+   "name": "د۳۸",
+   "new": true,
+   "note": "هم‌پوشانی چند سری: هر عدد نشانگر با محور خودش؛ سری بی‌نام از حرف"
+  },
+  {
+   "kind": "reading",
+   "name": "د۱۸",
+   "new": false,
+   "note": "مسیر دستی رو به آینده پیش‌بینی است؛ طرح روی گذشته نه"
+  }
+ ],
+ "amir_lesson": [
+  "کوون می‌گوید فصل چهارم سال‌های میان‌دوره‌ای — ۲۰۱۸ و ۲۰۲۲ — ضعیف بوده؛ الگو: کف فوریه، کف تابستان، کف فصل چهارم.",
+  "روش تازه: بیت‌کوین را کنار بازده اوراق ۱۰ ساله آمریکا بخوان؛ به گفته او کف بیت‌کوین نزدیک کف بازده می‌آید و طلا زودتر کف می‌زند.",
+  "فیک‌اوت دو طرف دارد: اگر قیمت دوباره زیر سقف محدوده حدود 82,500 بپذیرد، شکست بالا تله بوده و کف محدوده هدف است.",
+  "کجا به کار می‌آید: رادار بازده ۱۰ ساله را در امتیاز رژیم دارد؛ قاعده فصلی را ندارد و می‌شود آزمود — ر۵۹ و ر۶۰.",
+  "احتیاط: فصلی بودن به گفته خودش حدود ۷۰٪ کار می‌کند و نمونه فقط دو سه چرخه است؛ خودش هم گفت در اندازه این رالی اشتباه کرد."
+ ]
+}
