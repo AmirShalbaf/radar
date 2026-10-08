@@ -10,8 +10,9 @@
 - on_deadline: اگر باند با هیسترزیس — trade_band — دست‌کم «سازنده» شد، پله‌های
   پرنشده لغو؛ وگرنه در مهلت باقی‌مانده در بازار. باند نامعلوم یعنی «تصمیم لازم»،
   نه بازار و نه لغو.
-- rebuy: با سازنده‌شدن تأییدشده همان مقدارهای فروخته‌شده بازخرید، یا نزدیک سطح
-  ابطال و بالای کف. فقط تا مقدار فروخته‌شده.
+- rebuy: با سازنده‌شدن تأییدشده همان مقدارهای فروخته‌شده بازخرید. فقط تا مقدار
+  فروخته‌شده. بازخرید «نزدیک سطح ابطال» — اصلاح ۹ اکتبر، رویداد ۹۸ — فقط وقتی قیمت
+  بالای کف و دست‌کم min_below_sale_pct زیر قیمت واقعی فروش همان پله است.
 - گزارش سبد پیشرفت نقشه، شرط مهلت، وضع امروز شرط و نقشه بازخرید را نشان می‌دهد؛
   پایشگر در مهلت همان حکم شرط را می‌فرستد، نه «بازار» بی‌شرط.
 """
@@ -41,9 +42,11 @@ PLAN = {
     "on_deadline": {"cancel_if_band_at_least": "سازنده", "otherwise": "market"},
     "steps": [{"symbol": "ETH", "qty": 0.04, "price": 2625},
               {"symbol": "BNB", "qty": 0.12, "price": 783}],
-    "rebuy": {"note": "با سازنده‌شدن تأییدشده، یا نزدیک ابطال بالای کف",
-              "steps": [{"symbol": "ETH", "qty": 0.04, "floor": 2380.56},
-                        {"symbol": "BNB", "qty": 0.12, "floor": 702.39}]},
+    "rebuy": {"note": "با سازنده‌شدن تأییدشده، یا نزدیک ابطال بالای کف و ۵٪ زیر فروش",
+              "steps": [{"symbol": "ETH", "qty": 0.04, "floor": 2380.56,
+                         "min_below_sale_pct": 5},
+                        {"symbol": "BNB", "qty": 0.12, "floor": 702.39,
+                         "min_below_sale_pct": 5}]},
 }
 OLD_TRIM = {"at": "2026-10-02T08:17:19+00:00", "action": "trim", "symbol": "ETH",
             "delta": -0.0472, "price": 2755.0, "reason": "reserve"}
@@ -300,6 +303,130 @@ def test_section5_plan_deviates() -> None:
     assert "منحرف" in s5
 
 
+# ═══════════════ قانون بازخرید — تصمیم کاربر ۹ اکتبر، رویداد ۹۸ ═══════════════
+# بازخرید «نزدیک سطح ابطال» فقط بالای کف و دست‌کم ۵٪ زیر قیمت واقعی فروش همان پله.
+# وگرنه فقط با سازنده‌شدن تأییدشده باند. فروش در مهلت نزدیک ابطال و بازخرید فوری
+# همان‌جا فقط دو بار کارمزد است.
+
+def _fill(price, qty=0.04, sym="ETH", at="2026-10-09T03:00:00+00:00") -> dict:
+    return {"at": at, "action": "trim", "symbol": sym, "delta": -qty, "price": price,
+            "reason": "reserve"}
+
+
+def _rb(h, prices, plan=PLAN) -> dict:
+    return {r["symbol"]: r for r in W.rebuy_status(plan, h, prices)}
+
+
+def test_rebuy_rule_floor_is_five() -> None:
+    assert W.REBUY_MIN_BELOW_SALE_PCT == 5
+
+
+@pytest.mark.parametrize("gap", [None, 4, 4.99, "5", 0, 100, -5])
+def test_rebuy_step_needs_gap_of_at_least_five(gap) -> None:
+    step = {"symbol": "ETH", "qty": 0.04, "floor": 2380.56}
+    if gap is not None:
+        step["min_below_sale_pct"] = gap
+    with pytest.raises(W.WatchError):
+        W.validate_watch(_watch(dict(PLAN, rebuy={"steps": [step]})))
+
+
+@pytest.mark.parametrize("gap", [5, 7.5])
+def test_rebuy_step_gap_five_or_more_passes(gap) -> None:
+    step = {"symbol": "ETH", "qty": 0.04, "floor": 2380.56, "min_below_sale_pct": gap}
+    W.validate_watch(_watch(dict(PLAN, rebuy={"steps": [step]})))
+
+
+def test_rebuy_unsold() -> None:
+    rb = _rb(_h(), PRICES)
+    assert rb["ETH"]["window"] == "unsold" and rb["ETH"]["sold"] == 0
+    assert rb["ETH"]["sale"] is None and rb["ETH"]["ceiling"] is None
+
+
+@pytest.mark.parametrize("px,window", [
+    (2580.0, "above"),       # بالای سقف 2493.75 — فقط با سازنده‌شدن
+    (2493.75, "open"),       # درست ۵٪ زیر فروش
+    (2490.0, "open"),
+    (2380.57, "open"),       # درست بالای کف
+    (2380.56, "below"),      # در کف — ابطال
+    (2300.0, "below"),
+])
+def test_rebuy_window_after_limit_sale(px, window) -> None:
+    rb = _rb(_h((OLD_TRIM, ETH_FILL)), {"ETH": px, "BNB": 760.0})
+    e = rb["ETH"]
+    assert e["sale"] == 2625.0 and e["ceiling"] == pytest.approx(2625.0 * 0.95)
+    assert e["sold"] == pytest.approx(0.04) and e["window"] == window
+    assert rb["BNB"]["window"] == "unsold"
+
+
+def test_rebuy_deadline_sale_near_invalidation_has_no_window() -> None:
+    """
+    مهلت با باند محتاط: باقی‌مانده در بازار، نزدیک ابطال — 2450. سقف 2327.5 زیر
+    کف 2380.56 است؛ پس در هیچ قیمتی بازخرید نزدیک ابطال مجاز نیست، حتی 2400.
+    """
+    for px in (2400.0, 2381.0, 2330.0, 2600.0):
+        e = _rb(_h((_fill(2450.0),)), {"ETH": px})["ETH"]
+        assert e["ceiling"] == pytest.approx(2327.5) and e["window"] == "no_gap", px
+
+
+def test_rebuy_sale_without_price_is_no_data() -> None:
+    e = _rb(_h((_fill(None),)), {"ETH": 2400.0})["ETH"]
+    assert e["sold"] == pytest.approx(0.04) and e["sale"] is None
+    assert e["window"] == "no_sale"
+
+
+def test_rebuy_no_live_price() -> None:
+    assert _rb(_h((ETH_FILL,)), {})["ETH"]["window"] == "no_price"
+
+
+def test_rebuy_two_sales_uses_lowest() -> None:
+    """دو پله ETH پر در 2625 و 2700 — سقف از پایین‌تر، محتاطانه‌تر."""
+    plan = dict(PLAN, steps=[{"symbol": "ETH", "qty": 0.02, "price": 2625},
+                             {"symbol": "ETH", "qty": 0.02, "price": 2700}])
+    h = _h((_fill(2625.0, 0.02), _fill(2700.0, 0.02, at="2026-10-10T03:00:00+00:00")))
+    e = _rb(h, {"ETH": 2550.0}, plan)["ETH"]
+    assert e["sale"] == 2625.0 and e["ceiling"] == pytest.approx(2493.75)
+    assert e["window"] == "above"
+
+
+def test_rebuy_view_carries_rule() -> None:
+    rb = {r["symbol"]: r for r in _view(h=_h((OLD_TRIM, ETH_FILL)))["rebuy"]}
+    assert rb["ETH"]["window"] == "above" and rb["ETH"]["sale"] == 2625.0
+    assert rb["ETH"]["dist_pct"] == pytest.approx(100 * (2580.0 / 2380.56 - 1))
+
+
+def _rebuy_rows(view) -> dict[str, str]:
+    s6 = _section(_report(view), "۶")
+    tab = s6[s6.index("**نقشه بازخرید**"):]
+    return {ln.split("|")[1].strip(): ln for ln in tab.splitlines()
+            if ln.startswith("| ") and ln.split("|")[1].strip() in ("ETH", "BNB")}
+
+
+def test_section6_rebuy_explains_rule() -> None:
+    s6 = _section(_report(_view()), "۶")
+    tab = s6[s6.index("**نقشه بازخرید**"):]
+    assert "۵٪" in tab and "سازنده" in tab and "قیمت فروش" in tab and "سقف" in tab
+
+
+def test_section6_rebuy_window_open() -> None:
+    v = B.reserve_view(PLAN, _h((OLD_TRIM, ETH_FILL)), {"ETH": 2490.0, "BNB": 760.0},
+                       VAL, NOW, band="محتاط")
+    rows = _rebuy_rows(v)
+    assert "2625" in rows["ETH"] and "2493.75" in rows["ETH"] and "مجاز" in rows["ETH"]
+    assert "مجاز" not in rows["BNB"]
+
+
+def test_section6_rebuy_above_ceiling() -> None:
+    rows = _rebuy_rows(_view(h=_h((OLD_TRIM, ETH_FILL))))
+    assert "بالای سقف" in rows["ETH"] and "مجاز" not in rows["ETH"]
+
+
+def test_section6_rebuy_deadline_sale_near_floor() -> None:
+    v = B.reserve_view(PLAN, _h((_fill(2450.0),)), {"ETH": 2400.0, "BNB": 760.0},
+                       VAL, LATE, band="محتاط")
+    rows = _rebuy_rows(v)
+    assert "سقف زیر کف" in rows["ETH"] and "مجاز" not in rows["ETH"]
+
+
 # ═══════════════ قفل داده — watch.json واقعی ═══════════════
 
 def _real() -> dict:
@@ -315,9 +442,11 @@ def test_real_watch_has_oct8_plan() -> None:
     assert [(s["symbol"], s["qty"], s["price"]) for s in rp["steps"]] == \
         [("ETH", 0.04, 2625), ("BNB", 0.12, 783)]
     assert rp["on_deadline"] == {"cancel_if_band_at_least": "سازنده", "otherwise": "market"}
-    assert [(s["symbol"], s["qty"], s["floor"]) for s in rp["rebuy"]["steps"]] == \
-        [("ETH", 0.04, 2380.56), ("BNB", 0.12, 702.39)]
+    assert [(s["symbol"], s["qty"], s["floor"], s["min_below_sale_pct"])
+            for s in rp["rebuy"]["steps"]] == \
+        [("ETH", 0.04, 2380.56, 5), ("BNB", 0.12, 702.39, 5)]
     assert "2631.24" in rp["note"] and "785.48" in rp["note"]
+    assert "۵٪" in rp["rebuy"]["note"] and "۹۸" in rp["rebuy"]["note"]
 
 
 def test_real_watch_archives_event36_plan() -> None:

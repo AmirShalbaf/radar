@@ -673,7 +673,8 @@ def reserve_view(rp: dict | None, h: dict, prices: dict, val: dict,
 
     band باند با هیسترزیس امروز است — شرط مهلت on_deadline از radar_watch.
     plan_rule_state، یک تعریف با پایشگر. بازخرید rebuy فقط تا مقدار پله‌های
-    پرشده همان نماد — رویداد ۸۹.
+    پرشده همان نماد — رویداد ۸۹؛ پنجره بازخرید نزدیک ابطال از radar_watch.
+    rebuy_status — رویداد ۹۸.
     """
     if not rp:
         return None
@@ -707,16 +708,9 @@ def reserve_view(rp: dict | None, h: dict, prices: dict, val: dict,
             after = {"stable": st, "total": tot, "pct": 100 * st / tot if tot else 0.0}
     deadline = datetime.fromisoformat(rp["deadline"])
     total = val["total"]
-    sold: dict[str, float] = {}
-    for s in steps:
-        if s["filled"]:
-            sold[s["symbol"]] = sold.get(s["symbol"], 0.0) + s["qty"]
-    rebuy = []
-    for s in (rp.get("rebuy") or {}).get("steps", []):
-        p = prices.get(s["symbol"])
-        rebuy.append({"symbol": s["symbol"], "qty": s["qty"], "floor": s["floor"],
-                      "sold": min(s["qty"], sold.get(s["symbol"], 0.0)), "price": p,
-                      "dist_pct": None if p is None else 100 * (p / s["floor"] - 1)})
+    rebuy = [dict(r, dist_pct=None if r["price"] is None
+                  else 100 * (r["price"] / r["floor"] - 1))
+             for r in RW.rebuy_status(rp, h, prices)]
     return {"title": rp.get("title") or "نقشه ذخیره",
             "rule": rp.get("on_deadline"), "rule_state": RW.plan_rule_state(rp, band),
             "band": band, "rebuy": rebuy, "rebuy_note": (rp.get("rebuy") or {}).get("note"),
@@ -732,6 +726,18 @@ def reserve_view(rp: dict | None, h: dict, prices: dict, val: dict,
 def _n(x) -> str:
     """عدد بازار نقشه: رقم لاتین، بی‌جداکننده و بی‌گرد کردن گمراه‌کننده — هم‌قالب پایشگر."""
     return f"{x:.10g}"
+
+
+# پنجره بازخرید نزدیک ابطال — حکم از radar_watch.rebuy_status، رویداد ۹۸
+REBUY_WINDOW = {
+    "open": "**مجاز** — بالای کف و زیر سقف",
+    "above": "نه — بالای سقف؛ فقط با سازنده‌شدن باند",
+    "below": "نه — در کف یا زیر آن؛ ابطال",
+    "no_gap": "نه — سقف زیر کف، فروش نزدیک ابطال بود؛ فقط با سازنده‌شدن باند",
+    "unsold": "— هنوز فروشی نیست",
+    "no_sale": "داده ندارم — قیمت فروش در دفتر کل نیست؛ فقط با سازنده‌شدن باند",
+    "no_price": "داده ندارم — قیمت امروز نیامد",
+}
 
 
 def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
@@ -796,14 +802,22 @@ def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
         o += ["**نقشه بازخرید**", ""]
         if rv.get("rebuy_note"):
             o += [rv["rebuy_note"], ""]
-        o += ["فقط تا مقدار فروخته‌شده همان نماد. کف یعنی بالای سطح ابطال.", "",
-              "| نماد | مقدار نقشه | فروخته‌شده تا امروز | کف | قیمت امروز | فاصله تا کف |",
-              "|---|---|---|---|---|---|"]
+        gaps = "، ".join(fa(_n(g)) + "٪" for g in
+                        sorted({r["min_below_sale_pct"] for r in rv["rebuy"]}))
+        o += ["بازخرید با سازنده‌شدن تأییدشده باند با هیسترزیس، فقط تا مقدار فروخته‌شده "
+              "همان نماد. بازخرید نزدیک ابطال فقط وقتی قیمت بالای کف — سطح ابطال — و "
+              f"دست‌کم {gaps} زیر قیمت واقعی فروش است؛ سقف همین مرز است — رویداد ۹۸.", "",
+              "| نماد | مقدار نقشه | فروخته‌شده تا امروز | قیمت فروش | کف | سقف نزدیک ابطال "
+              "| قیمت امروز | فاصله تا کف | بازخرید نزدیک ابطال |",
+              "|---|---|---|---|---|---|---|---|---|"]
         for r in rv["rebuy"]:
             px = _n(r["price"]) if r["price"] is not None else "—"
             dist = f"{r['dist_pct']:+.1f}٪" if r["dist_pct"] is not None else "داده ندارم"
-            o.append(f"| {r['symbol']} | {_n(r['qty'])} | {_n(r['sold'])} | {_n(r['floor'])} | "
-                     f"{px} | {dist} |")
+            sale = _n(r["sale"]) if r["sale"] is not None else "—"
+            ceil = _n(r["ceiling"]) if r["ceiling"] is not None else "—"
+            o.append(f"| {r['symbol']} | {_n(r['qty'])} | {_n(r['sold'])} | {sale} | "
+                     f"{_n(r['floor'])} | {ceil} | {px} | {dist} | "
+                     f"{REBUY_WINDOW[r['window']]} |")
         o.append("")
     for s in rv["stray"]:
         o.append(f"⚠️ {s['symbol']} {_n(s['qty'])} در `watch.json` علامت اجراشده دارد "

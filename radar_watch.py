@@ -482,6 +482,9 @@ DEFAULT_EXIT_FRACTION = 1.0
 WARN_REARM = 1.01
 # پله ذخیره با پوشش ۹۹٪ مقدارش پرشده حساب می‌شود — گرد کردن صرافی
 STEP_TOL = 0.01
+# کمینه فاصله بازخرید «نزدیک سطح ابطال» زیر قیمت واقعی فروش، درصد — تصمیم کاربر
+# ۹ اکتبر، رویداد ۹۸. داده نقشه می‌تواند سخت‌تر بگیرد، شل‌تر نه
+REBUY_MIN_BELOW_SALE_PCT = 5
 
 
 def _num(x) -> bool:
@@ -604,6 +607,11 @@ def _validate_plan(rp: dict, where: str) -> None:
                     or not _num(s.get("qty")) or s["qty"] <= 0
                     or not _num(s.get("floor")) or s["floor"] <= 0):
                 raise WatchError(f"{where}.rebuy پله {i}: نماد، مقدار یا کف نامعتبر")
+            # قانون بازخرید — رویداد ۹۸: هر پله کمینه فاصله زیر قیمت فروش را دارد
+            gap = s.get("min_below_sale_pct")
+            if not _num(gap) or not REBUY_MIN_BELOW_SALE_PCT <= gap < 100:
+                raise WatchError(f"{where}.rebuy پله {i}: min_below_sale_pct باید عددی از "
+                                 f"{fa(REBUY_MIN_BELOW_SALE_PCT)} تا زیر ۱۰۰ باشد — رویداد ۹۸")
 
 
 def unfilled_steps(rp: dict, h: dict) -> list[dict]:
@@ -680,6 +688,61 @@ def reserve_progress(rp: dict, h: dict) -> list[dict]:
                 rec["fill_price"] = sum(q * p for q, p, _ in took) / got
             rec["fill_at"] = max((t for _, _, t in took), default=None)
         out.append(rec)
+    return out
+
+
+def rebuy_status(rp: dict, h: dict, prices: dict) -> list[dict]:
+    """
+    نقشه بازخرید هر پله rebuy — تنها تعریف قانون بازخرید؛ سبد از همین می‌خواند و
+    گسترش reenter در ک۸۸ هم باید از همین بخواند.
+
+    تصمیم کاربر، ۹ اکتبر ۲۰۲۶، رویداد ۹۸: بازخرید «نزدیک سطح ابطال» فقط وقتی مجاز
+    است که قیمت بالای کف — سطح ابطال — و دست‌کم min_below_sale_pct زیر قیمت واقعی
+    فروش باشد. وگرنه بازخرید فقط با سازنده‌شدن تأییدشده باند با هیسترزیس. دلیل:
+    فروش در مهلت نزدیک ابطال و بازخرید فوری همان‌جا فقط دو بار کارمزد است.
+
+    sold تا مقدار پله‌های پرشده همان نماد. sale قیمت واقعی فروش، از دفتر کل با
+    reserve_progress؛ با چند پله پرشده، پایین‌ترین — محتاطانه‌تر. سقف = sale ×
+    (100 − درصد) / 100. window:
+        unsold    هنوز پله‌ای از این نماد پر نشده
+        no_sale   قیمت فروش در دفتر کل نیست — داده ندارم؛ فقط با سازنده‌شدن
+        no_gap    سقف در کف یا زیر آن — فروش نزدیک ابطال بود؛ فقط با سازنده‌شدن
+        no_price  قیمت امروز نیامد — داده ندارم
+        below     قیمت در کف یا زیر آن — ابطال؛ بازخرید نه
+        above     قیمت بالای سقف — فقط با سازنده‌شدن
+        open      کف < قیمت ≤ سقف — بازخرید نزدیک ابطال مجاز
+    """
+    sold: dict[str, float] = {}
+    sale: dict[str, list] = {}
+    for s in reserve_progress(rp, h):
+        if s["filled"]:
+            sold[s["symbol"]] = sold.get(s["symbol"], 0.0) + s["qty"]
+            sale.setdefault(s["symbol"], []).append(s["fill_price"])
+    out = []
+    for s in (rp.get("rebuy") or {}).get("steps", []):
+        sym, floor = s["symbol"], s["floor"]
+        gap = s.get("min_below_sale_pct", REBUY_MIN_BELOW_SALE_PCT)
+        fills = sale.get(sym, [])
+        sp = None if not fills or None in fills else min(fills)
+        ceiling = None if sp is None else sp * (100 - gap) / 100
+        p = prices.get(sym)
+        if not fills:
+            window = "unsold"
+        elif sp is None:
+            window = "no_sale"
+        elif ceiling <= floor:
+            window = "no_gap"
+        elif p is None:
+            window = "no_price"
+        elif p <= floor:
+            window = "below"
+        elif p > ceiling:
+            window = "above"
+        else:
+            window = "open"
+        out.append({"symbol": sym, "qty": s["qty"], "floor": floor,
+                    "min_below_sale_pct": gap, "sold": min(s["qty"], sold.get(sym, 0.0)),
+                    "sale": sp, "ceiling": ceiling, "price": p, "window": window})
     return out
 
 
@@ -959,13 +1022,8 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
 
         if rule == "cancel" and left:
             # شرط برقرار: پله پرنشده لغو می‌شود، پیش یا پس از مهلت؛ هشدار رسیدن قیمت نه
-            sold: dict[str, float] = {}
-            for s, filled in zip(rp.get("steps") or [], step_filled(rp, h)):
-                if filled:
-                    sold[s["symbol"]] = sold.get(s["symbol"], 0.0) + s["qty"]
-            rb = [(s["symbol"], min(s["qty"], sold.get(s["symbol"], 0.0)))
-                  for s in (rp.get("rebuy") or {}).get("steps", [])]
-            rb = [(sym, q) for sym, q in rb if q > 0]
+            # باند سازنده: بازخرید مجاز است، بی‌شرط ۵٪ — رویداد ۹۸؛ مقدار از rebuy_status
+            rb = [(r["symbol"], r["sold"]) for r in rebuy_status(rp, h, {}) if r["sold"] > 0]
             tail = ("\nبازخرید همان مقدار فروخته‌شده — " + "، ".join(
                 f"{sym} {_n(q)}" for sym, q in rb) if rb else
                     "\nهنوز پله‌ای پر نشده؛ بازخریدی نیست.") if rp.get("rebuy") else ""
