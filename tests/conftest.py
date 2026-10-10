@@ -32,7 +32,8 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA_FILES = ("book_state.json", "holdings.json", "radar_journal.json",
               "radar_optcost.json", "regime.json", "regime_history.json",
               "snapshot.json", "watch.json", "watch_state.json",
-              "events_ledger.json")                        # دفتر رویداد — نشست ۱۰
+              "events_ledger.json",                        # دفتر رویداد — نشست ۱۰
+              "pump.json", "pump_ledger.json")             # اسکنر پامپ — نشست ۹
 REAL = {os.path.normcase(str(ROOT / n)): n for n in DATA_FILES}
 
 # شناسه آزمون در جریان و نوشتن‌های دیده‌شده — قلاب فقط در این بازه ثبت می‌کند
