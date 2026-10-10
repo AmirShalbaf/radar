@@ -76,7 +76,8 @@ MIN_RR = 2.5                     # کف نسبت — اصل دو کتابخان�
 STOP_BUF_ATR = 0.25              # فاصله استاپ از سطح — همان buffer_atr در radar_levels
 ON_LEVEL_ATR = 0.5               # «ورود روی سطح ساختاری»: تا این کسر دامنه واقعی
 QUALITY = (("الف", 2.0, 4.0), ("ب", 1.5, 3.0), ("ج", 1.0, MIN_RR))   # جدول ۸.۲ کتابخانه
-DAILY_TARGET = (3, 8)            # نامزد لانگ و شورت در روز — تصمیم کاربر
+PULSE_MAX, PULSE_TTL_DAYS = 5, 3  # نامزد نبض: سقف و انقضا؛ پیدا شدن دوباره تمدید — تصمیم کاربر
+DAILY_TARGET = (3, 8)            # نامزد لانگ و شورت در روز — پیشنهاد بازبین، تصمیم کاربر
 
 # ── پنجره‌ها
 Z1H_BASE, Z1H_MIN, Z1H_RECENT = 168, 120, 6
@@ -441,18 +442,23 @@ def rel_z(sym: pd.DataFrame | None, btc: pd.DataFrame | None, base_n: int, min_n
     """
     جهش حجم نسبت به بازار: z نماد منهای z بیت‌کوین در همان ساعت و همان صرافی.
     وقتی کل بازار تکان می‌خورد همه از دروازه مطلق می‌گذشتند — LTC و FIL، ۱۰ اکتبر.
+
+    دروازه هر دو را می‌خواهد، در یک ساعت: z مطلق و z نسبی هر دو دست‌کم آستانه؛ یعنی
+    gate = z − max(0, z بیت‌کوین). بیت‌کوین کم‌حجم دروازه را شل نمی‌کند — شنبه ۱۰ اکتبر،
+    z بیت‌کوین ‎-1.29، تفریق ساده دروازه را از ۱۰ به ۳۴ برد. ف۳۹.
     z مطلق برای جدول می‌ماند. بیت‌کوین غایب یعنی نسبی نامعلوم، نه صفر.
     """
     z, ago, why = z_recent_max([] if sym is None else sym["qv"], base_n, min_n, recent)
-    out = {"z": z, "ago": ago, "rel": None, "btc_z": None, "why": why}
+    out = {"z": z, "ago": ago, "rel": None, "btc_z": None, "gate": None, "why": why}
     if z is None:
         return out
     zs, zb = z_by_ts(sym, base_n, min_n, recent), z_by_ts(btc, base_n, min_n, recent)
-    pairs = [(zs[t] - zb[t], zb[t]) for t in zs if t in zb]
-    if not pairs:
+    common = [t for t in zs if t in zb]
+    if not common:
         return dict(out, why="بیت‌کوین داده ندارد")
-    rel, bz = max(pairs)
-    return dict(out, rel=rel, btc_z=bz)
+    rel, bz = max((zs[t] - zb[t], zb[t]) for t in common)
+    gate = max(zs[t] - max(0.0, zb[t]) for t in common)
+    return dict(out, rel=rel, btc_z=bz, gate=gate)
 
 
 def ratio_shift(spot: pd.DataFrame | None, perp: pd.DataFrame | None) -> dict:
@@ -528,9 +534,9 @@ def _ge(x, t: float) -> bool:
 def flow_signs(m: dict) -> list[str]:
     """دروازه جریان — دودویی، نه امتیاز. سنجه غایب نشانه نیست، صفر هم نیست."""
     s = []
-    if _ge(m.get("z1h_rel"), Z_MIN):
+    if _ge(m.get("z1h_gate"), Z_MIN):
         s.append("حجم ساعتی")
-    if _ge(m.get("z4h_rel"), Z_MIN):
+    if _ge(m.get("z4h_gate"), Z_MIN):
         s.append("حجم چهارساعته")
     # رشد از پایه ناچیز معنا ندارد — کف دلاری، ف۴۰
     if _ge(m.get("d24"), OI24_MIN) and _ge(m.get("oi_usd"), OI_USD_MIN):
@@ -805,9 +811,9 @@ def why_line(e: dict) -> str:
         parts.append(f"{SETUP_FA[s['name']]} ({s['name']}) — {STATE_FA[s['state']]}")
     for sign in e.get("signs") or []:
         if sign in ("حجم ساعتی", "حجم چهارساعته"):
-            z = _num(m.get("z1h_rel" if sign == "حجم ساعتی" else "z4h_rel"), ".1f")
-            parts.append(f"{sign} {z} انحراف معیار بیش از بیت‌کوین" if z
-                         else f"{sign} بالای بیت‌کوین")
+            z = _num(m.get("z1h_gate" if sign == "حجم ساعتی" else "z4h_gate"), ".1f")
+            parts.append(f"{sign} {z} انحراف معیار بالای عادی و بیش از بیت‌کوین" if z
+                         else f"{sign} بالای عادی و بیش از بیت‌کوین")
         elif sign == "بهره باز":
             d = _num(100 * m["d24"], "+.0f") if _f(m.get("d24")) is not None else None
             parts.append(f"بهره باز {d}٪ در ۲۴ ساعت" if d else "بهره باز رو به رشد")
@@ -961,9 +967,10 @@ def flow_metrics(net: Net, u: dict, now: datetime, btc: dict | None = None) -> d
     btc = btc or {}
     r1 = rel_z(h1, btc.get("1h"), Z1H_BASE, Z1H_MIN, Z1H_RECENT)
     r4 = rel_z(h4, btc.get("4h"), Z4H_BASE, Z4H_MIN, 1)
-    m["z1h"], m["z1h_ago"], m["z1h_rel"], m["z1h_btc"], m["z1h_why"] = (
-        r1["z"], r1["ago"], r1["rel"], r1["btc_z"], r1["why"])
-    m["z4h"], m["z4h_rel"], m["z4h_btc"], m["z4h_why"] = r4["z"], r4["rel"], r4["btc_z"], r4["why"]
+    m["z1h"], m["z1h_ago"], m["z1h_rel"], m["z1h_btc"], m["z1h_gate"], m["z1h_why"] = (
+        r1["z"], r1["ago"], r1["rel"], r1["btc_z"], r1["gate"], r1["why"])
+    m["z4h"], m["z4h_rel"], m["z4h_btc"], m["z4h_gate"], m["z4h_why"] = (
+        r4["z"], r4["rel"], r4["btc_z"], r4["gate"], r4["why"])
     m["chg24_closed"] = price_chg24(h1)
     ab = abnormal_4h(h4)
     m["abn_ratio"], m["abn_flag"] = ab["ratio"], ab["flag"]
@@ -1018,7 +1025,9 @@ def structure(net: Net, row: dict, btc: pd.DataFrame | None) -> dict:
 
 # ═══════════════ کارت معامله — جدول همان ستاپ در کتابخانه ═══════════════
 
-CARD_KEYS = ("ok", "why", "tag", "entry", "stop", "target", "rr", "rr_gross", "grade", "risk_pct")
+CARD_KEYS = ("ok", "why", "tag", "entry", "stop", "target", "target_25r", "rr", "rr_gross", "grade",
+             "risk_pct")
+STEP_R = 2.5                     # پله کنار هدف ساختاری: ورود + ۲.۵ × فاصله ورود تا استاپ
 
 
 def _p(x) -> str:
@@ -1148,6 +1157,8 @@ def make_card(e: dict, budget: dict | None) -> dict:
     risk, reward = sgn * (g["entry"] - g["stop"]), sgn * (g["target"] - g["entry"])
     if not (risk > 0 and reward > 0):
         return dict(c, why="کارت ندارد — هندسه وارونه")
+    # هدف ساختاری گاهی خیلی دور است — OP، ۱۰ اکتبر، +۸۱٪. پله ۲.۵R کنارش
+    c["target_25r"] = g["entry"] + sgn * STEP_R * risk
     cost = g["entry"] * RT_COST
     c.update(rr_gross=reward / risk, rr=(reward - cost) / (risk + cost))
     a = _f(e.get("atr_d")) or _f(s.get("atr"))
@@ -1350,13 +1361,15 @@ def _cards_section(res: dict) -> list[str]:
     ok = [e for e in sec["long"] + sec["short"] if (e.get("card") or {}).get("ok")]
     if not ok:
         return o + ["**امروز کارتی نیست.** دلیل هر نامزد در ستون «کارت» بخش ۱ و ۲.", ""]
-    o += ["| نماد | سمت | ستاپ | ماشه ورود | ابطال | ورود | استاپ | هدف | نسبت با کارمزد | رده "
-          "| ریسک٪ | ریسک دلاری | مقدار | نوع |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    o += ["| نماد | سمت | ستاپ | ماشه ورود | ابطال | ورود | استاپ | پله دو و نیم برابر ریسک (2.5R) "
+          "| هدف ساختاری | نسبت با کارمزد تا هدف ساختاری | رده | ریسک٪ | ریسک دلاری | مقدار | نوع |",
+          "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for e in ok:
         c = e["card"]
         o.append(f"| **{e['symbol']}** | {'لانگ' if e['side'] == 'long' else 'شورت'} "
                  f"| {_setup_txt(e['setup'])} | {c['trigger']} | {c['invalid']} | {_p(c['entry'])} "
-                 f"| {_p(c['stop'])} | {_p(c['target'])} | {c['rr']:.2f} | {c['grade']} "
+                 f"| {_p(c['stop'])} | {_p(c['target_25r'])} | {_p(c['target'])} | {c['rr']:.2f} "
+                 f"| {c['grade']} "
                  f"| {_cell(c.get('risk_pct'), '.2f')} | {_cell(c.get('risk_usd'), ',.0f')} "
                  f"| {_cell(c.get('qty'), '.6g')} | {c['tag']} |")
     return o + [""]
@@ -1378,8 +1391,7 @@ def render_md(res: dict) -> str:
     n_cards = sum(1 for e in sec["long"] + sec["short"] if (e.get("card") or {}).get("ok"))
     lo_t, hi_t = DAILY_TARGET
     A(f"**امروز {n_cards} کارت، {len(sec['long']) + len(sec['short'])} نامزد.** هدف روزانه "
-      f"{fa(lo_t)} تا {fa(hi_t)} نامزد لانگ و شورت — تصمیم کاربر، کنار سنجه تعادل بخش ۵ "
-      "کتابخانه ستاپ.")
+      f"{fa(lo_t)} تا {fa(hi_t)} نامزد لانگ و شورت — پیشنهاد بازبین، تصمیم کاربر.")
     A("")
     for w in res["warnings"]:
         A(f"> ⚠️ {w}")
@@ -1459,8 +1471,8 @@ def render_md(res: dict) -> str:
     A("| ستون یا برچسب | معنا |")
     A("|---|---|")
     A(f"| جهش حجم | حجم دلاری کندل بسته در برابر میانگین خود نماد، به انحراف معیار. "
-      f"نسبی یعنی منهای همان عدد بیت‌کوین در همان ساعت و همان صرافی. دروازه: نسبی دست‌کم "
-      f"{fa(f'{Z_MIN:g}')} |")
+      f"نسبی یعنی منهای همان عدد بیت‌کوین در همان ساعت و همان صرافی. دروازه: مطلق و نسبی "
+      f"هر دو دست‌کم {fa(f'{Z_MIN:g}')} |")
     A(f"| بهره باز | تغییر ۲۴ ساعته به واحد کوین. دروازه: دست‌کم {fa(f'{100 * OI24_MIN:g}')}٪، "
       f"با بهره باز دلاری دست‌کم {fa(f'{OI_USD_MIN / 1e6:g}')} میلیون |")
     A("| ضعیف‌تر از بیت‌کوین | ر۵۵ — لانگ با قدرت نسبی ۷ روزه منفی |")
@@ -1485,6 +1497,58 @@ def render_md(res: dict) -> str:
     A(f"| زمان اجرا | {res['elapsed_s']:.0f} ثانیه |")
     A("")
     return "\n".join(L_)
+
+
+# ═══════════════ نبض و تلگرام ═══════════════
+
+def pulse_picks(sec: dict) -> list[dict]:
+    """نامزدهای امروز برای نبض: کارت‌دار اول، سپس لانگ و شورت به ترتیب رتبه."""
+    both = list(sec.get("long") or []) + list(sec.get("short") or [])
+    return ([e for e in both if (e.get("card") or {}).get("ok")]
+            + [e for e in both if not (e.get("card") or {}).get("ok")])
+
+
+def pulse_merge(prev: list[dict], picks: list[dict], now: datetime) -> list[dict]:
+    """
+    بخش pulse در pump.json — جدا از دفتر موقعیت؛ watch.json هرگز نوشته نمی‌شود.
+    سقف ۵ و انقضای ۳ روز. نامزد امروز اول است و پیدا شدن دوباره انقضا را تمدید می‌کند؛
+    سپس مانده‌های تاریخ‌نگذشته، تازه‌دیده‌تر اول.
+    """
+    exp = iso(now + timedelta(days=PULSE_TTL_DAYS))
+    live = {}
+    for it in prev or []:
+        try:
+            if datetime.fromisoformat(it["expires"].replace("Z", "+00:00")) > now:
+                live[it["symbol"]] = it
+        except (KeyError, TypeError, ValueError):
+            continue
+    out: list[dict] = []
+    for e in picks:
+        if len(out) >= PULSE_MAX:
+            break
+        if any(o["symbol"] == e["symbol"] for o in out):
+            continue
+        out.append({"symbol": e["symbol"], "side": e["side"],
+                    "setup": (e.get("setup") or {}).get("name"),
+                    "added": (live.get(e["symbol"]) or {}).get("added", iso(now)),
+                    "last_seen": iso(now), "expires": exp})
+    for it in sorted(live.values(), key=lambda x: x.get("last_seen", ""), reverse=True):
+        if len(out) >= PULSE_MAX:
+            break
+        if all(o["symbol"] != it["symbol"] for o in out):
+            out.append(it)
+    return out
+
+
+def telegram_line(sec: dict) -> str:
+    """یک خط ساده برای پیام روزانه: تعداد کارت و نامشان، و تعداد هر بخش."""
+    cards = [e["symbol"] for e in list(sec.get("long") or []) + list(sec.get("short") or [])
+             if (e.get("card") or {}).get("ok")]
+    names = f": {'، '.join(cards)}" if cards else ""
+    parts = [f"{w} {len(sec.get(k) or [])}" for k, w in
+             (("long", "لانگ"), ("short", "شورت"), ("afterpump", "پس از پامپ"), ("late", "دیر است"),
+              ("nolevel", "بی‌سطح"), ("veto", "وتو"))]
+    return f"اسکنر پامپ، {UNTESTED}: {len(cards)} کارت{names}؛ " + "، ".join(parts)
 
 
 def _write(path: str, text: str) -> None:
@@ -1588,11 +1652,12 @@ def main(argv=None, get=None, now: datetime | None = None, veto=None, history=No
     ap.add_argument("--regime-file", default="regime.json", dest="regime_file",
                     help="باند رژیم — فقط خواندن")
     ap.add_argument("--limit", type=int, default=0, help="فقط برای اشکال‌زدایی: سقف نماد")
+    ap.add_argument("--line", help="یک خط ساده برای پیام تلگرام — فایل")
     ap.add_argument("--stdout", action="store_true")
     a = ap.parse_args(argv)
 
     # ک۱۴: مسیر خروجی فایل است. پوشه هم‌نام یعنی خطای صریح، نه فایل داخل پوشه.
-    for p in (a.out, a.json, None if a.no_ledger else a.ledger):
+    for p in (a.out, a.json, a.line, None if a.no_ledger else a.ledger):
         if p and Path(p).is_dir():
             _log(f"⛔ مسیر خروجی پوشه است، نه فایل: {p}")
             return 2
@@ -1652,7 +1717,18 @@ def main(argv=None, get=None, now: datetime | None = None, veto=None, history=No
            "candidates": [e["symbol"] for e in sec["long"] + sec["short"]],
            "sections": sec, "requests": res["requests"],
            "elapsed_s": round(res["elapsed_s"], 1), "warnings": res["warnings"]}
+    prev_pulse = []
+    if Path(a.json).is_file():
+        try:
+            prev_pulse = (json.loads(Path(a.json).read_text(encoding="utf-8")).get("pulse")
+                          or {}).get("items") or []
+        except ValueError:
+            res["warnings"].append("pump.json پیشین خوانا نبود — بخش pulse از نو")
+    out["pulse"] = {"max": PULSE_MAX, "ttl_days": PULSE_TTL_DAYS,
+                    "items": pulse_merge(prev_pulse, pulse_picks(sec), now)}
     _write(a.json, json.dumps(_clean(out), ensure_ascii=False, indent=1))
+    if a.line:
+        _write(a.line, telegram_line(sec) + "\n")
     md = render_md(res)
     if a.stdout:
         print(md)

@@ -43,7 +43,8 @@ jobs:
   scan:
     # ثابت روی 24.04 — برچسب شناور گیت‌هاب از ۱۹ اکتبر ۲۰۲۶ به 26.04 می‌رود؛ رویداد ۹۰
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    # از ۲۵ به ۴۰ با اسکنر پامپ — نشست ۹؛ گام اسکنر خودش سقف ۱۲ دقیقه دارد
+    timeout-minutes: 40
 
     steps:
       - name: برداشت مخزن
@@ -172,6 +173,25 @@ jobs:
             echo "holdings.json نیست — سطوح ساختاری سبد رد شد."
           fi
 
+      # اسکنر پامپ — نشست ۹. پیش از گام رویداد، تا radar_events نامزد تازه را از
+      # pump.json بخواند. شکست نرم مثل گام رویداد: فایل خطای صریح و یک خط هشدار، و بقیه
+      # گام‌ها ادامه می‌دهند. timeout درون پوسته تا در سررسید هم فایل خطا نوشته شود.
+      - name: اسکنر پامپ
+        timeout-minutes: 12
+        continue-on-error: true
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          D=$(date -u +%Y-%m-%d)
+          if ! timeout 11m python radar_pump.py --out reports/PUMP.md --json pump.json \
+                 --ledger pump_ledger.json --line /tmp/pump_line.txt > /tmp/pump.log 2>&1; then
+            echo "::error::اسکنر پامپ خطا داد — reports/pump-error-$D.md"
+            { echo "# خطای اسکنر پامپ — $D"; echo
+              echo "اسکنر پامپ کامل اجرا نشد. ته گزارش خطا:"; echo; echo '```'
+              tail -c 4000 /tmp/pump.log; echo '```'; } > "reports/pump-error-$D.md"
+            echo "⚠️ اسکنر پامپ خطا داد — reports/pump-error-$D.md" > /tmp/pump_line.txt
+          fi
+
       # تقویم کلان، وتوی آزادسازی و دفتر رویداد — نشست ۱۰. کد ۲ یعنی منبعی نیامد
       # ولی گزارش نوشته شد؛ هر کد جز صفر خطای صریح است، نه بلعیده. خط تلگرام و بخش
       # خلاصه از /tmp به گام بعد می‌روند.
@@ -230,6 +250,13 @@ jobs:
               echo "⚠️ تقویم رویداد: خط ساخته نشد"
             fi
             echo
+            # یک خط اسکنر پامپ — نشست ۹: تعداد کارت و نامشان، و تعداد هر بخش
+            if [ -s /tmp/pump_line.txt ]; then
+              cat /tmp/pump_line.txt
+            else
+              echo "⚠️ اسکنر پامپ: خط ساخته نشد"
+            fi
+            echo
             cat /tmp/staleness.md
             echo
             # بخش کامل رویداد میان دو نشانه — گام تلگرام آن را برمی‌دارد
@@ -266,7 +293,8 @@ jobs:
           git add reports/ radar_optcost.json book_state.json 2>/dev/null || true
           # رژیم و تاریخچه‌اش — خط git add جدا، بدون || true. فایل غایب
           # اعلام می‌شود، نه بلعیده؛ تاریخچه تا نخستین ساخت موفق نیست.
-          for f in regime.json regime_history.json events_ledger.json; do
+          for f in regime.json regime_history.json events_ledger.json \
+                   pump.json pump_ledger.json reports/PUMP.md; do
             if [ -f "$f" ]; then
               git add "$f"
             else

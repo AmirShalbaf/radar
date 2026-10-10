@@ -280,11 +280,11 @@ def test_abnormal_4h_candle():
 
 
 def test_flow_gate_inclusive_and_missing_not_zero():
-    assert P.flow_signs({"z1h_rel": 2.0}) == ["حجم ساعتی"]
-    assert P.flow_signs({"z1h": 5.0, "z1h_rel": 1.9}) == []          # دروازه روی z نسبی است
-    assert P.flow_signs({"z4h_rel": 1.99, "d24": 0.15, "oi_usd": 2e6}) == ["بهره باز"]
+    assert P.flow_signs({"z1h_gate": 2.0}) == ["حجم ساعتی"]
+    assert P.flow_signs({"z1h": 5.0, "z1h_rel": 5.0}) == []          # دروازه روی عدد دروازه است
+    assert P.flow_signs({"z4h_gate": 1.99, "d24": 0.15, "oi_usd": 2e6}) == ["بهره باز"]
     assert P.flow_signs({"shift": math.log(2)}) == ["نسبت قرارداد"]
-    assert P.flow_signs({"z1h_rel": None, "z4h_rel": None, "d24": None, "shift": None}) == []
+    assert P.flow_signs({"z1h_gate": None, "z4h_gate": None, "d24": None, "shift": None}) == []
 
 
 def test_oi_sign_needs_two_million_dollar_base():
@@ -302,6 +302,19 @@ def test_volume_spike_is_relative_to_btc_same_hours():
     assert alone["rel"] > 2 and alone["rel"] == pytest.approx(alone["z"] - alone["btc_z"])
     none = P.rel_z(spike, None, 168, 120, 6)
     assert none["z"] > 5 and none["rel"] is None and none["why"] == "بیت‌کوین داده ندارد"
+    assert none["gate"] is None
+    assert whole["gate"] == pytest.approx(0.0, abs=1e-9)
+    assert alone["gate"] >= P.Z_MIN
+
+
+def test_quiet_btc_does_not_loosen_the_gate():
+    # شنبه ۱۰ اکتبر: z بیت‌کوین ‎-1.29 و دروازه از ۱۰ به ۳۴ رفت — ف۳۹
+    mild = closed_frame([100.0, 200.0] * 90 + [250.0])                # z مطلق حدود 1.6
+    quiet = closed_frame([100.0, 200.0] * 90 + [30.0])                 # بیت‌کوین بسیار کم‌حجم
+    r = P.rel_z(mild, quiet, 168, 120, 6)
+    assert r["z"] < P.Z_MIN and r["rel"] >= P.Z_MIN                   # نسبی به‌تنهایی می‌گذشت
+    assert r["gate"] < P.Z_MIN                                        # دروازه = z − max(0, z بیت‌کوین)
+    assert P.flow_signs({"z1h_gate": r["gate"]}) == []
 
 
 def test_leveraged_pump_pattern():
@@ -590,7 +603,8 @@ def _run(tmp_path, monkeypatch, extra=(), now=NOW, hist=None):
     def veto(syms, g, n):
         return {s: {"status": "unknown", "why": "پوشش کوتاه"} for s in syms}, [], []
     argv = ["--out", str(tmp_path / "PUMP.md"), "--json", str(tmp_path / "pump.json"),
-            "--ledger", str(tmp_path / "pump_ledger.json"), *extra]
+            "--ledger", str(tmp_path / "pump_ledger.json"), "--line", str(tmp_path / "line.txt"),
+            *extra]
     rc = P.main(argv, get=get, now=now, veto=veto, history=hist or _Hist(), sleep=lambda s: None)
     return rc, get
 
@@ -608,11 +622,18 @@ def test_main_end_to_end(tmp_path, monkeypatch):
     assert c["setup"]["name"] == "الف‌۱" and c["why"]
     assert c["veto"]["status"] == "unknown"
     assert js["requests"]["okx"] > 0 and js["requests"]["gate"] > 0 and js["requests"]["lbank"] == 1
+    pulse = js["pulse"]
+    assert pulse["max"] == 5 and pulse["ttl_days"] == 3
+    assert [i["symbol"] for i in pulse["items"]] == ["AAA"]
+    assert pulse["items"][0]["expires"] == P.iso(NOW + timedelta(days=3))
+    line = (tmp_path / "line.txt").read_text(encoding="utf-8")
+    assert "0 کارت" in line and "لانگ 1" in line
     md = (tmp_path / "PUMP.md").read_text(encoding="utf-8")
     assert md.startswith(f"# اسکنر پامپ رادار {R.FRAMEWORK}")
     assert "مجوز ورود نیست" in md and "آزمون‌نشده" in md and "| AAA |" not in md
     assert "زیر کف ر۵۴" not in md and "پس از پامپ — دنبالش نکن" in md
     assert "امروز 0 کارت، 1 نامزد" in md and "۳ تا ۸ نامزد" in md
+    assert "پیشنهاد بازبین، تصمیم کاربر" in md
     assert c["card"]["ok"] is False and c["card"]["why"] == "کارت ندارد — نسبت کافی نیست"
     assert "**AAA**" in md
     # اسکنر معامله نمی‌کند — هیچ فایل دفتر موقعیتی ساخته نمی‌شود
@@ -630,7 +651,7 @@ def test_ledger_records_every_gate_passer_once_per_day_and_fills(tmp_path, monke
     assert e["price"] == 102.2 and e["placements"][0]["setup"]["name"] == "الف‌۱"
     assert "z1h" in e["metrics"] and e["prices"] == {"h24": None, "d7": None}
     card = e["placements"][0]["card"]
-    assert set(card) >= {"entry", "stop", "target", "rr", "ok"}
+    assert set(card) >= {"entry", "stop", "target", "target_25r", "rr", "ok"}
     ctl = led["controls"]
     assert len(ctl) == 2 and set(ctl[0]["prices"]) == {"AAA", "NEW", "BBB"}
     assert ctl[0]["prices"]["BBB"] == {"price": 3.0, "venue": "gate"}
@@ -683,7 +704,7 @@ def test_card_squeeze_next_level_target_grade_b_and_size():
          "atr": 4.0}
     c = P.make_card(_cand(s, 105.0, levels=[150.0], metrics={"d24": 0.2}), BUDGET)
     cost = 110.0 * P.RT_COST
-    assert c["target"] == 150.0
+    assert c["target"] == 150.0 and c["target_25r"] == pytest.approx(135.0)   # ورود + ۲.۵ × ۱۰
     assert c["rr"] == pytest.approx((40.0 - cost) / (10.0 + cost))
     assert c["ok"] is True and c["grade"] == "ب" and c["qmult"] == 1.5
     assert c["risk_pct"] == pytest.approx(2.0 * 0.5 * 1.5)            # ۲٪ × رژیم × کیفیت
@@ -712,6 +733,7 @@ def test_long_card_needs_lbank_short_card_is_futures():
                           metrics={"d24": 0.2}, funding=0.002), BUDGET)
     assert c["ok"] is True and c["tag"] == "فیوچرز"
     assert c["entry"] == 98.0 and c["stop"] == pytest.approx(106.5) and c["target"] == 70.0
+    assert c["target_25r"] == pytest.approx(98.0 - 2.5 * 8.5)
     assert c["grade"] == "ب"
 
 

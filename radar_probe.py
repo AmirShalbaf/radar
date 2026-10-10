@@ -6,7 +6,7 @@ radar_probe.py — سنجش دسترسی منابع، نشست ۱۰ رادار �
 
 چرا این فایل نوشته شد
 ---------------------
-ایستگاه ۱ نشست ۱۰ منبع تقویم کلان، آزادسازی توکن و سه منبع تکرارگر را از
+ایستگاه ۱ نشست ۱۰ منبع تقویم کلان، آزادسازی توکن، سه منبع تکرارگر و از نشست ۹ اسکنر پامپ را از
 لپ‌تاپ سنجید. اجراکننده گیت‌هاب آی‌پی مرکز داده دارد و همان پاسخ را نمی‌گیرد:
 بایننس آنجا ۴۵۱ است و یوتیوب بسته. پس هر منبع باید از همان محیطی سنجیده
 شود که گردش‌کار در آن اجرا می‌شود.
@@ -72,6 +72,8 @@ def targets(now: datetime) -> list[Target]:
     vs = now.strftime("%Y-%m-%d")
     ve = (now + timedelta(days=FRED_DAYS)).strftime("%Y-%m-%d")
     M, U, T, C = "تقویم کلان", "آزادسازی و عرضه", "سه منبع تکرارگر", "شاهد"
+    K = "اسکنر پامپ"
+    OKX, GATE = "https://www.okx.com/api/v5", "https://api.gateio.ws/api/v4"
     return [
         Target("fed-calendar-json", M, "https://www.federalreserve.gov/json/calendar.json",
                "bot", "FOMC"),
@@ -116,6 +118,27 @@ def targets(now: datetime) -> list[Target]:
         Target("ff-xml", T, "https://nfs.faireconomy.media/ff_calendar_thisweek.xml",
                "bot", "<weeklyevents"),
         Target("ff-site", T, "https://www.forexfactory.com/calendar", "browser", "calendar"),
+        # اسکنر پامپ — نشست ۹. ال‌بانک بسته از گیت‌هاب یعنی ستون ال‌بانک «نامعلوم»، نه «نیست»
+        Target("okx-tickers-spot", K, f"{OKX}/market/tickers?instType=SPOT", "bot", '"volCcy24h"'),
+        Target("okx-instruments-spot", K, f"{OKX}/public/instruments?instType=SPOT", "bot",
+               '"listTime"'),
+        Target("okx-funding-all", K, f"{OKX}/public/funding-rate?instId=ANY", "bot",
+               '"fundingRate"'),
+        Target("okx-oi-history", K, f"{OKX}/rubik/stat/contracts/open-interest-history"
+               "?instId=BTC-USDT-SWAP&period=1H&limit=2", "bot", '"code":"0"'),
+        Target("okx-candles-4h", K, f"{OKX}/market/candles?instId=BTC-USDT&bar=4H&limit=2", "bot",
+               '"code":"0"'),
+        Target("gate-tickers-spot", K, f"{GATE}/spot/tickers?currency_pair=BTC_USDT", "bot",
+               '"quote_volume"'),
+        Target("gate-currency-pairs", K, f"{GATE}/spot/currency_pairs/BTC_USDT", "bot",
+               '"buy_start"'),
+        Target("gate-contracts", K, f"{GATE}/futures/usdt/contracts/BTC_USDT", "bot",
+               '"funding_rate"'),
+        Target("gate-candles-1h", K, f"{GATE}/spot/candlesticks?currency_pair=BTC_USDT"
+               "&interval=1h&limit=2", "bot", '[["'),
+        Target("gate-contract-stats", K, f"{GATE}/futures/usdt/contract_stats?contract=BTC_USDT"
+               "&interval=1h&limit=2", "bot", '"open_interest"'),
+        Target("lbank-pairs", K, "https://api.lbkex.com/v2/currencyPairs.do", "bot", "_usdt"),
         # شاهد: دو منبعی که گردش‌کار روزانه امروز از همین محیط می‌خواند
         Target("okx-candles", C,
                "https://www.okx.com/api/v5/market/history-candles?instId=BTC-USDT&bar=1H"

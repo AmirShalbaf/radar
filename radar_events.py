@@ -78,6 +78,8 @@ CG_MARKETS = "https://api.coingecko.com/api/v3/coins/markets"
 # ── تصمیم‌های کاربر، ایستگاه ۱ — رویداد ۸۷ ──
 HORIZON_DAYS = 30                 # افق وتو و تقویم کامل
 SECTION_DAYS = 14                 # بخش LATEST.md و خط تلگرام
+PUMP_FILE = "pump.json"           # نامزدهای اسکنر پامپ — نشست ۹، ف۴۷
+PUMP_MAX_AGE_H = 36               # کهنه‌تر از این یعنی بی نامزد، با هشدار
 LOOKBACK_DAYS = 8                 # رویداد گذشته هنوز ثبت می‌شود تا ۷ روزش پر شود
 VETO_SINGLE_PCT = 1.0             # ف۳۱
 VETO_TOTAL_PCT = 2.0              # ف۳۱
@@ -393,25 +395,25 @@ def _cg_ids() -> dict:
     return dict(R.CG_IDS)
 
 
-_ROT_ROW = re.compile(r"^\| [0-9]+ \| \*\*([A-Z0-9]+)\*\*", re.M)
-_ROT_NAME = re.compile(r"^rotate-([0-9]{4}-[0-9]{2}-[0-9]{2})\.md$")
-
-
-def rotate_candidates(reports_dir) -> tuple[list[str], str | None]:
+def pump_candidates(path, now: datetime) -> tuple[list[str], str | None, str | None]:
     """
-    نامزدهای آخرین غربال چرخش. نام rotate-<تاریخ>.md گاهی پوشه است — ک۲۴ و ک۱۴،
-    کلید --out؛ آن‌وقت فایل داخلش خوانده می‌شود.
+    نامزدهای اسکنر از pump.json تازه — نشست ۹، ف۴۷؛ جای غربال چرخش هفتگی ف۳۵.
+    کهنه‌تر از ۳۶ ساعت یا نبودن فایل یعنی بی نامزد، با هشدار — نه وتوی نامزد ردشده.
     """
-    d = Path(reports_dir)
-    found = sorted(((m.group(1), p) for p in (d.iterdir() if d.is_dir() else [])
-                    if (m := _ROT_NAME.match(p.name))), key=lambda x: x[0])
-    for _, p in reversed(found):
-        f = p if p.is_file() else next(iter(sorted(p.glob("*.md"), reverse=True)), None)
-        if f is None:
-            continue
-        syms = list(dict.fromkeys(_ROT_ROW.findall(f.read_text(encoding="utf-8"))))
-        return syms, str(f).replace("\\", "/")
-    return [], None
+    p = Path(path)
+    try:
+        doc = json.loads(p.read_text(encoding="utf-8"))
+        at = parse_iso(doc["generated"])
+    except (OSError, ValueError, KeyError, TypeError):
+        return [], None, "pump.json نیست یا خوانا نیست — نامزد اسکنر امروز بی حکم آزادسازی"
+    age_h = (now - at).total_seconds() / 3600
+    if age_h > PUMP_MAX_AGE_H:
+        return [], None, (f"نامزد اسکنر کهنه — pump.json از {doc['generated']}، بیش از "
+                          f"{PUMP_MAX_AGE_H} ساعت؛ خوانده نشد")
+    # نماد صرافی اسکی است — [A-Z0-9]
+    syms = [x.upper() for x in doc.get("candidates") or []
+            if isinstance(x, str) and re.fullmatch(r"[A-Za-z0-9]{1,20}", x)]
+    return list(dict.fromkeys(syms)), f"{p.name} — {doc['generated']}", None
 
 
 # ═══════════════ دفتر رویداد ═══════════════
@@ -689,7 +691,8 @@ def render_report(macro, verdicts, groups, now, sources, ledger, notes,
          f"| آستانه وتو | {RULE} — ف۳۱ |",
          "| پاداش | استیکینگ و استخراج در وتو شمرده نمی‌شود |",
          "| داده ناقص | «نامعلوم» — بررسی دستی پیش از ورود، نه رد خودکار |",
-         f"| نامزدهای اسکنر | {('`' + cand_src + '`') if cand_src else 'گزارش چرخش نیست'} |", ""]
+         f"| نامزدهای اسکنر | {('`' + cand_src + '`') if cand_src else 'pump.json تازه نیست'} |",
+         ""]
     if notes:
         o += ["## هشدار", ""] + [f"- {n}" for n in notes] + [""]
     o += [f"## ۱ — تقویم کلان {fa(HORIZON_DAYS)} روز آینده", "",
@@ -756,7 +759,7 @@ def main(argv=None, get=None, now: datetime | None = None, history=None) -> int:
     ap = argparse.ArgumentParser(description="تقویم رویداد، آزادسازی و دفتر رویداد — نشست ۱۰")
     ap.add_argument("--holdings", default="holdings.json")
     ap.add_argument("--ledger", default=LEDGER_FILE)
-    ap.add_argument("--reports-dir", default="reports", dest="reports_dir")
+    ap.add_argument("--pump", default=PUMP_FILE, help="نامزدهای اسکنر پامپ — فقط خواندن")
     ap.add_argument("--out", help="گزارش کامل مارک‌داون")
     ap.add_argument("--section", help="بخش ۱۴ روزه برای LATEST.md")
     ap.add_argument("--line", help="یک خط ساده برای پیام تلگرام")
@@ -820,7 +823,9 @@ def main(argv=None, get=None, now: datetime | None = None, history=None) -> int:
     # ── نمادها
     port = portfolio_symbols(a.holdings)
     watch = watchlist()
-    cands, cand_src = rotate_candidates(a.reports_dir)
+    cands, cand_src, cnote = pump_candidates(a.pump, now)
+    if cnote:
+        notes.append(f"⚠️ {cnote}")
     groups: dict[str, list[str]] = {}
     for g, syms in ((G_PORT, port), (G_WATCH, watch), (G_CAND, cands)):
         for s in syms:

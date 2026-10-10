@@ -269,26 +269,7 @@ def test_index_mapping() -> None:
 
 # ═══════════════ نامزدهای اسکنر ═══════════════
 
-ROT = "\n".join(["# چرخش", "", "| # | نماد | قیمت |", "|---|---|---|",
-                 "| 1 | **WLD** | 0.58 |", "| 2 | **SUI** | 1.18 |", "| 3 | **STRK** | 0.05 |", ""])
-
-
-def test_rotate_candidates_dir_form(tmp_path) -> None:
-    (tmp_path / "rotate-2026-09-27.md").write_text(ROT.replace("WLD", "OLD"), encoding="utf-8")
-    d = tmp_path / "rotate-2026-10-04.md"
-    d.mkdir()
-    (d / "ROTATE_20261004_1258.md").write_text(ROT, encoding="utf-8")
-    syms, src = E.rotate_candidates(tmp_path)
-    assert syms == ["WLD", "SUI", "STRK"] and "2026-10-04" in src
-
-
-def test_rotate_candidates_file_form(tmp_path) -> None:
-    (tmp_path / "rotate-2026-10-11.md").write_text(ROT, encoding="utf-8")
-    assert E.rotate_candidates(tmp_path)[0] == ["WLD", "SUI", "STRK"]
-
-
-def test_rotate_candidates_none(tmp_path) -> None:
-    assert E.rotate_candidates(tmp_path) == ([], None)
+# منبع نامزد از نشست ۹ pump.json است — آزمون‌هایش در tests/test_pump_wiring.py
 
 
 # ═══════════════ دفتر رویداد ═══════════════
@@ -467,8 +448,9 @@ def _get(fail=()):
 def world(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     (tmp_path / "reports").mkdir()
-    (tmp_path / "reports" / "rotate-2026-10-04.md").write_text(
-        ROT.replace("WLD", "ZRO").replace("SUI", "ZRO2").replace("STRK", "ZRO3"), encoding="utf-8")
+    (tmp_path / "pump.json").write_text(json.dumps(
+        {"generated": E.iso(NOW - timedelta(hours=3)), "candidates": ["ZRO", "ZRO2", "ZRO3"]}),
+        encoding="utf-8")
     monkeypatch.setattr(E, "portfolio_symbols", lambda path: ["SOL"])
     monkeypatch.setattr(E, "watchlist", lambda: ["BTC"])
     monkeypatch.setattr(E, "PAUSE_RETRY", 0.0)
@@ -477,7 +459,7 @@ def world(tmp_path, monkeypatch):
 
 def _run(world, get, extra=()):
     argv = ["--out", "reports/events.md", "--section", "sec.md", "--line", "line.txt",
-            "--ledger", "events_ledger.json", "--reports-dir", "reports", *extra]
+            "--ledger", "events_ledger.json", "--pump", "pump.json", *extra]
     return E.main(argv, get=get, now=NOW, history=_Hist())
 
 

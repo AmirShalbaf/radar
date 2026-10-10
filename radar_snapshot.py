@@ -46,6 +46,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 import time
 from datetime import datetime, timezone
@@ -67,6 +68,7 @@ STALE_HOURS = 5.0          # سقف عمر داده این فایل
 PAUSE = 0.25               # احترام به سقف نرخ صرافی
 
 CORE = ["BTC", "ETH"]
+PUMP_FILE = "pump.json"    # بخش pulse اسکنر پامپ — نشست ۹
 
 
 # ─────────────────────── واکشی ───────────────────────
@@ -160,6 +162,30 @@ def load_symbols(args_symbols: str | None) -> list[str]:
     return sorted(syms)
 
 
+def pulse_items(path: str = PUMP_FILE, now: datetime | None = None) -> list[dict]:
+    """
+    نامزدهای نبض از بخش pulse در pump.json — فقط تاریخ‌نگذشته‌ها. جدا از سبد و پایش؛
+    watch.json را نمی‌خواند و نمی‌نویسد. نبود یا خرابی فایل یعنی هیچ نامزدی.
+    """
+    now = now or datetime.now(UTC)
+    try:
+        with open(path, encoding="utf-8") as f:
+            items = (json.load(f).get("pulse") or {}).get("items") or []
+    except (OSError, ValueError, AttributeError):
+        return []
+    out = []
+    for it in items:
+        try:
+            exp = datetime.fromisoformat(str(it["expires"]).replace("Z", "+00:00"))
+        except (KeyError, TypeError, ValueError):
+            continue
+        sym = str(it.get("symbol", "")).upper()
+        # نماد صرافی اسکی است — [A-Z0-9]، نه \w که حرف فارسی را هم می‌گیرد
+        if exp > now and re.fullmatch(r"[A-Z0-9]{1,20}", sym):
+            out.append(dict(it, symbol=sym))
+    return out
+
+
 # ─────────────────────── گزارش ───────────────────────
 
 def fmt(v, d=4):
@@ -203,7 +229,10 @@ def freshness_block(stamp: str | None = None) -> str:
     return "\n".join(head + freshness_note())
 
 
-def build(rows: list[dict], prev: dict, failures: list[str]) -> tuple[str, dict]:
+def build(rows: list[dict], prev: dict, failures: list[str],
+          scanner: dict | None = None) -> tuple[str, dict]:
+    """scanner: نامزدهای نبض اسکنر که در سبد و پایش نیستند — بخش جدا، نه در symbols."""
+    scanner = scanner or {}
     now = datetime.now(UTC)
     stamp = now.strftime("%Y-%m-%d %H:%M UTC")
     prev_at = prev.get("generated_utc", "—")
@@ -221,11 +250,13 @@ def build(rows: list[dict], prev: dict, failures: list[str]) -> tuple[str, dict]
     ]
 
     js = {"version": VERSION, "generated_utc": stamp,
-          "stale_after_hours": STALE_HOURS, "symbols": {}}
+          "stale_after_hours": STALE_HOURS, "symbols": {}, "scanner": {}}
 
     prev_syms = prev.get("symbols", {})
     for r in rows:
         s = r["symbol"]
+        if s in scanner:
+            continue
         oi_prev = (prev_syms.get(s) or {}).get("oi_usd")
         oi_chg = None
         if r.get("oi_usd") and oi_prev:
@@ -239,6 +270,26 @@ def build(rows: list[dict], prev: dict, failures: list[str]) -> tuple[str, dict]
             "funding_8h_pct": r.get("funding"), "oi_usd": r.get("oi_usd"),
             "oi_chg_pct_vs_prev": oi_chg, "source": r.get("src"),
         }
+
+    sc = [r for r in rows if r["symbol"] in scanner]
+    if sc:
+        lines += ["", "## نامزد اسکنر — آزمون‌نشده", "",
+                  "> از بخش pulse در `pump.json`: سقف ۵، انقضای ۳ روز. جدا از سبد و پایش — "
+                  "دفتر موقعیت نیست؛ هر نامزد مال دفتر معامله است، زیر سقف ریسک رژیم.", "",
+                  "| نماد | سمت | ستاپ | قیمت | تغییر ۲۴س ٪ | فاندینگ ۸س ٪ | بهره باز (دلار) | انقضا |",
+                  "|---|---|---|---|---|---|---|---|"]
+        for r in sc:
+            it = scanner[r["symbol"]]
+            side = "شورت" if it.get("side") == "short" else "لانگ"
+            lines.append(f"| {r['symbol']} | {side} | {it.get('setup') or 'فقط جریان'} "
+                         f"| {fmt(r.get('price'))} | {fmt(r.get('chg24'), 2)} "
+                         f"| {fmt(r.get('funding'), 4)} | {fmt(r.get('oi_usd'), 0)} "
+                         f"| {it.get('expires', '—')} |")
+            js["scanner"][r["symbol"]] = {
+                "price": r.get("price"), "chg24_pct": r.get("chg24"),
+                "funding_8h_pct": r.get("funding"), "oi_usd": r.get("oi_usd"),
+                "side": it.get("side"), "setup": it.get("setup"), "expires": it.get("expires"),
+                "source": r.get("src")}
 
     lines += [
         "",
@@ -263,6 +314,7 @@ def main() -> int:
     ap.add_argument("--symbols", help="فهرست جدا با کاما؛ پیش‌فرض: سبد + پایش + هسته")
     ap.add_argument("--out", default="reports/SNAPSHOT.md")
     ap.add_argument("--json", default="snapshot.json")
+    ap.add_argument("--pump", default=PUMP_FILE, help="بخش pulse اسکنر پامپ — فقط خواندن")
     ap.add_argument("--freshness", action="store_true",
                     help="فقط چاپ بخش قانون تازگی و خروج — برای گردش‌کار")
     a = ap.parse_args()
@@ -280,6 +332,10 @@ def main() -> int:
         return 0
 
     syms = load_symbols(a.symbols)
+    # نامزد اسکنر فقط وقتی فهرست دستی داده نشده؛ آنچه در سبد و پایش هست همان‌جا می‌ماند
+    scanner = {} if a.symbols else {it["symbol"]: it for it in pulse_items(a.pump)
+                                    if it["symbol"] not in syms}
+    syms = syms + sorted(scanner)
     prev = {}
     if os.path.exists(a.json):
         try:
@@ -310,7 +366,7 @@ def main() -> int:
         print("هیچ نمادی قیمت نگرفت — خروجی نوشته نمی‌شود.", file=sys.stderr)
         return 1
 
-    rep, js = build(rows, prev, failures)
+    rep, js = build(rows, prev, failures, scanner=scanner)
     os.makedirs(os.path.dirname(a.out) or ".", exist_ok=True)
     with open(a.out, "w", encoding="utf-8") as f:
         f.write(rep)
