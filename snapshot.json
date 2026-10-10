@@ -1,87 +1,139 @@
 {
   "version": "7.0-p1",
-  "generated_utc": "2026-10-10 05:47 UTC",
+  "generated_utc": "2026-10-10 14:27 UTC",
   "stale_after_hours": 5.0,
   "symbols": {
     "AAVE": {
-      "price": 173.75,
-      "chg24_pct": 2.410703760462103,
-      "funding_8h_pct": -0.00929948528167,
-      "oi_usd": 20403778.725,
-      "oi_chg_pct_vs_prev": 2.6564687831732714,
+      "price": 173.18,
+      "chg24_pct": 2.424887627158738,
+      "funding_8h_pct": -0.00043773489835000003,
+      "oi_usd": 20446344.301600005,
+      "oi_chg_pct_vs_prev": 0.2086161449489253,
       "source": "okx"
     },
     "BNB": {
-      "price": 750.5,
-      "chg24_pct": 1.0230179028133022,
-      "funding_8h_pct": 0.00517742548665,
-      "oi_usd": 54192359.169999994,
-      "oi_chg_pct_vs_prev": -0.6888857620951351,
+      "price": 752.0,
+      "chg24_pct": 1.4981778917532762,
+      "funding_8h_pct": 0.01,
+      "oi_usd": 53761006.4,
+      "oi_chg_pct_vs_prev": -0.795966030279017,
       "source": "okx"
     },
     "BTC": {
-      "price": 82799.9,
-      "chg24_pct": 0.448866248776233,
-      "funding_8h_pct": 0.00523725614932,
-      "oi_usd": 2475317715.7622504,
-      "oi_chg_pct_vs_prev": 0.0851275635205428,
+      "price": 82878.1,
+      "chg24_pct": -0.3385057167182141,
+      "funding_8h_pct": 0.00245855727678,
+      "oi_usd": 2488353100.57398,
+      "oi_chg_pct_vs_prev": 0.526614613094841,
       "source": "okx"
     },
     "ETH": {
-      "price": 2497.21,
-      "chg24_pct": 0.15441011326081708,
-      "funding_8h_pct": 0.00046013465668999997,
-      "oi_usd": 1502257420.1332555,
-      "oi_chg_pct_vs_prev": 0.5200026664405764,
+      "price": 2500.55,
+      "chg24_pct": 0.2911815312298296,
+      "funding_8h_pct": 0.00107814889574,
+      "oi_usd": 1506771486.8154044,
+      "oi_chg_pct_vs_prev": 0.30048556403525833,
       "source": "okx"
     },
     "LINK": {
-      "price": 12.941,
-      "chg24_pct": 0.3178294573643439,
-      "funding_8h_pct": 0.0021181439653,
-      "oi_usd": 25516336.515800003,
-      "oi_chg_pct_vs_prev": 1.2284360056326133,
+      "price": 13.146,
+      "chg24_pct": 2.3911519588753047,
+      "funding_8h_pct": 0.00025773875927,
+      "oi_usd": 25766951.389200002,
+      "oi_chg_pct_vs_prev": 0.9821741974786052,
       "source": "okx"
     },
     "ONDO": {
-      "price": 0.4964,
-      "chg24_pct": 2.774327122153214,
+      "price": 0.4981,
+      "chg24_pct": 3.1049472158973326,
       "funding_8h_pct": 0.01,
-      "oi_usd": 19677057.728,
-      "oi_chg_pct_vs_prev": 1.9130263295958831,
+      "oi_usd": 20228872.066999998,
+      "oi_chg_pct_vs_prev": 2.8043539162604514,
       "source": "okx"
     },
     "SOL": {
-      "price": 110.19,
-      "chg24_pct": -0.2715177844148766,
-      "funding_8h_pct": 0.00484148663098,
-      "oi_usd": 338424379.56270015,
-      "oi_chg_pct_vs_prev": 1.230500044973424,
+      "price": 110.12,
+      "chg24_pct": -0.1722418638382719,
+      "funding_8h_pct": -0.00029122422483,
+      "oi_usd": 339121312.38000023,
+      "oi_chg_pct_vs_prev": 0.20593457782226943,
       "source": "okx"
     },
     "SUI": {
-      "price": 1.107,
-      "chg24_pct": 3.554724041159966,
-      "funding_8h_pct": 0.00582348985663,
-      "oi_usd": 40223013.264,
-      "oi_chg_pct_vs_prev": 5.268929537724054,
+      "price": 1.1225,
+      "chg24_pct": 6.006232883180669,
+      "funding_8h_pct": 0.01,
+      "oi_usd": 42054575.8725,
+      "oi_chg_pct_vs_prev": 4.553519142085933,
       "source": "okx"
     },
     "TAO": {
-      "price": 281.1,
-      "chg24_pct": 1.8847408481333983,
+      "price": 283.5,
+      "chg24_pct": 3.278688524590164,
       "funding_8h_pct": 0.01,
-      "oi_usd": 21802374.612,
-      "oi_chg_pct_vs_prev": 2.9158478533744465,
+      "oi_usd": 22082311.125,
+      "oi_chg_pct_vs_prev": 1.2839725854720594,
       "source": "okx"
     },
     "TRX": {
-      "price": 0.33103,
-      "chg24_pct": -0.373190477623625,
-      "funding_8h_pct": -0.021615149085740002,
-      "oi_usd": 15767912.266400002,
-      "oi_chg_pct_vs_prev": 0.9795621307899627,
+      "price": 0.33142,
+      "chg24_pct": -0.31581796853851335,
+      "funding_8h_pct": -0.019070687105580002,
+      "oi_usd": 15820277.358600002,
+      "oi_chg_pct_vs_prev": 0.3320990839832685,
       "source": "okx"
+    }
+  },
+  "scanner": {
+    "ATOM": {
+      "price": 1.936,
+      "chg24_pct": -1.3754457463066803,
+      "funding_8h_pct": 0.01,
+      "oi_usd": 5368363.4399999995,
+      "side": "long",
+      "setup": "الف‌۳",
+      "expires": "2026-10-13T12:57:01Z",
+      "source": "okx"
+    },
+    "MINA": {
+      "price": 0.08634,
+      "chg24_pct": 8.290480371252986,
+      "funding_8h_pct": -0.06805534075164,
+      "oi_usd": 3226151.17074,
+      "side": "short",
+      "setup": "ج‌۱",
+      "expires": "2026-10-13T12:57:01Z",
+      "source": "okx"
+    },
+    "NIGHT": {
+      "price": 0.047941,
+      "chg24_pct": 5.708678779326147,
+      "funding_8h_pct": 0.005,
+      "oi_usd": 5397629.249,
+      "side": "long",
+      "setup": "الف‌۱",
+      "expires": "2026-10-13T12:57:01Z",
+      "source": "okx"
+    },
+    "OP": {
+      "price": 0.13578,
+      "chg24_pct": 10.606060606060622,
+      "funding_8h_pct": 0.01,
+      "oi_usd": 5875505.290320001,
+      "side": "long",
+      "setup": "الف‌۳",
+      "expires": "2026-10-13T12:57:01Z",
+      "source": "okx"
+    },
+    "US": {
+      "price": 0.021481,
+      "chg24_pct": -34.28,
+      "funding_8h_pct": null,
+      "oi_usd": null,
+      "side": "short",
+      "setup": "ج‌۲",
+      "expires": "2026-10-13T12:57:01Z",
+      "source": "gate"
     }
   }
 }
