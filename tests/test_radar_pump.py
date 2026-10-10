@@ -286,18 +286,31 @@ def test_flow_gate_inclusive_and_missing_not_zero():
     assert P.flow_signs({"z1h": None, "z4h": None, "d24": None, "shift": None}) == []
 
 
-def test_long_crowding():
-    assert P.long_crowding(0.0003, 0.15, 0.0) is True
-    assert P.long_crowding(0.0003, 0.15, 0.05) is False          # قیمت رشد کرده
-    assert P.long_crowding(0.0001, 0.30, 0.0) is False
-    assert P.long_crowding(None, 0.30, 0.0) is False
+def test_leveraged_pump_pattern():
+    # الگوی پامپ اهرمی نبض: فاندینگ بالا، بهره باز رو به رشد، قیمت رشد نکرده
+    assert P.leveraged_pump(0.0003, 0.15, 0.0) is True
+    assert P.leveraged_pump(0.0003, 0.15, 0.05) is False          # قیمت رشد کرده
+    assert P.leveraged_pump(0.0001, 0.30, 0.0) is False
+    assert P.leveraged_pump(None, 0.30, 0.0) is False
 
 
-def test_r54_btc_volume_and_weekend_floor():
-    assert P.r54(16_000_000, 80_000, NOW) == (200.0, False)        # شنبه: کف ۲۰۰
-    vb, below = P.r54(16_000_000, 80_000, NOW - timedelta(days=2))   # پنجشنبه: کف ۳۰۰
-    assert vb == 200.0 and below is True
-    assert P.r54(1e6, None, NOW) == (None, None)
+def test_extreme_funding_both_directions():
+    assert P.crowd_label(0.0011) == "ازدحام لانگ"
+    assert P.crowd_label(-0.0011) == "ازدحام شورت"
+    assert P.crowd_label(0.001) is None and P.crowd_label(-0.001) is None   # «بالاتر از»
+    assert P.crowd_label(None) is None
+
+
+def test_flow_labels_never_mark_r54():
+    row = {"funding_8h": -0.0149, "metrics": {"abn_flag": True, "d24": 6.8, "chg24_closed": 0.3,
+                                              "vol_btc": 135.0}}
+    assert P.flow_labels(row) == ["شمع غیرعادی", "ازدحام شورت"]
+    assert all("ر۵۴" not in x for x in P.flow_labels(row))
+
+
+def test_r54_is_a_column_only():
+    assert P.r54(16_000_000, 80_000) == 200.0
+    assert P.r54(1e6, None) is None and P.r54(None, 80_000) is None
 
 
 # ═══════════════ ستاپ‌ها ═══════════════
@@ -400,6 +413,29 @@ def test_rank_groups_then_distance_without_score():
     assert [e["symbol"] for e in sec["nolevel"]] == ["NOLVL"]
     flat = json.dumps(sec, ensure_ascii=False)
     assert "score" not in flat and "امتیاز" not in flat
+
+
+def test_after_pump_leaves_long_groups():
+    trig = [{"name": "الف‌۱", "side": "long", "state": "trigger", "level": 1}]
+    short = [{"name": "ج‌۱", "side": "short", "state": "trigger", "level": 1}]
+    rows = [
+        dict(_row("ABN", trig, d_sup=0.1), metrics={"abn_flag": True, "rs7": 10.0}),
+        dict(_row("RS", trig, d_sup=0.2), metrics={"abn_flag": False, "rs7": 50.1}),
+        dict(_row("EDGE", trig, d_sup=0.3), metrics={"abn_flag": False, "rs7": 50.0}),
+        dict(_row("FLOWP", d_sup=None), metrics={"abn_flag": None, "rs7": 120.0}),
+        dict(_row("SH", short, d_res=0.4), metrics={"abn_flag": True, "rs7": 90.0}),
+    ]
+    sec = P.rank(rows)
+    assert [e["symbol"] for e in sec["long"]] == ["EDGE"]             # +۵۰ خودش «بالاتر» نیست
+    assert [e["symbol"] for e in sec["afterpump"]] == ["ABN", "RS", "FLOWP"]
+    assert [e["symbol"] for e in sec["short"]] == ["SH"]              # شورت دست نمی‌خورد
+    assert sec["nolevel"] == []
+    # دفتر نامزد: گروه خودش می‌ماند، بخش «پس از پامپ»
+    led = {"entries": []}
+    P.ledger_add(led, rows, sec, NOW)
+    abn = next(e for e in led["entries"] if e["symbol"] == "ABN")
+    assert abn["placements"] == [{"side": "long", "section": "afterpump", "group": 1,
+                                  "setup": trig[0], "dist_atr": 0.1, "veto": None}]
 
 
 def test_incomplete_data_never_ranks_better():
@@ -510,6 +546,7 @@ def test_main_end_to_end(tmp_path, monkeypatch):
     md = (tmp_path / "PUMP.md").read_text(encoding="utf-8")
     assert md.startswith(f"# اسکنر پامپ رادار {R.FRAMEWORK}")
     assert "مجوز ورود نیست" in md and "آزمون‌نشده" in md and "| AAA |" not in md
+    assert "زیر کف ر۵۴" not in md and "پس از پامپ — دنبالش نکن" in md
     assert "**AAA**" in md
     # اسکنر معامله نمی‌کند — هیچ فایل دفتر موقعیتی ساخته نمی‌شود
     for f in ("holdings.json", "watch.json", "radar_journal.json", "radar_optcost.json"):

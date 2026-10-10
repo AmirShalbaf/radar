@@ -57,11 +57,12 @@ RATIO_MULT = 2.0                 # نسبت قرارداد به نقدی در ب
 NEW_LISTING_DAYS = 30            # تازه‌فهرست: عمر قدیمی‌ترین فهرست
 FRESH_VENUE_DAYS = 14            # فهرست‌شدن تازه در یک صرافی
 LATE_ATR = 3.0                   # «دیر است» — همان مرز «کشیده» در radar_levels
-CROWD_FUNDING_8H = 0.0003        # ازدحام لانگ — همان مرز آزمون پامپ radar_rotate
-CROWD_OI24 = 0.15
-CROWD_PRICE_MAX = 0.02           # «قیمت رشد نکرده»: تغییر ۲۴ ساعته کمتر از این
+CROWD_FUNDING_ABS = 0.001        # ازدحام لانگ یا شورت: قدر مطلق فاندینگ ۸ ساعته — تصمیم کاربر
+LEV_FUNDING_8H = 0.0003          # پامپ اهرمی — همان مرز آزمون پامپ radar_rotate
+LEV_OI24 = 0.15
+LEV_PRICE_MAX = 0.02             # «قیمت رشد نکرده»: تغییر ۲۴ ساعته کمتر از این
 ABNORMAL_K = 5.0                 # ر۵۶ — شمع ۴ ساعته غیرعادی
-R54_WEEKDAY, R54_WEEKEND = 300.0, 200.0     # ر۵۴ — کف حجم به بیت‌کوین
+POST_PUMP_RS7 = 50.0             # پس از پامپ: قدرت نسبی ۷ روزه به بیت‌کوین، واحد درصد — تصمیم کاربر
 
 # ── پنجره‌ها
 Z1H_BASE, Z1H_MIN, Z1H_RECENT = 168, 120, 6
@@ -84,7 +85,7 @@ SETUP_FA = {"الف‌۱": "شکست و بازآزمایی", "الف‌۲": "پ�
             "ج‌۱": "شکست ناکام", "ج‌۲": "سقف پایین‌تر", "ر۵۸": "شکست کف پس از چند برخورد"}
 GROUP = {"trigger": 1, "pre": 2}
 GROUP_FLOW = 3
-SECTIONS = ("long", "short", "late", "nolevel", "veto")
+SECTIONS = ("long", "short", "afterpump", "late", "nolevel", "veto")
 
 # پیچیده‌شده و سپرده‌ای — فهرست صریح، نه الگو: WIF و WLD و STX نماد واقعی‌اند
 WRAPPED = {"WBTC", "WETH", "WBETH", "STETH", "WSTETH", "CBBTC", "CBETH", "RETH", "METH",
@@ -490,19 +491,47 @@ def flow_signs(m: dict) -> list[str]:
     return s
 
 
-def long_crowding(funding_8h, d24, chg24) -> bool:
+def leveraged_pump(funding_8h, d24, chg24) -> bool:
     """فاندینگ بالا و بهره باز رو به رشد، ولی قیمت رشد نکرده — الگوی پامپ اهرمی نبض."""
     if None in (funding_8h, d24, chg24):
         return False
-    return funding_8h >= CROWD_FUNDING_8H and d24 >= CROWD_OI24 and chg24 < CROWD_PRICE_MAX
+    return funding_8h >= LEV_FUNDING_8H and d24 >= LEV_OI24 and chg24 < LEV_PRICE_MAX
 
 
-def r54(vol_usd, btc_px, now: datetime) -> tuple[float | None, bool | None]:
-    """ر۵۴ — حجم به بیت‌کوین از تیکر همان صرافی؛ کف آخر هفته پایین‌تر. فقط برچسب."""
-    if not btc_px or vol_usd is None:
-        return None, None
-    vb = vol_usd / btc_px
-    return vb, vb < (R54_WEEKEND if now.weekday() >= 5 else R54_WEEKDAY)
+def crowd_label(funding_8h) -> str | None:
+    """تأمین مالی افراطی در هر دو جهت: قدر مطلق نرخ ۸ ساعته بالاتر از آستانه."""
+    f = _f(funding_8h)
+    if f is None or abs(f) <= CROWD_FUNDING_ABS:
+        return None
+    return "ازدحام لانگ" if f > 0 else "ازدحام شورت"
+
+
+def post_pump(m: dict | None) -> bool:
+    """
+    پس از پامپ: شمع غیرعادی ر۵۶، یا قدرت نسبی ۷ روزه بالاتر از آستانه. سطحی که بعد از
+    پامپ ساخته شده فاصله را کم نشان می‌دهد — KAIA و MAGIC، اجرای ۱۰ اکتبر.
+    """
+    m = m or {}
+    rs7 = _f(m.get("rs7"))
+    return bool(m.get("abn_flag")) or (rs7 is not None and rs7 > POST_PUMP_RS7)
+
+
+def flow_labels(row: dict) -> list[str]:
+    """برچسب‌های جریان. ر۵۴ برچسب نمی‌گیرد — روی حجم یک صرافی همه را می‌گرفت."""
+    m, out = row.get("metrics") or {}, []
+    if m.get("abn_flag"):
+        out.append("شمع غیرعادی")
+    crowd = crowd_label(row.get("funding_8h"))
+    if crowd:
+        out.append(crowd)
+    if leveraged_pump(row.get("funding_8h"), m.get("d24"), m.get("chg24_closed")):
+        out.append("پامپ اهرمی")
+    return out
+
+
+def r54(vol_usd, btc_px) -> float | None:
+    """ر۵۴ — حجم ۲۴ ساعته به بیت‌کوین از تیکر همان صرافی. فقط ستون."""
+    return vol_usd / btc_px if btc_px and vol_usd is not None else None
 
 
 # ═══════════════ ستاپ‌ها — روی کندل روزانه بسته ═══════════════
@@ -722,7 +751,10 @@ def _entry(row: dict, side: str, setup: dict | None, group: int, dist) -> dict:
                                   "lbank", "funding_8h")}
     d = _f(dist)
     e.update(side=side, setup=setup, group=group, dist_atr=d, status=UNTESTED, veto=None)
-    e["section"] = "nolevel" if d is None else "late" if d > LATE_ATR else side
+    if side == "long" and post_pump(row.get("metrics")):
+        e["section"] = "afterpump"          # گروهش در دفتر نامزد می‌ماند
+    else:
+        e["section"] = "nolevel" if d is None else "late" if d > LATE_ATR else side
     e["why"] = why_line(e)
     return e
 
@@ -753,8 +785,9 @@ def rank(rows: list[dict]) -> dict[str, list[dict]]:
     for r in rows:
         for e in place(r):
             sec[e["section"]].append(e)
-    for k in ("long", "short"):
-        sec[k].sort(key=lambda e: (e["group"], e["dist_atr"], e["symbol"]))
+    for k in ("long", "short", "afterpump"):
+        sec[k].sort(key=lambda e: (e["group"], math.inf if e["dist_atr"] is None else e["dist_atr"],
+                                   e["symbol"]))
     sec["late"].sort(key=lambda e: (e["dist_atr"], e["symbol"]))
     sec["nolevel"].sort(key=lambda e: (e["group"], e["symbol"]))
     return sec
@@ -1015,8 +1048,8 @@ def render_md(res: dict) -> str:
     for w in res["warnings"]:
         A(f"> ⚠️ {w}")
         A("")
-    A("| جهان بازار | از دروازه جریان گذشت | لانگ | شورت | دیر است | بی‌سطح | وتو |")
-    A("|---|---|---|---|---|---|---|")
+    A("| جهان بازار | از دروازه جریان گذشت | لانگ | شورت | پس از پامپ | دیر است | بی‌سطح | وتو |")
+    A("|---|---|---|---|---|---|---|---|")
     A(f"| {res['universe_n']} | {res['gate_n']} | " + " | ".join(
         str(len(sec[k])) for k in SECTIONS) + " |")
     A("")
@@ -1034,17 +1067,25 @@ def render_md(res: dict) -> str:
     A("")
     L_ += _table(sec["short"], "بالا") if sec["short"] else ["**هیچ نامزدی.**"]
     A("")
-    A(f"## ۳ — دیر است — بیش از {fa(f'{LATE_ATR:g}')} برابر دامنه واقعی از سطح")
+    A("## ۳ — پس از پامپ — دنبالش نکن")
+    A("")
+    A(f"> شمع غیرعادی ر۵۶، یا قدرت نسبی ۷ روزه به بیت‌کوین بالاتر از "
+      f"{fa(f'{POST_PUMP_RS7:g}')}٪. سطحی که بعد از پامپ ساخته شده فاصله را کم نشان "
+      "می‌دهد. در دفتر نامزد با گروه خودش ثبت می‌شود.")
+    A("")
+    L_ += _table(sec["afterpump"], "زیر") if sec["afterpump"] else ["**هیچ‌کدام.**"]
+    A("")
+    A(f"## ۴ — دیر است — بیش از {fa(f'{LATE_ATR:g}')} برابر دامنه واقعی از سطح")
     A("")
     A("> جای حد ضرر نزدیک ندارد — قاعده سخت ۵ و ر۵۷. منتظر اصلاح و برگشت.")
     A("")
     L_ += _table(sec["late"], "") if sec["late"] else ["**هیچ‌کدام.**"]
     A("")
-    A("## ۴ — بی‌سطح یا داده کم")
+    A("## ۵ — بی‌سطح یا داده کم")
     A("")
     L_ += _table(sec["nolevel"], "") if sec["nolevel"] else ["**هیچ‌کدام.**"]
     A("")
-    A("## ۵ — وتوی آزادسازی")
+    A("## ۶ — وتوی آزادسازی")
     A("")
     if sec["veto"]:
         A("| نماد | سمت | دلیل |")
@@ -1057,7 +1098,7 @@ def render_md(res: dict) -> str:
     for n_ in res["veto_notes"]:
         A(f"> {n_}")
         A("")
-    A("## ۶ — سنجه‌های همه گذشته‌ها از دروازه")
+    A("## ۷ — سنجه‌های همه گذشته‌ها از دروازه")
     A("")
     A("| نماد | صرافی | جهش حجم ۱ ساعته | جهش حجم ۴ ساعته | بهره باز ۲۴ ساعته | نسبت قرارداد "
       "به نقدی | فاندینگ ۸ ساعته | حجم به بیت‌کوین | قدرت نسبی ۷ روزه | قدرت نسبی ۳۰ روزه "
@@ -1083,10 +1124,12 @@ def render_md(res: dict) -> str:
     A(f"| نسبت قرارداد به نقدی | این ۲۴ ساعت در برابر شش روز پیش از آن، یک صرافی. دروازه: "
       f"{fa(f'{RATIO_MULT:g}')} برابر |")
     A("| ماشه / پیش‌شرط / فقط جریان | گروه رتبه. داخل گروه، نزدیک‌تر به سطح بالاتر |")
-    A("| ازدحام لانگ | فاندینگ بالا و بهره باز رو به رشد، ولی قیمت رشد نکرده |")
+    A(f"| ازدحام لانگ / شورت | قدر مطلق فاندینگ ۸ ساعته بالاتر از "
+      f"{fa(f'{100 * CROWD_FUNDING_ABS:g}')}٪؛ مثبت لانگ، منفی شورت |")
+    A("| پامپ اهرمی | فاندینگ بالا و بهره باز رو به رشد، ولی قیمت رشد نکرده — الگوی هشدار نبض |")
     A(f"| شمع غیرعادی | ر۵۶ — دامنه یک شمع ۴ ساعته دست‌کم {fa(f'{ABNORMAL_K:g}')} برابر میانه |")
-    A(f"| زیر کف ر۵۴ | حجم یک صرافی به بیت‌کوین زیر {fa(f'{R54_WEEKDAY:g}')} در روز کاری و "
-      f"{fa(f'{R54_WEEKEND:g}')} آخر هفته. ویدیو احتمالاً حجم همه صرافی‌ها را می‌گفت |")
+    A("| حجم به بیت‌کوین | ر۵۴ — حجم ۲۴ ساعته یک صرافی تقسیم بر قیمت بیت‌کوین. فقط ستون، "
+      "بی کف و بی برچسب |")
     A("| در LBank نیست | جفت نقدی USDT در ال‌بانک نیست. «نامعلوم» یعنی فهرست ال‌بانک نیامد |")
     A("")
     A("## درخواست‌ها")
@@ -1136,13 +1179,10 @@ def scan(net: Net, now: datetime, min_vol: float, veto_fn, limit: int = 0) -> di
         except Exception as exc:
             warns.append(f"{s}: سنجه جریان خطا داد — {type(exc).__name__}")
             continue
-        met["vol_btc"], below = r54(u["vol24"], btc_px, now)
+        met["vol_btc"] = r54(u["vol24"], btc_px)
         signs = flow_signs(met)
         if signs:
-            labels = list(u["labels"])
-            if below:
-                labels.append("زیر کف ر۵۴")
-            rows.append(dict(u, metrics=met, signs=signs, labels=labels,
+            rows.append(dict(u, metrics=met, signs=signs, labels=list(u["labels"]),
                              lbank=lbank_label(s, m["lbank"])))
     _log(f"[۲] از دروازه جریان گذشت: {len(rows)} — سطح و ستاپ روزانه")
     btc = None
@@ -1160,11 +1200,7 @@ def scan(net: Net, now: datetime, min_vol: float, veto_fn, limit: int = 0) -> di
                  support=st.get("support"), resistance=st.get("resistance"),
                  level_verdict=st.get("level_verdict"))
         r["metrics"].update(rs7=st["rs7"], rs30=st["rs30"])
-        r["labels"] += st["labels"]
-        if r["metrics"].get("abn_flag"):
-            r["labels"].append("شمع غیرعادی")
-        if long_crowding(r["funding_8h"], r["metrics"].get("d24"), r["metrics"].get("chg24_closed")):
-            r["labels"].append("ازدحام لانگ")
+        r["labels"] += st["labels"] + flow_labels(r)
     warns += [f"radar_fetch3: {x}" for x in R.FAILURES[n_fail:][:10]]
     sec = rank(rows)
     _log("[۳] وتوی آزادسازی ...")
@@ -1233,7 +1269,9 @@ def main(argv=None, get=None, now: datetime | None = None, veto=None, history=No
                           "ratio_mult": RATIO_MULT, "late_atr": LATE_ATR,
                           "new_listing_days": NEW_LISTING_DAYS,
                           "fresh_venue_days": FRESH_VENUE_DAYS,
-                          "crowd_funding_8h": CROWD_FUNDING_8H, "abnormal_k": ABNORMAL_K},
+                          "crowd_funding_abs": CROWD_FUNDING_ABS,
+                          "lev_funding_8h": LEV_FUNDING_8H, "abnormal_k": ABNORMAL_K,
+                          "post_pump_rs7": POST_PUMP_RS7},
            "universe_n": res["universe_n"], "gate_n": res["gate_n"],
            "candidates": [e["symbol"] for e in sec["long"] + sec["short"]],
            "sections": sec, "requests": res["requests"],
