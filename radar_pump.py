@@ -63,6 +63,20 @@ LEV_OI24 = 0.15
 LEV_PRICE_MAX = 0.02             # «قیمت رشد نکرده»: تغییر ۲۴ ساعته کمتر از این
 ABNORMAL_K = 5.0                 # ر۵۶ — شمع ۴ ساعته غیرعادی
 POST_PUMP_RS7 = 50.0             # پس از پامپ: قدرت نسبی ۷ روزه به بیت‌کوین، واحد درصد — تصمیم کاربر
+OI_USD_MIN = 2_000_000           # نشانه بهره باز فقط با بهره باز دلاری دست‌کم این — تصمیم کاربر
+SQ_DRIFT = 0.5                   # فشردگی افقی: تغییر خالص بسته پنجره کمتر از این کسر ارتفاع
+SQ_LIVE_ATR = 0.5                # فشردگی: قیمت زنده درون محدوده یا تا این کسر دامنه واقعی بیرونش
+
+# ── کارت معامله — کتابخانه ستاپ و radar_size
+BASE_RISK_PCT = 2.0              # ریسک پایه — همان radar_size
+MAX_TRADE_RISK_PCT = 2.0         # سقف ریسک هر معامله — همان radar_size
+FEE_SIDE, SLIP = 0.001, 0.001    # کارمزد هر طرف و لغزش — همان پیش‌فرض radar_size
+RT_COST = 2 * FEE_SIDE + SLIP    # هزینه رفت و برگشت، کسری از قیمت ورود
+MIN_RR = 2.5                     # کف نسبت — اصل دو کتابخانه
+STOP_BUF_ATR = 0.25              # فاصله استاپ از سطح — همان buffer_atr در radar_levels
+ON_LEVEL_ATR = 0.5               # «ورود روی سطح ساختاری»: تا این کسر دامنه واقعی
+QUALITY = (("الف", 2.0, 4.0), ("ب", 1.5, 3.0), ("ج", 1.0, MIN_RR))   # جدول ۸.۲ کتابخانه
+DAILY_TARGET = (3, 8)            # نامزد لانگ و شورت در روز — تصمیم کاربر
 
 # ── پنجره‌ها
 Z1H_BASE, Z1H_MIN, Z1H_RECENT = 168, 120, 6
@@ -407,6 +421,40 @@ def z_recent_max(qv, base_n: int, min_n: int, recent: int
     return best, ago, None
 
 
+def z_by_ts(df: pd.DataFrame | None, base_n: int, min_n: int, recent: int) -> dict:
+    """z هر یک از چند کندل بسته آخر، با کلید مهر زمان همان کندل."""
+    if df is None or len(df) == 0:
+        return {}
+    qv, ts, out = list(df["qv"]), list(df["ts"]), {}
+    for k in range(recent):
+        n = len(qv) - k
+        if n < min_n + 1:
+            break
+        z, _ = vol_z(qv[:n], base_n, min_n)
+        if z is not None:
+            out[ts[n - 1]] = z
+    return out
+
+
+def rel_z(sym: pd.DataFrame | None, btc: pd.DataFrame | None, base_n: int, min_n: int,
+          recent: int) -> dict:
+    """
+    جهش حجم نسبت به بازار: z نماد منهای z بیت‌کوین در همان ساعت و همان صرافی.
+    وقتی کل بازار تکان می‌خورد همه از دروازه مطلق می‌گذشتند — LTC و FIL، ۱۰ اکتبر.
+    z مطلق برای جدول می‌ماند. بیت‌کوین غایب یعنی نسبی نامعلوم، نه صفر.
+    """
+    z, ago, why = z_recent_max([] if sym is None else sym["qv"], base_n, min_n, recent)
+    out = {"z": z, "ago": ago, "rel": None, "btc_z": None, "why": why}
+    if z is None:
+        return out
+    zs, zb = z_by_ts(sym, base_n, min_n, recent), z_by_ts(btc, base_n, min_n, recent)
+    pairs = [(zs[t] - zb[t], zb[t]) for t in zs if t in zb]
+    if not pairs:
+        return dict(out, why="بیت‌کوین داده ندارد")
+    rel, bz = max(pairs)
+    return dict(out, rel=rel, btc_z=bz)
+
+
 def ratio_shift(spot: pd.DataFrame | None, perp: pd.DataFrame | None) -> dict:
     """
     r = حجم دلاری قرارداد ۲۴ ساعت بسته / حجم نقدی همان ساعت‌ها؛ r7 همان روی ۱۴۴
@@ -480,11 +528,12 @@ def _ge(x, t: float) -> bool:
 def flow_signs(m: dict) -> list[str]:
     """دروازه جریان — دودویی، نه امتیاز. سنجه غایب نشانه نیست، صفر هم نیست."""
     s = []
-    if _ge(m.get("z1h"), Z_MIN):
+    if _ge(m.get("z1h_rel"), Z_MIN):
         s.append("حجم ساعتی")
-    if _ge(m.get("z4h"), Z_MIN):
+    if _ge(m.get("z4h_rel"), Z_MIN):
         s.append("حجم چهارساعته")
-    if _ge(m.get("d24"), OI24_MIN):
+    # رشد از پایه ناچیز معنا ندارد — کف دلاری، ف۴۰
+    if _ge(m.get("d24"), OI24_MIN) and _ge(m.get("oi_usd"), OI_USD_MIN):
         s.append("بهره باز")
     if _ge(m.get("shift"), math.log(RATIO_MULT)):
         s.append("نسبت قرارداد")
@@ -536,8 +585,10 @@ def r54(vol_usd, btc_px) -> float | None:
 
 # ═══════════════ ستاپ‌ها — روی کندل روزانه بسته ═══════════════
 
-def _setup(name: str, side: str, state: str, level: float) -> dict:
-    return {"name": name, "side": side, "state": state, "level": float(level)}
+def _setup(name: str, side: str, state: str, level: float, **geo) -> dict:
+    """هندسه ستاپ برای کارت معامله در geo — عدد ساده، نه numpy."""
+    return {"name": name, "side": side, "state": state, "level": float(level),
+            **{k: _f(v) if not isinstance(v, bool) else v for k, v in geo.items()}}
 
 
 def _compressed(df: pd.DataFrame, atr: pd.Series, end: int) -> tuple[float, float] | None:
@@ -549,6 +600,9 @@ def _compressed(df: pd.DataFrame, atr: pd.Series, end: int) -> tuple[float, floa
     if not atr.iloc[end - 1] < atr.iloc[end - SQ_WIN]:
         return None
     if not hi - lo < 0.5 * (float(p["high"].max()) - float(p["low"].min())):
+        return None
+    # افقی: روند با دامنه کم‌شونده فشردگی نیست — LTC، ۱۰ اکتبر. ف۴۵
+    if not abs(float(w["close"].iloc[-1]) - float(w["close"].iloc[0])) < SQ_DRIFT * (hi - lo):
         return None
     return hi, lo
 
@@ -564,12 +618,18 @@ def squeeze(df: pd.DataFrame) -> dict | None:
         x, pc = df.iloc[-1], float(df["close"].iloc[-2])
         tr = max(x["high"] - x["low"], abs(x["high"] - pc), abs(x["low"] - pc))
         if tr > atr.iloc[-2]:
+            # تأیید اختیاری: حجم انبساط بالای میانگین ۲۰ کندل پیش از آن
+            exp_vol = bool(x["vol"] > df["vol"].iloc[-21:-1].mean()) if "vol" in df else False
+            geo = dict(hi=hi, lo=lo, atr=atr.iloc[-2], exp_vol=exp_vol)
             if x["close"] > hi:
-                return _setup("الف‌۳", "long", "trigger", hi)
+                return _setup("الف‌۳", "long", "trigger", hi, **geo)
             if x["close"] < lo:
-                return _setup("الف‌۳", "short", "trigger", lo)
+                return _setup("الف‌۳", "short", "trigger", lo, **geo)
     box = _compressed(df, atr, n)
-    return _setup("الف‌۳", "long", "pre", box[0]) if box else None
+    if not box:
+        return None
+    return _setup("الف‌۳", "long", "pre", box[0], hi=box[0], lo=box[1], atr=atr.iloc[-1],
+                  exp_vol=False)
 
 
 def _hist_levels(df: pd.DataFrame) -> list:
@@ -605,7 +665,10 @@ def breakout(df: pd.DataFrame) -> dict | None:
             continue
         if c[-1] < lvl:
             if rsi is None or rsi >= 30:
-                found.append(_setup("ج‌۱", "short", "trigger", lvl))
+                found.append(_setup("ج‌۱", "short", "trigger", lvl,
+                                    fail_high=df["high"].iloc[b:].max(),
+                                    range_low=df["low"].iloc[max(0, b - BASE_MIN):b].min(),
+                                    atr=atr.iloc[-1]))
             continue
         if b < BASE_MIN or not np.all(c[b - BASE_MIN:b] <= lvl):
             continue
@@ -617,7 +680,9 @@ def breakout(df: pd.DataFrame) -> dict | None:
         a = float(atr.iloc[b - 1])
         retest = (b < n - 1 and last["low"] <= lvl + 0.5 * a and last["close"] > lvl
                   and last["close"] > last["open"])
-        found.append(_setup("الف‌۱", "long", "trigger" if retest else "pre", lvl))
+        found.append(_setup("الف‌۱", "long", "trigger" if retest else "pre", lvl,
+                            range_low=df["low"].iloc[b - BASE_MIN:b].min(),
+                            retest_low=last["low"] if retest else None, atr=a))
     if found:
         return min(found, key=lambda s: (GROUP[s["state"]], abs(c[-1] - s["level"])))
     return {"killed": killed} if killed else None
@@ -658,9 +723,10 @@ def lower_high(df: pd.DataFrame) -> dict | None:
     if not l2 < l1:
         return None
     x = df.iloc[-1]
+    geo = dict(h1=h1, h2=h2, l2=l2, atr=L.atr_wilder(df).iloc[-1])
     if ih2 > il2 and h2 < h1 and x["close"] < x["open"] and x["close"] < h2:
-        return _setup("ج‌۲", "short", "trigger", h2)
-    return _setup("ج‌۲", "short", "pre", h2)
+        return _setup("ج‌۲", "short", "trigger", h2, **geo)
+    return _setup("ج‌۲", "short", "pre", h2, **geo)
 
 
 def floor_break(df: pd.DataFrame) -> dict | None:
@@ -693,10 +759,15 @@ def live_check(setups: list[dict], price: float | None) -> tuple[list[dict], lis
     for s in setups:
         if s["side"] == "short":
             bad = price >= s["level"]
+        elif s["name"] == "الف‌۳" and s["state"] == "pre":
+            # فشردگی واقعی: قیمت زنده درون محدوده یا در حال شکستنش — ف۴۵
+            hi, lo, a = s.get("hi"), s.get("lo"), s.get("atr")
+            bad = (None not in (hi, lo, a)
+                   and not lo - SQ_LIVE_ATR * a <= price <= hi + SQ_LIVE_ATR * a)
         else:
-            bad = not (s["name"] == "الف‌۳" and s["state"] == "pre") and price <= s["level"]
+            bad = price <= s["level"]
         if bad:
-            labels.append(f"{s['name']} با قیمت زنده باطل")
+            labels.append(f"{'شورت' if s['side'] == 'short' else 'لانگ'} {s['name']} باطل شد")
         else:
             keep.append(s)
     return keep, labels
@@ -734,8 +805,9 @@ def why_line(e: dict) -> str:
         parts.append(f"{SETUP_FA[s['name']]} ({s['name']}) — {STATE_FA[s['state']]}")
     for sign in e.get("signs") or []:
         if sign in ("حجم ساعتی", "حجم چهارساعته"):
-            z = _num(m.get("z1h" if sign == "حجم ساعتی" else "z4h"), ".1f")
-            parts.append(f"{sign} {z} انحراف معیار بالای عادی" if z else f"{sign} بالای عادی")
+            z = _num(m.get("z1h_rel" if sign == "حجم ساعتی" else "z4h_rel"), ".1f")
+            parts.append(f"{sign} {z} انحراف معیار بیش از بیت‌کوین" if z
+                         else f"{sign} بالای بیت‌کوین")
         elif sign == "بهره باز":
             d = _num(100 * m["d24"], "+.0f") if _f(m.get("d24")) is not None else None
             parts.append(f"بهره باز {d}٪ در ۲۴ ساعت" if d else "بهره باز رو به رشد")
@@ -747,8 +819,15 @@ def why_line(e: dict) -> str:
 
 
 def _entry(row: dict, side: str, setup: dict | None, group: int, dist) -> dict:
-    e = {k: row.get(k) for k in ("symbol", "venue", "price", "signs", "metrics", "labels",
-                                  "lbank", "funding_8h")}
+    e = {k: row.get(k) for k in ("symbol", "venue", "price", "signs", "metrics", "lbank",
+                                  "funding_8h", "levels", "atr_d")}
+    e["labels"] = list(row.get("labels") or [])
+    rs7 = _f((row.get("metrics") or {}).get("rs7"))
+    if side == "long" and rs7 is not None and rs7 < 0:
+        e["labels"].append("ضعیف‌تر از بیت‌کوین")        # ر۵۵
+    # فشردگی: فاصله تا ماشه ورود، یعنی لبه محدوده؛ بقیه فاصله تا سطح
+    if setup and setup["name"] == "الف‌۳" and setup.get("atr") and _f(row.get("price")):
+        dist = abs(setup["level"] - row["price"]) / setup["atr"]
     d = _f(dist)
     e.update(side=side, setup=setup, group=group, dist_atr=d, status=UNTESTED, veto=None)
     if side == "long" and post_pump(row.get("metrics")):
@@ -867,8 +946,11 @@ def oi_points(net: Net, base: str, venue: str, quanto: float | None) -> list:
             for x in d or [] if isinstance(x, dict) and "time" in x]
 
 
-def flow_metrics(net: Net, u: dict, now: datetime) -> dict:
-    """سنجه‌های جریان یک نماد — حداکثر چهار درخواست، همه روی کندل بسته."""
+def flow_metrics(net: Net, u: dict, now: datetime, btc: dict | None = None) -> dict:
+    """
+    سنجه‌های جریان یک نماد — حداکثر چهار درخواست، همه روی کندل بسته. btc: کندل بسته
+    ۱ و ۴ ساعته بیت‌کوین همان صرافی، برای جهش نسبی.
+    """
     b, v = u["symbol"], u["venue"]
     if v == "okx":
         h1, h4 = okx_candles(net, f"{b}-USDT", "1H"), okx_candles(net, f"{b}-USDT", "4H")
@@ -876,9 +958,12 @@ def flow_metrics(net: Net, u: dict, now: datetime) -> dict:
         h1, h4 = gate_candles(net, f"{b}_USDT", "1h", now), gate_candles(net, f"{b}_USDT", "4h", now)
     h1, h4 = closed(h1), closed(h4)
     m: dict = {}
-    m["z1h"], m["z1h_ago"], m["z1h_why"] = z_recent_max(
-        [] if h1 is None else h1["qv"], Z1H_BASE, Z1H_MIN, Z1H_RECENT)
-    m["z4h"], m["z4h_why"] = vol_z([] if h4 is None else h4["qv"], Z4H_BASE, Z4H_MIN)
+    btc = btc or {}
+    r1 = rel_z(h1, btc.get("1h"), Z1H_BASE, Z1H_MIN, Z1H_RECENT)
+    r4 = rel_z(h4, btc.get("4h"), Z4H_BASE, Z4H_MIN, 1)
+    m["z1h"], m["z1h_ago"], m["z1h_rel"], m["z1h_btc"], m["z1h_why"] = (
+        r1["z"], r1["ago"], r1["rel"], r1["btc_z"], r1["why"])
+    m["z4h"], m["z4h_rel"], m["z4h_btc"], m["z4h_why"] = r4["z"], r4["rel"], r4["btc_z"], r4["why"]
     m["chg24_closed"] = price_chg24(h1)
     ab = abnormal_4h(h4)
     m["abn_ratio"], m["abn_flag"] = ab["ratio"], ab["flag"]
@@ -892,6 +977,7 @@ def flow_metrics(net: Net, u: dict, now: datetime) -> dict:
     oc = (oi_change(oi_points(net, b, u["deriv_venue"], u.get("quanto")), now)
           if u["deriv_venue"] else {"oi": None, "d4": None, "d24": None, "why": "قرارداد ندارد"})
     m["oi"], m["d4"], m["d24"], m["oi_why"] = oc["oi"], oc["d4"], oc["d24"], oc["why"]
+    m["oi_usd"] = oc["oi"] * u["price"] if oc["oi"] and u.get("price") else None
     m["funding_8h"] = u["funding_8h"]
     return m
 
@@ -904,7 +990,8 @@ def daily_candles(net: Net, base: str, venue: str) -> pd.DataFrame | None:
 def structure(net: Net, row: dict, btc: pd.DataFrame | None) -> dict:
     """سطح، فاصله، ستاپ و قدرت نسبی — فقط برای گذشته‌ها از دروازه."""
     out = {"d_sup": None, "d_res": None, "support": None, "resistance": None,
-           "level_verdict": None, "setups": [], "labels": [], "rs7": None, "rs30": None}
+           "level_verdict": None, "setups": [], "labels": [], "rs7": None, "rs30": None,
+           "levels": [], "atr_d": None}
     d = daily_candles(net, row["symbol"], row["venue"])
     if d is None or len(d) == 0:
         out["labels"].append("کندل روزانه نیامد")
@@ -917,12 +1004,215 @@ def structure(net: Net, row: dict, btc: pd.DataFrame | None) -> dict:
     if a.resistance is not None and atr and a.price is not None:
         out["resistance"], out["d_res"] = a.resistance.price, (a.resistance.price - a.price) / atr
     dc = d[d["confirm"] == 1].reset_index(drop=True) if "confirm" in d.columns else d
+    out["atr_d"] = atr
+    if atr:
+        res, sup = L.structural_levels(dc, atr)
+        out["levels"] = sorted(lv.price for lv in res + sup)
     setups, labels = detect_setups(dc)
     out["setups"], void = live_check(setups, _f(row.get("price")))
     out["labels"] = labels + void
     if btc is not None:
         out["rs7"], out["rs30"] = rs_pair(dc, btc, 7), rs_pair(dc, btc, 30)
     return out
+
+
+# ═══════════════ کارت معامله — جدول همان ستاپ در کتابخانه ═══════════════
+
+CARD_KEYS = ("ok", "why", "tag", "entry", "stop", "target", "rr", "rr_gross", "grade", "risk_pct")
+
+
+def _p(x) -> str:
+    """قیمت در متن کارت — عدد بازار، رقم لاتین."""
+    v = _f(x)
+    return "—" if v is None else f"{v:.6g}"
+
+
+def card_geometry(s: dict, price: float | None, levels: list, atr) -> dict | str:
+    """ورود، استاپ، هدف، ماشه و ابطال از جدول همان ستاپ — یا دلیل نبود کارت."""
+    name, side, st = s["name"], s["side"], s["state"]
+    a = _f(s.get("atr")) or _f(atr)
+    if name == "الف‌۳":
+        hi, lo = _f(s.get("hi")), _f(s.get("lo"))
+        if hi is None or lo is None or hi <= lo:
+            return "کارت ندارد — محدوده فشردگی نامعلوم"
+        h = hi - lo
+        if side == "long":
+            nxt = min((v for v in levels if v > hi), default=None)
+            return {"entry": hi, "stop": lo,
+                    "target": hi + 2 * h if nxt is None else max(hi + 2 * h, nxt),
+                    "trigger": f"بسته روزانه بالای سقف محدوده {_p(hi)}",
+                    "invalid": f"بسته روزانه دوباره داخل محدوده، زیر {_p(hi)}"}
+        nxt = max((v for v in levels if v < lo), default=None)
+        return {"entry": lo, "stop": hi,
+                "target": lo - 2 * h if nxt is None else min(lo - 2 * h, nxt),
+                "trigger": f"بسته روزانه زیر کف محدوده {_p(lo)}",
+                "invalid": f"بسته روزانه دوباره داخل محدوده، بالای {_p(lo)}"}
+    if name == "الف‌۱":
+        lvl, rl = s["level"], _f(s.get("range_low"))
+        if rl is None or a is None:
+            return "کارت ندارد — رنج شکسته‌شده نامعلوم"
+        if st == "trigger" and _f(s.get("retest_low")) is not None and price is not None:
+            entry, stop = price, s["retest_low"] - STOP_BUF_ATR * a
+            trig = f"بازآزمایی {_p(lvl)} انجام شد — ورود در قیمت زنده"
+        else:
+            entry, stop = lvl, lvl - STOP_BUF_ATR * a
+            trig = f"بازگشت به {_p(lvl)} و کندل واکنش صعودی روی آن"
+        return {"entry": entry, "stop": stop, "target": lvl + (lvl - rl), "trigger": trig,
+                "invalid": f"بسته روزانه دوباره زیر {_p(lvl)} — داخل رنج قبلی"}
+    if name == "ج‌۱":
+        fh, rl = _f(s.get("fail_high")), _f(s.get("range_low"))
+        if None in (fh, rl, a, price):
+            return "کارت ندارد — هندسه شکست ناکام نامعلوم"
+        return {"entry": price, "stop": fh + STOP_BUF_ATR * a, "target": rl,
+                "trigger": f"بسته روزانه دوباره زیر {_p(s['level'])} رخ داد — ورود در قیمت زنده",
+                "invalid": f"بازپس‌گیری {_p(s['level'])} با بسته روزانه"}
+    if name == "ج‌۲" and st == "trigger":
+        h1, h2, l2 = _f(s.get("h1")), _f(s.get("h2")), _f(s.get("l2"))
+        if None in (h1, h2, l2, a, price):
+            return "کارت ندارد — هندسه سقف پایین‌تر نامعلوم"
+        return {"entry": price, "stop": h2 + STOP_BUF_ATR * a, "target": l2,
+                "trigger": f"سقف پایین‌تر {_p(h2)} و کندل نزولی رخ داد — ورود در قیمت زنده",
+                "invalid": f"بازپس‌گیری سقف قبلی {_p(h1)}"}
+    if name == "ر۵۸":
+        return "کارت ندارد — ر۵۸ روش است، ستاپ کتابخانه نیست"
+    return "کارت ندارد — ماشه عددی ندارد، چشمی"
+
+
+def confirmations(s: dict, e: dict) -> dict[str, bool]:
+    """تأییدهای اختیاری جدول همان ستاپ. آنچه سنجیده نمی‌شود «نه» است — محافظه‌کارانه."""
+    m = e.get("metrics") or {}
+    rs7, d24, f = _f(m.get("rs7")), _f(m.get("d24")), _f(e.get("funding_8h"))
+    return {
+        "الف‌۱": {"حجم شکست بالای میانگین": True,       # بی آن، شکست بی‌حجم و ستاپ کشته
+                  "قدرت نسبی مثبت به بیت‌کوین": rs7 is not None and rs7 > 0,
+                  "سطح هم‌زمان مرز ناحیه ارزش": False},  # سنجیده نمی‌شود
+        "الف‌۳": {"بهره باز رو به رشد": d24 is not None and d24 > 0,
+                  "حجم انبساط بالای میانگین": bool(s.get("exp_vol"))},
+        "ج‌۱": {"فاندینگ به‌شدت مثبت": f is not None and f > CROWD_FUNDING_ABS,
+                "بهره باز بالا": d24 is not None and d24 >= OI24_MIN},
+        "ج‌۲": {"ضعف نسبی به بیت‌کوین": rs7 is not None and rs7 < 0,
+                "حجم بالاتر در موج نزولی": False},     # سنجیده نمی‌شود
+    }.get(s["name"], {})
+
+
+def quality(rr: float, conf: dict, on_level: bool) -> tuple[str | None, float]:
+    """جدول ۸.۲ کتابخانه — بی امتیاز: نسبت، تأییدها و ورود روی سطح."""
+    n, k = len(conf), sum(conf.values())
+    for grade, mult, floor in QUALITY:
+        if rr < floor:
+            continue
+        if grade == "الف" and not (n and k == n and on_level):
+            continue
+        if grade == "ب" and k < 1:
+            continue
+        return grade, mult
+    return None, 0.0
+
+
+def size_card(entry: float, risk: float, cost: float, qmult: float, budget: dict | None) -> dict:
+    """
+    ریسک٪ = ۲ × ضریب رژیم × ضریب کیفیت؛ سقف هر معامله ۲٪ مثل radar_size؛ سقف باقی‌مانده
+    بودجه دفتر معامله. سرمایه به روش radar_book. هر کارت جدا — با هم بیش از باقی‌مانده‌اند.
+    """
+    out = {"risk_pct": None, "risk_usd": None, "qty": None, "notional": None, "size_why": None}
+    band = (budget or {}).get("band")
+    if band is None:
+        return dict(out, size_why="اندازه ندارد — رژیم کهنه یا خوانده نشد")
+    pct = min(BASE_RISK_PCT * band["mult"] * qmult, MAX_TRADE_RISK_PCT)
+    free = _f(budget.get("free_pct"))
+    if free is not None:
+        pct = min(pct, max(free, 0.0))
+    out["risk_pct"] = pct
+    total = _f(budget.get("total"))
+    if not total:
+        return dict(out, size_why="سرمایه نامعلوم — فقط درصد ریسک")
+    usd = pct / 100 * total
+    qty = usd / (risk + cost)
+    return dict(out, risk_usd=usd, qty=qty, notional=qty * entry)
+
+
+def make_card(e: dict, budget: dict | None) -> dict:
+    """کارت معامله یک نامزد لانگ یا شورت. کف نسبت با کارمزد ۲.۵ — اصل دو کتابخانه."""
+    side, s = e.get("side"), e.get("setup")
+    c = {k: None for k in CARD_KEYS + ("trigger", "invalid", "confirms", "on_level", "qmult",
+                                        "risk_usd", "qty", "notional", "size_why")}
+    c.update(ok=False, tag="فیوچرز" if side == "short" else "نقدی")
+    if not s:
+        return dict(c, why="کارت ندارد — ستاپ نام‌دار نیست")
+    price = _f(e.get("price"))
+    g = card_geometry(s, price, e.get("levels") or [], e.get("atr_d"))
+    if isinstance(g, str):
+        return dict(c, why=g)
+    c.update(g)
+    sgn = 1 if side == "long" else -1
+    risk, reward = sgn * (g["entry"] - g["stop"]), sgn * (g["target"] - g["entry"])
+    if not (risk > 0 and reward > 0):
+        return dict(c, why="کارت ندارد — هندسه وارونه")
+    cost = g["entry"] * RT_COST
+    c.update(rr_gross=reward / risk, rr=(reward - cost) / (risk + cost))
+    a = _f(e.get("atr_d")) or _f(s.get("atr"))
+    on_level = bool(a) and any(abs(v - g["entry"]) <= ON_LEVEL_ATR * a for v in e.get("levels") or [])
+    conf = confirmations(s, e)
+    grade, qmult = quality(c["rr"], conf, on_level)
+    c.update(confirms=conf, on_level=on_level, grade=grade, qmult=qmult)
+    if side == "long" and e.get("lbank") != "هست":
+        return dict(c, why="کارت ندارد — در LBank نیست" if e.get("lbank") == NOT_IN_LBANK
+                    else "کارت ندارد — بودن در LBank نامعلوم")
+    if grade is None:
+        return dict(c, why="کارت ندارد — نسبت کافی نیست")
+    c["ok"] = True
+    c.update(size_card(g["entry"], risk, cost, qmult, budget))
+    return c
+
+
+def ticker_prices(m: dict) -> dict[str, float]:
+    """قیمت زنده هر نماد از تیکرهای یک‌باره: اوکی‌اکس اول، گیت پشتیبان."""
+    out: dict[str, float] = {}
+    for t in m.get("gate_spot") or []:
+        p, v = t.get("currency_pair", ""), _f(t.get("last"))
+        if p.endswith("_USDT") and v:
+            out[p[:-5]] = v
+    for t in m.get("okx_spot") or []:
+        i, v = t.get("instId", ""), _f(t.get("last"))
+        if i.endswith("-USDT") and v:
+            out[i[:-5]] = v
+    return out
+
+
+def budget_from(h: dict, prices: dict, band: dict) -> dict:
+    """سرمایه و حرارت دفتر معامله با همان توابع radar_book — radar_positions.value و trade_heat."""
+    import radar_positions as PS
+    val = PS.value(h, prices)
+    total = val["total"]
+    heat = PS.trade_heat(h, band, total)
+    free = heat["cap_usd"] - heat["effective"]
+    return {"band": band, "total": total, "free_pct": 100 * free / total if total > 0 else None,
+            "heat": heat["effective"], "cap_usd": heat["cap_usd"],
+            "missing": val["missing"], "note": ""}
+
+
+def load_budget(holdings: str, regime_file: str, prices: dict) -> dict:
+    """باند دفتر معامله با هیسترزیس، مثل radar_size؛ سرمایه از holdings.json. خطا یعنی بی‌اندازه."""
+    out = {"band": None, "total": None, "free_pct": None, "note": ""}
+    try:
+        import radar_book as B
+        from radar_budget import regime_band
+        info = B.load_regime(regime_file)
+        raw = regime_band(info.score) if info.score is not None else None
+        band, bnote = B.effective_trade_band(raw, info)
+    except Exception as exc:
+        return dict(out, note=f"رژیم خوانده نشد — {type(exc).__name__}")
+    if band is None:
+        return dict(out, note=f"رژیم کهنه — {bnote}")
+    try:
+        import radar_positions as PS
+        h, _ = PS.load(holdings)
+        b = budget_from(h, prices, band)
+    except Exception as exc:
+        return dict(out, band=band, note=f"باند {band['name']}؛ سرمایه خوانده نشد — "
+                                         f"{type(exc).__name__}")
+    miss = f"؛ ⚠️ بی‌قیمت: {'، '.join(b['missing'])}" if b["missing"] else ""
+    return dict(b, note=f"باند {band['name']} — {bnote}{miss}")
 
 
 # ═══════════════ دفتر نامزد — برای نشست ۱۳ ═══════════════
@@ -943,7 +1233,9 @@ def ledger_add(led: dict, rows: list[dict], sec: dict, now: datetime) -> int:
         for e in sec[k]:
             places.setdefault(e["symbol"], []).append(
                 {"side": e["side"], "section": k, "group": e["group"], "setup": e["setup"],
-                 "dist_atr": e["dist_atr"], "veto": e["veto"]})
+                 "dist_atr": e["dist_atr"], "veto": e["veto"],
+                 "card": ({k2: e["card"].get(k2) for k2 in CARD_KEYS} if e.get("card")
+                          else None)})
     n = 0
     for r in rows:
         eid = f"{day}:{r['symbol']}"
@@ -1020,16 +1312,54 @@ def _setup_txt(s) -> str:
     return f"{s['name']} {STATE_FA[s['state']]}" if s else "فقط جریان"
 
 
+def _card_txt(c: dict | None) -> str:
+    if not c:
+        return "—"
+    if c["ok"]:
+        risk = f"، ریسک {c['risk_pct']:.2f}٪" if c.get("risk_pct") is not None else ""
+        return f"رده {c['grade']}{risk}"
+    return (c["why"] or "").replace("کارت ندارد — ", "ندارد: ")
+
+
 def _table(es: list[dict], side_word: str) -> list[str]:
     where = f"فاصله تا سطح {side_word}" if side_word else "فاصله تا سطح"
     o = [f"| # | نماد | ستاپ | {where} (برابر دامنه واقعی) | چرا "
-         "| فاندینگ ۸ ساعته | وتو | ال‌بانک | برچسب |", "|---|---|---|---|---|---|---|---|---|"]
+         "| فاندینگ ۸ ساعته | وتو | ال‌بانک | کارت | برچسب |",
+         "|---|---|---|---|---|---|---|---|---|---|"]
     for i, e in enumerate(es, 1):
         labels = "، ".join([UNTESTED] + list(e.get("labels") or []))
         o.append(f"| {i} | **{e['symbol']}** | {_setup_txt(e['setup'])} | {_cell(e['dist_atr'], '.2f')} "
                  f"| {e['why']} | {_cell(e.get('funding_8h'), '+.4f', True)} | {_veto_txt(e['veto'])} "
-                 f"| {e.get('lbank') or '—'} | {labels} |")
+                 f"| {e.get('lbank') or '—'} | {_card_txt(e.get('card'))} | {labels} |")
     return o
+
+
+def _cards_section(res: dict) -> list[str]:
+    sec, b = res["sections"], res.get("budget") or {}
+    o = [f"## ۳ — کارت‌های معامله — {UNTESTED}", "",
+         "> طبق جدول همان ستاپ در کتابخانه. نسبت با کارمزد و لغزش رفت و برگشت "
+         f"{fa(f'{100 * RT_COST:g}')}٪؛ کف {fa(f'{MIN_RR:g}')} — اصل دو. ریسک٪ = "
+         f"{fa(f'{BASE_RISK_PCT:g}')} × ضریب رژیم × ضریب کیفیت جدول ۸.۲، سقف هر معامله "
+         f"{fa(f'{MAX_TRADE_RISK_PCT:g}')}٪ مثل radar_size، و سقف باقی‌مانده بودجه دفتر معامله. "
+         "هر کارت جدا حساب شده؛ با هم از باقی‌مانده بیشترند. لانگ نقدی فقط اگر در ال‌بانک هست.",
+         ""]
+    total, free = _f(b.get("total")), _f(b.get("free_pct"))
+    o += [f"بودجه: {b.get('note') or 'خوانده نشد'} | سرمایه "
+          f"{'—' if total is None else format(total, ',.0f') + ' دلار'} | باقی‌مانده بودجه دفتر "
+          f"معامله {'—' if free is None else format(free, '.2f') + '٪'}", ""]
+    ok = [e for e in sec["long"] + sec["short"] if (e.get("card") or {}).get("ok")]
+    if not ok:
+        return o + ["**امروز کارتی نیست.** دلیل هر نامزد در ستون «کارت» بخش ۱ و ۲.", ""]
+    o += ["| نماد | سمت | ستاپ | ماشه ورود | ابطال | ورود | استاپ | هدف | نسبت با کارمزد | رده "
+          "| ریسک٪ | ریسک دلاری | مقدار | نوع |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for e in ok:
+        c = e["card"]
+        o.append(f"| **{e['symbol']}** | {'لانگ' if e['side'] == 'long' else 'شورت'} "
+                 f"| {_setup_txt(e['setup'])} | {c['trigger']} | {c['invalid']} | {_p(c['entry'])} "
+                 f"| {_p(c['stop'])} | {_p(c['target'])} | {c['rr']:.2f} | {c['grade']} "
+                 f"| {_cell(c.get('risk_pct'), '.2f')} | {_cell(c.get('risk_usd'), ',.0f')} "
+                 f"| {_cell(c.get('qty'), '.6g')} | {c['tag']} |")
+    return o + [""]
 
 
 def render_md(res: dict) -> str:
@@ -1044,6 +1374,12 @@ def render_md(res: dict) -> str:
     A(">")
     A(f"> **همه نامزدها {UNTESTED}‌اند تا نشست ۱۳.** رتبه بی امتیاز است: ماشه ستاپ، سپس "
       "پیش‌شرط، سپس فقط جریان؛ داخل هر گروه فاصله از سطح.")
+    A("")
+    n_cards = sum(1 for e in sec["long"] + sec["short"] if (e.get("card") or {}).get("ok"))
+    lo_t, hi_t = DAILY_TARGET
+    A(f"**امروز {n_cards} کارت، {len(sec['long']) + len(sec['short'])} نامزد.** هدف روزانه "
+      f"{fa(lo_t)} تا {fa(hi_t)} نامزد لانگ و شورت — تصمیم کاربر، کنار سنجه تعادل بخش ۵ "
+      "کتابخانه ستاپ.")
     A("")
     for w in res["warnings"]:
         A(f"> ⚠️ {w}")
@@ -1067,7 +1403,8 @@ def render_md(res: dict) -> str:
     A("")
     L_ += _table(sec["short"], "بالا") if sec["short"] else ["**هیچ نامزدی.**"]
     A("")
-    A("## ۳ — پس از پامپ — دنبالش نکن")
+    L_ += _cards_section(res)
+    A("## ۴ — پس از پامپ — دنبالش نکن")
     A("")
     A(f"> شمع غیرعادی ر۵۶، یا قدرت نسبی ۷ روزه به بیت‌کوین بالاتر از "
       f"{fa(f'{POST_PUMP_RS7:g}')}٪. سطحی که بعد از پامپ ساخته شده فاصله را کم نشان "
@@ -1075,17 +1412,17 @@ def render_md(res: dict) -> str:
     A("")
     L_ += _table(sec["afterpump"], "زیر") if sec["afterpump"] else ["**هیچ‌کدام.**"]
     A("")
-    A(f"## ۴ — دیر است — بیش از {fa(f'{LATE_ATR:g}')} برابر دامنه واقعی از سطح")
+    A(f"## ۵ — دیر است — بیش از {fa(f'{LATE_ATR:g}')} برابر دامنه واقعی از سطح")
     A("")
     A("> جای حد ضرر نزدیک ندارد — قاعده سخت ۵ و ر۵۷. منتظر اصلاح و برگشت.")
     A("")
     L_ += _table(sec["late"], "") if sec["late"] else ["**هیچ‌کدام.**"]
     A("")
-    A("## ۵ — بی‌سطح یا داده کم")
+    A("## ۶ — بی‌سطح یا داده کم")
     A("")
     L_ += _table(sec["nolevel"], "") if sec["nolevel"] else ["**هیچ‌کدام.**"]
     A("")
-    A("## ۶ — وتوی آزادسازی")
+    A("## ۷ — وتوی آزادسازی")
     A("")
     if sec["veto"]:
         A("| نماد | سمت | دلیل |")
@@ -1098,9 +1435,10 @@ def render_md(res: dict) -> str:
     for n_ in res["veto_notes"]:
         A(f"> {n_}")
         A("")
-    A("## ۷ — سنجه‌های همه گذشته‌ها از دروازه")
+    A("## ۸ — سنجه‌های همه گذشته‌ها از دروازه")
     A("")
-    A("| نماد | صرافی | جهش حجم ۱ ساعته | جهش حجم ۴ ساعته | بهره باز ۲۴ ساعته | نسبت قرارداد "
+    A("| نماد | صرافی | جهش حجم ۱ ساعته، مطلق / نسبی | جهش حجم ۴ ساعته، مطلق / نسبی "
+      "| بهره باز ۲۴ ساعته | نسبت قرارداد "
       "به نقدی | فاندینگ ۸ ساعته | حجم به بیت‌کوین | قدرت نسبی ۷ روزه | قدرت نسبی ۳۰ روزه "
       "| شمع ۴ ساعته | عمر روز |")
     A("|---|---|---|---|---|---|---|---|---|---|---|---|")
@@ -1108,8 +1446,10 @@ def render_md(res: dict) -> str:
         m = r["metrics"]
         ratio = _cell(math.exp(m["shift"]), ".2f") if _f(m.get("shift")) is not None else (
             m.get("shift_why") or "—")
-        A(f"| **{r['symbol']}** | {VENUE_FA[r['venue']]} | {_cell(m.get('z1h'), '+.1f')} "
-          f"| {_cell(m.get('z4h'), '+.1f')} | {_cell(m.get('d24'), '+.1f', True)} | {ratio} "
+        A(f"| **{r['symbol']}** | {VENUE_FA[r['venue']]} "
+          f"| {_cell(m.get('z1h'), '+.1f')} / {_cell(m.get('z1h_rel'), '+.1f')} "
+          f"| {_cell(m.get('z4h'), '+.1f')} / {_cell(m.get('z4h_rel'), '+.1f')} "
+          f"| {_cell(m.get('d24'), '+.1f', True)} | {ratio} "
           f"| {_cell(m.get('funding_8h'), '+.4f', True)} | {_cell(m.get('vol_btc'), '.0f')} "
           f"| {_cell(m.get('rs7'), '+.1f')} | {_cell(m.get('rs30'), '+.1f')} "
           f"| {_cell(m.get('abn_ratio'), '.1f')} | {_cell(r.get('age_days'), '.0f')} |")
@@ -1119,8 +1459,12 @@ def render_md(res: dict) -> str:
     A("| ستون یا برچسب | معنا |")
     A("|---|---|")
     A(f"| جهش حجم | حجم دلاری کندل بسته در برابر میانگین خود نماد، به انحراف معیار. "
-      f"دروازه: دست‌کم {fa(f'{Z_MIN:g}')} |")
-    A(f"| بهره باز | تغییر ۲۴ ساعته به واحد کوین. دروازه: دست‌کم {fa(f'{100 * OI24_MIN:g}')}٪ |")
+      f"نسبی یعنی منهای همان عدد بیت‌کوین در همان ساعت و همان صرافی. دروازه: نسبی دست‌کم "
+      f"{fa(f'{Z_MIN:g}')} |")
+    A(f"| بهره باز | تغییر ۲۴ ساعته به واحد کوین. دروازه: دست‌کم {fa(f'{100 * OI24_MIN:g}')}٪، "
+      f"با بهره باز دلاری دست‌کم {fa(f'{OI_USD_MIN / 1e6:g}')} میلیون |")
+    A("| ضعیف‌تر از بیت‌کوین | ر۵۵ — لانگ با قدرت نسبی ۷ روزه منفی |")
+    A("| کارت | رده جدول ۸.۲ و ریسک٪، یا دلیل نبود کارت |")
     A(f"| نسبت قرارداد به نقدی | این ۲۴ ساعت در برابر شش روز پیش از آن، یک صرافی. دروازه: "
       f"{fa(f'{RATIO_MULT:g}')} برابر |")
     A("| ماشه / پیش‌شرط / فقط جریان | گروه رتبه. داخل گروه، نزدیک‌تر به سطح بالاتر |")
@@ -1157,7 +1501,8 @@ def _log(msg: str) -> None:
     print(msg, file=sys.stderr, flush=True)
 
 
-def scan(net: Net, now: datetime, min_vol: float, veto_fn, limit: int = 0) -> dict | None:
+def scan(net: Net, now: datetime, min_vol: float, veto_fn, limit: int = 0,
+         budget_fn=None) -> dict | None:
     m = fetch_market(net)
     if not m["okx_spot"] and not m["gate_spot"]:
         return None
@@ -1169,13 +1514,28 @@ def scan(net: Net, now: datetime, min_vol: float, veto_fn, limit: int = 0) -> di
     syms = sorted(uni, key=lambda s: -uni[s]["vol24"])
     syms = syms[:limit] if limit else syms
     _log(f"[۱] جهان بازار: {len(uni)} نماد — سنجه جریان برای {len(syms)}")
+    btc_frames: dict[str, dict] = {}
+
+    def btc_for(v: str) -> dict:
+        """کندل بسته بیت‌کوین همان صرافی، یک بار — مبنای جهش حجم نسبی."""
+        if v not in btc_frames:
+            if v == "okx":
+                f1, f4 = okx_candles(net, "BTC-USDT", "1H"), okx_candles(net, "BTC-USDT", "4H")
+            else:
+                f1, f4 = (gate_candles(net, "BTC_USDT", "1h", now),
+                          gate_candles(net, "BTC_USDT", "4h", now))
+            btc_frames[v] = {"1h": closed(f1), "4h": closed(f4)}
+            if f1 is None or f4 is None:
+                warns.append(f"کندل بیت‌کوین {VENUE_FA[v]} نیامد — جهش حجم نسبی نامعلوم")
+        return btc_frames[v]
+
     rows = []
     for i, s in enumerate(syms, 1):
         if i % 10 == 0:
             _log(f"     {i}/{len(syms)} ...")
         u = uni[s]
         try:
-            met = flow_metrics(net, u, now)
+            met = flow_metrics(net, u, now, btc_for(u["venue"]))
         except Exception as exc:
             warns.append(f"{s}: سنجه جریان خطا داد — {type(exc).__name__}")
             continue
@@ -1198,14 +1558,21 @@ def scan(net: Net, now: datetime, min_vol: float, veto_fn, limit: int = 0) -> di
                   "labels": [f"سطح و ستاپ خطا داد — {type(exc).__name__}"]}
         r.update(d_sup=st["d_sup"], d_res=st["d_res"], setups=st["setups"],
                  support=st.get("support"), resistance=st.get("resistance"),
-                 level_verdict=st.get("level_verdict"))
+                 level_verdict=st.get("level_verdict"), levels=st.get("levels") or [],
+                 atr_d=st.get("atr_d"))
         r["metrics"].update(rs7=st["rs7"], rs30=st["rs30"])
         r["labels"] += st["labels"] + flow_labels(r)
     warns += [f"radar_fetch3: {x}" for x in R.FAILURES[n_fail:][:10]]
     sec = rank(rows)
     _log("[۳] وتوی آزادسازی ...")
     vnotes = apply_veto(sec, veto_fn, net, now)
-    return {"uni": uni, "rows": rows, "sections": sec, "warnings": warns, "veto_notes": vnotes}
+    budget = budget_fn(ticker_prices(m)) if budget_fn else None
+    for k in ("long", "short"):
+        for e in sec[k]:
+            e["card"] = make_card(e, budget)
+    prices = {s: {"price": u["price"], "venue": u["venue"]} for s, u in sorted(uni.items())}
+    return {"uni": uni, "rows": rows, "sections": sec, "warnings": warns, "veto_notes": vnotes,
+            "budget": budget, "prices": prices}
 
 
 def main(argv=None, get=None, now: datetime | None = None, veto=None, history=None,
@@ -1217,6 +1584,9 @@ def main(argv=None, get=None, now: datetime | None = None, veto=None, history=No
     ap.add_argument("--json", default="pump.json", help="خروجی ماشین‌خوان — فایل")
     ap.add_argument("--ledger", default="pump_ledger.json", help="دفتر نامزد نشست ۱۳ — فایل")
     ap.add_argument("--no-ledger", action="store_true", dest="no_ledger")
+    ap.add_argument("--holdings", default="holdings.json", help="سرمایه — فقط خواندن")
+    ap.add_argument("--regime-file", default="regime.json", dest="regime_file",
+                    help="باند رژیم — فقط خواندن")
     ap.add_argument("--limit", type=int, default=0, help="فقط برای اشکال‌زدایی: سقف نماد")
     ap.add_argument("--stdout", action="store_true")
     a = ap.parse_args(argv)
@@ -1242,7 +1612,8 @@ def main(argv=None, get=None, now: datetime | None = None, veto=None, history=No
         history = lambda s, tf, x, y: H.history(s, tf, x, y, get=net)   # noqa: E731
 
     t0 = time.monotonic()
-    res = scan(net, now, a.min_vol, veto, a.limit)
+    res = scan(net, now, a.min_vol, veto, a.limit,
+               budget_fn=lambda px: load_budget(a.holdings, a.regime_file, px))
     if res is None:
         _log("⛔ تیکر نقدی هیچ صرافی نیامد — " + "؛ ".join(net.errors[:4]))
         return 3
@@ -1255,6 +1626,8 @@ def main(argv=None, get=None, now: datetime | None = None, veto=None, history=No
         led = load_ledger(a.ledger)
         led_notes = ledger_fill(led, now, history)
         ledger_add(led, res["rows"], res["sections"], now)
+        # عکس کنترل: قیمت همه نمادهای جهان بازار، تا نشست ۱۳ نامزد را با غیرنامزد بسنجد
+        led.setdefault("controls", []).append({"at": iso(now), "prices": res["prices"]})
         led["updated"] = iso(now)
         _write(a.ledger, json.dumps(_clean(led), ensure_ascii=False, indent=1))
     res["warnings"] += led_notes[:10]
@@ -1271,7 +1644,10 @@ def main(argv=None, get=None, now: datetime | None = None, veto=None, history=No
                           "fresh_venue_days": FRESH_VENUE_DAYS,
                           "crowd_funding_abs": CROWD_FUNDING_ABS,
                           "lev_funding_8h": LEV_FUNDING_8H, "abnormal_k": ABNORMAL_K,
-                          "post_pump_rs7": POST_PUMP_RS7},
+                          "post_pump_rs7": POST_PUMP_RS7, "oi_usd_min": OI_USD_MIN,
+                          "min_rr": MIN_RR, "rt_cost": RT_COST},
+           "budget": {k: (res["budget"] or {}).get(k) for k in ("total", "free_pct", "note")},
+           "cards_n": sum(1 for e in sec["long"] + sec["short"] if (e.get("card") or {}).get("ok")),
            "universe_n": res["universe_n"], "gate_n": res["gate_n"],
            "candidates": [e["symbol"] for e in sec["long"] + sec["short"]],
            "sections": sec, "requests": res["requests"],

@@ -280,10 +280,28 @@ def test_abnormal_4h_candle():
 
 
 def test_flow_gate_inclusive_and_missing_not_zero():
-    assert P.flow_signs({"z1h": 2.0}) == ["حجم ساعتی"]
-    assert P.flow_signs({"z4h": 1.99, "d24": 0.15}) == ["بهره باز"]
+    assert P.flow_signs({"z1h_rel": 2.0}) == ["حجم ساعتی"]
+    assert P.flow_signs({"z1h": 5.0, "z1h_rel": 1.9}) == []          # دروازه روی z نسبی است
+    assert P.flow_signs({"z4h_rel": 1.99, "d24": 0.15, "oi_usd": 2e6}) == ["بهره باز"]
     assert P.flow_signs({"shift": math.log(2)}) == ["نسبت قرارداد"]
-    assert P.flow_signs({"z1h": None, "z4h": None, "d24": None, "shift": None}) == []
+    assert P.flow_signs({"z1h_rel": None, "z4h_rel": None, "d24": None, "shift": None}) == []
+
+
+def test_oi_sign_needs_two_million_dollar_base():
+    assert P.flow_signs({"d24": 0.50, "oi_usd": 1.9e6}) == []
+    assert P.flow_signs({"d24": 0.50}) == []                          # کف نامعلوم، نشانه نه
+    assert P.flow_signs({"d24": 0.15, "oi_usd": 2.0e6}) == ["بهره باز"]
+
+
+def test_volume_spike_is_relative_to_btc_same_hours():
+    spike = closed_frame([100.0, 200.0] * 90 + [8000.0])
+    calm = closed_frame([100.0, 200.0] * 90 + [150.0])
+    whole = P.rel_z(spike, spike, 168, 120, 6)                        # کل بازار تکان خورد
+    assert whole["z"] > 5 and abs(whole["rel"]) < 1e-9
+    alone = P.rel_z(spike, calm, 168, 120, 6)
+    assert alone["rel"] > 2 and alone["rel"] == pytest.approx(alone["z"] - alone["btc_z"])
+    none = P.rel_z(spike, None, 168, 120, 6)
+    assert none["z"] > 5 and none["rel"] is None and none["why"] == "بیت‌کوین داده ندارد"
 
 
 def test_leveraged_pump_pattern():
@@ -323,6 +341,20 @@ def test_squeeze_pre_and_trigger_both_ways():
     dn = P.squeeze(daily(squeeze_spec((100.0, 100.2, 85.0, 86.0, 3000.0))))
     assert dn["state"] == "trigger" and dn["side"] == "short"
     assert P.squeeze(daily(base_osc(80, 90, 110))) is None
+    assert pre["hi"] == 100.5 and pre["lo"] == 99.5 and pre["atr"] > 0
+
+
+def test_squeeze_must_be_horizontal_not_a_falling_drift():
+    # LTC، ۱۰ اکتبر: دامنه کم‌شونده در روند نزولی — فشردگی نیست
+    spec = []
+    for i in range(40):
+        m = 70.0 if i % 2 == 0 else 90.0
+        spec.append((m, m + 2, m - 2, m, 1000.0))
+    for m in np.linspace(72.0, 64.0, 10):
+        spec.append((m + 0.3, m + 0.5, m - 0.5, m - 0.3, 1000.0))
+    assert P.squeeze(daily(spec)) is None
+    spec.append((63.5, 64.0, 55.0, 56.0, 3000.0))
+    assert P.squeeze(daily(spec)) is None                             # ماشه هم نه
 
 
 def test_breakout_retest_trigger_pre_and_volume_killer():
@@ -349,11 +381,21 @@ def test_live_price_voids_stale_setup():
     sh = {"name": "ج‌۱", "side": "short", "state": "trigger", "level": 100.0}
     lo = {"name": "الف‌۱", "side": "long", "state": "trigger", "level": 100.0}
     box = {"name": "الف‌۳", "side": "long", "state": "pre", "level": 100.0}
+    box = dict(box, hi=100.0, lo=96.0, atr=2.0)
     keep, labels = P.live_check([sh, lo, box], 101.0)
-    assert keep == [lo, box] and labels == ["ج‌۱ با قیمت زنده باطل"]
+    assert keep == [lo, box] and labels == ["شورت ج‌۱ باطل شد"]
     keep, labels = P.live_check([sh, lo, box], 99.0)
-    assert keep == [sh, box] and labels == ["الف‌۱ با قیمت زنده باطل"]
+    assert keep == [sh, box] and labels == ["لانگ الف‌۱ باطل شد"]
     assert P.live_check([sh], None) == ([sh], [])
+
+
+def test_squeeze_live_price_inside_or_breaking():
+    box = {"name": "الف‌۳", "side": "long", "state": "pre", "level": 100.0, "hi": 100.0,
+           "lo": 96.0, "atr": 2.0}
+    assert P.live_check([box], 98.0)[0] == [box]                      # درون محدوده
+    assert P.live_check([box], 100.9)[0] == [box]                     # در حال شکستن
+    keep, labels = P.live_check([box], 93.0)                          # بیرون، پایین
+    assert keep == [] and labels == ["لانگ الف‌۳ باطل شد"]
 
 
 def test_failed_breakout_is_short():
@@ -435,7 +477,28 @@ def test_after_pump_leaves_long_groups():
     P.ledger_add(led, rows, sec, NOW)
     abn = next(e for e in led["entries"] if e["symbol"] == "ABN")
     assert abn["placements"] == [{"side": "long", "section": "afterpump", "group": 1,
-                                  "setup": trig[0], "dist_atr": 0.1, "veto": None}]
+                                  "setup": trig[0], "dist_atr": 0.1, "veto": None, "card": None}]
+
+
+def test_weaker_than_btc_label_only_on_longs():
+    long_ = dict(_row("LTC", d_sup=1.0), metrics={"rs7": -7.0})
+    short_ = dict(_row("SH", [{"name": "ج‌۱", "side": "short", "state": "trigger", "level": 1}],
+                       d_res=0.5), metrics={"rs7": -7.0})
+    sec = P.rank([long_, short_])
+    assert "ضعیف‌تر از بیت‌کوین" in sec["long"][0]["labels"]
+    assert "ضعیف‌تر از بیت‌کوین" not in sec["short"][0]["labels"]
+    assert "ضعیف‌تر از بیت‌کوین" not in long_["labels"]               # ردیف دست نمی‌خورد
+
+
+def test_squeeze_ranked_by_distance_to_entry_trigger():
+    def sq(sym, d_sup, hi):
+        s = {"name": "الف‌۳", "side": "long", "state": "pre", "level": hi, "hi": hi, "lo": 90.0,
+             "atr": 2.0}
+        return dict(_row(sym, [s], d_sup=d_sup), price=100.0)
+    far, near = sq("FAR", 0.1, 104.0), sq("NEAR", 1.0, 100.4)        # ۲.۰ و ۰.۲ دامنه واقعی
+    sec = P.rank([far, near])
+    assert [e["symbol"] for e in sec["long"]] == ["NEAR", "FAR"]
+    assert sec["long"][0]["dist_atr"] == pytest.approx(0.2)
 
 
 def test_incomplete_data_never_ranks_better():
@@ -492,6 +555,8 @@ def _routes():
         ("instId=AAA-USDT-SWAP", ok(okx_rows(flat))),
         ("bar=4H&instId=AAA-USDT", ok(okx_rows([100.0, 200.0] * 50, bar_h=4))),
         ("bar=1H&instId=AAA-USDT", ok(okx_rows(spike, close=2.0))),
+        ("bar=1H&instId=BTC-USDT", ok(okx_rows(flat, close=80000.0))),
+        ("bar=4H&instId=BTC-USDT", ok(okx_rows([100.0, 200.0] * 50, bar_h=4))),
         ("bar=4H&instId=NEW-USDT", ok(okx_rows([100.0, 200.0] * 50, bar_h=4))),
         ("bar=1H&instId=NEW-USDT", ok(okx_rows(flat, close=5.0))),
         ("gateio.ws/api/v4/spot/tickers", m["gate_spot"]),
@@ -547,6 +612,8 @@ def test_main_end_to_end(tmp_path, monkeypatch):
     assert md.startswith(f"# اسکنر پامپ رادار {R.FRAMEWORK}")
     assert "مجوز ورود نیست" in md and "آزمون‌نشده" in md and "| AAA |" not in md
     assert "زیر کف ر۵۴" not in md and "پس از پامپ — دنبالش نکن" in md
+    assert "امروز 0 کارت، 1 نامزد" in md and "۳ تا ۸ نامزد" in md
+    assert c["card"]["ok"] is False and c["card"]["why"] == "کارت ندارد — نسبت کافی نیست"
     assert "**AAA**" in md
     # اسکنر معامله نمی‌کند — هیچ فایل دفتر موقعیتی ساخته نمی‌شود
     for f in ("holdings.json", "watch.json", "radar_journal.json", "radar_optcost.json"):
@@ -562,6 +629,11 @@ def test_ledger_records_every_gate_passer_once_per_day_and_fills(tmp_path, monke
     e = led["entries"][0]
     assert e["price"] == 102.2 and e["placements"][0]["setup"]["name"] == "الف‌۱"
     assert "z1h" in e["metrics"] and e["prices"] == {"h24": None, "d7": None}
+    card = e["placements"][0]["card"]
+    assert set(card) >= {"entry", "stop", "target", "rr", "ok"}
+    ctl = led["controls"]
+    assert len(ctl) == 2 and set(ctl[0]["prices"]) == {"AAA", "NEW", "BBB"}
+    assert ctl[0]["prices"]["BBB"] == {"price": 3.0, "venue": "gate"}
     h = _Hist()
     _run(tmp_path, monkeypatch, now=NOW + timedelta(days=1, hours=1), hist=h)
     led = json.loads((tmp_path / "pump_ledger.json").read_text(encoding="utf-8"))
@@ -583,3 +655,76 @@ def test_market_failure_exits_3(tmp_path, monkeypatch):
     rc = P.main(["--out", str(tmp_path / "x.md"), "--json", str(tmp_path / "x.json"), "--no-ledger"],
                 get=get, now=NOW, sleep=lambda s: None)
     assert rc == 3 and not (tmp_path / "x.json").exists()
+
+
+# ═══════════════ کارت معامله ═══════════════
+
+BUDGET = {"band": {"name": "محتاط", "cap": 4.0, "mult": 0.5}, "total": 10_000.0, "free_pct": 4.0,
+          "note": "آزمون"}
+
+
+def _cand(setup, price, side="long", lbank="هست", levels=(), metrics=None, funding=None):
+    return {"symbol": "X", "side": side, "setup": setup, "price": price, "lbank": lbank,
+            "levels": list(levels), "metrics": metrics or {}, "funding_8h": funding,
+            "atr_d": setup.get("atr") if setup else None}
+
+
+def test_card_squeeze_double_height_is_exactly_two_and_rejected():
+    s = {"name": "الف‌۳", "side": "long", "state": "pre", "level": 110.0, "hi": 110.0, "lo": 100.0,
+         "atr": 4.0}
+    c = P.make_card(_cand(s, 105.0, levels=[130.0]), BUDGET)
+    assert c["entry"] == 110.0 and c["stop"] == 100.0 and c["target"] == 130.0
+    assert c["rr_gross"] == pytest.approx(2.0) and c["rr"] < 2.0
+    assert c["ok"] is False and c["why"] == "کارت ندارد — نسبت کافی نیست"
+
+
+def test_card_squeeze_next_level_target_grade_b_and_size():
+    s = {"name": "الف‌۳", "side": "long", "state": "pre", "level": 110.0, "hi": 110.0, "lo": 100.0,
+         "atr": 4.0}
+    c = P.make_card(_cand(s, 105.0, levels=[150.0], metrics={"d24": 0.2}), BUDGET)
+    cost = 110.0 * P.RT_COST
+    assert c["target"] == 150.0
+    assert c["rr"] == pytest.approx((40.0 - cost) / (10.0 + cost))
+    assert c["ok"] is True and c["grade"] == "ب" and c["qmult"] == 1.5
+    assert c["risk_pct"] == pytest.approx(2.0 * 0.5 * 1.5)            # ۲٪ × رژیم × کیفیت
+    assert c["risk_usd"] == pytest.approx(150.0)
+    assert c["qty"] == pytest.approx(150.0 / (10.0 + cost))
+    assert c["invalid"] and c["trigger"]
+
+
+def test_card_size_capped_by_free_budget_and_stale_regime():
+    s = {"name": "الف‌۳", "side": "long", "state": "pre", "level": 110.0, "hi": 110.0, "lo": 100.0,
+         "atr": 4.0}
+    tight = dict(BUDGET, free_pct=0.5)
+    assert P.make_card(_cand(s, 105.0, levels=[150.0], metrics={"d24": 0.2}), tight)["risk_pct"] == 0.5
+    stale = P.make_card(_cand(s, 105.0, levels=[150.0], metrics={"d24": 0.2}), None)
+    assert stale["ok"] is True and stale["risk_pct"] is None and "رژیم" in stale["size_why"]
+
+
+def test_long_card_needs_lbank_short_card_is_futures():
+    s = {"name": "الف‌۳", "side": "long", "state": "pre", "level": 110.0, "hi": 110.0, "lo": 100.0,
+         "atr": 4.0}
+    c = P.make_card(_cand(s, 105.0, lbank="در LBank نیست", levels=[150.0]), BUDGET)
+    assert c["ok"] is False and c["why"] == "کارت ندارد — در LBank نیست"
+    sh = {"name": "ج‌۱", "side": "short", "state": "trigger", "level": 100.0, "fail_high": 106.0,
+          "range_low": 70.0, "atr": 2.0}
+    c = P.make_card(_cand(sh, 98.0, side="short", lbank="در LBank نیست",
+                          metrics={"d24": 0.2}, funding=0.002), BUDGET)
+    assert c["ok"] is True and c["tag"] == "فیوچرز"
+    assert c["entry"] == 98.0 and c["stop"] == pytest.approx(106.5) and c["target"] == 70.0
+    assert c["grade"] == "ب"
+
+
+def test_no_card_without_numeric_trigger():
+    for s in ({"name": "الف‌۲", "side": "long", "state": "pre", "level": 95.0, "atr": 2.0},
+              {"name": "ر۵۸", "side": "short", "state": "trigger", "level": 95.0, "atr": 2.0}):
+        c = P.make_card(_cand(s, 100.0, side=s["side"]), BUDGET)
+        assert c["ok"] is False and c["why"].startswith("کارت ندارد")
+    assert P.make_card(_cand(None, 100.0), BUDGET)["why"] == "کارت ندارد — ستاپ نام‌دار نیست"
+
+
+def test_budget_from_holdings_same_method_as_book():
+    h = {"positions": [], "cash": [{"asset": "USDT", "qty": 1000}]}
+    band = {"name": "محتاط", "cap": 4.0, "mult": 0.5, "maxpos": 3, "stable": 25}
+    b = P.budget_from(h, {}, band)
+    assert b["total"] == 1000.0 and b["free_pct"] == pytest.approx(4.0) and b["band"] == band
