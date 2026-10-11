@@ -1183,6 +1183,43 @@
      "7lBaoC08nEQ"
     ]
    }
+  ],
+  "2026-10-11": [
+   {
+    "at": "2026-10-11T20:38:02Z",
+    "picked": [],
+    "deferred": [],
+    "short": [],
+    "stale": [],
+    "off_topic": [],
+    "failed": [],
+    "untried": [],
+    "feed_failures": [
+     {
+      "source": "cryptocity_pro",
+      "error": "SourceFailure: خوراک کانال UC2I0e9vRItuSE8-1ub_35AA خالی یا در دسترس نیست — وضعیت 404، SAXParseException: <unknown>:3:11: not well-formed (invalid token)"
+     },
+     {
+      "source": "tekrargar",
+      "error": "SourceFailure: خوراک کانال UCg7VGpxh_RQrYL5nLyF-V0g خالی یا در دسترس نیست — وضعیت 404، SAXParseException: <unknown>:3:11: not well-formed (invalid token)"
+     },
+     {
+      "source": "benjamin_cowen",
+      "error": "SourceFailure: خوراک کانال UCRvqjQPSeaWn-uEx-w0XOIg خالی یا در دسترس نیست — وضعیت 404، SAXParseException: <unknown>:3:11: not well-formed (invalid token)"
+     },
+     {
+      "source": "gareth_soloway",
+      "error": "SourceFailure: خوراک کانال UCwTu6kD2igaLMpxswtcdxlg خالی یا در دسترس نیست — وضعیت 404، SAXParseException: <unknown>:3:11: not well-formed (invalid token)"
+     }
+    ],
+    "queue": [],
+    "blocked": "",
+    "mode": "pick",
+    "listed_at": "2026-10-11T05:51:55Z",
+    "listed": [],
+    "chosen": [],
+    "user_skipped": []
+   }
   ]
  }
 }
