@@ -520,12 +520,20 @@
    "first_seen": "2026-10-08T07:10:41Z",
    "prices": {
     "PUMP": {
-     "before": null,
+     "before": {
+      "close": 0.005578,
+      "candle_open": "2026-10-12T01:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "BTC": {
-     "before": null,
+     "before": {
+      "close": 83669.9,
+      "candle_open": "2026-10-12T01:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     }
@@ -893,6 +901,67 @@
    "at": "2026-11-06T13:30:00Z",
    "source": "fred.stlouisfed.org rid=50 — برنامه BLS/BEA",
    "first_seen": "2026-10-08T07:10:41Z",
+   "prices": {
+    "BTC": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "SOL": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "ETH": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "BNB": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "AAVE": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "LINK": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "SUI": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "ONDO": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "TAO": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "TRX": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    }
+   }
+  },
+  {
+   "id": "cpi:2026-11-10",
+   "kind": "cpi",
+   "title": "تورم مصرف‌کننده (CPI)",
+   "importance": "high",
+   "at": "2026-11-10T13:30:00Z",
+   "source": "fred.stlouisfed.org rid=10 — برنامه BLS/BEA",
+   "first_seen": "2026-10-12T15:59:57Z",
    "prices": {
     "BTC": {
      "before": null,
