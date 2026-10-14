@@ -162,6 +162,11 @@
         "title": "Macro Talk: 10.9.2026",
         "file": "2026-10-09_Macro-Talk-1092026_ae3007.md",
         "at": "2026-10-09"
+      },
+      "487c82eaee62": {
+        "title": "Week Ahead 2026.10.11",
+        "file": "2026-10-11_Week-Ahead-20261011_487c82.md",
+        "at": "2026-10-11"
       }
     },
     "ray_dalio": {
@@ -393,6 +398,11 @@
         "title": "تحلیل بیت ‌کوین ترید سیتی پرو: برای هفته جدید باید آماده باشی!",
         "file": "2026-10-10_تحلیل-بیت-کوین-ترید-سیتی-پرو-برای-هفته-ج_cTeO5i.md",
         "at": "2026-10-10"
+      },
+      "gAqbVEfr7Ts": {
+        "title": "مسیر موفقیت ترید برای مبتدی تا فوق پیشرفته از صفر تا صد",
+        "file": "2026-10-11_مسیر-موفقیت-ترید-برای-مبتدی-تا-فوق-پیشرف_gAqbVE.md",
+        "at": "2026-10-11"
       }
     },
     "no_bs_crypto": {
@@ -475,6 +485,11 @@
         "title": "The Altcoin Trap is Set - It’s CRITICAL You Don’t Fall for It!",
         "file": "2026-10-09_The-Altcoin-Trap-is-Set---Its-CRITICAL-Y_lQntIl.md",
         "at": "2026-10-09"
+      },
+      "tGBpD49H06k": {
+        "title": "Top 13 Altcoins to Buy (EXACT Entry Prices)",
+        "file": "2026-10-11_Top-13-Altcoins-to-Buy-EXACT-Entry-Price_tGBpD4.md",
+        "at": "2026-10-11"
       }
     },
     "cryptocity_pro": {
@@ -588,6 +603,11 @@
         "title": "تحلیل بیت کوین و آلت کوین های ارزدیجیتال | آخرین حمایت !",
         "file": "2026-10-08_تحلیل-بیت-کوین-و-آلت-کوین-های-ارزدیجیتال_MsCqug.md",
         "at": "2026-10-08"
+      },
+      "lFUjTOqgWYk": {
+        "title": "واچلیست هفتگی ترید ارزدیجیتال | به ترید باز میگردیم !",
+        "file": "2026-10-11_واچلیست-هفتگی-ترید-ارزدیجیتال-به-ترید-با_lFUjTO.md",
+        "at": "2026-10-11"
       }
     },
     "tekrargar": {
@@ -713,6 +733,23 @@
         "rejected": "کوتاه",
         "seconds": 169,
         "at": "2026-10-10"
+      },
+      "4RZJ3WdjzKw": {
+        "title": "تحلیل بیت کوین بیت کوین بنجامین | آیا تاریخ تکرار می شود؟",
+        "file": "2026-10-11_تحلیل-بیت-کوین-بیت-کوین-بنجامین-آیا-تاری_4RZJ3W.md",
+        "at": "2026-10-11"
+      },
+      "DNP_J2li5Vs": {
+        "title": "تحلیل و بررسی پلیگان متیک",
+        "rejected": "کوتاه",
+        "seconds": 179,
+        "at": "2026-10-11"
+      },
+      "PY1s8TDWb_g": {
+        "title": "تحلیل دامینن بیت کوین | سیگنال صعودی بنجامین بر روی آلتکوینها",
+        "file": "2026-10-13_تحلیل-دامینن-بیت-کوین-سیگنال-صعودی-بنجام_PY1s8T.md",
+        "at": "2026-10-13",
+        "by": "radar_video 1.3"
       }
     },
     "benjamin_cowen": {
@@ -1043,6 +1080,12 @@
         "rejected": "کوتاه",
         "seconds": 28,
         "at": "2026-10-07"
+      },
+      "8KTA793k-5A": {
+        "title": "AI Movies Are Now So Real Even Experts Can't Tell",
+        "rejected": "کوتاه",
+        "seconds": 53,
+        "at": "2026-10-11"
       }
     },
     "virtualbacon": {
@@ -1353,6 +1396,20 @@
         "gareth_soloway/2026-10-10_Rare-80-Signal-on-Yields-Signals-Stock-M_etHSTh.md",
         "tekrargar/2026-10-10_اخبار-روزانه-بازار-رمزارزها-تحلیل-بیت-کو_0lubxu.md",
         "tradecity_pro/2026-10-10_تحلیل-بیت-کوین-ترید-سیتی-پرو-برای-هفته-ج_cTeO5i.md"
+      ],
+      "failures": []
+    },
+    {
+      "at": "2026-10-14T05:19:52Z",
+      "stamp": "20261011T223003Z",
+      "started": "2026-10-11 22:30 UTC",
+      "exit_code": 0,
+      "docs": [
+        "bob_elliott/2026-10-11_Week-Ahead-20261011_487c82.md",
+        "cryptocity_pro/2026-10-11_واچلیست-هفتگی-ترید-ارزدیجیتال-به-ترید-با_lFUjTO.md",
+        "no_bs_crypto/2026-10-11_Top-13-Altcoins-to-Buy-EXACT-Entry-Price_tGBpD4.md",
+        "tekrargar/2026-10-11_تحلیل-بیت-کوین-بیت-کوین-بنجامین-آیا-تاری_4RZJ3W.md",
+        "tradecity_pro/2026-10-11_مسیر-موفقیت-ترید-برای-مبتدی-تا-فوق-پیشرف_gAqbVE.md"
       ],
       "failures": []
     }
