@@ -55,5 +55,8 @@
   "mkt_BTC_2026-10-12T00:00:00+00:00": true,
   "stale_2026-10-13": true,
   "stale_2026-10-14": true,
-  "warn_BNB_736.42": true
+  "warn_BNB_736.42": true,
+  "stale_2026-10-15": true,
+  "warn_SUI_1.007": true,
+  "reserve_deadline_2026-10-15T00:00:00+00:00": true
 }
