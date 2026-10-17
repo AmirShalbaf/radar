@@ -19,7 +19,9 @@ import radar_watch as W
 
 ROOT = Path(__file__).resolve().parent.parent
 OLD = "2026-09-25T21:34:47+00:00"
-APPROVED = {"SOL": 96.7108, "ETH": 2380.5606, "BNB": 702.3872, "AAVE": 106.8920,
+# BNB از ۱۷ اکتبر ۲۰۲۶ ناچیز است — فروش ذخیره RD-20261017-01 — و مثل TRX سطح ندارد؛
+# سطح 702.3872 فقط کف بازخرید نقشه ۱۷ اکتبر است
+APPROVED = {"SOL": 96.7108, "ETH": 2380.5606, "AAVE": 106.8920,
             "LINK": 10.3366, "SUI": 0.6843, "ONDO": 0.3478, "TAO": 202.5065}
 CHANGED = {"AAVE", "LINK", "SUI", "ONDO", "TAO"}
 

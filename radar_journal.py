@@ -31,7 +31,7 @@ radar_journal.py — ژورنال و موتور کالیبراسیون رادا�
 مخزن باید خصوصی شود، نه فایل حذف.
 """
 from __future__ import annotations
-import argparse, json, os, sys
+import argparse, json, os, re, sys
 from datetime import datetime, timezone
 
 # لنگر کندل وقت جهانی — کتابخانه استاندارد، نشست ۳ب
@@ -53,6 +53,14 @@ UNKNOWN_SETUP = "نامشخص — پیش از کتابخانه ستاپ"
 # قاعده ضدبهانه: شناسه‌ای که اینجا trade است هرگز به دفتر موقعیت نمی‌رود —
 # radar_positions.py همین میدان را می‌خواند.
 BOOKS = ("trade", "position")
+
+# رکورد تصمیم بی‌معامله — مرور هفتگی ۱۷ اکتبر ۲۰۲۶، RD-20261017-01. چارچوب بند
+# ۱۰.۱: هر حکم شناسه RD-YYYYMMDD-NN می‌گیرد، با «تصمیم انسان: پیروی یا سرپیچی».
+# فهرست جدا decisions، نه trades: شمارنده بیست معامله — قاعده سخت ۳ — فقط معامله
+# را می‌شمارد. قالب شناسه اسکی است؛ \d رقم فارسی را هم می‌گیرد
+DECISION_ID = re.compile(r"RD-([0-9]{8})-[0-9]{2}")
+NO_SETUP = "بدون ستاپ ورود"
+HUMAN = {"followed": "پیروی", "defied": "سرپیچی"}
 
 
 def load(path: str | None = None) -> dict:
@@ -147,6 +155,49 @@ def cmd_add(a) -> None:
     if a.verdict != "enter" and a.decision == "entered":
         print("   ⚠️ این معامله **خلاف حکم چارچوب** ثبت شد — "
               "داده کالیبراسیون ارزشمندی می‌سازد.")
+
+
+def _decision_fail(msg: str) -> None:
+    print(f"⛔ {msg}", file=sys.stderr)
+    sys.exit(2)
+
+
+def cmd_decide(a) -> None:
+    """
+    تصمیم بی‌معامله — افزایش ذخیره، اجرای نقشه، یا اجرانشدن آن. بی ورود و استاپ،
+    پس بی R. برچسب انسان پیروی یا سرپیچی — قرارداد بند ۴.
+    """
+    m = DECISION_ID.fullmatch(a.decision_id)
+    if m is None:
+        _decision_fail(f"شناسه تصمیم باید RD-YYYYMMDD-NN با رقم لاتین باشد: {a.decision_id}")
+    try:
+        at = datetime.fromisoformat(a.at)
+    except ValueError:
+        _decision_fail(f"--at قابل‌خواندن نیست: {a.at}")
+    if at.tzinfo is None:
+        _decision_fail(f"--at منطقه زمانی ندارد: {a.at}")
+    if at.astimezone(UTC).strftime("%Y%m%d") != m.group(1):
+        _decision_fail(f"تاریخ شناسه {m.group(1)} با تاریخ وقت جهانی --at نمی‌خواند")
+    d = load()
+    used = {t.get("decision_id") for t in d["trades"]}
+    used |= {r.get("decision_id") for r in d.get("decisions", [])}
+    if a.decision_id in used:
+        _decision_fail(f"شناسه {a.decision_id} پیش‌تر در دفترچه ثبت شده")
+    r = {
+        "decision_id": a.decision_id,
+        "at": at.astimezone(UTC).isoformat(),
+        "recorded": datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC"),
+        "action": a.action,
+        "symbols": [s.strip().upper() for s in a.symbols.split(",") if s.strip()],
+        "setup_name": a.setup_name,
+        "framework_verdict": a.verdict,
+        "human": a.human,
+        "regime_score": a.regime, "regime_band": a.band,
+        "note": a.note,
+    }
+    d.setdefault("decisions", []).append(r)
+    save(d)
+    print(f"✅ تصمیم ثبت شد — {a.decision_id} — {a.action} — تصمیم انسان: {HUMAN[a.human]}")
 
 
 def cmd_update(a) -> None:
@@ -388,6 +439,26 @@ def cmd_report(a) -> None:
         "برای بازتنظیم وزن‌ها نه.",
     ])
 
+    dec = d.get("decisions") or []
+    if dec:
+        print("## تصمیم‌های بی‌معامله — قرارداد بند ۴")
+        print()
+        print("تصمیم انسان در برابر حکم چارچوب. پس از بیست مورد سنجیده می‌شود که")
+        print("قضاوت انسان بهتر بوده یا چارچوب.")
+        print()
+        print("| تصمیم انسان | تعداد |")
+        print("|---|---|")
+        for k, fa_label in HUMAN.items():
+            print(f"| {fa_label} | {sum(1 for r in dec if r.get('human') == k)} |")
+        print()
+        print("| شناسه | زمان | اقدام | نماد | تصمیم انسان |")
+        print("|---|---|---|---|---|")
+        for r in dec:
+            print(f"| {r['decision_id']} | {r['at'][:16].replace('T', ' ')} | {r['action']} "
+                  f"| {'، '.join(r.get('symbols') or []) or '—'} "
+                  f"| {HUMAN.get(r.get('human'), r.get('human'))} |")
+        print()
+
     print("---")
     print()
     print("**این گزارش را در گفت‌وگو با کلاود بچسبان و بنویس «کالیبراسیون رادار».**")
@@ -511,6 +582,21 @@ def main() -> int:
     p.add_argument("--paper", action="store_true",
                    help="معامله فرضی — بدون پول واقعی. جدا از واقعی شمرده می‌شود")
     p.set_defaults(func=cmd_add)
+
+    p = sub.add_parser("decide", help="تصمیم بی‌معامله با شناسه RD — پیروی یا سرپیچی")
+    p.add_argument("--decision-id", dest="decision_id", required=True,
+                   help="RD-YYYYMMDD-NN، تاریخ همان تاریخ وقت جهانی --at")
+    p.add_argument("--at", required=True, help="زمان تصمیم، مهر کامل با منطقه زمانی")
+    p.add_argument("--action", required=True, help="اقدام، مثل «افزایش ذخیره»")
+    p.add_argument("--symbols", default="", help="نمادها، جدا با کاما")
+    p.add_argument("--setup-name", dest="setup_name", default=NO_SETUP)
+    p.add_argument("--verdict", required=True, help="حکم چارچوب")
+    p.add_argument("--human", choices=list(HUMAN), required=True,
+                   help="followed = پیروی، defied = سرپیچی — قرارداد بند ۴")
+    p.add_argument("--regime", type=float, default=None, help="امتیاز رژیم")
+    p.add_argument("--band", default=None, help="باند رژیم")
+    p.add_argument("--note", default="")
+    p.set_defaults(func=cmd_decide)
 
     p = sub.add_parser("update", help="قیمت زنده و هشدار موقعیت‌های باز")
     p.set_defaults(func=cmd_update)

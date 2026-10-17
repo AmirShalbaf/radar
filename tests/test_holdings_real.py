@@ -58,9 +58,11 @@ def _ledger_by_account(h, field) -> dict:
 
 
 def test_updated_not_before_screenshot(h) -> None:
+    """منبع تازه — مرور هفتگی ۱۷ اکتبر ۲۰۲۶؛ frozen همان اسکرین‌شات ۲۵ سپتامبر می‌ماند."""
     from datetime import datetime
-    assert "۰۵:۱۵" in h["source"]
-    assert datetime.fromisoformat(h["updated"]) >= datetime.fromisoformat("2026-09-25T05:15:00+00:00")
+    assert "LBank" in h["source"] and "۱۷ اکتبر ۲۰۲۶" in h["source"]
+    assert "15:32 تا 15:36 UTC" in h["source"]
+    assert datetime.fromisoformat(h["updated"]) >= datetime.fromisoformat("2026-10-17T15:36:00+00:00")
 
 
 def test_quantities_match_screenshots(h) -> None:
@@ -132,7 +134,8 @@ def test_lbank_cash_withdrawn_once() -> None:
     مثل ک۱۰: بی‌پیگیری هزینه فرصت و بی‌رکورد دفترچه.
     """
     h = json.loads((ROOT / "holdings.json").read_text(encoding="utf-8"))
-    rows = [r for r in h["ledger"] if r["action"] == "withdraw" and r["account"] == "LBank"]
+    rows = [r for r in h["ledger"] if r["action"] == "withdraw" and r["account"] == "LBank"
+            and r["at"].startswith("2026-10-03")]
     assert len(rows) == 1
     r = rows[0]
     assert (r["symbol"], r["delta"], r["at"]) == ("USDT", -12.15376371, "2026-10-03T04:10:00+00:00")
@@ -149,7 +152,7 @@ def test_bnb_adjust_cause_unknown(h) -> None:
     تصمیم کاربر، ۳ اکتبر ۲۰۲۶: BNB در اسکرین‌شات 0.001443 کمتر از دفتر بود —
     0.44٪، زیر سقف ۱٪ adjust. علت نامعلوم، و همین در دلیل.
     """
-    rows = [r for r in h["ledger"] if r["action"] == "adjust"]
+    rows = [r for r in h["ledger"] if r["action"] == "adjust" and "۱۱ مهر" in r["reason"]]
     assert len(rows) == 1
     r = rows[0]
     assert (r["symbol"], r["delta"]) == ("BNB", -0.001443)
@@ -174,3 +177,75 @@ def test_sold_positions_are_gone(h) -> None:
     syms = {p["symbol"] for p in h["positions"]}
     assert "HYPE" not in syms and "XRP" not in syms
     assert syms == set(LBANK)
+
+
+# ═══════════════ مرور هفتگی ۱۷ اکتبر ۲۰۲۶ — RD-20261017-01 ═══════════════
+# اسکرین‌شات‌های LBank، حدود 15:32 تا 15:36 UTC. پیش از فروش: تتر 0.41517649 و
+# BNB 0.3277579؛ پس از فروش BNB: تتر 234.98925749. بقیه نمادها با دفتر می‌خوانند.
+
+SEEN_1017 = {"SOL": 5.63105369, "ETH": 0.148257, "AAVE": 1.04895, "LINK": 11.09889,
+             "SUI": 81.6183, "ONDO": 115.43866, "TAO": 0.153892, "TRX": 0.6704}
+
+
+def _rows_1017(h, action) -> list[dict]:
+    return [r for r in h["ledger"] if r["action"] == action and r["at"].startswith("2026-10-17")]
+
+
+def test_1017_withdraw_personal_usdt(h) -> None:
+    """برداشت شخصی تتر — مثل ردیف ۳ اکتبر: فقط نقد، زمان اسکرین‌شات پیش از فروش."""
+    rows = _rows_1017(h, "withdraw")
+    assert len(rows) == 1
+    r = rows[0]
+    assert (r["symbol"], r["delta"], r["account"]) == ("USDT", -334.844156, "LBank")
+    assert r["at"] == "2026-10-17T15:32:00+00:00"
+    assert r["cash"] == {"asset": "USDT", "qty": 334.844156, "account": "LBank"}
+    assert r["reason"].startswith("پول خرج شخصی")
+    for x in ("نامعلوم", "اسکرین‌شات", "335.25933249", "0.41517649"):
+        assert x in r["reason"], x
+    assert 335.25933249 - 0.41517649 == pytest.approx(334.844156, abs=1e-9)
+
+
+def test_1017_bnb_adjust_second_time(h) -> None:
+    rows = [r for r in h["ledger"] if r["action"] == "adjust" and "۱۷ اکتبر" in r["reason"]]
+    assert len(rows) == 1
+    r = rows[0]
+    assert (r["symbol"], r["delta"]) == ("BNB", -0.000448)
+    assert r["reason"] == "اختلاف با اسکرین‌شات ۱۷ اکتبر — علت نامعلوم؛ دومین بار پس از ۳ اکتبر"
+    assert 0.3282059 - 0.000448 == pytest.approx(0.3277579, abs=1e-12)
+    assert -r["delta"] <= P.ADJUST_MAX * 0.3282059
+    # adjust پیش از فروش در دفتر کل — پس از فروش سقف ۱٪ مانده ناچیز آن را رد می‌کرد
+    i_adj = h["ledger"].index(r)
+    i_trim = h["ledger"].index(_rows_1017(h, "trim")[0])
+    assert i_adj < i_trim
+
+
+def test_1017_bnb_reserve_sale(h) -> None:
+    rows = _rows_1017(h, "trim")
+    assert len(rows) == 1
+    r = rows[0]
+    assert (r["symbol"], r["delta"], r["price"], r["reason"]) == ("BNB", -0.327, 718.07, "reserve")
+    assert r["order_id"] == "8c103fa9-64c1-493e-9f3d-1f3c3ae36102"
+    assert r["at"] == "2026-10-17T15:33:55+00:00" and r["account"] == "LBank"
+    assert (r["gross"], r["fee"]) == (234.80889, 0.234809)
+    assert r["net"] == pytest.approx(234.574081, abs=1e-9)
+    oc = json.loads((ROOT / "radar_optcost.json").read_text(encoding="utf-8"))
+    assert [x for x in oc.get("exits", []) if x.get("order_id") == r["order_id"]]
+
+
+def test_1017_matches_screenshots(h) -> None:
+    pos = {p["symbol"]: p for p in h["positions"]}
+    for sym, q in SEEN_1017.items():
+        assert P.position_qty(pos[sym]) == pytest.approx(q, abs=1e-12), sym
+    assert P.position_qty(pos["BNB"]) == pytest.approx(0.0007579, abs=1e-12)
+    lb = [c for c in h["cash"] if c["account"] == "LBank"]
+    assert len(lb) == 1 and lb[0]["qty"] == pytest.approx(234.98925749, abs=1e-9)
+    assert 0.41517649 + 234.80889 - 0.234809 == pytest.approx(234.98925749, abs=1e-9)
+
+
+def test_1017_bnb_dust_has_no_level(h) -> None:
+    """مانده BNB ناچیز است، مثل TRX: سطح ابطال ندارد؛ کف 702.39 فقط در نقشه بازخرید."""
+    bnb = next(p for p in h["positions"] if p["symbol"] == "BNB")
+    trx = next(p for p in h["positions"] if p["symbol"] == "TRX")
+    assert bnb["invalidation"] is None and "invalidation_since" not in bnb
+    assert {k for k in bnb if k != "lots"} == {k for k in trx if k != "lots"}
+    assert 0.0007579 * 718.07 < P.DUST_USD

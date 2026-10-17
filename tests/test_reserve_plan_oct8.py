@@ -434,19 +434,26 @@ def _real() -> dict:
 
 
 def test_real_watch_has_oct8_plan() -> None:
+    """از ۱۷ اکتبر در reserve_archive — در مهلت اجرا نشد؛ جایگزین نقشه ۱۷ اکتبر."""
     w = _real()
     W.validate_watch(w)
-    rp = w["reserve_plan"]
+    rp = next(p for p in w["reserve_archive"] if p["created"] == "2026-10-08T00:00:00+00:00")
     assert "۸۹" in rp["title"] and rp["account"] == "LBank"
     assert rp["deadline"] == "2026-10-15T00:00:00+00:00"
-    assert [(s["symbol"], s["qty"], s["price"]) for s in rp["steps"]] == \
-        [("ETH", 0.04, 2625), ("BNB", 0.12, 783)]
+    assert [(s["symbol"], s["qty"], s["price"]) for s in rp["steps"]] ==         [("ETH", 0.04, 2625), ("BNB", 0.12, 783)]
     assert rp["on_deadline"] == {"cancel_if_band_at_least": "سازنده", "otherwise": "market"}
     assert [(s["symbol"], s["qty"], s["floor"], s["min_below_sale_pct"])
-            for s in rp["rebuy"]["steps"]] == \
-        [("ETH", 0.04, 2380.56, 5), ("BNB", 0.12, 702.39, 5)]
+            for s in rp["rebuy"]["steps"]] ==         [("ETH", 0.04, 2380.56, 5), ("BNB", 0.12, 702.39, 5)]
     assert "2631.24" in rp["note"] and "785.48" in rp["note"]
     assert "۵٪" in rp["rebuy"]["note"] and "۹۸" in rp["rebuy"]["note"]
+    # دو سفارش محدود ۱۷ اکتبر لغو شد؛ هیچ پله‌ای اجرا نشد
+    assert all(s.get("cancelled") and "executed" not in s for s in rp["steps"])
+    cl = rp["closed"]
+    assert cl["at"] == "2026-10-17T15:32:00+00:00"
+    for x in ("۱۵ اکتبر", "کاربر دور بود", "لغو شد", "نقشه ۱۷ اکتبر",
+              "2026-10-14 23:11 UTC", "0.12 × (730.3 − 718.07)", "1.47"):
+        assert x in cl["reason"], x
+    assert 0.12 * (730.3 - 718.07) == pytest.approx(1.47, abs=0.005)
 
 
 def test_real_watch_archives_event36_plan() -> None:

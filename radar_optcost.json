@@ -91,6 +91,25 @@
       "p30": null,
       "chg30": null,
       "saved30": null
+    },
+    {
+      "id": 4,
+      "date": "2026-10-17",
+      "at": "2026-10-17T15:33:55+00:00",
+      "book": "position",
+      "symbol": "BNB",
+      "action": "trim",
+      "reason": "reserve",
+      "qty": 0.327,
+      "price": 718.07,
+      "level": null,
+      "order_id": "8c103fa9-64c1-493e-9f3d-1f3c3ae36102",
+      "p14": null,
+      "chg14": null,
+      "saved14": null,
+      "p30": null,
+      "chg30": null,
+      "saved30": null
     }
   ]
 }
