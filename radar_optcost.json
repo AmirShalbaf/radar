@@ -85,9 +85,9 @@
       "price": 2755.0,
       "level": null,
       "order_id": "ccb9052a-ce7b-4d51-8834-feecf67c83e1",
-      "p14": null,
-      "chg14": null,
-      "saved14": null,
+      "p14": 2478.62,
+      "chg14": -10.031941923774957,
+      "saved14": 13.045136000000005,
       "p30": null,
       "chg30": null,
       "saved30": null
