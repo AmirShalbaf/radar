@@ -43,6 +43,8 @@ radar_watch.py — پایشگر زنده سطوح و هشدار، رادار ۶.
     ورود دوباره  بسته هفتگی بالای سطح، از سهمیه دفتر کل holdings.json.
     هشدار بازار  بسته هفتگی BTC زیر میانگین ساده ۵۰ هفته — فقط اطلاع.
     نقشه ذخیره   پله رسیده، و مهلت برای پله‌های پرنشده.
+    پیام هفتگی   یک خلاصه برای هر هفته بسته‌شده، کنار پیام‌های بالا — نشست ۱۱:
+                 هر دارایی در برابر سطح ابطال، و اقدام شرطی نقشه ذخیره.
 سطح ابطال فقط در بازبینی هفتگی عوض می‌شود؛ این پایشگر watch.json را
 بازنویسی نمی‌کند. حد ضرر دفتر معامله باید سفارش روی خود صرافی باشد —
 پیام تلگرام حد ضرر نیست.
@@ -810,12 +812,35 @@ def regime_sma(regime: dict | None, now: datetime) -> tuple[dict | None, str | N
     return s, None
 
 
+def _position_level(item: dict, p: dict) -> tuple[float, datetime]:
+    """
+    سطح و مهر داوری یک پوزیشن — تنها تعریف، برای ابطال هفتگی و پیام هفتگی.
+    ناهمخوانی: محافظه‌کارانه‌تر — سطح بالاتر زودتر خارج می‌کند، مهر زودتر
+    بسته بیشتری را داوری می‌کند.
+    """
+    sym = item["symbol"].upper()
+    lvl = float(item["invalidation"])
+    since = _aware(item["invalidation_since"], f"{sym}: invalidation_since")
+    hinv = p.get("invalidation")
+    if _num(hinv):
+        lvl = max(lvl, float(hinv))
+    try:
+        hs = P.level_since(p)
+    except P.PositionsError:
+        hs = None
+    if hs is not None:
+        since = min(since, hs)
+    return lvl, since
+
+
 def check_positions(watch: dict, h: dict, state: dict, now: datetime,
-                    weekly=None, price=None, regime: dict | None = None) -> list[str]:
+                    weekly=None, price=None, regime: dict | None = None,
+                    wk_cache: dict | None = None) -> list[str]:
     """
     ابطال هفتگی، سطح هشدار، ورود دوباره، هشدار بازار و نقشه ذخیره. فقط state
     عوض می‌شود؛ watch و h دست‌نخورده می‌مانند. weekly و price تزریق‌پذیرند.
-    regime سند regime.json است — منبع میانگین هشدار بازار.
+    regime سند regime.json است — منبع میانگین هشدار بازار. wk_cache بسته‌های
+    هفتگی را با پیام هفتگی همان اجرا شریک می‌کند — یک واکشی برای هر نماد.
     """
     weekly = weekly or (lambda s: P.weekly_close(s, now=now))
     price = price or ticker
@@ -837,7 +862,7 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                   "⚠️ قاعده لنگر سطح ابطال — سطح باید دست‌کم ۱ دامنه واقعی هفتگی زیر "
                   "min(قیمت، آخرین بسته هفتگی) باشد:\n" + "\n".join(f"- {a}" for a in av)
                   + "\nپایش با سطح فعلی ادامه دارد تا بازبینی.")
-    wk_cache: dict = {}
+    wk_cache = {} if wk_cache is None else wk_cache
     px_cache: dict = {}
 
     def wk(sym):
@@ -856,23 +881,12 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
 
     # ── ۱ ابطال هفتگی و سطح هشدار
     for item in watch.get("positions") or []:
-        sym, lvl = item["symbol"].upper(), float(item["invalidation"])
+        sym = item["symbol"].upper()
         tag = f" ({item['label']})" if item.get("label") else ""
         p = pos.get(sym)
         if p is None:
             continue                            # در پیام ناهمخوانی بالا آمده
-        since = _aware(item["invalidation_since"], f"{sym}: invalidation_since")
-        # ناهمخوانی: محافظه‌کارانه‌تر — سطح بالاتر زودتر خارج می‌کند، مهر زودتر
-        # بسته بیشتری را داوری می‌کند
-        hinv = p.get("invalidation")
-        if _num(hinv):
-            lvl = max(lvl, float(hinv))
-        try:
-            hs = P.level_since(p)
-        except P.PositionsError:
-            hs = None
-        if hs is not None:
-            since = min(since, hs)
+        lvl, since = _position_level(item, p)
         if p.get("status") != "open" or P.position_qty(p) <= 0:
             continue
 
@@ -1049,6 +1063,235 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
     return msgs
 
 
+# ─────────────────────── پیام بسته هفتگی — نشست ۱۱ ───────────────────────
+#
+# یک پیام کوتاه برای هر هفته بسته‌شده: هر دارایی سبد در برابر سطح ابطالش، و اقدام
+# لازم نقشه ذخیره. کنار پیام‌های جدای نقض و مهلت، نه به‌جایشان — تصمیم کاربر
+# ۱۸ اکتبر ۲۰۲۶. کلید با زمان بسته هفته است، نه با ساعت اجرا؛ پس هر نبض همان هفته
+# که کلید را نبیند می‌فرستد و نبض جاافتاده جبران می‌شود.
+
+# بسته قدیمی‌تر یعنی کلید بی ارسال، با دلیل — تصمیم کاربر؛ پوش یکشنبه پیام هفته
+# پیش را نمی‌فرستد
+DIGEST_MAX_AGE_HOURS = 72
+# برچسب «دیر» — تصمیم کاربر؛ نخستین نبض پس از بسته معمولاً ۵ تا ۶ ساعت بعد است
+DIGEST_LATE_HOURS = 12
+VENUE_FA = {"okx": "اوکی‌اکس", "gate": "گیت"}
+# خطای ساخت پیام هفتگی همین اجرا — کد خروج ۵؛ بر ارسال ناموفق، کد ۴، مقدم است
+DIGEST_ERRORS: list[str] = []
+RC_DIGEST_FAILED = 5
+
+
+def _week_close(now: datetime) -> datetime:
+    """بسته آخرین هفته بسته‌شده: دوشنبه ۰۰:۰۰ وقت جهانی همین هفته."""
+    d = now.astimezone(UTC)
+    return datetime(d.year, d.month, d.day, tzinfo=UTC) - timedelta(days=d.weekday())
+
+
+def digest_key(closed: datetime) -> str:
+    return f"weekly_digest_{closed.isoformat()}"
+
+
+def _breach_action(sym: str, qty: float, f: float, state: dict, closed_at: str,
+                   left: list[dict]) -> str:
+    """
+    اقدام نقض ابطال در پیام هفتگی. نقض بر پله نقشه مقدم است: سفارش باز همان نماد
+    اول لغو، سپس فروش. سهم همان حکم بخش ۱ است — state بخش ۱ از پیش به‌روز شده:
+    breach_<نماد> برابر همین بسته یعنی نخستین بسته زیر سطح با سهم جزئی.
+    """
+    partial = f < 1.0 and state.get(f"breach_{sym}") == closed_at
+    amount = f"سهم {_n(f)}، یعنی {_n(qty * f)}" if partial else f"کل {_n(qty)}"
+    orders = [s for s in left if s["symbol"] == sym and s["price"] is not None]
+    market = [s for s in left if s["symbol"] == sym and s["price"] is None]
+    pre = tail = ""
+    if orders:
+        word = "سفارش" if len(orders) == 1 else "سفارش‌های"
+        pre = f"اول {word} {' و '.join(_n(s['price']) for s in orders)} را لغو کن، "
+        tail = " اگر سفارش پر شده بود: رسیدش را ثبت کن و باقی را بفروش."
+    elif market:
+        pre = "پله بازار نقشه را جدا اجرا نکن؛ "
+    if partial:
+        tail += " باقی فقط اگر بسته هفتگی بعد هم زیر سطح بود."
+    return f"⛔ ابطال {sym}: {pre}{amount} را بفروش — در بازار.{tail}"
+
+
+def _step_line(s: dict, mode: str) -> str:
+    """
+    یک پله باز نقشه. رادار سفارش‌های صرافی را نمی‌بیند، پس اقدام شرطی است.
+    mode: market فروش باقی‌مانده، cancel لغو، ask تصمیم کاربر، info فقط اطلاع.
+    """
+    sym, q, p = s["symbol"], _n(s["qty"]), s["price"]
+    done = "اگر پر شده: فقط رسیدش را ثبت کن."
+    if p is not None:
+        o = f"اگر سفارش {_n(p)} پر نشده:"
+        return f"پله {sym}: " + {
+            "market": f"{o} لغو کن و {q} را در بازار بفروش. {done}",
+            "cancel": f"{o} لغو کن. {done}",
+            "ask": f"{o} لغو کن، یا لغو و {q} را در بازار بفروش — تصمیم با تو. {done}",
+            "info": f"سفارش {q} در {_n(p)}",
+        }[mode]
+    o = f"اگر {q} هنوز فروخته نشده:"
+    sold = "اگر فروخته شده: فقط رسیدش را ثبت کن."
+    return f"پله {sym}: " + {
+        "market": f"{o} در بازار بفروش. {sold}",
+        "cancel": f"{o} نفروش. {sold}",
+        "ask": f"{o} تصمیم با تو — فروش در بازار یا لغو. {sold}",
+        "info": f"فروش {q} در بازار، هنوز در دفتر کل ثبت نشده",
+    }[mode]
+
+
+def weekly_digest(watch: dict, h: dict, state: dict, now: datetime, weekly=None,
+                  regime: dict | None = None, wk_cache: dict | None = None
+                  ) -> tuple[str, str | None]:
+    """
+    کلید و متن پیام هفتگی آخرین هفته بسته‌شده. متن None یعنی ارسالی نیست: کلید
+    هست، چیزی برای گزارش نیست، یا بسته کهنه‌تر از ۷۲ ساعت است — آن‌وقت کلید بی
+    ارسال و با دلیل ثبت می‌شود. کلید ارسال را run_once فقط پس از ارسال موفق می‌گذارد.
+    """
+    closed = _week_close(now)
+    key = digest_key(closed)
+    if key in state:
+        return key, None
+    pos = {p["symbol"]: p for p in h.get("positions", []) if p.get("book") == "position"}
+    items = []
+    for it in watch.get("positions") or []:
+        p = pos.get(it["symbol"].upper())
+        if p is not None and p.get("status") == "open" and P.position_qty(p) > 0:
+            items.append((it, p))
+    rp = watch.get("reserve_plan")
+    if not items and not rp:
+        return key, None
+    stamp = f"{closed:%Y-%m-%d %H:%M} UTC"
+    age = (now - closed).total_seconds() / 3600
+    if age >= DIGEST_MAX_AGE_HOURS:
+        why = (f"بسته هفته {stamp} {age:.0f} ساعت پیش بود — بیش از "
+               f"{fa(DIGEST_MAX_AGE_HOURS)} ساعت؛ پیام هفتگی فرستاده نشد")
+        state[key] = {"skipped": why, "at": now.astimezone(UTC).isoformat()}
+        print(f"  {why}")
+        return key, None
+
+    weekly = weekly or (lambda s: P.weekly_close(s, now=now))
+    cache = {} if wk_cache is None else wk_cache
+
+    def wk(sym):
+        if sym not in cache:
+            cache[sym] = weekly(sym)
+        return cache[sym]
+
+    f = exit_fraction(watch)
+    left = unfilled_steps(rp, h) if rp else []
+    rows, acts, breached = [], [], set()
+    above = nodata = unjudged = 0
+    for it, p in items:
+        sym = it["symbol"].upper()
+        lvl, since = _position_level(it, p)
+        w, why = wk(sym)
+        if w is None:
+            nodata += 1
+            rows.append(f"⚠️ داده ندارم — {sym}: بسته هفتگی در دسترس نیست "
+                        f"({'؛ '.join(why) or 'بی‌دلیل'})")
+            continue
+        at = _aware(w["closed_at"], "زمان بسته هفتگی")
+        src = VENUE_FA.get(w.get("venue"), w.get("venue") or "منبع نامعلوم")
+        if at != closed:
+            nodata += 1
+            rows.append(f"⚠️ داده ندارم — {sym}: بسته هفته {stamp} هنوز نیامده؛ آخرین "
+                        f"بسته {at.astimezone(UTC):%Y-%m-%d %H:%M} UTC، {src}")
+            continue
+        if not P.judged(at, since):
+            unjudged += 1
+            rows.append(f"ℹ️ داوری نمی‌شود — {sym}: سطح {_n(lvl)} پس از این بسته ثبت شد")
+            continue
+        close = w["close"]
+        gap = f"{abs(close - lvl) / close * 100:.1f}"
+        if close < lvl:
+            breached.add(sym)
+            rows.append(f"⛔ زیر سطح — {sym}: بسته {_n(close)}، ابطال {_n(lvl)}، "
+                        f"فاصله {gap}٪، {src}")
+            acts.append(_breach_action(sym, P.position_qty(p), f, state, w["closed_at"], left))
+        else:
+            above += 1
+            rows.append(f"✅ بالای سطح — {sym}: بسته {_n(close)}، ابطال {_n(lvl)}، "
+                        f"فاصله {gap}٪، {src}")
+
+    # نقشه ذخیره: پله نمادِ نقض‌شده نمی‌آید — اقدام نقض بالا آن را پوشش داده
+    info: list[str] = []
+    steps = [s for s in left if s["symbol"] not in breached]
+    if rp and steps:
+        deadline = _aware(rp["deadline"], "reserve_plan.deadline")
+        dl = f"{deadline.astimezone(UTC):%Y-%m-%d %H:%M} UTC"
+        title = rp.get("title") or "نقشه ذخیره"
+        # حکم از باند با هیسترزیس — همان شرط بخش ۴، نه باند خام
+        band, band_warn = (regime_trade_band(regime, now) if rp.get("on_deadline")
+                           else (None, None))
+        rule = plan_rule_state(rp, band)
+        if rule == "cancel":
+            head, mode = f"🟢 شرط لغو {title} برقرار — باند با هیسترزیس {band}:", "cancel"
+        elif now >= deadline and rule == "unknown":
+            head = (f"⏰ مهلت {title} گذشت ({dl}) — باند با هیسترزیس نامعلوم: "
+                    f"{band_warn}.")
+            mode = "ask"
+        elif now >= deadline:
+            why = (f" — باند با هیسترزیس {band}، زیر "
+                   f"{rp['on_deadline']['cancel_if_band_at_least']}" if rule == "keep" else "")
+            head, mode = f"⏰ مهلت {title} گذشت ({dl}){why}:", "market"
+        else:
+            head, mode = f"🗓 مهلت {title}: {dl} — پله‌های باز:", "info"
+        block = [head] + [_step_line(s, mode) for s in steps]
+        if mode == "info":
+            info = block
+        else:
+            acts += block
+
+    lines = [f"📊 بسته هفتگی سبد — هفته بسته در {stamp}"]
+    if age > DIGEST_LATE_HOURS:
+        lines.append(f"⏱ دیر: {age:.0f} ساعت پس از بسته.")
+    lines += rows + ["", "اقدام:"]
+    if acts:
+        lines += acts
+    elif items and above == len(items):
+        lines.append("هیچ — همه بالای سطح ابطال.")
+    else:
+        lines.append("هیچ نقضی در نمادهای با داده.")
+    if nodata:
+        lines.append(f"⚠️ {nodata} نماد داده ندارد — حکمشان معلوم نیست.")
+    if unjudged:
+        lines.append(f"ℹ️ {unjudged} نماد با سطح تازه داوری نمی‌شود.")
+    if info:
+        lines += [""] + info
+    lines += ["", "فقط خلاصه؛ پیام‌های ابطال و مهلت جدا می‌آیند."]
+    return key, "\n".join(lines)
+
+
+def _send_digest(watch: dict, h: dict, state: dict, now: datetime,
+                 regime: dict | None, wk_cache: dict) -> int:
+    """
+    پیام هفتگی پس از سنجش‌های فعلی. خطای ساختش بلند است، نه بلعیده: پیام‌های نقض
+    و مهلت از پیش فرستاده شده‌اند و run_once وضعیت را در هر حال ثبت می‌کند. کلید
+    فقط پس از ارسال موفق؛ ناموفق یا بی‌کلید یعنی تلاش دوباره در اجرای بعد.
+    """
+    try:
+        key, text = weekly_digest(watch, h, state, now, regime=regime, wk_cache=wk_cache)
+    except Exception as exc:          # بلند: سطر خطا، پیام تلگرام و کد خروج ۵
+        err = f"{type(exc).__name__}: {str(exc)[:300]}"
+        DIGEST_ERRORS.append(err)
+        print(f"  ⛔ پیام بسته هفتگی ساخته نشد — {err}", file=sys.stderr)
+        notify(f"⛔ پیام بسته هفتگی ساخته نشد — {err}\nپیام‌های ابطال و مهلت جدا "
+               "فرستاده شده‌اند؛ اجرای بعد دوباره می‌سازد.")
+        return 1
+    if not text:
+        return 0
+    if notify(text, quiet=False).ok:
+        state[key] = {"sent": now.astimezone(UTC).isoformat()}
+    return 1
+
+
+def _run_rc() -> int:
+    """کد خروج اجرای پایش، پس از کد ۲ و ۳ main."""
+    if DIGEST_ERRORS:
+        return RC_DIGEST_FAILED
+    return RC_SEND_FAILED if SEND_FAILURES else 0
+
+
 def _read_regime(path: str | None) -> dict | None:
     """regime.json هر اجرا تازه خوانده می‌شود؛ غایب یا خراب یعنی None و هشدار صریح بعدی."""
     if not path or not os.path.exists(path):
@@ -1100,10 +1343,15 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
     need = watch.get("market") or (h is not None and
                                    (watch.get("reserve_plan") or {}).get("on_deadline"))
     regime = _read_regime(regime_path) if need else None
+    wk_cache: dict = {}
     for msg in check_positions(scope, h or {"positions": [], "ledger": []}, state, now,
-                               regime=regime):
+                               regime=regime, wk_cache=wk_cache):
         notify(msg, quiet=False)
         n += 1
+    # پیام بسته هفتگی — نشست ۱۱. پس از سنجش‌های بالا، تا خطایش جلوی پیام نقض و
+    # مهلت را نگیرد؛ بی holdings.json پوزیشنی برای گزارش نیست
+    if h is not None:
+        n += _send_digest(watch, h, state, now, regime, wk_cache)
     if n == 0 and not quiet:
         print("  هیچ ماشه‌ای فعال نشد.")
     save_json(STATE_FILE, state)
@@ -1127,6 +1375,7 @@ def main(argv: list[str] | None = None) -> int:
                     help="منبع میانگین ساده ۵۰ هفته بیت‌کوین برای هشدار بازار")
     a = ap.parse_args(argv)
     SEND_FAILURES.clear()
+    DIGEST_ERRORS.clear()
 
     if a.staleness:
         print(staleness_report(a.holdings, a.watch)[0])
@@ -1187,11 +1436,12 @@ def main(argv: list[str] | None = None) -> int:
                 time.sleep(a.loop)
         except KeyboardInterrupt:
             print("\nمتوقف شد.")
-        return rc or (RC_SEND_FAILED if SEND_FAILURES else 0)
+        return rc or _run_rc()
 
     run_once(watch, state, a.quiet, path=a.watch, h=h, regime_path=a.regime_file)
-    # کد ۲ و ۳ مقدم‌اند؛ ارسال ناموفق تنها، کد ۴ — گام نبض با آن ::error:: می‌دهد
-    return rc or (RC_SEND_FAILED if SEND_FAILURES else 0)
+    # کد ۲ و ۳ مقدم‌اند؛ سپس خطای پیام هفتگی، ۵، و ارسال ناموفق، ۴ — گام نبض با
+    # هر کد جز صفر ::error:: می‌دهد
+    return rc or _run_rc()
 
 
 def run_cli(argv: list[str] | None = None) -> int:
