@@ -66,6 +66,8 @@ import radar_positions as P
 import radar_anchor as A
 # ترتیب باندها — تنها منبع radar_budget، کتابخانه استاندارد؛ شرط مهلت نقشه ذخیره
 import radar_budget as BG
+# تنها تابع ارسال تلگرام، با رسید — نشست ۱۱
+import radar_telegram as TG
 
 try:
     import requests
@@ -317,59 +319,40 @@ def staleness_report(holdings_path: str, watch_path: str,
     return "\n".join(lines), stale
 
 
-def notify(msg: str, quiet: bool = False) -> None:
-    """چاپ + ارسال تلگرام در صورت وجود کلید."""
+# ارسال‌های ناموفق همین اجرا — main از آن کد خروج ۴ می‌سازد. پیش از نشست ۱۱
+# پاسخ تلگرام خوانده نمی‌شد و ارسال ناموفق بی‌صدا بود.
+SEND_FAILURES: list[str] = []
+RC_SEND_FAILED = 4
+
+
+def notify(msg: str, quiet: bool = False) -> TG.Sent:
+    """
+    چاپ + ارسال تلگرام در صورت وجود کلید. رسید برمی‌گردد؛ ناموفق یک سطر خطا
+    می‌گیرد و در SEND_FAILURES می‌نشیند. توکن هرگز چاپ نمی‌شود — radar_telegram.
+    """
     if not quiet:
         print(msg)
-    tok, chat = os.getenv("TELEGRAM_BOT_TOKEN"), os.getenv("TELEGRAM_CHAT_ID")
-    if not (tok and chat):
-        return
-    try:
-        requests.post(f"https://api.telegram.org/bot{tok}/sendMessage",
-                      data={"chat_id": chat, "text": msg}, timeout=15)
-    except Exception as e:
-        # فقط نوع استثنا — متن استثنای requests گاهی نشانی درخواست را
-        # برمی‌گرداند و توکن بخشی از همان نشانی است.
-        print(f"  ارسال تلگرام ناموفق: {type(e).__name__}")
+    res = TG.send(msg)
+    if res.ok is False:
+        SEND_FAILURES.append(res.detail)
+        print(f"  ⛔ ارسال تلگرام ناموفق — {res.detail}")
+    return res
 
 
 def ping_telegram() -> bool:
     """
     یک پیام آزمایشی به تلگرام می‌فرستد و بلافاصله نتیجه را می‌دهد —
-    بدون منتظر ماندن برای فعال‌شدن هیچ هشداری.
-
-    توکن هرگز چاپ نمی‌شود: نه در پیام موفقیت، نه در پیام خطا، نه در خطای
-    شبکه. حتی متن استثنای requests گاهی نشانی کامل درخواست را برمی‌گرداند
-    و توکن بخشی از آن نشانی است، پس فقط نوع استثنا گزارش می‌شود.
+    بدون منتظر ماندن برای فعال‌شدن هیچ هشداری. همان تابع ارسال notify.
     """
-    tok = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat = os.getenv("TELEGRAM_CHAT_ID")
-    missing = [name for name, v in
-               (("TELEGRAM_BOT_TOKEN", tok), ("TELEGRAM_CHAT_ID", chat))
-               if not v]
-    if missing:
-        print(f"❌ متغیر محیطی غایب: {', '.join(missing)}")
+    gone = TG.missing()
+    if gone:
+        print(f"❌ متغیر محیطی غایب: {', '.join(gone)}")
         return False
-
-    try:
-        r = requests.post(
-            f"https://api.telegram.org/bot{tok}/sendMessage",
-            data={"chat_id": chat,
-                  "text": "🔔 آزمایش رادار — این یک پیام آزمایشی است."},
-            timeout=15)
-    except Exception as e:
-        print(f"❌ خطای شبکه: {type(e).__name__}")
-        return False
-
-    try:
-        j = r.json()
-    except ValueError:
-        j = {}
-
-    if r.status_code == 200 and j.get("ok"):
+    res = TG.send("🔔 آزمایش رادار — این یک پیام آزمایشی است.")
+    if res.ok:
         print("✅ پیام آزمایشی با موفقیت به تلگرام ارسال شد.")
         return True
-    print(f"❌ ارسال ناموفق — کد {r.status_code}: {j.get('description', '؟')}")
+    print(f"❌ ارسال ناموفق — {res.detail}")
     return False
 
 
@@ -1143,6 +1126,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--regime-file", default="regime.json", dest="regime_file",
                     help="منبع میانگین ساده ۵۰ هفته بیت‌کوین برای هشدار بازار")
     a = ap.parse_args(argv)
+    SEND_FAILURES.clear()
 
     if a.staleness:
         print(staleness_report(a.holdings, a.watch)[0])
@@ -1203,10 +1187,11 @@ def main(argv: list[str] | None = None) -> int:
                 time.sleep(a.loop)
         except KeyboardInterrupt:
             print("\nمتوقف شد.")
-        return rc
+        return rc or (RC_SEND_FAILED if SEND_FAILURES else 0)
 
     run_once(watch, state, a.quiet, path=a.watch, h=h, regime_path=a.regime_file)
-    return rc
+    # کد ۲ و ۳ مقدم‌اند؛ ارسال ناموفق تنها، کد ۴ — گام نبض با آن ::error:: می‌دهد
+    return rc or (RC_SEND_FAILED if SEND_FAILURES else 0)
 
 
 def run_cli(argv: list[str] | None = None) -> int:
