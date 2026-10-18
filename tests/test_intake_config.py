@@ -29,9 +29,9 @@ def _src() -> dict:
 
 def test_meta_version_and_framework() -> None:
     meta = _raw()["meta"]
-    assert meta["version"] == "1.9"             # ۱.۹ — تکرارگر: خلاصه و آموزش، نه رأی مستقل
+    assert meta["version"] == "1.10"            # ۱.۱۰ — الیوت خاموش، ک۵۶؛ نشست ۱۱
     assert meta["framework"] == "Radar 7"
-    assert meta["updated"] == "2026-10-05"      # وقت جهانی، مثل بقیه مخزن
+    assert meta["updated"] == "2026-10-18"      # وقت جهانی، مثل بقیه مخزن
 
 
 def test_tekrargar_note_says_summary_and_teaching_not_a_vote() -> None:
@@ -64,9 +64,11 @@ def test_every_enabled_youtube_source_has_a_valid_id() -> None:
             assert re.fullmatch(r"UC[A-Za-z0-9_-]{22}", s.channel_id), key
 
 
-def test_elliott_enabled_with_official_feed() -> None:
+def test_elliott_disabled_with_reason_and_kept() -> None:
+    """ک۵۶، تصمیم کاربر ۱۸ اکتبر ۲۰۲۶: ۱۴ سند در دو هفته، همه متن ناقص — خاموش."""
     s = _src()["bob_elliott"]
-    assert s.enabled is True
+    assert s.enabled is False
+    assert "ناقص" in s.disabled_reason and "14" in s.disabled_reason
     assert (s.kind, s.url) == ("rss", "https://bobeunlimited.substack.com/feed")
 
 

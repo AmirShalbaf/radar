@@ -1134,6 +1134,11 @@ def slugify(text: str, maxlen: int = 40) -> str:
 # یک قاعده برای همه منابع. ۹ فایل پیشین دوره ارشیا همان‌طور می‌مانند.
 # ---------------------------------------------------------------------------
 LOCAL_DIR = "_local"
+# شناسنامه سند منبع خاموش، بیرون از مخزن: intake/_local/_disabled/<src>/ — ک۵۶، نشست ۱۱.
+# متن محلی همان intake/_local/<src>/ می‌ماند؛ هیچ فایلی پاک نمی‌شود.
+DISABLED_DIR = "_disabled"
+# حافظه کنار INDEX — همان پیش‌فرض --state؛ فهرست سند منبع خاموش از آن خوانده می‌شود
+STATE_FILE = ".state.json"
 # گزارش ویدیوی radar_video — خوانده ماست، نه سند جمع‌آوری؛ INDEX و DIGEST
 # نمی‌شمارندش. نشست ۶ب.
 REPORTS_DIR = "reports"
@@ -1416,7 +1421,21 @@ def _previous_run_section(index: Path) -> list[str]:
     return lines[start:end]
 
 
-def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
+def _disabled_section(docs: list[dict]) -> list[str]:
+    """فهرست سند منبع خاموش — فقط فهرست، ک۵۶. تهی یعنی بی بخش."""
+    if not docs:
+        return []
+    rows = sorted(docs, key=lambda x: (x.get("date") or "", x.get("file") or ""), reverse=True)
+    return ["## سند منبع خاموش — وارد نشد", "",
+            "فقط فهرست — ک۵۶. متن ناقص و شناسنامه در `intake/_local/` ماند، بیرون از مخزن.", "",
+            "| تاریخ | منبع | عنوان | پیوند |", "|---|---|---|---|",
+            *(f"| {x.get('date') or '—'} | {_cell(x.get('name_fa') or x.get('source') or '—')} | "
+              f"{_cell(x.get('title') or '—')} | {_cell(x.get('url') or '—')} |" for x in rows),
+            ""]
+
+
+def rebuild_index(outdir: Path, run: RunReport | None = None,
+                  disabled_docs: list[dict] | None = None) -> list[str]:
     """
     فهرست خوانا از همه فایل‌های جمع‌آوری‌شده. این همان چیزی است که اول می‌خوانم.
 
@@ -1425,8 +1444,12 @@ def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
 
     ترتیب: تاریخ‌دارها نزولی، سپس بی‌تاریخ و ناخوانا به ترتیب نام فایل.
     پیش از این مرتب‌سازی رشته‌ای «—» را بالای رقم‌ها می‌گذاشت.
-    بی run، کارنامه آخرین اجرا از INDEX موجود نگه داشته می‌شود.
+    بی run، کارنامه آخرین اجرا از INDEX موجود نگه داشته می‌شود. بی disabled_docs،
+    فهرست سند منبع خاموش از حافظه کنار INDEX — ک۵۶.
     """
+    if disabled_docs is None:
+        sp = outdir / STATE_FILE
+        disabled_docs = load_state(sp).get("disabled_docs", []) if sp.exists() else []
     kept_run = [] if run is not None else _previous_run_section(outdir / "INDEX.md")
     rows: list[tuple[str, str, str]] = []      # (تاریخ ISO یا تهی، مسیر، ردیف)
     problems = []
@@ -1476,6 +1499,7 @@ def rebuild_index(outdir: Path, run: RunReport | None = None) -> list[str]:
         header += kept_run
     if problems:
         header += ["### سند ناخوانا", ""] + [f"- {p}" for p in problems] + [""]
+    header += _disabled_section(disabled_docs)
     header += [
         "## اسناد",
         "",
@@ -1530,6 +1554,22 @@ class ImportResult:
     imported: list[dict] = field(default_factory=list)    # همان رکورد imports در .state.json
     partial: list[str] = field(default_factory=list)       # نیمه‌کاره — هرگز وارد نمی‌شود
     kept: list[str] = field(default_factory=list)          # پوشه با فایل ناشناخته، برداشته نشد
+    disabled: list[dict] = field(default_factory=list)     # سند منبع خاموش — فقط فهرست، ک۵۶
+
+
+def disabled_sources(sources: list[Source]) -> dict[str, str]:
+    """منبع خاموش ← نام فارسی؛ ورود پوشه انتظار سندشان را وارد نمی‌کند — ک۵۶."""
+    return {s.key: s.name_fa for s in sources if not s.enabled}
+
+
+def _disabled_entry(f: Path, rel: Path, name_fa: str, stamp: str) -> dict:
+    """یک ردیف فهرست سند منبع خاموش، از سرخط همان شناسنامه — پیش از جابه‌جایی."""
+    meta = _front_matter(f.read_text(encoding="utf-8"))
+    day = (meta.get("تاریخ انتشار") or "")[:10]
+    return {"source": rel.parts[0], "name_fa": name_fa,
+            "date": day if _ISO_DAY.fullmatch(day) else "",
+            "title": meta.get("عنوان", ""), "url": meta.get("نشانی", ""),
+            "file": rel.as_posix(), "stamp": stamp}
 
 
 def pending_root(outdir: Path) -> Path:
@@ -1580,15 +1620,21 @@ def _failures(run: RunReport) -> list[str]:
     return out
 
 
-def import_pending(outdir: Path, statepath: Path, now: datetime | None = None) -> ImportResult:
+def import_pending(outdir: Path, statepath: Path, now: datetime | None = None,
+                   disabled: dict[str, str] | None = None) -> ImportResult:
     """
     پوشه‌های کامل انتظار، به ترتیب زمان. برای هر پوشه اول همه فایل‌ها سنجیده
     می‌شوند و بعد جابه‌جا: فایل هم‌نام یکسان کنار می‌رود، با محتوای دیگر خطای بلند
     و هیچ فایلی از آن پوشه جابه‌جا نمی‌شود. دیده‌شده‌ها ادغام می‌شوند — اصلی برنده
     است. رکورد ورود در .state.json می‌نشیند — خلاصه روزانه از آن می‌خواند — و INDEX
     با کارنامه آخرین شب ساخته می‌شود. نیمه‌کاره هرگز وارد نمی‌شود.
+
+    disabled — منبع خاموش ← نام فارسی، از disabled_sources. سند منبع خاموش وارد
+    intake/<منبع>/ نمی‌شود: شناسنامه به intake/_local/_disabled/<منبع>/، متن محلی
+    همان intake/_local/<منبع>/، و فقط فهرستش در .state.json و INDEX — ک۵۶.
     """
     now = now or datetime.now(UTC)
+    disabled = disabled or {}
     complete, partial = pending_dirs(outdir)
     res = ImportResult(partial=[p.name for p in partial])
     if not complete:
@@ -1598,11 +1644,17 @@ def import_pending(outdir: Path, statepath: Path, now: datetime | None = None) -
     try:
         for d in complete:
             plan: list[tuple[Path, Path | None]] = []
+            skipped: list[dict] = []
             for f in sorted(p for p in d.rglob("*") if p.is_file()):
                 rel = f.relative_to(d)
                 if len(rel.parts) == 1 and rel.name in _PENDING_META:
                     continue
                 target = outdir / rel
+                if rel.parts[0] in disabled:
+                    # منبع خاموش: شناسنامه بیرون از مخزن، و فقط فهرستش
+                    target = outdir / LOCAL_DIR / DISABLED_DIR / rel
+                    if rel.suffix == ".md":
+                        skipped.append(_disabled_entry(f, rel, disabled[rel.parts[0]], d.name))
                 if target.exists():
                     if target.read_bytes() != f.read_bytes():
                         raise ImportConflict(
@@ -1630,6 +1682,12 @@ def import_pending(outdir: Path, statepath: Path, now: datetime | None = None) -
             rec = {"at": now.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"), "stamp": d.name,
                    "started": run.get("started", "—"), "exit_code": run.get("exit_code"),
                    "docs": sorted(docs), "failures": _failures(report)}
+            if skipped:
+                rec["disabled_docs"] = skipped
+                listed = state.setdefault("disabled_docs", [])
+                have = {x.get("file") for x in listed}
+                listed += [x for x in skipped if x["file"] not in have]
+                res.disabled += skipped
             state.setdefault("imports", []).append(rec)
             save_state(statepath, state)      # پس از هر پوشه — قطع اجرا ورود قبلی را گم نمی‌کند
             res.imported.append(rec)
@@ -1642,7 +1700,7 @@ def import_pending(outdir: Path, statepath: Path, now: datetime | None = None) -
                 shutil.rmtree(d)
     finally:
         if res.imported:
-            rebuild_index(outdir, last)
+            rebuild_index(outdir, last, disabled_docs=state.get("disabled_docs", []))
     return res
 
 
@@ -1652,6 +1710,8 @@ def render_import(res: ImportResult) -> list[str]:
         out.append(f"✓ ورود پوشه انتظار {r['stamp']} — اجرای {r['started']} — کد خروج {r['exit_code']} — "
                    f"سند تازه {len(r['docs'])}")
         out += [f"    ⛔ {f}" for f in r["failures"]]
+    out += [f"⏸ منبع خاموش — وارد نشد، فقط فهرست: {x['name_fa']} {x['date'] or '—'} "
+            f"«{x['title'] or x['file']}»" for x in res.disabled]
     out += [f"⚠ پوشه نیمه‌کاره {p} — اجرای شبانه قطع شد؛ وارد نشد و دست نخورد" for p in res.partial]
     out += [f"⚠ پوشه {k} فایل ناشناخته دارد — وارد شد ولی برداشته نشد" for k in res.kept]
     return out
@@ -1881,7 +1941,8 @@ def main(argv: list[str] | None = None, now: datetime | None = None) -> int:
             log("! --import-pending تنها اجرا می‌شود")
             return 2
         try:
-            res = import_pending(Path(args.out), Path(args.state), now)
+            off = disabled_sources(load_sources(Path(args.config)))
+            res = import_pending(Path(args.out), Path(args.state), now, disabled=off)
         except IntakeError as e:
             log(f"! ورود متوقف شد — {e}")
             return 2

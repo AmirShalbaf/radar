@@ -1172,7 +1172,9 @@ def new_cli(a, deps: Deps, now: datetime) -> int:
     # گام صفر: پوشه انتظار جمع‌آوری شبانه — پیش از هر چیز، وگرنه سند شب گرفته‌شده
     # دوباره گرفته می‌شود و ورود بعدی با آن برخورد می‌کند. نشست ۷ب، کار شش.
     try:
-        imported = I.import_pending(intake, intake / STATE_NAME, now)
+        # منبع خاموش فقط فهرست می‌شود، وارد نه — ک۵۶، نشست ۱۱
+        off = I.disabled_sources(I.load_sources(Path(a.config)))
+        imported = I.import_pending(intake, intake / STATE_NAME, now, disabled=off)
     except I.IntakeError as e:
         print(f"⛔ ورود پوشه انتظار — {e}", file=sys.stderr)
         return 2
@@ -1579,7 +1581,9 @@ def pick_cli(a, deps: Deps, now: datetime) -> int:
     state_path = intake / VIDEO_STATE_NAME
     # گام صفر، همان --new: پوشه انتظار جمع‌آوری شبانه پیش از هر دیدن
     try:
-        imported = I.import_pending(intake, intake / STATE_NAME, now)
+        # منبع خاموش فقط فهرست می‌شود، وارد نه — ک۵۶، نشست ۱۱
+        off = I.disabled_sources(I.load_sources(Path(a.config)))
+        imported = I.import_pending(intake, intake / STATE_NAME, now, disabled=off)
     except I.IntakeError as e:
         print(f"⛔ ورود پوشه انتظار — {e}", file=sys.stderr)
         return 2
