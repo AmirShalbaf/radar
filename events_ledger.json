@@ -938,12 +938,20 @@
    "first_seen": "2026-10-08T07:10:41Z",
    "prices": {
     "ZRO": {
-     "before": null,
+     "before": {
+      "close": 1.8567,
+      "candle_open": "2026-10-20T04:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "BTC": {
-     "before": null,
+     "before": {
+      "close": 82092.0,
+      "candle_open": "2026-10-20T04:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     }
@@ -1255,6 +1263,67 @@
    "at": "2026-11-13T13:30:00Z",
    "source": "fred.stlouisfed.org rid=46 — برنامه BLS/BEA",
    "first_seen": "2026-10-15T12:00:06Z",
+   "prices": {
+    "BTC": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "SOL": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "ETH": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "BNB": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "AAVE": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "LINK": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "SUI": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "ONDO": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "TAO": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "TRX": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    }
+   }
+  },
+  {
+   "id": "fomc_minutes:2026-11-18",
+   "kind": "fomc_minutes",
+   "title": "صورت‌جلسه فدرال‌رزرو (FOMC Minutes)",
+   "importance": "medium",
+   "at": "2026-11-18T19:00:00Z",
+   "source": "federalreserve.gov/json/calendar.json",
+   "first_seen": "2026-10-20T12:01:21Z",
    "prices": {
     "BTC": {
      "before": null,
