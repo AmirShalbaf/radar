@@ -731,6 +731,32 @@ def rebuy_status(rp: dict, h: dict, prices: dict) -> list[dict]:
     return out
 
 
+class Msg(str):
+    """
+    پیامی که اثرش بر state فقط پس از رسید موفق ثبت می‌شود — مثل پیام هفتگی.
+    بازبینی ۲۳ اکتبر ۲۰۲۶: پیش از این کلید نقض ابطال پیش از ارسال گذاشته می‌شد و
+    پیام خروجی که نمی‌رسید، دیگر هرگز فرستاده نمی‌شد. سهم خروج جزئی — breach_ —
+    هم با همین پیام ثبت می‌شود، تا ارسال ناموفق «نخستین بسته» را «دومین» نکند.
+    """
+
+    def __new__(cls, text: str, what: str, sets: dict, pops: tuple = ()):
+        m = super().__new__(cls, text)
+        m.what, m.sets, m.pops = what, dict(sets), tuple(pops)
+        return m
+
+    def commit(self, state: dict) -> None:
+        state.update(self.sets)
+        for k in self.pops:
+            state.pop(k, None)
+
+
+def commit_sent(msgs: list, state: dict) -> None:
+    """همه پیام‌های Msg را رسیده فرض می‌کند — برای سنجش منطق بی‌تلگرام در آزمون."""
+    for m in msgs:
+        if isinstance(m, Msg):
+            m.commit(state)
+
+
 def _once(state: dict, key: str, msgs: list, text: str) -> None:
     if not state.get(key):
         state[key] = True
@@ -835,13 +861,18 @@ def _position_level(item: dict, p: dict) -> tuple[float, datetime]:
 
 def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                     weekly=None, price=None, regime: dict | None = None,
-                    wk_cache: dict | None = None) -> list[str]:
+                    wk_cache: dict | None = None,
+                    verdicts: dict | None = None) -> list[str]:
     """
     ابطال هفتگی، سطح هشدار، ورود دوباره، هشدار بازار و نقشه ذخیره. فقط state
     عوض می‌شود؛ watch و h دست‌نخورده می‌مانند. weekly و price تزریق‌پذیرند.
     regime سند regime.json است — منبع میانگین هشدار بازار. wk_cache بسته‌های
     هفتگی را با پیام هفتگی همان اجرا شریک می‌کند — یک واکشی برای هر نماد.
+    پیام ابطال هفتگی Msg است: اثرش بر state را run_once فقط پس از رسید موفق
+    ثبت می‌کند. verdicts حکم سهم خروج همان بسته را با پیام هفتگی شریک می‌کند —
+    full یا partial، با کلید «نماد|زمان بسته» — تا ارسال ناموفق آن را عوض نکند.
     """
+    verdicts = {} if verdicts is None else verdicts
     weekly = weekly or (lambda s: P.weekly_close(s, now=now))
     price = price or ticker
     msgs: list[str] = []
@@ -898,31 +929,36 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                   "دوباره تلاش می‌کند.")
         elif (not state.get(f"wk_{sym}_{w['closed_at']}")
               and P.judged(w["closed_at"], since)):
-            state[f"wk_{sym}_{w['closed_at']}"] = True
+            # کلید هفته و سهم خروج فقط با رسید موفق — Msg، بازبینی ۲۳ اکتبر
+            wkey = f"wk_{sym}_{w['closed_at']}"
             close, qty = w["close"], P.position_qty(p)
             bkey = f"breach_{sym}"
             prev = state.get(bkey)
             head = (f"⛔ ابطال هفتگی {sym}{tag} — بسته هفته تا {w['closed_at'][:10]}: "
                     f"{_n(close)}، زیر سطح {_n(lvl)}.")
             if close < lvl and (f >= 1.0 or prev):
-                state.pop(bkey, None)
                 second = "دومین بسته پیاپی زیر سطح. " if prev else ""
-                msgs.append(f"{head}\n{second}خروج کامل باقی‌مانده: {_n(qty)} {sym}.\n"
-                            f"ثبت: radar_positions.py exit --symbol {sym} "
-                            f"--price <قیمت اجرا> --level {_n(lvl)} {P.RECEIPT_ARGS}")
+                verdicts[f"{sym}|{w['closed_at']}"] = "full"
+                msgs.append(Msg(f"{head}\n{second}خروج کامل باقی‌مانده: {_n(qty)} {sym}.\n"
+                                f"ثبت: radar_positions.py exit --symbol {sym} "
+                                f"--price <قیمت اجرا> --level {_n(lvl)} {P.RECEIPT_ARGS}",
+                                f"ابطال {sym}", {wkey: True}, pops=(bkey,)))
             elif close < lvl:
                 sell = qty * f
-                state[bkey] = w["closed_at"]
-                msgs.append(f"{head}\nفروش سهم {_n(f)}: {_n(sell)} {sym}. باقی فقط اگر "
-                            "بسته هفتگی بعد هم زیر سطح بود.\n"
-                            f"ثبت: radar_positions.py trim --reason invalidation "
-                            f"--level {_n(lvl)} --symbol {sym} --qty {_n(sell)} "
-                            f"--price <قیمت اجرا> {P.RECEIPT_ARGS}")
+                verdicts[f"{sym}|{w['closed_at']}"] = "partial"
+                msgs.append(Msg(f"{head}\nفروش سهم {_n(f)}: {_n(sell)} {sym}. باقی فقط اگر "
+                                "بسته هفتگی بعد هم زیر سطح بود.\n"
+                                f"ثبت: radar_positions.py trim --reason invalidation "
+                                f"--level {_n(lvl)} --symbol {sym} --qty {_n(sell)} "
+                                f"--price <قیمت اجرا> {P.RECEIPT_ARGS}",
+                                f"ابطال {sym}", {wkey: True, bkey: w["closed_at"]}))
             elif prev:
-                state.pop(bkey, None)
-                msgs.append(f"✅ {sym}{tag} — بسته هفتگی {_n(close)} بالای سطح {_n(lvl)}. "
-                            f"باقی‌مانده {_n(qty)} نگه داشته می‌شود. سهم فروخته‌شده: "
-                            "ورود دوباره مجاز — radar_positions.py reenter")
+                msgs.append(Msg(f"✅ {sym}{tag} — بسته هفتگی {_n(close)} بالای سطح {_n(lvl)}. "
+                                f"باقی‌مانده {_n(qty)} نگه داشته می‌شود. سهم فروخته‌شده: "
+                                "ورود دوباره مجاز — radar_positions.py reenter",
+                                f"بازگشت بالای سطح {sym}", {wkey: True}, pops=(bkey,)))
+            else:
+                state[wkey] = True              # بی پیام — چیزی برای رسیدن نیست
 
         for wl in item.get("warnings") or []:
             v = px(sym)
@@ -1095,13 +1131,15 @@ def digest_key(closed: datetime) -> str:
 
 
 def _breach_action(sym: str, qty: float, f: float, state: dict, closed_at: str,
-                   left: list[dict]) -> str:
+                   left: list[dict], verdict: str | None = None) -> str:
     """
     اقدام نقض ابطال در پیام هفتگی. نقض بر پله نقشه مقدم است: سفارش باز همان نماد
-    اول لغو، سپس فروش. سهم همان حکم بخش ۱ است — state بخش ۱ از پیش به‌روز شده:
-    breach_<نماد> برابر همین بسته یعنی نخستین بسته زیر سطح با سهم جزئی.
+    اول لغو، سپس فروش. سهم همان حکم بخش ۱ است: verdict همان اجرا از check_positions،
+    و اگر نبود state — breach_<نماد> برابر همین بسته یعنی نخستین بسته زیر سطح با
+    سهم جزئی. verdict لازم است چون state بخش ۱ از ۲۳ اکتبر فقط با رسید موفق ثبت می‌شود.
     """
-    partial = f < 1.0 and state.get(f"breach_{sym}") == closed_at
+    partial = (verdict == "partial" if verdict else
+               f < 1.0 and state.get(f"breach_{sym}") == closed_at)
     amount = f"سهم {_n(f)}، یعنی {_n(qty * f)}" if partial else f"کل {_n(qty)}"
     orders = [s for s in left if s["symbol"] == sym and s["price"] is not None]
     market = [s for s in left if s["symbol"] == sym and s["price"] is None]
@@ -1143,12 +1181,13 @@ def _step_line(s: dict, mode: str) -> str:
 
 
 def weekly_digest(watch: dict, h: dict, state: dict, now: datetime, weekly=None,
-                  regime: dict | None = None, wk_cache: dict | None = None
-                  ) -> tuple[str, str | None]:
+                  regime: dict | None = None, wk_cache: dict | None = None,
+                  verdicts: dict | None = None) -> tuple[str, str | None]:
     """
     کلید و متن پیام هفتگی آخرین هفته بسته‌شده. متن None یعنی ارسالی نیست: کلید
     هست، چیزی برای گزارش نیست، یا بسته کهنه‌تر از ۷۲ ساعت است — آن‌وقت کلید بی
     ارسال و با دلیل ثبت می‌شود. کلید ارسال را run_once فقط پس از ارسال موفق می‌گذارد.
+    verdicts حکم سهم خروج check_positions همان اجراست.
     """
     closed = _week_close(now)
     key = digest_key(closed)
@@ -1210,7 +1249,8 @@ def weekly_digest(watch: dict, h: dict, state: dict, now: datetime, weekly=None,
             breached.add(sym)
             rows.append(f"⛔ زیر سطح — {sym}: بسته {_n(close)}، ابطال {_n(lvl)}، "
                         f"فاصله {gap}٪، {src}")
-            acts.append(_breach_action(sym, P.position_qty(p), f, state, w["closed_at"], left))
+            acts.append(_breach_action(sym, P.position_qty(p), f, state, w["closed_at"], left,
+                                       (verdicts or {}).get(f"{sym}|{w['closed_at']}")))
         else:
             above += 1
             rows.append(f"✅ بالای سطح — {sym}: بسته {_n(close)}، ابطال {_n(lvl)}، "
@@ -1266,14 +1306,15 @@ def weekly_digest(watch: dict, h: dict, state: dict, now: datetime, weekly=None,
 
 
 def _send_digest(watch: dict, h: dict, state: dict, now: datetime,
-                 regime: dict | None, wk_cache: dict) -> int:
+                 regime: dict | None, wk_cache: dict, verdicts: dict | None = None) -> int:
     """
     پیام هفتگی پس از سنجش‌های فعلی. خطای ساختش بلند است، نه بلعیده: پیام‌های نقض
     و مهلت از پیش فرستاده شده‌اند و run_once وضعیت را در هر حال ثبت می‌کند. کلید
     فقط پس از ارسال موفق؛ ناموفق یا بی‌کلید یعنی تلاش دوباره در اجرای بعد.
     """
     try:
-        key, text = weekly_digest(watch, h, state, now, regime=regime, wk_cache=wk_cache)
+        key, text = weekly_digest(watch, h, state, now, regime=regime, wk_cache=wk_cache,
+                                  verdicts=verdicts)
     except Exception as exc:          # بلند: سطر خطا، پیام تلگرام و کد خروج ۵
         err = f"{type(exc).__name__}: {str(exc)[:300]}"
         DIGEST_ERRORS.append(err)
@@ -1347,14 +1388,22 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
                                    (watch.get("reserve_plan") or {}).get("on_deadline"))
     regime = _read_regime(regime_path) if need else None
     wk_cache: dict = {}
+    verdicts: dict = {}
     for msg in check_positions(scope, h or {"positions": [], "ledger": []}, state, now,
-                               regime=regime, wk_cache=wk_cache):
-        notify(msg, quiet=False)
+                               regime=regime, wk_cache=wk_cache, verdicts=verdicts):
+        res = notify(msg, quiet=False)
         n += 1
+        if isinstance(msg, Msg):
+            # کلید فقط با رسید موفق — مثل پیام هفتگی؛ بازبینی ۲۳ اکتبر
+            if res.ok:
+                msg.commit(state)
+            else:
+                print(f"  ⛔ پیام {msg.what} فرستاده نشد — کلید هفته ثبت نشد؛ اجرای بعد "
+                      "دوباره می‌فرستد")
     # پیام بسته هفتگی — نشست ۱۱. پس از سنجش‌های بالا، تا خطایش جلوی پیام نقض و
     # مهلت را نگیرد؛ بی holdings.json پوزیشنی برای گزارش نیست
     if h is not None:
-        n += _send_digest(watch, h, state, now, regime, wk_cache)
+        n += _send_digest(watch, h, state, now, regime, wk_cache, verdicts)
     if n == 0 and not quiet:
         print("  هیچ ماشه‌ای فعال نشد.")
     save_json(STATE_FILE, state)

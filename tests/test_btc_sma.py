@@ -23,6 +23,10 @@ import radar_positions as P
 import radar_regime as G
 import radar_watch as W
 
+# رسید موفق ساختگی — notify همیشه TG.Sent برمی‌گرداند؛ پیام ابطال از ۲۳ اکتبر
+# فقط با رسید موفق کلید می‌گیرد
+OK = W.TG.Sent(True, "آزمون")
+
 UTC = timezone.utc
 ROOT = Path(__file__).resolve().parent.parent
 MON0 = datetime(2025, 9, 1, tzinfo=UTC)          # دوشنبه
@@ -194,7 +198,7 @@ def test_watcher_main_reads_regime_file(tmp_path, monkeypatch) -> None:
     r["generated_at"] = datetime.now(UTC).isoformat()
     (tmp_path / "reg.json").write_text(json.dumps(r), encoding="utf-8")
     sent: list[str] = []
-    monkeypatch.setattr(W, "notify", lambda m, quiet=False: sent.append(m))
+    monkeypatch.setattr(W, "notify", lambda m, quiet=False: sent.append(m) or OK)
     monkeypatch.setattr(W.P, "weekly_close", lambda s, now=None, get=None: (
         {"close": 79000.0, "closed_at": WEEK, "venue": "okx"}, []))
     assert W.main(["--once", "--watch", "watch.json", "--regime-file", "reg.json"]) == 0

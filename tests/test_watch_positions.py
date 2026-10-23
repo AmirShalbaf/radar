@@ -23,6 +23,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import radar_watch as W
 
+# رسید موفق ساختگی — notify همیشه TG.Sent برمی‌گرداند؛ پیام ابطال از ۲۳ اکتبر
+# فقط با رسید موفق کلید می‌گیرد
+OK = W.TG.Sent(True, "آزمون")
+
 UTC = timezone.utc
 MON = datetime(2026, 9, 28, 4, 40, tzinfo=UTC)        # نخستین اجرای پس از دوشنبه
 WEEK1 = "2026-09-28T00:00:00+00:00"
@@ -86,8 +90,12 @@ def _regime(value=78822.35, week=WEEK1) -> dict:
 
 
 def _run(watch, h, state, weekly, price=None, now=MON, regime=None) -> list[str]:
-    return W.check_positions(watch, h, state, now, weekly=weekly,
+    msgs = W.check_positions(watch, h, state, now, weekly=weekly,
                              price=price or (lambda s: PX.get(s)), regime=regime)
+    # ارسال موفق فرض می‌شود — کلید ابطال از ۲۳ اکتبر فقط با رسید؛ ارسال ناموفق در
+    # tests/test_breach_send_receipt.py
+    W.commit_sent(msgs, state)
+    return msgs
 
 
 def _all_above():
@@ -291,7 +299,7 @@ def test_main_runs_position_checks(tmp_path, monkeypatch) -> None:
     monkeypatch.chdir(tmp_path)
     _write(tmp_path, _watch(), _valid_h())
     sent: list[str] = []
-    monkeypatch.setattr(W, "notify", lambda m, quiet=False: sent.append(m))
+    monkeypatch.setattr(W, "notify", lambda m, quiet=False: sent.append(m) or OK)
     monkeypatch.setattr(W.P, "weekly_close", lambda s, now=None, get=None: (
         {"close": {"SOL": 95.0}.get(s, 1e9), "closed_at": WEEK1, "venue": "okx"}, []))
     monkeypatch.setattr(W, "ticker", lambda s: PX.get(s))
@@ -303,7 +311,7 @@ def test_main_invalid_watch_v2_is_loud(tmp_path, monkeypatch) -> None:
     monkeypatch.chdir(tmp_path)
     _write(tmp_path, _watch(exit_fraction=2), _valid_h())
     sent: list[str] = []
-    monkeypatch.setattr(W, "notify", lambda m, quiet=False: sent.append(m))
+    monkeypatch.setattr(W, "notify", lambda m, quiet=False: sent.append(m) or OK)
     assert W.main(["--once", "--watch", "watch.json"]) == 2
     assert any("exit_fraction" in m for m in sent)
 
@@ -314,7 +322,7 @@ def test_main_invalid_holdings_is_loud(tmp_path, monkeypatch) -> None:
     h["frozen"]["members"]["SOL"] = 5.0                 # ناوردا شکسته
     _write(tmp_path, _watch(), h)
     sent: list[str] = []
-    monkeypatch.setattr(W, "notify", lambda m, quiet=False: sent.append(m))
+    monkeypatch.setattr(W, "notify", lambda m, quiet=False: sent.append(m) or OK)
     monkeypatch.setattr(W.P, "weekly_close", lambda s, now=None, get=None: (None, ["آزمون"]))
     monkeypatch.setattr(W, "ticker", lambda s: PX.get(s))
     assert W.main(["--once", "--watch", "watch.json", "--holdings", "holdings.json"]) == 2

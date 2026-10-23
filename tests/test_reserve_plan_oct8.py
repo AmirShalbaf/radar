@@ -29,6 +29,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import radar_book as B
 import radar_watch as W
 
+# رسید موفق ساختگی — notify همیشه TG.Sent برمی‌گرداند؛ پیام ابطال از ۲۳ اکتبر
+# فقط با رسید موفق کلید می‌گیرد
+OK = W.TG.Sent(True, "آزمون")
+
 UTC = timezone.utc
 ROOT = Path(__file__).resolve().parent.parent
 NOW = datetime(2026, 10, 8, 12, 0, tzinfo=UTC)
@@ -209,7 +213,7 @@ def test_run_once_reads_regime_for_plan_rule(tmp_path, monkeypatch) -> None:
     (tmp_path / "regime.json").write_text(json.dumps(_regime("سازنده", gen=NOW.isoformat())),
                                           encoding="utf-8")
     sent = []
-    monkeypatch.setattr(W, "notify", lambda msg, quiet=False: sent.append(msg))
+    monkeypatch.setattr(W, "notify", lambda msg, quiet=False: sent.append(msg) or OK)
     monkeypatch.setattr(W, "ticker", lambda s: PRICES.get(s))
     monkeypatch.setattr(W, "stale_warning", lambda p: None)
     W.run_once(_watch(), {}, quiet=True, h=_h(), now=NOW, regime_path="regime.json")

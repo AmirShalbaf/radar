@@ -27,6 +27,10 @@ import radar_book as B
 import radar_positions as P
 import radar_watch as W
 
+# رسید موفق ساختگی — notify همیشه TG.Sent برمی‌گرداند؛ پیام ابطال از ۲۳ اکتبر
+# فقط با رسید موفق کلید می‌گیرد
+OK = W.TG.Sent(True, "آزمون")
+
 UTC = timezone.utc
 ROOT = Path(__file__).resolve().parent.parent
 MON = "2026-09-28T00:00:00+00:00"
@@ -153,7 +157,7 @@ def test_watcher_mismatch_is_loud_and_uses_conservative_level(tmp_path, monkeypa
                                             encoding="utf-8")
     (tmp_path / "radar_journal.json").write_text('{"version": 1, "trades": []}', encoding="utf-8")
     sent: list[str] = []
-    monkeypatch.setattr(W, "notify", lambda m, quiet=False: sent.append(m))
+    monkeypatch.setattr(W, "notify", lambda m, quiet=False: sent.append(m) or OK)
     monkeypatch.setattr(W.P, "weekly_close", lambda s, now=None, get=None: (
         {"close": {"SOL": 95.0, "ETH": 3000.0}[s], "closed_at": MON, "venue": "okx"}, []))
     monkeypatch.setattr(W, "ticker", lambda s: None)

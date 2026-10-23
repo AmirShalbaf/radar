@@ -19,6 +19,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import radar_watch as W
 
+# رسید موفق ساختگی — notify همیشه TG.Sent برمی‌گرداند؛ پیام ابطال از ۲۳ اکتبر
+# فقط با رسید موفق کلید می‌گیرد
+OK = W.TG.Sent(True, "آزمون")
+
 ROOT = Path(__file__).resolve().parent.parent
 PULSE = ROOT / ".github" / "workflows" / "radar-pulse.yml"
 
@@ -27,7 +31,7 @@ PULSE = ROOT / ".github" / "workflows" / "radar-pulse.yml"
 def sent(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     msgs: list[str] = []
-    monkeypatch.setattr(W, "notify", lambda m, quiet=False: msgs.append(m))
+    monkeypatch.setattr(W, "notify", lambda m, quiet=False: msgs.append(m) or OK)
     return msgs
 
 

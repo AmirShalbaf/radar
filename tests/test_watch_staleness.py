@@ -21,6 +21,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import radar_watch as W
 
+# رسید موفق ساختگی — notify همیشه TG.Sent برمی‌گرداند؛ پیام ابطال از ۲۳ اکتبر
+# فقط با رسید موفق کلید می‌گیرد
+OK = W.TG.Sent(True, "آزمون")
+
 UTC = timezone.utc
 
 
@@ -138,7 +142,7 @@ def test_run_once_sends_warning_to_telegram(tmp_path, monkeypatch) -> None:
     p = _write(tmp_path, ITEMS, age_days=W.STALE_AFTER_DAYS + 5)
     monkeypatch.setattr(W, "STATE_FILE", str(tmp_path / "state.json"))
     sent = []
-    monkeypatch.setattr(W, "notify", lambda msg, quiet=False: sent.append(msg))
+    monkeypatch.setattr(W, "notify", lambda msg, quiet=False: sent.append(msg) or OK)
     W.run_once({"items": []}, {}, quiet=False, path=p)
     assert any("کهنه" in m for m in sent)
 
@@ -151,7 +155,7 @@ def test_run_once_telegram_warning_once_per_day(tmp_path, monkeypatch) -> None:
     p = _write(tmp_path, ITEMS, age_days=W.STALE_AFTER_DAYS + 5)
     monkeypatch.setattr(W, "STATE_FILE", str(tmp_path / "state.json"))
     sent = []
-    monkeypatch.setattr(W, "notify", lambda msg, quiet=False: sent.append(msg))
+    monkeypatch.setattr(W, "notify", lambda msg, quiet=False: sent.append(msg) or OK)
     state = {}
     for _ in range(6):
         W.run_once({"items": []}, state, quiet=False, path=p)
@@ -163,7 +167,7 @@ def test_run_once_no_warning_when_fresh(tmp_path, monkeypatch, capsys) -> None:
     p = _write(tmp_path, ITEMS, age_days=1)
     monkeypatch.setattr(W, "STATE_FILE", str(tmp_path / "state.json"))
     sent = []
-    monkeypatch.setattr(W, "notify", lambda msg, quiet=False: sent.append(msg))
+    monkeypatch.setattr(W, "notify", lambda msg, quiet=False: sent.append(msg) or OK)
     W.run_once({"items": []}, {}, quiet=False, path=p)
     assert not sent
     assert "کهنه" not in capsys.readouterr().out
@@ -172,7 +176,7 @@ def test_run_once_no_warning_when_fresh(tmp_path, monkeypatch, capsys) -> None:
 def test_run_once_missing_file_does_not_crash(tmp_path, monkeypatch) -> None:
     """فایل غایب نباید run_once را بشکند."""
     monkeypatch.setattr(W, "STATE_FILE", str(tmp_path / "state.json"))
-    monkeypatch.setattr(W, "notify", lambda msg, quiet=False: None)
+    monkeypatch.setattr(W, "notify", lambda msg, quiet=False: OK)
     assert W.run_once({"items": []}, {}, quiet=True,
                       path=str(tmp_path / "nope.json")) == 0
 

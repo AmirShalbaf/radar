@@ -15,6 +15,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import radar_levels as L
 import radar_watch as W
 
+# رسید موفق ساختگی — notify همیشه TG.Sent برمی‌گرداند؛ پیام ابطال از ۲۳ اکتبر
+# فقط با رسید موفق کلید می‌گیرد
+OK = W.TG.Sent(True, "آزمون")
+
 ROOT = Path(__file__).resolve().parent.parent
 DAILY = ROOT / ".github" / "workflows" / "radar-daily.yml"
 
@@ -60,6 +64,6 @@ def test_watcher_never_rewrites_watch_file(tmp_path, monkeypatch) -> None:
     p = tmp_path / "watch.json"
     body = json.dumps({"updated": "2026-09-26", "items": []})
     p.write_text(body, encoding="utf-8")
-    monkeypatch.setattr(W, "notify", lambda m, quiet=False: None)
+    monkeypatch.setattr(W, "notify", lambda m, quiet=False: OK)
     W.run_once(json.loads(body), {}, quiet=True, path=str(p))
     assert p.read_text(encoding="utf-8") == body
