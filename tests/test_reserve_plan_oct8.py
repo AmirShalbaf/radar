@@ -283,8 +283,10 @@ def test_section6_cancel_with_sale_asks_rebuy() -> None:
 
 def test_section6_deadline_keep_is_market_without_decision() -> None:
     s6 = _section(_report(_view(now=LATE)), "۶")
-    acts = s6[s6.index("\n1. "):]
-    assert "بازار" in acts and "گذشت" in acts and "تصمیم لازم" not in acts
+    # فقط ردیف اقدام خود نقشه — ردیف «کسری پس از نقشه» بازبینی ۲۳ اکتبر جداست و
+    # برای کسری مانده تصمیم می‌خواهد، نه برای حکم مهلت
+    plan = s6[s6.index("\n1. "):].split("\n")[1]
+    assert "بازار" in plan and "گذشت" in plan and "تصمیم لازم" not in plan
 
 
 def test_section6_deadline_unknown_band_asks() -> None:

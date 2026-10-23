@@ -728,6 +728,22 @@ def _n(x) -> str:
     return f"{x:.10g}"
 
 
+def gap_after_plan(rv: dict, reg: dict | None) -> float | None:
+    """
+    کسری تا هدف رژیم اگر همه پله‌های مانده پر شوند — روش ک۴۲، همان عدد «اگر همه
+    پر شوند». None یعنی رژیم کهنه یا آن عدد «داده ندارم». بازبینی ۲۳ اکتبر،
+    یافته م۱: پیش از این با پله مانده هیچ ردیف کسری ساخته نمی‌شد.
+    """
+    if reg is None or rv.get("after") is None:
+        return None
+    return reg["stable"] / 100 * rv["after"]["total"] - rv["after"]["stable"]
+
+
+def _plan_word(rv: dict | None) -> str:
+    """نقشه با پله مانده: «فعال» تا مهلت، سپس «مهلت‌گذشته» — یافته م۱."""
+    return "نقشه مهلت‌گذشته" if rv and rv["expired"] else "نقشه فعال"
+
+
 # پنجره بازخرید نزدیک ابطال — حکم از radar_watch.rebuy_status، رویداد ۹۸
 REBUY_WINDOW = {
     "open": "**مجاز** — بالای کف و زیر سقف",
@@ -797,6 +813,16 @@ def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
                      "مانده همان نماد، بقیه نمادها با قیمت امروز |")
     if reg is not None:
         o.append(f"| هدف رژیم | {reg['stable']}٪ کل سرمایه |")
+    if reg is not None and rv["left"]:
+        g = gap_after_plan(rv, reg)
+        if g is None:
+            cell = f"داده ندارم — {rv['after_why']}"
+        elif g > 0:
+            cell = (f"{g:,.0f} دلار — هدف {reg['stable']}٪ از {rv['after']['total']:,.0f}؛ "
+                    "نقشه به هدف نمی‌رسد")
+        else:
+            cell = f"هیچ — نقشه به هدف {reg['stable']}٪ می‌رسد"
+        o.append(f"| کسری پس از نقشه | {cell} |")
     o.append("")
     if rv.get("rebuy"):
         o += ["**نقشه بازخرید**", ""]
@@ -1012,7 +1038,11 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
         gap = reg["stable"] / 100 * total - stable
         if gap > 0:
             W(f"⚠️ ذخیره استیبل {stable_pct:.1f}٪ است، هدف رژیم {reg['stable']}٪ کل سرمایه.")
-            if plan_live:
+            if plan_live and reserve["expired"]:
+                dl = f"{reserve['deadline'].astimezone(UTC):%Y-%m-%d %H:%M} UTC"
+                W(f"**کسری: {gap:,.0f} دلار.** مهلت نقشه ذخیره گذشت — {dl}؛ پیشرفت و حکم "
+                  "مهلت در بخش ۶.")
+            elif plan_live:
                 W(f"**کسری: {gap:,.0f} دلار.** نقشه ذخیره فعال است — پیشرفتش در بخش ۶.")
             else:
                 W(f"**کسری: {gap:,.0f} دلار.** ترتیب فروش در بخش ۵.")
@@ -1157,11 +1187,12 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
         syms = list(dict.fromkeys(s["symbol"] for s in reserve["steps"]
                                   if not s.get("cancelled")))
         head = [r["pos"]["symbol"] for r in order[:len(syms)]]
+        word = _plan_word(reserve)
         if set(syms) == set(head):
-            W(f"نقشه فعال با همین ترتیب هم‌خوان است: {'، '.join(head)} سر فهرست‌اند. "
+            W(f"{word} با همین ترتیب هم‌خوان است: {'، '.join(head)} سر فهرست‌اند. "
               "پیشرفتش در بخش ۶.")
         else:
-            W("نقشه فعال از این ترتیب منحرف است — دلیل در یادداشت نقشه `watch.json`. "
+            W(f"{word} از این ترتیب منحرف است — دلیل در یادداشت نقشه `watch.json`. "
               "پیشرفتش در بخش ۶؛ این فهرست مرجع می‌ماند.")
         W("")
 
@@ -1197,6 +1228,11 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
                            "`radar_positions.py reenter`")
     if plan_live:
         actions += _plan_actions(reserve)
+        g = gap_after_plan(reserve, reg)
+        if g is not None and g > 0:
+            actions.append(f"**ذخیره استیبل** — کسری پس از نقشه: اگر همه پله‌های مانده پر "
+                           f"شوند هم {g:,.0f} دلار تا هدف رژیم {reg['stable']}٪ می‌ماند. "
+                           "**تصمیم لازم است:** نقشه تازه، یا فروش به ترتیب مرجع بخش ۵")
     elif reg is not None:
         gap = reg["stable"] / 100 * total - stable
         if gap > 0 and reserve:
