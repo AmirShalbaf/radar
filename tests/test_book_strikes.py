@@ -102,7 +102,7 @@ def run_book(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     (tmp_path / "holdings.json").write_text(json.dumps({
         "version": 2, "updated": datetime.now(UTC).isoformat(), "source": "آزمون",
-        "frozen": {"date": "2026-09-25", "members": {"AAA": 2.0}},
+        "frozen": {"date": "2026-09-25", "members": {"AAA": 2.0}, "cash": [{"asset": "USDT", "qty": 100.0, "account": "A"}]},
         "cash": [{"asset": "USDT", "qty": 100.0, "account": "A"}], "ledger": [],
         "positions": [{"symbol": "AAA", "book": "position", "status": "open",
                        "lots": [{"qty": 2.0, "account": "A", "entry": None}],

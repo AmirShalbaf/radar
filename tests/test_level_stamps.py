@@ -45,7 +45,7 @@ def _watch(sol_since=STAMP, eth_since=STAMP, updated="2026-09-25T21:32:45+00:00"
 
 def _h(sol_since=STAMP, eth_since=STAMP, sol_lvl=96.71) -> dict:
     return {"version": 2, "updated": "2026-09-25T05:15:00+00:00", "source": "آزمون",
-            "frozen": {"date": "2026-09-25", "members": {"SOL": 6.0, "ETH": 0.4}},
+            "frozen": {"date": "2026-09-25", "members": {"SOL": 6.0, "ETH": 0.4}, "cash": []},
             "cash": [], "ledger": [],
             "positions": [
                 {"symbol": "SOL", "book": "position", "status": "open", "invalidation": sol_lvl,

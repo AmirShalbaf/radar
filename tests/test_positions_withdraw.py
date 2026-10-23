@@ -29,6 +29,7 @@ REASON = "پول خرج شخصی — از رادار حذف شد"
 def files(tmp_path):
     h = _h()
     h["cash"].append({"asset": "USDT", "qty": 3.17, "account": "B"})
+    h["frozen"]["cash"].append({"asset": "USDT", "qty": 3.17, "account": "B"})
     hp, jp = tmp_path / "holdings.json", tmp_path / "journal.json"
     hp.write_text(json.dumps(h, ensure_ascii=False), encoding="utf-8")
     jp.write_text(json.dumps(_j(), ensure_ascii=False), encoding="utf-8")
@@ -114,7 +115,7 @@ def test_replay_rules() -> None:
 def test_trim_still_goes_to_optcost(files) -> None:
     """قفل: رفتار trim عوض نشد — هنوز رکورد هزینه فرصت می‌سازد."""
     assert _run(files, "trim", "--symbol", "SOL", "--qty", "1", "--price", "100",
-                "--reason", "reserve") == 0
+                "--reason", "reserve", "--gross", "100", "--fee", "0.1") == 0
     assert (files[0].parent / "optcost.json").exists()
 
 
@@ -168,6 +169,7 @@ def test_withdraw_at_full_past_after_frozen(files, at) -> None:
 def test_replay_cash_row_rules() -> None:
     h = _h()
     h["ledger"] = [_row("withdraw", "USDT", -1.5, account="A", reason=REASON, cash=CASH_ROW)]
+    h["cash"][0]["qty"] = 1.5                                  # ناوردای نقد — بازبینی ۲۳ اکتبر
     P.validate(h, _j())                                        # ناوردای کوین‌ها برقرار
     for bad in (dict(cash=None), dict(cash={**CASH_ROW, "qty": 2.0}),
                 dict(cash={**CASH_ROW, "account": "B"}), dict(cash={**CASH_ROW, "asset": "USDC"})):

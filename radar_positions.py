@@ -47,9 +47,15 @@ holdings.json نسخه ۲ بر پایه **مقدار** است، نه دلار. �
 فقط کتابخانه استاندارد، به‌علاوه requests اختیاری برای بسته هفتگی — تا
 radar_book.py بتواند بی‌آنکه استقلالش بشکند ایمپورتش کند.
 
+رسید اجباری — بازبینی ۲۳ اکتبر ۲۰۲۶: trim و exit بی --gross و --fee خطا می‌دهند،
+مگر با --no-receipt صریح. ناوردای نقد کنار ناوردای کوین:
+
+    نقد منجمد frozen.cash + خالص فروش‌ها − برداشت‌ها = نقد فعلی
+
     python radar_positions.py validate
-    python radar_positions.py trim --symbol SOL --qty 1.5 --price 120 --reason reserve
-    python radar_positions.py exit --symbol SOL --price 95 --level 100
+    python radar_positions.py trim --symbol SOL --qty 1.5 --price 120 --reason reserve \\
+        --gross 180 --fee 0.18 --order-id ... --at 2026-10-17T15:33:55+00:00
+    python radar_positions.py exit --symbol SOL --price 95 --level 100 --gross ... --fee ...
     python radar_positions.py reenter --symbol SOL --qty 4 --price 105 --account LBank
     python radar_positions.py add --symbol LINK --qty 10 --price 14 --account LBank \\
         --decision-id D-... --setup-name ...
@@ -263,6 +269,17 @@ def _check_shape(h) -> None:
     for c in h.get("cash") or []:
         if not isinstance(c, dict) or not _num(c.get("qty")) or c["qty"] < 0:
             raise PositionsError(f"ردیف نقد نامعتبر: {c!r}")
+    # نقد منجمد — پایه ناوردای نقد، بازبینی ۲۳ اکتبر ۲۰۲۶. غایب خطاست، نه صفر:
+    # بی آن هر ویرایش دستی نقد بی‌صدا می‌گذشت
+    fc = fr.get("cash")
+    if not isinstance(fc, list):
+        raise PositionsError("frozen.cash نیست — نقد منجمد پایه ناوردای نقد است؛ "
+                             "فهرست ردیف‌های asset و qty و account")
+    for c in fc:
+        if (not isinstance(c, dict) or not isinstance(c.get("asset"), str)
+                or not isinstance(c.get("account"), str)
+                or not _num(c.get("qty")) or c["qty"] < 0):
+            raise PositionsError(f"ردیف frozen.cash نامعتبر: {c!r}")
     if not isinstance(h.get("positions"), list) or not isinstance(h.get("ledger"), list):
         raise PositionsError("positions یا ledger فهرست نیست")
     seen = set()
@@ -418,9 +435,47 @@ def _replay(h: dict, jidx: dict, check_journal: bool = True) -> dict:
     return {"expected": run, "reentry": reentry}
 
 
+def cash_expected(h: dict) -> dict:
+    """
+    نقد انتظاری هر (دارایی، حساب) از دفتر کل — ناوردای نقد، بازبینی ۲۳ اکتبر:
+
+        نقد منجمد + خالص فروش‌ها − برداشت‌ها = نقد فعلی
+
+    خالص هر ردیف رسیددار به تتر همان حساب می‌رود — همان کار _receipt. برداشت
+    از میدان cash همان ردیف کم می‌شود، چه نقد تنها، چه کنار کوین.
+    """
+    out: dict[tuple, float] = {}
+    for c in h["frozen"]["cash"]:
+        k = (c["asset"], c["account"])
+        out[k] = out.get(k, 0.0) + float(c["qty"])
+    for r in h["ledger"]:
+        if r.get("action") in ("trim", "exit") and _num(r.get("net")):
+            k = ("USDT", r.get("account"))
+            out[k] = out.get(k, 0.0) + float(r["net"])
+        elif r.get("action") == "withdraw" and isinstance(r.get("cash"), dict):
+            c = r["cash"]
+            k = (c.get("asset"), c.get("account"))
+            out[k] = out.get(k, 0.0) - float(c.get("qty") or 0.0)
+    return out
+
+
+def _check_cash(h: dict) -> None:
+    actual: dict[tuple, float] = {}
+    for c in h.get("cash") or []:
+        k = (c.get("asset"), c.get("account"))
+        actual[k] = actual.get(k, 0.0) + float(c["qty"])
+    want = cash_expected(h)
+    for k in sorted(set(actual) | set(want), key=str):
+        w, g = want.get(k, 0.0), actual.get(k, 0.0)
+        if not _close(w, g):
+            raise PositionsError(
+                f"نقد {k[0]} حساب {k[1]}: اختلاف ثبت‌نشده — منجمد به‌علاوه خالص فروش‌ها "
+                f"منهای برداشت‌ها {w}، ولی فعلی {g}. هر تغییر نقد فقط با رسید فروش یا withdraw")
+
+
 def validate(h: dict, journal: dict) -> dict:
     """
-    قالب، قاعده ضدبهانه و ناوردای دفتر کل. هر نقض خطای صریح.
+    قالب، قاعده ضدبهانه، ناوردای دفتر کل و ناوردای نقد. هر نقض خطای صریح.
     خروجی: نتیجه بازپخش، برای کسی که سهمیه ورود دوباره را می‌خواهد.
     """
     _check_shape(h)
@@ -436,6 +491,7 @@ def validate(h: dict, journal: dict) -> dict:
             raise PositionsError(
                 f"{sym}: اختلاف ثبت‌نشده — منجمد به‌علاوه دفتر کل {want}، ولی فعلی {got}. "
                 "هر تغییر مقدار فقط با فرمان و یک ردیف دفتر کل")
+    _check_cash(h)
     return rp
 
 
@@ -683,18 +739,31 @@ def _receipt_at(raw: str, h: dict) -> str:
     return t.astimezone(UTC).isoformat()
 
 
+# دنباله رسید در هر فرمان ثبت trim و exit که پایشگر و سبد پیشنهاد می‌دهند — یک متن،
+# بازبینی ۲۳ اکتبر ۲۰۲۶. بی آن پیروی از پیام، پول فروش را از دفتر غیب می‌کرد
+RECEIPT_ARGS = "--gross <مجموع رسید> --fee <کارمزد> --order-id <شناسه سفارش> --at <زمان رسید>"
+
+
 def _receipt(h: dict, a, row: dict, qty: float, account: str) -> None:
     """
     رسید فروش: مجموع باید با مقدار × قیمت بخواند؛ خالص پس از کارمزد به تتر همان
-    حساب اضافه می‌شود. بدون --gross و --fee نقد دست نمی‌خورد — رفتار پیشین.
+    حساب اضافه می‌شود. --gross و --fee هر دو لازم‌اند — تصمیم کاربر، ۲۳ اکتبر ۲۰۲۶:
+    کارمزد غایب یعنی صفر فرض‌شده و نقد بیش از واقع. بی رسید فقط با کلید صریح
+    --no-receipt؛ آن‌وقت نقد دست نمی‌خورد و ردیف no_receipt می‌گیرد.
     """
-    if a.gross is None and a.fee is None:
+    if a.no_receipt:
+        if a.gross is not None or a.fee is not None:
+            raise PositionsError("--no-receipt با --gross یا --fee هم‌زمان نمی‌آید")
+        row["no_receipt"] = True
         return
+    if a.gross is None or a.fee is None:
+        raise PositionsError("رسید لازم است: --gross و --fee هر دو، یا --no-receipt صریح. "
+                             "بی رسید پول فروش به نقد نمی‌رسد و از دفتر غیب می‌شود")
     expect = qty * a.price
-    gross = expect if a.gross is None else a.gross
+    gross = a.gross
     if not math.isclose(gross, expect, rel_tol=1e-6):
         raise PositionsError(f"مجموع رسید {gross} با مقدار × قیمت {expect} نمی‌خواند")
-    fee = a.fee or 0.0
+    fee = a.fee
     if not (_num(fee) and 0 <= fee < gross):
         raise PositionsError(f"کارمزد نامعتبر: {fee}")
     net = round(gross - fee, 10)
@@ -753,14 +822,14 @@ def _apply(h: dict, a, journal: dict) -> dict:
             raise PositionsError(f"{sym} در دفتر موقعیت باز نیست")
         q = position_qty(p)
         accts = sorted({l["account"] for l in p["lots"]})
-        if (a.gross is not None or a.fee is not None) and len(accts) != 1:
+        if len(accts) != 1 and not a.no_receipt:
             raise PositionsError(f"{sym} در چند حساب است ({accts}) — رسید هر حساب جداست؛ "
-                                 "با trim جدا ثبت کن")
+                                 "با trim جدا ثبت کن، یا --no-receipt صریح")
         p["lots"], p["status"] = [], "exited"
         row.update(delta=-q, price=a.price, level=a.level, reason="invalidation")
         if len(accts) == 1:
             row["account"] = accts[0]
-            _receipt(h, a, row, q, accts[0])
+        _receipt(h, a, row, q, row.get("account"))
     elif a.cmd == "reenter":
         if p is None:
             raise PositionsError(f"{sym} در دفتر موقعیت نیست")
@@ -862,6 +931,8 @@ def main(argv: list[str] | None = None) -> int:
                            help="مجموع رسید به تتر؛ باید با مقدار × قیمت بخواند")
             p.add_argument("--fee", type=float, default=None, help="کارمزد به تتر")
             p.add_argument("--order-id", dest="order_id", default=None)
+            p.add_argument("--no-receipt", dest="no_receipt", action="store_true",
+                           help="ثبت بی‌رسید — نقد دست نمی‌خورد؛ فقط وقتی رسید در دست نیست")
         if name == "trim":
             p.add_argument("--reason", choices=TRIM_REASONS, required=True)
             p.add_argument("--level", type=float, default=None,

@@ -30,7 +30,8 @@ def _step(name: str) -> str:
 def test_symbols_lists_open_positions(tmp_path, capsys) -> None:
     now = datetime.now(timezone.utc).isoformat()
     h = {"version": 2, "updated": now, "source": "آزمون",
-         "frozen": {"date": "2026-09-25", "members": {"SOL": 6.0, "ETH": 0.5, "BNB": 1.0}},
+         "frozen": {"date": "2026-09-25", "members": {"SOL": 6.0, "ETH": 0.5, "BNB": 1.0},
+                    "cash": []},
          "cash": [], "ledger": [{"at": now, "action": "exit", "symbol": "BNB", "delta": -1.0,
                                  "price": 700.0, "level": 702.0, "reason": "invalidation"}],
          "positions": [

@@ -14,7 +14,19 @@
       "ONDO": 115.43866,
       "TAO": 0.153892,
       "TRX": 0.6704
-    }
+    },
+    "cash": [
+      {
+        "asset": "USDT",
+        "qty": 0.1010102,
+        "account": "LBank"
+      },
+      {
+        "asset": "USDT",
+        "qty": 3.17443595,
+        "account": "صرافی دوم"
+      }
+    ]
   },
   "cash": [
     {

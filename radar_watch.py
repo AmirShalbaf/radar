@@ -909,7 +909,7 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                 second = "دومین بسته پیاپی زیر سطح. " if prev else ""
                 msgs.append(f"{head}\n{second}خروج کامل باقی‌مانده: {_n(qty)} {sym}.\n"
                             f"ثبت: radar_positions.py exit --symbol {sym} "
-                            f"--price <قیمت اجرا> --level {_n(lvl)}")
+                            f"--price <قیمت اجرا> --level {_n(lvl)} {P.RECEIPT_ARGS}")
             elif close < lvl:
                 sell = qty * f
                 state[bkey] = w["closed_at"]
@@ -917,7 +917,7 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                             "بسته هفتگی بعد هم زیر سطح بود.\n"
                             f"ثبت: radar_positions.py trim --reason invalidation "
                             f"--level {_n(lvl)} --symbol {sym} --qty {_n(sell)} "
-                            "--price <قیمت اجرا>")
+                            f"--price <قیمت اجرا> {P.RECEIPT_ARGS}")
             elif prev:
                 state.pop(bkey, None)
                 msgs.append(f"✅ {sym}{tag} — بسته هفتگی {_n(close)} بالای سطح {_n(lvl)}. "
@@ -1007,7 +1007,8 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
             _once(state, f"reserve_stray_{day}", msgs,
                   "⚠️ پله‌هایی در watch.json علامت اجراشده دارند ولی دفتر کل پوششان "
                   f"نمی‌دهد — پر حساب نشدند:\n{rows}\n"
-                  "ثبت با radar_positions.py trim --reason reserve --at <زمان رسید>")
+                  "ثبت با radar_positions.py trim --reason reserve --symbol <نماد> --qty <مقدار> "
+                  f"--price <قیمت اجرا> {P.RECEIPT_ARGS}")
 
         # شرط مهلت — رویداد ۸۹. باند با هیسترزیس از regime.json؛ حکم از plan_rule_state
         band, band_warn = (regime_trade_band(regime, now) if rp.get("on_deadline")
@@ -1040,14 +1041,16 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                 _once(state, f"reserve_deadline_{rp['deadline']}", msgs,
                       f"⏰ مهلت {title} گذشت ({dl}).{why} پله‌های پرنشده — فروش در قیمت "
                       f"بازار از {acct}:\n{rows}\n"
-                      "ثبت هر کدام: radar_positions.py trim --reason reserve")
+                      "ثبت هر کدام: radar_positions.py trim --reason reserve --symbol <نماد> "
+                      f"--qty <مقدار> --price <قیمت اجرا> {P.RECEIPT_ARGS}")
         else:
             market = [s for s in left if s["price"] is None]
             if market:
                 rows = "، ".join(f"{s['symbol']} {_n(s['qty'])}" for s in market)
                 _once(state, f"reserve_market_{day}", msgs,
                       f"🧾 پله بازار نقشه ذخیره هنوز در دفتر کل ثبت نشده: {rows}. اجرا از "
-                      f"{acct} و ثبت با radar_positions.py trim --reason reserve.")
+                      f"{acct} و ثبت با radar_positions.py trim --reason reserve --symbol <نماد> "
+                      f"--qty <مقدار> --price <قیمت اجرا> {P.RECEIPT_ARGS}")
             for s in left:
                 if s["price"] is None:
                     continue
@@ -1059,7 +1062,7 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                                 f"{_n(v)}.\nفروش {_n(s['qty'])} {s['symbol']} از {acct}. "
                                 "اگر سفارش پر شد، ثبت: radar_positions.py trim --reason "
                                 f"reserve --symbol {s['symbol']} --qty {_n(s['qty'])} "
-                                "--price <قیمت اجرا>")
+                                f"--price <قیمت اجرا> {P.RECEIPT_ARGS}")
     return msgs
 
 

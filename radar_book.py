@@ -822,7 +822,7 @@ def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
     for s in rv["stray"]:
         o.append(f"⚠️ {s['symbol']} {_n(s['qty'])} در `watch.json` علامت اجراشده دارد "
                  f"(سفارش {s['executed'].get('order_id', '—')}) ولی دفتر کل پوشش نمی‌دهد — "
-                 "پر حساب نشد. ثبت: `radar_positions.py trim --reason reserve --at <زمان رسید>`")
+                 f"پر حساب نشد. ثبت: `radar_positions.py trim --reason reserve {P.RECEIPT_ARGS}`")
     if rv["stray"]:
         o.append("")
     return o
@@ -847,11 +847,12 @@ def _plan_actions(rv: dict) -> list[str]:
                        + ". ثبت بازخرید در دفتر کل هنوز فرمان ندارد — ک۸۸")
     elif not rv["expired"]:
         out.append(f"**{t}** — {n} پله مانده، مهلت {dl}. هر پله پرشده: "
-                   "`radar_positions.py trim --reason reserve --at <زمان رسید>`")
+                   f"`radar_positions.py trim --reason reserve {P.RECEIPT_ARGS}`")
     elif st == "keep":
         out.append(f"**{t}** — مهلت {dl} گذشت؛ باند با هیسترزیس {rv['band']}، زیر "
                    f"{rv['rule']['cancel_if_band_at_least']}. طبق نقشه: فروش {n} پله مانده در "
-                   f"بازار از {acct}؛ ثبت با `radar_positions.py trim --reason reserve`")
+                   f"بازار از {acct}؛ ثبت با `radar_positions.py trim --reason reserve "
+                   f"{P.RECEIPT_ARGS}`")
     elif st == "unknown":
         out.append(f"⛔ **{t} — مهلت {dl} گذشت** و باند با هیسترزیس نامعلوم است — رژیم "
                    f"کهنه. **تصمیم لازم است:** فروش {n} پله مانده در بازار، یا لغو")
@@ -1188,7 +1189,7 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
         p = r["pos"]
         if r["verdict"].startswith("⛔"):
             actions.append(f"**{p['symbol']}** — خروج کامل. {r['verdict'][2:]}. ثبت با "
-                           "`radar_positions.py exit`")
+                           f"`radar_positions.py exit {P.RECEIPT_ARGS}`")
     for e in reentry:
         wk = e.get("weekly")
         if wk is not None and wk["close"] > e["state"]["level"]:
@@ -1204,7 +1205,7 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
                            "بخش ۵")
         elif gap > 0:
             actions.append(f"**ذخیره استیبل** — فروش {gap:,.0f} دلار به ترتیب بخش ۵، "
-                           "ثبت با `radar_positions.py trim --reason reserve`")
+                           f"ثبت با `radar_positions.py trim --reason reserve {P.RECEIPT_ARGS}`")
     if heat is not None and (heat["over_cap"] or heat["over_maxpos"]):
         actions.append("**دفتر معامله** — ورود تازه مجاز نیست تا ریسک زیر سقف برگردد")
     for s in no_inval:
@@ -1241,7 +1242,8 @@ def sample_holdings() -> dict:
     now = datetime.now(UTC)
     return {"version": 2, "updated": now.isoformat(),
             "source": "نمونه — با موجودی واقعی جایگزین کن",
-            "frozen": {"date": now.strftime("%Y-%m-%d"), "members": {"SOL": 1.0}},
+            "frozen": {"date": now.strftime("%Y-%m-%d"), "members": {"SOL": 1.0},
+                       "cash": [{"asset": "USDT", "qty": 0.0, "account": "صرافی"}]},
             "cash": [{"asset": "USDT", "qty": 0.0, "account": "صرافی"}],
             "positions": [{"symbol": "SOL", "book": "position", "status": "open",
                            "lots": [{"qty": 1.0, "account": "صرافی", "entry": None}],

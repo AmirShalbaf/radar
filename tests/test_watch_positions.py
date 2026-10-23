@@ -55,7 +55,7 @@ def _watch(**over) -> dict:
 
 def _h(ledger=None, sol=6.0, sol_status="open") -> dict:
     return {"version": 2, "updated": "2026-09-25T05:15:00+00:00",
-            "frozen": {"date": "2026-09-25", "members": {"SOL": 6.0, "ONDO": 100.0}},
+            "frozen": {"date": "2026-09-25", "members": {"SOL": 6.0, "ONDO": 100.0}, "cash": []},
             "cash": [], "ledger": ledger or [],
             "positions": [
                 {"symbol": "SOL", "book": "position", "status": sol_status, "invalidation": 96.71,

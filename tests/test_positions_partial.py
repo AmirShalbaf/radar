@@ -23,7 +23,7 @@ NOW = datetime(2026, 9, 26, 6, 0, tzinfo=timezone.utc)
 
 def _h(ledger=None, sol=6.0, status="open") -> dict:
     return {"version": 2, "updated": NOW.isoformat(), "source": "آزمون",
-            "frozen": {"date": "2026-09-25", "members": {"SOL": 6.0}},
+            "frozen": {"date": "2026-09-25", "members": {"SOL": 6.0}, "cash": []},
             "cash": [], "ledger": ledger or [],
             "positions": [{"symbol": "SOL", "book": "position", "status": status,
                            "invalidation": 96.7,
@@ -81,9 +81,10 @@ def _run(files, *args) -> int:
 
 def test_cli_partial_invalidation_trim(files) -> None:
     assert _run(files, "trim", "--symbol", "SOL", "--qty", "3", "--price", "95",
-                "--reason", "invalidation") == 2              # بدون سطح: خطا
+                "--reason", "invalidation", "--gross", "285", "--fee", "0.285") == 2  # بدون سطح
     assert _run(files, "trim", "--symbol", "SOL", "--qty", "3", "--price", "95",
-                "--reason", "invalidation", "--level", "96.7") == 0
+                "--reason", "invalidation", "--level", "96.7",
+                "--gross", "285", "--fee", "0.285") == 0
     h = json.loads(files[0].read_text(encoding="utf-8"))
     assert h["ledger"][-1]["level"] == 96.7
     assert h["positions"][0]["status"] == "open"

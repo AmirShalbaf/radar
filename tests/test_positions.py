@@ -44,7 +44,8 @@ def _h() -> dict:
     return {
         "version": 2, "updated": NOW.isoformat(), "source": "آزمون",
         "frozen": {"date": "2026-09-25",
-                   "members": {"SOL": 6.0, "ETH": 0.4, "TRX": 0.67}},
+                   "members": {"SOL": 6.0, "ETH": 0.4, "TRX": 0.67},
+                   "cash": [{"asset": "USDT", "qty": 3.0, "account": "A"}]},
         "cash": [{"asset": "USDT", "qty": 3.0, "account": "A"}],
         "positions": [
             _pos("SOL", [(6.0, "A", None)]),
@@ -494,9 +495,14 @@ def _read(p) -> dict:
     return json.loads(Path(p).read_text(encoding="utf-8"))
 
 
+# رسید اجباری — بازبینی ۲۳ اکتبر: 1.5 × 120 و 6 × 95، کارمزد 0.1٪
+RECEIPT_SOL = ("--gross", "180", "--fee", "0.18")
+RECEIPT_EXIT = ("--gross", "570", "--fee", "0.57")
+
+
 def test_cli_trim_writes_ledger_and_keeps_invariant(files) -> None:
     assert _run(files, "trim", "--symbol", "SOL", "--qty", "1.5",
-                "--price", "120", "--reason", "reserve") == 0
+                "--price", "120", "--reason", "reserve", *RECEIPT_SOL) == 0
     h = _read(files[0])
     assert h["ledger"][-1]["action"] == "trim" and h["ledger"][-1]["delta"] == -1.5
     assert P.position_qty(next(p for p in h["positions"] if p["symbol"] == "SOL")) == 4.5
@@ -509,11 +515,11 @@ def test_cli_trim_multi_account_needs_account(files) -> None:
                 "--price", "2700", "--reason", "reserve") != 0
     assert _read(files[0])["ledger"] == []           # فایل دست نخورد
     assert _run(files, "trim", "--symbol", "ETH", "--qty", "0.1", "--account", "B",
-                "--price", "2700", "--reason", "reserve") == 0
+                "--price", "2700", "--reason", "reserve", "--gross", "270", "--fee", "0.27") == 0
 
 
 def test_cli_exit_then_reenter(files, monkeypatch) -> None:
-    assert _run(files, "exit", "--symbol", "SOL", "--price", "95", "--level", "100") == 0
+    assert _run(files, "exit", "--symbol", "SOL", "--price", "95", "--level", "100", *RECEIPT_EXIT) == 0
     h = _read(files[0])
     assert next(p for p in h["positions"] if p["symbol"] == "SOL")["status"] == "exited"
     monkeypatch.setattr(P, "weekly_close", lambda sym, get=None, now=None: (
@@ -527,7 +533,7 @@ def test_cli_exit_then_reenter(files, monkeypatch) -> None:
 
 
 def test_cli_reenter_below_level_is_refused(files, monkeypatch) -> None:
-    _run(files, "exit", "--symbol", "SOL", "--price", "95", "--level", "100")
+    _run(files, "exit", "--symbol", "SOL", "--price", "95", "--level", "100", *RECEIPT_EXIT)
     before = _read(files[0])
     monkeypatch.setattr(P, "weekly_close", lambda sym, get=None, now=None: (
         {"close": 99.0, "closed_at": MON2.isoformat(), "venue": "okx"}, []))
@@ -537,7 +543,7 @@ def test_cli_reenter_below_level_is_refused(files, monkeypatch) -> None:
 
 
 def test_cli_reenter_without_data_is_refused(files, monkeypatch) -> None:
-    _run(files, "exit", "--symbol", "SOL", "--price", "95", "--level", "100")
+    _run(files, "exit", "--symbol", "SOL", "--price", "95", "--level", "100", *RECEIPT_EXIT)
     monkeypatch.setattr(P, "weekly_close", lambda sym, get=None, now=None: (None, ["شبکه"]))
     assert _run(files, "reenter", "--symbol", "SOL", "--qty", "4", "--price", "99",
                 "--account", "A") != 0

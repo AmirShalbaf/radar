@@ -50,7 +50,8 @@ def _holdings(positions, cash=100.0, members=None, ledger=None) -> dict:
         p["symbol"]: sum(l["qty"] for l in p["lots"])
         for p in positions if p["book"] == "position"}
     return {"version": 2, "updated": datetime.now(UTC).isoformat(), "source": "آزمون",
-            "frozen": {"date": "2026-09-25", "members": mem},
+            "frozen": {"date": "2026-09-25", "members": mem,
+                       "cash": [{"asset": "USDT", "qty": cash, "account": "A"}]},
             "cash": [{"asset": "USDT", "qty": cash, "account": "A"}],
             "positions": positions, "ledger": ledger or []}
 

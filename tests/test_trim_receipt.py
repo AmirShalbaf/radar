@@ -23,7 +23,9 @@ AT = "2026-09-25T22:10:21+00:00"
 
 def _h() -> dict:
     return {"version": 2, "updated": "2026-09-25T05:15:00+00:00", "source": "آزمون",
-            "frozen": {"date": "2026-09-25", "members": {"ETH": 0.4, "SOL": 6.0}},
+            "frozen": {"date": "2026-09-25", "members": {"ETH": 0.4, "SOL": 6.0},
+                       "cash": [{"asset": "USDT", "qty": 0.1010102, "account": "LBank"},
+                                {"asset": "USDT", "qty": 3.0, "account": "B"}]},
             "cash": [{"asset": "USDT", "qty": 0.1010102, "account": "LBank"},
                      {"asset": "USDT", "qty": 3.0, "account": "B"}],
             "ledger": [],
@@ -84,7 +86,9 @@ def test_at_must_be_full_past_and_after_frozen(files, at) -> None:
 
 
 def test_without_receipt_cash_unchanged(files) -> None:
-    assert _run(files, *ETH) == 0
+    """از بازبینی ۲۳ اکتبر بی رسید فقط با کلید صریح — tests/test_cash_receipt.py."""
+    assert _run(files, *ETH) == 2
+    assert _run(files, *ETH, "--no-receipt") == 0
     h = json.loads(files[0].read_text(encoding="utf-8"))
     assert {c["account"]: c["qty"] for c in h["cash"]}["LBank"] == 0.1010102
 

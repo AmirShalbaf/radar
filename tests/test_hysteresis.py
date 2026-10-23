@@ -139,7 +139,8 @@ def test_book_trade_cap_uses_trade_band(tmp_path, monkeypatch) -> None:
         "score": 0.2, "generated_at": now.isoformat(), "trade_band": {"name": M}}),
         encoding="utf-8")
     h = {"version": 2, "updated": now.isoformat(), "source": "آزمون",
-         "frozen": {"date": "2026-09-25", "members": {"SOL": 10.0}},
+         "frozen": {"date": "2026-09-25", "members": {"SOL": 10.0},
+                    "cash": [{"asset": "USDT", "qty": 0.0, "account": "A"}]},
          "cash": [{"asset": "USDT", "qty": 0.0, "account": "A"}], "ledger": [],
          "positions": [{"symbol": "SOL", "book": "position", "status": "open",
                         "lots": [{"qty": 10.0, "account": "A", "entry": None}],

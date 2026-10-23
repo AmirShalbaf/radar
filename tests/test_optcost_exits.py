@@ -101,7 +101,7 @@ NOW = datetime(2026, 9, 25, 5, 15, tzinfo=UTC)
 
 def _h() -> dict:
     return {"version": 2, "updated": NOW.isoformat(), "source": "آزمون",
-            "frozen": {"date": "2026-09-25", "members": {"SOL": 6.0}},
+            "frozen": {"date": "2026-09-25", "members": {"SOL": 6.0}, "cash": []},
             "cash": [], "ledger": [],
             "positions": [{"symbol": "SOL", "book": "position", "status": "open",
                            "lots": [{"qty": 6.0, "account": "A", "entry": None}],
@@ -124,7 +124,7 @@ def _run(files, *args) -> int:
 
 def test_positions_trim_records_optcost(files) -> None:
     assert _run(files, "trim", "--symbol", "SOL", "--qty", "1.5", "--price", "120",
-                "--reason", "reserve") == 0
+                "--reason", "reserve", "--gross", "180", "--fee", "0.18") == 0
     ex = RO.load()["exits"]
     assert len(ex) == 1
     assert (ex[0]["action"], ex[0]["reason"], ex[0]["qty"], ex[0]["price"]) == \
@@ -132,7 +132,8 @@ def test_positions_trim_records_optcost(files) -> None:
 
 
 def test_positions_exit_records_optcost_with_level(files) -> None:
-    assert _run(files, "exit", "--symbol", "SOL", "--price", "95", "--level", "100") == 0
+    assert _run(files, "exit", "--symbol", "SOL", "--price", "95", "--level", "100",
+                "--gross", "570", "--fee", "0.57") == 0
     ex = RO.load()["exits"][0]
     assert ex["action"] == "exit" and ex["level"] == 100.0 and ex["qty"] == 6.0
     assert ex["reason"] == "invalidation"
@@ -146,5 +147,5 @@ def test_positions_adjust_does_not_record(files) -> None:
 
 def test_refused_command_records_nothing(files) -> None:
     assert _run(files, "trim", "--symbol", "SOL", "--qty", "9", "--price", "120",
-                "--reason", "reserve") != 0
+                "--reason", "reserve", "--gross", "1080", "--fee", "1.08") != 0
     assert RO.load()["exits"] == []
