@@ -1071,9 +1071,14 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                       f"⏰ مهلت {title} گذشت ({dl}). باند با هیسترزیس نامعلوم — {band_warn}. "
                       f"شرط لغو سنجیده نشد؛ تصمیم لازم: فروش باقی‌مانده در بازار یا لغو. "
                       f"پله‌های پرنشده در {acct}:\n{rows}")
+            elif left and rule == "no_rule":
+                # بی شرط مهلت: تصمیم لازم، مثل سبد و تعریف plan_rule_state — ت۳، بازبینی ۲۳ اکتبر
+                _once(state, f"reserve_deadline_{rp['deadline']}", msgs,
+                      f"⏰ مهلت {title} گذشت ({dl}). نقشه شرط مهلت ندارد — تصمیم لازم: فروش "
+                      f"باقی‌مانده در بازار، یا لغو. پله‌های پرنشده در {acct}:\n{rows}")
             elif left:
                 why = (f" باند با هیسترزیس {band}، زیر "
-                       f"{rp['on_deadline']['cancel_if_band_at_least']}." if rule == "keep" else "")
+                       f"{rp['on_deadline']['cancel_if_band_at_least']}.")
                 _once(state, f"reserve_deadline_{rp['deadline']}", msgs,
                       f"⏰ مهلت {title} گذشت ({dl}).{why} پله‌های پرنشده — فروش در قیمت "
                       f"بازار از {acct}:\n{rows}\n"
@@ -1273,9 +1278,11 @@ def weekly_digest(watch: dict, h: dict, state: dict, now: datetime, weekly=None,
             head = (f"⏰ مهلت {title} گذشت ({dl}) — باند با هیسترزیس نامعلوم: "
                     f"{band_warn}.")
             mode = "ask"
+        elif now >= deadline and rule == "no_rule":
+            head, mode = f"⏰ مهلت {title} گذشت ({dl}) — نقشه شرط مهلت ندارد:", "ask"
         elif now >= deadline:
             why = (f" — باند با هیسترزیس {band}، زیر "
-                   f"{rp['on_deadline']['cancel_if_band_at_least']}" if rule == "keep" else "")
+                   f"{rp['on_deadline']['cancel_if_band_at_least']}")
             head, mode = f"⏰ مهلت {title} گذشت ({dl}){why}:", "market"
         else:
             head, mode = f"🗓 مهلت {title}: {dl} — پله‌های باز:", "info"

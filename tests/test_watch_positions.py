@@ -254,7 +254,8 @@ def test_deadline_alert_once_with_unfilled_steps() -> None:
     st, now = {}, datetime(2026, 10, 5, 4, 40, tzinfo=UTC)
     msgs = _run(_watch(), _h(), st, _all_above(), now=now)
     m = next(x for x in msgs if "مهلت" in x)
-    assert "قیمت بازار" in m and "131.5" in m
+    # نقشه بی شرط مهلت: تصمیم لازم، نه فروش در بازار — ت۳، بازبینی ۲۳ اکتبر
+    assert "تصمیم لازم" in m and "قیمت بازار" not in m and "131.5" in m
     assert not [x for x in _run(_watch(), _h(), st, _all_above(), now=now) if "مهلت" in x]
 
 
