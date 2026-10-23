@@ -174,7 +174,8 @@ def test_dust_not_in_sell_order_or_missing_invalidation(run) -> None:
 
 
 def test_reentry_watch_for_exited_position(run) -> None:
-    ledger = [{"at": datetime.now(UTC).isoformat(), "action": "exit", "symbol": "SOL",
+    # خروج پیش از بسته ساختگی 2026-09-21 — ت۲: فقط بسته پس از خروج ورود دوباره می‌سازد
+    ledger = [{"at": "2026-09-20T08:00:00+00:00", "action": "exit", "symbol": "SOL",
                "delta": -6.0, "price": 90.0, "level": 95.0, "reason": "invalidation"}]
     h = _holdings([{"symbol": "SOL", "book": "position", "status": "exited",
                     "lots": [], "invalidation": 95.0}, _pos("ETH", 0.5)],
@@ -224,7 +225,8 @@ def test_correlation_and_maxpos_shown(run) -> None:
 
 def test_reentry_watch_for_partial_invalidation_exit(run) -> None:
     """خروج جزئی با ابطال: پوزیشن باز می‌ماند ولی سهمیه ورود دوباره دارد."""
-    ledger = [{"at": datetime.now(UTC).isoformat(), "action": "trim", "symbol": "SOL",
+    # خروج پیش از بسته ساختگی 2026-09-21 — ت۲
+    ledger = [{"at": "2026-09-20T08:00:00+00:00", "action": "trim", "symbol": "SOL",
                "delta": -3.0, "price": 90.0, "level": 95.0, "reason": "invalidation"}]
     h = _holdings([_pos("SOL", 3.0, inv=95.0), _pos("ETH", 0.5)],
                   members={"SOL": 6.0, "ETH": 0.5}, ledger=ledger)

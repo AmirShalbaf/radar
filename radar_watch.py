@@ -987,7 +987,8 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
         if state.get(key):
             continue
         state[key] = True
-        if w["close"] > st["level"]:
+        # فقط بسته‌ای که پس از آخرین خروج همان سطح بسته شده — ت۲، بازبینی ۲۳ اکتبر
+        if w["close"] > st["level"] and P.after_exit(w["closed_at"], st):
             msgs.append(f"🔁 ورود دوباره مجاز {sym} — بسته هفتگی {_n(w['close'])} بالای "
                         f"سطح {_n(st['level'])}.\nسهمیه باقی: "
                         f"{_n(st['max_qty'] - st['used'])} {sym}. ثبت: radar_positions.py "

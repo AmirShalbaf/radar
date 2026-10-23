@@ -1092,6 +1092,9 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
             left = st["max_qty"] - st["used"]
             if wk is None:
                 v = "داده ندارم — بسته هفتگی"
+            elif not P.after_exit(wk["closed_at"], st):
+                # ت۲، بازبینی ۲۳ اکتبر: بسته پیش از خروج ورود دوباره نمی‌سازد
+                v = "منتظر بسته پس از خروج — آخرین بسته پیش از خروج بسته شد"
             elif wk["close"] > st["level"]:
                 v = f"✅ ورود دوباره مجاز — تا {fmt(left, 6)}"
             else:
@@ -1223,7 +1226,8 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
                            f"`radar_positions.py exit {P.RECEIPT_ARGS}`")
     for e in reentry:
         wk = e.get("weekly")
-        if wk is not None and wk["close"] > e["state"]["level"]:
+        if (wk is not None and wk["close"] > e["state"]["level"]
+                and P.after_exit(wk["closed_at"], e["state"])):
             actions.append(f"**{e['symbol']}** — ورود دوباره مجاز است؛ ثبت با "
                            "`radar_positions.py reenter`")
     if plan_live:

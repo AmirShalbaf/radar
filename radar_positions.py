@@ -340,16 +340,29 @@ def _check_trades(h: dict, jidx: dict) -> None:
             raise PositionsError(f"{sym}: قیمت خرید هر لات دفتر معامله لازم است")
 
 
-def _allow(reentry: dict, sym: str, level: float, qty: float) -> None:
+def _allow(reentry: dict, sym: str, level: float, qty: float, at: str) -> None:
     """
     سهمیه ورود دوباره. خروج جزئی و کامل با همان سطح جمع می‌شوند؛ سطح
-    تازه سهمیه تازه می‌سازد.
+    تازه سهمیه تازه می‌سازد. exit_at زمان آخرین خروج همان سطح است — ت۲،
+    بازبینی ۲۳ اکتبر: فقط بسته هفتگی پس از آن ورود دوباره را مجاز می‌کند.
     """
     st = reentry.get(sym)
     if st is not None and _close(st["level"], level):
         st["max_qty"] += qty
+        if _ts(at, "زمان خروج") > _ts(st["exit_at"], "زمان خروج"):
+            st["exit_at"] = at
     else:
-        reentry[sym] = {"level": level, "max_qty": qty, "used": 0.0}
+        reentry[sym] = {"level": level, "max_qty": qty, "used": 0.0, "exit_at": at}
+
+
+def after_exit(closed_at, st: dict) -> bool:
+    """
+    آیا بسته هفتگی اکیداً پس از آخرین خروج همان سطح بسته شده؟ تنها تعریف — دفتر
+    کل، فرمان reenter، پایشگر و سبد. بسته پیش از خروج همان بسته‌ای است که خروج
+    را ساخت، یا خبری که خروج پس از آن ثبت شد؛ ورود دوباره نمی‌سازد.
+    """
+    t = closed_at if isinstance(closed_at, datetime) else _ts(closed_at, "زمان بسته هفتگی")
+    return t > _ts(st["exit_at"], "زمان خروج")
 
 
 def _replay(h: dict, jidx: dict, check_journal: bool = True) -> dict:
@@ -378,14 +391,14 @@ def _replay(h: dict, jidx: dict, check_journal: bool = True) -> dict:
             if r["reason"] == "invalidation":
                 if not _num(r.get("level")):
                     raise PositionsError(f"{where}: خروج جزئی با ابطال سطح لازم دارد")
-                _allow(reentry, sym, float(r["level"]), -d)
+                _allow(reentry, sym, float(r["level"]), -d, r["at"])
         elif act == "exit":
             if not _close(-d, cur) or cur <= TOL:
                 raise PositionsError(f"{where}: خروج با ابطال باید کامل باشد "
                                      f"(مقدار {cur}، delta {d})")
             if not _num(r.get("level")) or not _num(r.get("price")):
                 raise PositionsError(f"{where}: سطح یا قیمت خروج نیست")
-            _allow(reentry, sym, float(r["level"]), cur)
+            _allow(reentry, sym, float(r["level"]), cur, r["at"])
         elif act == "reenter":
             st = reentry.get(sym)
             if st is None:
@@ -394,6 +407,10 @@ def _replay(h: dict, jidx: dict, check_journal: bool = True) -> dict:
                 raise PositionsError(f"{where}: بسته هفتگی باید بالای سطح "
                                      f"{st['level']} باشد")
             _ts(r.get("week_close_at"), f"{where}: زمان بسته هفتگی")
+            if not after_exit(r["week_close_at"], st):
+                raise PositionsError(f"{where}: بسته هفتگی {r['week_close_at']} پس از خروج "
+                                     f"{st['exit_at']} بسته نشده — ورود دوباره فقط با بسته‌ای "
+                                     "پس از خروج")
             if not d > 0 or st["used"] + d > st["max_qty"] + TOL:
                 raise PositionsError(f"{where}: بیش از سهمیه ورود دوباره "
                                      f"({st['max_qty'] - st['used']} مانده)")
@@ -843,6 +860,10 @@ def _apply(h: dict, a, journal: dict) -> dict:
         if not w["close"] > st["level"]:
             raise PositionsError(f"{sym}: بسته هفتگی {w['close']} بالای سطح "
                                  f"{st['level']} نیست — ورود دوباره مجاز نیست")
+        if not after_exit(w["closed_at"], st):
+            raise PositionsError(f"{sym}: آخرین بسته هفتگی {w['closed_at']} پس از خروج "
+                                 f"{st['exit_at']} نیست — ورود دوباره فقط با بسته‌ای پس از "
+                                 "خروج؛ منتظر بسته بعد")
         p["lots"].append({"qty": a.qty, "account": a.account, "entry": a.price})
         p["status"] = "open"
         row.update(delta=a.qty, price=a.price, weekly_close=w["close"],

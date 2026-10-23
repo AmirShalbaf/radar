@@ -213,7 +213,7 @@ def test_exit_passes_and_sets_reentry_allowance() -> None:
     h = _exited()
     P.validate(h, _j())
     st = P.reentry_state(h, "SOL")
-    assert st == {"level": 100.0, "max_qty": 6.0, "used": 0.0}
+    assert st == {"level": 100.0, "max_qty": 6.0, "used": 0.0, "exit_at": NOW.isoformat()}
 
 
 def test_exit_must_be_full() -> None:
@@ -519,11 +519,18 @@ def test_cli_trim_multi_account_needs_account(files) -> None:
 
 
 def test_cli_exit_then_reenter(files, monkeypatch) -> None:
-    assert _run(files, "exit", "--symbol", "SOL", "--price", "95", "--level", "100", *RECEIPT_EXIT) == 0
+    # ت۲، بازبینی ۲۳ اکتبر: پیش از این خروجِ اکنون با بسته ۲۱ سپتامبر دوباره وارد می‌شد.
+    # حالا خروج با زمان رسید و بسته‌ای که پس از آن بسته شد
+    assert _run(files, "exit", "--symbol", "SOL", "--price", "95", "--level", "100",
+                *RECEIPT_EXIT, "--at", "2026-09-26T10:00:00+00:00") == 0
     h = _read(files[0])
     assert next(p for p in h["positions"] if p["symbol"] == "SOL")["status"] == "exited"
     monkeypatch.setattr(P, "weekly_close", lambda sym, get=None, now=None: (
         {"close": 104.0, "closed_at": MON2.isoformat(), "venue": "okx"}, []))
+    assert _run(files, "reenter", "--symbol", "SOL", "--qty", "4", "--price", "105",
+                "--account", "A") == 2                     # بسته ۲۱ سپتامبر پیش از خروج
+    monkeypatch.setattr(P, "weekly_close", lambda sym, get=None, now=None: (
+        {"close": 104.0, "closed_at": "2026-09-28T00:00:00+00:00", "venue": "okx"}, []))
     assert _run(files, "reenter", "--symbol", "SOL", "--qty", "4", "--price", "105",
                 "--account", "A") == 0
     h = _read(files[0])
@@ -590,4 +597,5 @@ def test_reentry_state_with_add_rows_present() -> None:
     h["positions"].append(_pos("LINK", [(10.0, "A", 14.0)]))
     h["ledger"].append(_row("add", "LINK", 10.0, price=14.0,
                             decision_id="D-9", setup_name="الف۱"))
-    assert P.reentry_state(h, "SOL") == {"level": 100.0, "max_qty": 6.0, "used": 0.0}
+    assert P.reentry_state(h, "SOL") == {"level": 100.0, "max_qty": 6.0, "used": 0.0,
+                                         "exit_at": NOW.isoformat()}
