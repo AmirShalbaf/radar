@@ -890,6 +890,48 @@ def _plan_actions(rv: dict) -> list[str]:
     return out
 
 
+def _plain_action(a: str) -> str:
+    """ردیف اقدام بی قالب و بی فرمان ثبت — برای یک خط پیام تلگرام."""
+    a = a.replace("**", "")
+    if "`" in a:
+        a = a[:a.index("`")]
+    a = a.strip(" ،؛:.")
+    for tail in ("ثبت با", "ثبت", "هر پله پرشده"):
+        if a.endswith(tail):
+            a = a[:-len(tail)].strip(" ،؛:.")
+    return a
+
+
+def daily_line(reg: dict | None, tband: dict | None, score: float | None, val: dict,
+               actions: list[str]) -> str:
+    """
+    یک خط بالای پیام روزانه — بازبینی ۲۳ اکتبر ۲۰۲۶، یافته م۴: رژیم و باند، هدف
+    ذخیره، ذخیره فعلی، کسری، و یک «اقدام سبد» — نخستین ردیف بخش ۶. پیش از این
+    پیام روزانه هیچ‌کدام را نداشت؛ جهش هدف 25٪ به 40٪ در ۲۰ اکتبر پیامی نساخت.
+    """
+    total, stable = val["total"], val["stable_usd"]
+    pct = 100 * stable / total if total else 0.0
+    if reg is None:
+        parts = ["📌 رژیم کهنه — هدف و کسری سنجیده نشد"]
+    else:
+        head = "📌 رژیم" + (f" {score:+.3f}" if score is not None else "")
+        head += f" — باند {reg['name']}"
+        if tband is not None and tband["name"] != reg["name"]:
+            head += f"، باند معامله {tband['name']}"
+        parts = [head, f"هدف ذخیره {reg['stable']}٪"]
+    parts.append(f"ذخیره {stable:,.0f} دلار ({pct:.1f}٪)")
+    if reg is not None:
+        gap = reg["stable"] / 100 * total - stable
+        parts.append(f"کسری {gap:,.0f} دلار" if gap > 0 else "کسری ندارد")
+    if val.get("incomplete"):
+        parts.append(f"⚠️ ارزش ناقص — بی‌قیمت: {'، '.join(val.get('missing') or [])}")
+    act = _plain_action(actions[0]) if actions else "هیچ اقدام اجباری"
+    if len(actions) > 1:
+        act += f" — و {fa(len(actions) - 1)} اقدام دیگر در گزارش سبد"
+    parts.append(f"اقدام سبد: {act}")
+    return "؛ ".join(parts)
+
+
 def _pnl(r: dict) -> str:
     """سود و زیان فقط وقتی قیمت خرید همه لات‌ها معلوم است — عدد ساخته نمی‌شود."""
     if r.get("avg_entry") and r.get("price"):
@@ -929,7 +971,9 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
                  tband: dict | None = None, tband_note: str = "",
                  level_notes: list[str] | None = None,
                  candle_notes: list[str] | None = None,
-                 reserve: dict | None = None) -> str:
+                 reserve: dict | None = None,
+                 regime_score: float | None = None,
+                 summary: dict | None = None) -> str:
     """
     گزارش دو دفتر — تصمیم کاربر، ۲۵ سپتامبر ۲۰۲۶.
 
@@ -946,7 +990,9 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     سطرهای هم‌خوانی سطح ابطال با watch.json است، بالای گزارش. candle_notes
     هشدار کندل این اجراست — رد لنگر، افتادن به گیت، کوتاه‌شدن — بالای گزارش.
     reserve نمای نقشه ذخیره watch.json از reserve_view است: با پله مانده، بخش ۶
-    پیشرفت نقشه را نشان می‌دهد نه فروش به ترتیب بخش ۵ — نشست ۳ب.
+    پیشرفت نقشه را نشان می‌دهد نه فروش به ترتیب بخش ۵ — نشست ۳ب. summary اگر
+    داده شود، میدان line می‌گیرد: خط بالای پیام روزانه از daily_line، با
+    regime_score — بازبینی ۲۳ اکتبر.
     """
     plan_live = bool(reserve and reserve["left"])
     regime_warnings = regime_warnings or []
@@ -1272,6 +1318,8 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     W("هر اقدام انجام‌شده در `radar_journal.py` و هر اقدام **انجام‌نشده** در دفتر هزینه")
     W("فرصت ثبت شود. بدون هر دو، نرخ اقدام قابل محاسبه نیست.")
 
+    if summary is not None:
+        summary["line"] = daily_line(reg, tband, regime_score, val, actions)
     return "\n".join(o)
 
 
@@ -1350,6 +1398,8 @@ def main() -> int:
     ap.add_argument("--candidates", default="", help="نمادهای نامزد جانشینی، جدا با کاما")
     ap.add_argument("--init", action="store_true", help="ساخت فایل نمونه holdings.json")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--line", default=None,
+                    help="یک خط بالای پیام روزانه — رژیم، هدف، ذخیره، کسری، اقدام سبد")
     a = ap.parse_args()
 
     if a.init:
@@ -1460,10 +1510,15 @@ def main() -> int:
             level_notes.append(f"⛔ نقشه ذخیره `watch.json` خوانا نیست — {exc}. بخش ۶ "
                                "بی‌نقشه ساخته شد؛ پیش از هر فروش، نقشه را درست کن.")
     save_state(state)
+    summary: dict = {}
     txt = build_report(h, rows, reg, cands, info.source, baseline,
                        info.warnings, val=val, heat=heat, reentry=reentry,
                        tband=tband, tband_note=tband_note, level_notes=level_notes,
-                       candle_notes=CANDLE_NOTES, reserve=rview)
+                       candle_notes=CANDLE_NOTES, reserve=rview,
+                       regime_score=info.score, summary=summary)
+    if a.line:
+        with open(a.line, "w", encoding="utf-8") as f:
+            f.write(summary["line"] + "\n")
     if a.out:
         with open(a.out, "w", encoding="utf-8") as f:
             f.write(txt)

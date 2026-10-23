@@ -131,10 +131,13 @@ jobs:
         run: |
           D=$(date -u +%Y-%m-%d)
           if [ -f holdings.json ]; then
+            # --line: یک خط بالای پیام روزانه — بازبینی ۲۳ اکتبر، یافته م۴
             if ! python radar_book.py \
                    --holdings holdings.json \
+                   --line /tmp/book_line.txt \
                    --out "reports/book-$D.md" > /tmp/book.log 2>&1; then
               echo "::error::بازبینی سبد خطا داد — reports/book-error-$D.md"
+              echo "⚠️ سبد: بازبینی خطا داد — reports/book-error-$D.md" >> /tmp/book_line.txt
               {
                 echo "# خطای بازبینی سبد — $D"
                 echo
@@ -240,6 +243,13 @@ jobs:
           {
             echo "# گزارش رادار — $D"
             echo
+            # خط سبد درست زیر سرتیتر، تا اول پیام تلگرام باشد — بازبینی ۲۳ اکتبر
+            if [ -s /tmp/book_line.txt ]; then
+              cat /tmp/book_line.txt
+            else
+              echo "⚠️ سبد: خط ساخته نشد — گام بازبینی سبد را ببین"
+            fi
+            echo
             echo "تولیدشده خودکار توسط گردش‌کار گیت‌هاب."
             echo
             # یک خط ساده رویداد — نشست ۱۰. همین خط به پیام تلگرام می‌رود؛ بازطراحی
@@ -309,21 +319,18 @@ jobs:
             git push
           fi
 
+      # ارسال فقط از radar_telegram.py، با رسید — بازبینی ۲۳ اکتبر، یافته م۴. پیش از این
+      # curl بی‌رسید با Markdown می‌فرستاد و «ارسال شد» را بی‌شرط چاپ می‌کرد. متن ساده؛
+      # بریدن به نویسه در خود radar_telegram.py. کلید غایب ارسال ناموفق نیست.
       - name: اعلان تلگرام
         if: success()
         env:
-          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PYTHONUTF8: "1"
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          if [ -n "$TG_TOKEN" ] && [ -n "$TG_CHAT" ]; then
-            # بخش رویداد در پیام نمی‌آید، فقط خط ساده بالای خلاصه — نشست ۱۰
-            MSG=$(sed '/<!-- رویداد-آغاز -->/,/<!-- رویداد-پایان -->/d' reports/LATEST.md | head -c 3500)
-            curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
-              -d chat_id="${TG_CHAT}" \
-              -d parse_mode="Markdown" \
-              --data-urlencode "text=${MSG}" > /dev/null
-            echo "اعلان تلگرام ارسال شد."
-          else
-            echo "کلید تلگرام تنظیم نشده — رد شد."
-            echo "برای فعال‌سازی: Settings > Secrets > TELEGRAM_BOT_TOKEN و TELEGRAM_CHAT_ID"
+          # بخش رویداد در پیام نمی‌آید، فقط خط ساده بالای خلاصه — نشست ۱۰
+          sed '/<!-- رویداد-آغاز -->/,/<!-- رویداد-پایان -->/d' reports/LATEST.md > /tmp/telegram_daily.txt
+          if ! python radar_telegram.py --file /tmp/telegram_daily.txt; then
+            echo "::error::پیام تلگرام روزانه نرسید — رسید بالا"
           fi
