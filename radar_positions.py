@@ -38,6 +38,9 @@ holdings.json نسخه ۲ بر پایه **مقدار** است، نه دلار. �
              با --symbol USDT فقط نقد همان حساب کم می‌شود و ناوردای کوین‌ها
              دست نمی‌خورد. --at زمان برداشت؛ زمان دقیق نامعلوم یعنی زمان شاهد،
              مثل اسکرین‌شات، و همین در دلیل
+    income   درآمد نقدی، مثل سود خودکار تتر صرافی — متن ۱۶، ۲۴ اکتبر ۲۰۲۶. فقط
+             استیبل، فقط افزایش، با دلیل و حساب؛ نقد همان حساب در همان ردیف.
+             ناوردای کوین دست نمی‌خورد؛ نه هزینه فرصت، نه سهمیه. برای نقد adjust نه
 
 بسته هفتگی = بسته کندل هفته دوشنبه تا یکشنبه به وقت جهانی، یعنی لحظه
 **دوشنبه ۰۰:۰۰ UTC**. اوکی‌اکس با 1Wutc، گیت با 7d. لنگر پیش‌فرض اوکی‌اکس
@@ -93,7 +96,7 @@ HOLDINGS_FILE = "holdings.json"
 BOOKS = RJ.BOOKS
 # withdraw تصمیم کاربر، ۲۹ سپتامبر ۲۰۲۶. نوع جدا، نه adjust: سقف ۱٪ adjust
 # برای پاداش و کارمزد است و شل‌کردنش ناوردا را برای همه ردیف‌ها سست می‌کرد
-ACTIONS = ("trim", "exit", "reenter", "add", "adjust", "withdraw")
+ACTIONS = ("trim", "exit", "reenter", "add", "adjust", "withdraw", "income")
 # invalidation: خروج جزئی با ابطال — سهم خروج در watch.json پارامتر است
 TRIM_REASONS = ("reserve", "rebalance", "invalidation")
 ADJUST_MAX = 0.01             # سقف هر ردیف adjust: ۱٪ مقدار نماد
@@ -448,6 +451,16 @@ def _replay(h: dict, jidx: dict, check_journal: bool = True) -> dict:
             if not (d < 0 and -d <= cur + TOL):
                 raise PositionsError(f"{where}: برداشت فقط کاهش است و بیش از مقدار نماد "
                                      f"({cur}) نه")
+        elif act == "income":
+            # درآمد نقدی — متن ۱۶، ۲۴ اکتبر ۲۰۲۶. ردیف با خودش هم‌خوان باشد؛ اثرش بر
+            # نقد را ناوردای نقد می‌سنجد و مقدار نماد کوینی عوض نمی‌شود
+            c = r.get("cash") or {}
+            if not (sym in STABLE_ASSETS and d > 0 and r.get("reason") and r.get("account")
+                    and c.get("asset") == sym and c.get("account") == r["account"]
+                    and _num(c.get("qty")) and _close(c["qty"], d)):
+                raise PositionsError(f"{where}: درآمد نقدی فقط استیبل و افزایش است، با دلیل، "
+                                     "حساب و cash همان دارایی و حساب به اندازه delta")
+            continue
         run[sym] = cur + d
     return {"expected": run, "reentry": reentry}
 
@@ -456,10 +469,10 @@ def cash_expected(h: dict) -> dict:
     """
     نقد انتظاری هر (دارایی، حساب) از دفتر کل — ناوردای نقد، بازبینی ۲۳ اکتبر:
 
-        نقد منجمد + خالص فروش‌ها − برداشت‌ها = نقد فعلی
+        نقد منجمد + خالص فروش‌ها + درآمد − برداشت‌ها = نقد فعلی
 
-    خالص هر ردیف رسیددار به تتر همان حساب می‌رود — همان کار _receipt. برداشت
-    از میدان cash همان ردیف کم می‌شود، چه نقد تنها، چه کنار کوین.
+    خالص هر ردیف رسیددار به تتر همان حساب می‌رود — همان کار _receipt. درآمد و
+    برداشت از میدان cash همان ردیف می‌آیند، برداشت چه نقد تنها، چه کنار کوین.
     """
     out: dict[tuple, float] = {}
     for c in h["frozen"]["cash"]:
@@ -469,10 +482,11 @@ def cash_expected(h: dict) -> dict:
         if r.get("action") in ("trim", "exit") and _num(r.get("net")):
             k = ("USDT", r.get("account"))
             out[k] = out.get(k, 0.0) + float(r["net"])
-        elif r.get("action") == "withdraw" and isinstance(r.get("cash"), dict):
+        elif r.get("action") in ("withdraw", "income") and isinstance(r.get("cash"), dict):
             c = r["cash"]
             k = (c.get("asset"), c.get("account"))
-            out[k] = out.get(k, 0.0) - float(c.get("qty") or 0.0)
+            sign = 1.0 if r["action"] == "income" else -1.0
+            out[k] = out.get(k, 0.0) + sign * float(c.get("qty") or 0.0)
     return out
 
 
@@ -818,11 +832,27 @@ def _take(p: dict, qty: float, account: str | None) -> str:
 def _apply(h: dict, a, journal: dict) -> dict:
     sym = a.symbol.upper()
     row = {"at": _now(), "action": a.cmd, "symbol": sym}
-    if a.cmd in ("trim", "exit", "withdraw") and a.at is not None:
+    if a.cmd in ("trim", "exit", "withdraw", "income") and a.at is not None:
         row["at"] = _receipt_at(a.at, h)
     if a.cmd in ("trim", "exit") and a.order_id:
         row["order_id"] = a.order_id
     p = _find(h, sym)
+    if a.cmd == "income":
+        # درآمد نقدی — متن ۱۶، ۲۴ اکتبر ۲۰۲۶؛ پاداش کوین همان adjust است
+        if sym not in STABLE_ASSETS:
+            raise PositionsError(f"درآمد نقدی فقط برای استیبل است ({'، '.join(sorted(STABLE_ASSETS))})؛ "
+                                 "پاداش کوین با adjust")
+        c = next((c for c in h["cash"]
+                  if c.get("asset") == sym and c.get("account") == a.account), None)
+        if c is None:
+            c = {"asset": sym, "qty": 0.0, "account": a.account}
+            h["cash"].append(c)
+        c["qty"] = round(c["qty"] + a.qty, 10)
+        row.update(delta=a.qty, reason=a.reason, account=a.account,
+                   cash={"asset": sym, "qty": a.qty, "account": a.account})
+        h["ledger"].append(row)
+        h["updated"] = _now()
+        return row
     if a.cmd == "trim":
         if p is None or p["status"] != "open":
             raise PositionsError(f"{sym} در دفتر موقعیت باز نیست")
@@ -970,6 +1000,14 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--reason", required=True)
             p.add_argument("--cash", type=float, default=None,
                            help="تتر همان حساب که با همین ردیف از رادار برداشته می‌شود")
+    # درآمد نقدی — متن ۱۶، ۲۴ اکتبر ۲۰۲۶
+    p = sp.add_parser("income", help="درآمد نقدی استیبل، مثل سود خودکار تتر صرافی")
+    p.add_argument("--asset", dest="symbol", required=True, help="استیبل، مثل USDT")
+    p.add_argument("--account", required=True)
+    p.add_argument("--qty", type=float, required=True)
+    p.add_argument("--at", default=None,
+                   help="زمان شاهد، مهر کامل با منطقه زمانی؛ پیش‌فرض اکنون")
+    p.add_argument("--reason", required=True)
     a = ap.parse_args(argv)
 
     try:
@@ -981,7 +1019,7 @@ def main(argv: list[str] | None = None) -> int:
             syms = [p["symbol"] for p in h["positions"] if p["status"] == "open"]
             print(",".join(dict.fromkeys(syms)))
             return 0
-        if a.cmd in ("trim", "reenter", "add", "withdraw") and a.qty <= 0:
+        if a.cmd in ("trim", "reenter", "add", "withdraw", "income") and a.qty <= 0:
             raise PositionsError("مقدار باید مثبت باشد")
         if a.cmd in ("reenter", "add") and not a.account:
             raise PositionsError("--account برای افزایش لازم است")
