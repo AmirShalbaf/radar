@@ -58,11 +58,10 @@ def _ledger_by_account(h, field) -> dict:
 
 
 def test_updated_not_before_screenshot(h) -> None:
-    """منبع تازه — مرور هفتگی ۱۷ اکتبر ۲۰۲۶؛ frozen همان اسکرین‌شات ۲۵ سپتامبر می‌ماند."""
-    from datetime import datetime
-    assert "LBank" in h["source"] and "۱۷ اکتبر ۲۰۲۶" in h["source"]
-    assert "15:32 تا 15:36 UTC" in h["source"]
-    assert datetime.fromisoformat(h["updated"]) >= datetime.fromisoformat("2026-10-17T15:36:00+00:00")
+    """منبع تازه — اسکرین‌شات ۲۴ اکتبر ۲۰۲۶، متن ۱۶؛ frozen همان اسکرین‌شات ۲۵ سپتامبر می‌ماند."""
+    assert "LBank" in h["source"] and "۲۴ اکتبر ۲۰۲۶" in h["source"]
+    assert "04:02 UTC" in h["source"] and "1625.64" in h["source"]
+    assert h["updated"] == "2026-10-24T04:02:00+00:00"
 
 
 def test_quantities_match_screenshots(h) -> None:
@@ -85,20 +84,23 @@ def test_no_invented_entry_price(h) -> None:
     assert known == []
 
 
-def _withdrawn_cash(h) -> dict:
+def _cash_rows(h, action) -> dict:
     out: dict = {}
     for r in h["ledger"]:
-        c = r.get("cash") if r.get("action") == "withdraw" else None
+        c = r.get("cash") if r.get("action") == action else None
         if c:
             out[c["account"]] = out.get(c["account"], 0.0) + c["qty"]
     return out
 
 
 def test_cash_is_stable_only(h) -> None:
+    """زنجیره نقد بیرون از کد: منجمد + خالص فروش‌ها + درآمد — income، متن ۱۶ — − برداشت‌ها."""
     assert {c["asset"] for c in h["cash"]} == {"USDT"}
     got = {c["account"]: c["qty"] for c in h["cash"]}
-    net, gone = _ledger_by_account(h, "net"), _withdrawn_cash(h)
-    want = {a: q + net.get(a, 0.0) - gone.get(a, 0.0) for a, q in CASH.items()}
+    net, gone = _ledger_by_account(h, "net"), _cash_rows(h, "withdraw")
+    earned = _cash_rows(h, "income")
+    want = {a: q + net.get(a, 0.0) + earned.get(a, 0.0) - gone.get(a, 0.0)
+            for a, q in CASH.items()}
     assert set(got) == {a for a, q in want.items() if q > 1e-9}
     for acct, q in got.items():
         assert q == pytest.approx(want[acct], abs=1e-9), acct
@@ -232,13 +234,19 @@ def test_1017_bnb_reserve_sale(h) -> None:
     assert [x for x in oc.get("exits", []) if x.get("order_id") == r["order_id"]]
 
 
+def _upto(h, last: dict) -> dict:
+    """همان فایل با دفتر کل تا این ردیف — وضعیت دفتر در لحظه آن اسکرین‌شات."""
+    return {**h, "ledger": h["ledger"][:h["ledger"].index(last) + 1]}
+
+
 def test_1017_matches_screenshots(h) -> None:
-    pos = {p["symbol"]: p for p in h["positions"]}
+    """از ۲۴ اکتبر مقدار فعلی عوض شده؛ پس وضعیت ۱۷ اکتبر از بازپخش دفتر کل تا فروش BNB."""
+    then = _upto(h, _rows_1017(h, "trim")[0])
+    run = P._replay(then, {}, check_journal=False)["expected"]
     for sym, q in SEEN_1017.items():
-        assert P.position_qty(pos[sym]) == pytest.approx(q, abs=1e-12), sym
-    assert P.position_qty(pos["BNB"]) == pytest.approx(0.0007579, abs=1e-12)
-    lb = [c for c in h["cash"] if c["account"] == "LBank"]
-    assert len(lb) == 1 and lb[0]["qty"] == pytest.approx(234.98925749, abs=1e-9)
+        assert run[sym] == pytest.approx(q, abs=1e-12), sym
+    assert run["BNB"] == pytest.approx(0.0007579, abs=1e-12)
+    assert P.cash_expected(then)[("USDT", "LBank")] == pytest.approx(234.98925749, abs=1e-9)
     assert 0.41517649 + 234.80889 - 0.234809 == pytest.approx(234.98925749, abs=1e-9)
 
 
@@ -249,3 +257,72 @@ def test_1017_bnb_dust_has_no_level(h) -> None:
     assert bnb["invalidation"] is None and "invalidation_since" not in bnb
     assert {k for k in bnb if k != "lots"} == {k for k in trx if k != "lots"}
     assert 0.0007579 * 718.07 < P.DUST_USD
+
+
+# ═══════════════ متن ۱۶ — ۲۱ تا ۲۴ اکتبر ۲۰۲۶، RD-20261024-01 ═══════════════
+# اسکرین‌شات LBank 2026-10-24 04:02 UTC، جمع 1625.64 دلار؛ ساعت اسکرین‌شات وقت تهران بود.
+# مقدارها شامل مقدار قفل‌شده در سفارش‌های باز است.
+
+SEEN_1024 = {"SOL": 5.48105369, "AAVE": 1.04895, "LINK": 11.09889, "ETH": 0.037257,
+             "SUI": 81.6183, "ONDO": 115.43866, "BNB": 0.0007579, "TRX": 0.6704,
+             "TAO": 0.000092}
+USDT_1024 = 561.87837649
+SALES_1024 = [  # نماد، مقدار، قیمت، زمان، سفارش، ناخالص، کارمزد
+    ("ETH", 0.074, 2490.0, "2026-10-21T13:06:34+00:00", "7e76721a-0cc5-408a-b3a0-e07b135189bd",
+     184.26, 0.18426),
+    ("TAO", 0.1538, 254.4, "2026-10-24T03:47:08+00:00", "4395c156-03ce-4604-83c3-ed74a5d55961",
+     39.12672, 0.078253),
+    ("ETH", 0.037, 2381.81, "2026-10-24T03:48:34+00:00", "a39a661a-34f9-4e1a-b9d6-7e244b797cca",
+     88.12697, 0.088127),
+    ("SOL", 0.15, 102.56, "2026-10-24T03:49:33+00:00", "fe063a55-bd90-47aa-935d-c7817c807f3d",
+     15.384, 0.015384),
+]
+
+
+def test_1024_matches_screenshot(h) -> None:
+    pos = {p["symbol"]: p for p in h["positions"]}
+    assert {s for s, p in pos.items() if p["status"] == "open"} == set(SEEN_1024)
+    for sym, q in SEEN_1024.items():
+        assert P.position_qty(pos[sym]) == pytest.approx(q, abs=1e-12), sym
+    assert [(c["account"], c["qty"]) for c in h["cash"]] == [("LBank", pytest.approx(USDT_1024,
+                                                                                    abs=1e-9))]
+
+
+def test_1024_sales_rows_and_optcost(h) -> None:
+    oc = json.loads((ROOT / "radar_optcost.json").read_text(encoding="utf-8"))
+    for sym, q, px, at, oid, gross, fee in SALES_1024:
+        rows = [r for r in h["ledger"] if r.get("order_id") == oid]
+        assert len(rows) == 1, oid
+        r = rows[0]
+        assert (r["action"], r["symbol"], r["delta"], r["price"], r["reason"], r["account"],
+                r["at"]) == ("trim", sym, -q, px, "reserve", "LBank", at)
+        assert (r["gross"], r["fee"]) == (gross, fee) and gross == pytest.approx(q * px)
+        assert r["net"] == pytest.approx(gross - fee, abs=1e-9)
+        assert [x for x in oc["exits"] if x.get("order_id") == oid and x["at"] == at]
+
+
+def test_1023_usdt_income(h) -> None:
+    rows = [r for r in h["ledger"] if r["action"] == "income"]
+    assert len(rows) == 1
+    r = rows[0]
+    assert (r["symbol"], r["delta"], r["account"], r["at"]) ==         ("USDT", 0.357453, "LBank", "2026-10-23T12:50:00+00:00")
+    assert r["reason"] == "سود خودکار تتر LBank، تجمعی ۱۷ تا ۲۳ اکتبر"
+    assert r["cash"] == {"asset": "USDT", "qty": 0.357453, "account": "LBank"}
+
+
+def test_1024_cash_equations() -> None:
+    """دو معادله وارسی متن ۱۶ — محاسبه‌شده از اسکرین‌شات‌ها."""
+    assert 234.98925749 + 184.26 - 0.18426 == pytest.approx(419.06499749, abs=1e-9)
+    after_income = 419.06499749 + 0.357453
+    assert after_income == pytest.approx(419.42245049, abs=1e-9)
+    assert (after_income + 39.12672 - 0.078253 + 88.12697 - 0.088127 + 15.384 - 0.015384
+            == pytest.approx(USDT_1024, abs=1e-9))
+
+
+def test_1024_tao_dust_has_no_level(h) -> None:
+    """مانده TAO ناچیز است، مثل BNB: سطح ابطال ندارد؛ کف 202.51 فقط در نقشه بازخرید."""
+    tao = next(p for p in h["positions"] if p["symbol"] == "TAO")
+    bnb = next(p for p in h["positions"] if p["symbol"] == "BNB")
+    assert tao["invalidation"] is None and "invalidation_since" not in tao
+    assert {k for k in tao if k != "lots"} == {k for k in bnb if k != "lots"}
+    assert 0.000092 * 254.4 < P.DUST_USD
