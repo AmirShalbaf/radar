@@ -27,11 +27,16 @@ radar_schedule.py — نگهبان تکرار زمان‌بندی گیت‌ها�
              نزدیک رویداد — بند ۴ متن ۲۰: در پنجره ۶ ساعت پیش تا ۶ ساعت پس از رویداد
              با اهمیت بالا و ساعت‌دار تقویم دستی events_calendar.json — پس از کنفرانس
              اگر هست — فاصله ۵۰ دقیقه. تقویم خراب یعنی همان ۳ ساعت، بلند در دلیل.
-    روزانه   نوبت دوم دو ساعت بعد. بی‌کار اگر reports/LATEST.md گزارش همان روز است.
+    روزانه   پنج نوبت از متن ۲۰: 00:37، 02:37، 04:37، 06:37 و 08:37 UTC — پیش از آن
+             فقط دو نوبت آخر. بی‌کار اگر reports/LATEST.md گزارش همان روز است.
     هفتگی    نوبت دوم دو ساعت بعد. بی‌کار اگر گزارش خودسنجی یا بازبینی هفتگی سبد
              از یکشنبه همین هفته به بعد هست.
 
 اجرای دستی workflow_dispatch همیشه کار می‌کند.
+
+push ربات — بند ۵ متن ۲۰: با نبض ساعتی و پنج نوبت روزانه push هم‌زمان دو کار محتمل‌تر
+است. push ردشده تا ۳ بار با git fetch و git merge --no-edit دوباره امتحان می‌شود. force و
+rebase ممنوع؛ تداخل واقعی ادغام را برمی‌گرداند و کار با خطای روشن می‌افتد.
 
 فقط کتابخانه استاندارد — گام نگهبان پیش از نصب وابستگی‌ها اجرا می‌شود.
 
@@ -39,6 +44,7 @@ radar_schedule.py — نگهبان تکرار زمان‌بندی گیت‌ها�
     python radar_schedule.py record --snapshot-rc 0 --watch-rc 0
     python radar_schedule.py health
     python radar_schedule.py plan --from 2026-10-27 --days 3
+    python radar_schedule.py push
 """
 from __future__ import annotations
 
@@ -46,6 +52,7 @@ import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 import tempfile
 from datetime import datetime, timedelta, timezone
@@ -229,6 +236,54 @@ def plan(start: datetime, days: int, cal: dict | None,
     return out
 
 
+# ═══════════════════════ push ربات — بند ۵ متن ۲۰ ═══════════════════════
+
+PUSH_RETRIES = 3
+
+
+def _git(run, cwd, *args):
+    return run(["git", *args], cwd=cwd, capture_output=True, text=True, encoding="utf-8")
+
+
+def _tail(r) -> str:
+    s = ((r.stderr or "") + " " + (r.stdout or "")).strip().replace("\n", " ")
+    return s[-300:] or f"کد {r.returncode}"
+
+
+def push_with_retry(cwd: str = ".", run=subprocess.run, retries: int = PUSH_RETRIES,
+                    remote: str = "origin") -> tuple[int, list[str]]:
+    """
+    push شاخه جاری؛ اگر رد شد، fetch همان شاخه و merge --no-edit، و دوباره — تا retries بار.
+    برداشت کم‌عمق actions/checkout پیش از ادغام کامل می‌شود. هیچ force و rebase. کد ۰
+    موفق؛ ۱ تداخل واقعی یا ردشدن پس از همه تلاش‌ها — هر دو با سطر روشن در log.
+    """
+    log: list[str] = []
+    br = _git(run, cwd, "rev-parse", "--abbrev-ref", "HEAD").stdout.strip() or "main"
+    for attempt in range(1, retries + 2):
+        r = _git(run, cwd, "push", remote, f"HEAD:{br}")
+        if r.returncode == 0:
+            log.append(f"push موفق — تلاش {fa(attempt)}")
+            return 0, log
+        log.append(f"push رد شد — تلاش {fa(attempt)}: {_tail(r)}")
+        if attempt > retries:
+            break
+        shallow = _git(run, cwd, "rev-parse", "--is-shallow-repository").stdout.strip() == "true"
+        f = _git(run, cwd, "fetch", "--no-tags", *(["--unshallow"] if shallow else []), remote, br)
+        if f.returncode != 0:
+            log.append(f"fetch {remote}/{br} ناموفق: {_tail(f)}")
+            continue
+        m = _git(run, cwd, "merge", "--no-edit", "FETCH_HEAD")
+        if m.returncode != 0:
+            files = _git(run, cwd, "diff", "--name-only", "--diff-filter=U").stdout.split()
+            _git(run, cwd, "merge", "--abort")
+            log.append(f"تداخل واقعی در ادغام با {remote}/{br} — "
+                       f"{'، '.join(files) if files else _tail(m)}؛ ادغام برگشت و push نشد")
+            return 1, log
+        log.append(f"merge --no-edit با {remote}/{br} — تلاش دوباره")
+    log.append(f"push پس از {fa(retries)} بار تلاش دوباره رد شد")
+    return 1, log
+
+
 # ═══════════════════════ خط سلامت گزارش روزانه ═══════════════════════
 
 def health_line(log: dict, now: datetime) -> str:
@@ -286,6 +341,8 @@ def main(argv: list[str] | None = None, now: datetime | None = None) -> int:
     p.add_argument("--log", default=PULSE_LOG)
     p = sp.add_parser("health", help="خط سلامت نبض برای گزارش روزانه")
     p.add_argument("--log", default=PULSE_LOG)
+    p = sp.add_parser("push", help="push ربات با تلاش دوباره fetch و merge — بند ۵ متن ۲۰")
+    p.add_argument("--retries", type=int, default=PUSH_RETRIES)
     a = ap.parse_args(argv)
     now = now or datetime.now(UTC)
 
@@ -313,6 +370,13 @@ def main(argv: list[str] | None = None, now: datetime | None = None) -> int:
                 print(f"\n{day} — {fa(n)} نبض")
             print(f"- {t:%H:%M} UTC، {t.astimezone(RC.TEHRAN):%H:%M} تهران — {why}")
         return 0
+    if a.cmd == "push":
+        rc, log = push_with_retry(retries=a.retries)
+        for line in log:
+            print(line)
+        if rc:
+            print(f"::error::{log[-1]}")
+        return rc
     if a.cmd == "record":
         e = record(a.log, now, a.snapshot_rc, a.watch_rc)
         print(f"دفتر نبض: {e['at']} — عکس {e['snapshot_rc']}، پایشگر {e['watch_rc']}")

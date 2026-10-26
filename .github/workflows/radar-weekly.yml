@@ -158,7 +158,9 @@ jobs:
             echo "تغییری نبود."
           else
             git commit -m "گزارش هفتگی رادار — $(date -u +%Y-%m-%d)"
-            git push
+            # push با تلاش دوباره — بند ۵ متن ۲۰: ردشده تا ۳ بار با fetch و merge --no-edit؛
+            # force و rebase ممنوع؛ تداخل واقعی کار را با ::error:: روشن می‌اندازد
+            python radar_schedule.py push
           fi
 
       # ارسال فقط از radar_telegram.py، با رسید — بازبینی ۲۳ اکتبر، یافته م۴

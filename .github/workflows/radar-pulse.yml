@@ -155,7 +155,8 @@ jobs:
           if git diff --staged --quiet; then
             echo "تغییری نبود."
           else
-            git pull --rebase --autostash || true
             git commit -m "نبض — $(date -u +%Y-%m-%d_%H:%M)"
-            git push
+            # push با تلاش دوباره — بند ۵ متن ۲۰: ردشده تا ۳ بار با fetch و merge --no-edit؛
+            # force و rebase ممنوع؛ تداخل واقعی کار را با ::error:: روشن می‌اندازد
+            python radar_schedule.py push
           fi

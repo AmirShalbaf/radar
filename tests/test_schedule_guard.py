@@ -168,7 +168,8 @@ def _crons(name: str) -> list[str]:
 # نبض ساعتی از بند ۴ متن ۲۰ — tests/test_pulse_event_window.py
 
 
-@pytest.mark.parametrize("wf", ["radar-daily.yml", "radar-weekly.yml"])
+# روزانه پنج نوبت از بند ۵ متن ۲۰ — tests/test_bot_push_retry.py
+@pytest.mark.parametrize("wf", ["radar-weekly.yml"])
 def test_second_cron_two_hours_later(wf) -> None:
     a, b = _crons(wf)
     ma, ha = a.split()[:2]
