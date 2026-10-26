@@ -208,6 +208,49 @@ def analyze(sym: str, order: list[str], btc: pd.DataFrame) -> dict | None:
 W_FULL = 1.00
 
 
+# ── مسیر گزارش و نامزدهای هفتگی — بند ۵ متن ۱۸، ک۱۴ و ک۲۴ ──
+
+class OutPathError(Exception):
+    """مسیر گزارش نامعتبر — پوشه‌ای که نام فایل دارد."""
+
+
+# نامزدهای بازبینی هفتگی سبد از سطرهای رتبه‌دار «| ۱ | **نماد** |» — بخش ۱ سپس بخش ۲.
+# همین رشته در radar-weekly.yml است؛ الگوی پایتون از همین ساخته می‌شود — یک تعریف
+CANDIDATE_SED = r"s/^\| [0-9]+ \| \*\*([A-Z0-9]{2,10})\*\* .*/\1/p"
+_CANDIDATE = re.compile(CANDIDATE_SED[2:-5])
+
+
+def candidates(text: str, n: int = 5) -> list[str]:
+    """همان کار sed و head گام «بازبینی سبد با نامزدهای چرخش»."""
+    out = []
+    for line in text.splitlines():
+        m = _CANDIDATE.match(line)
+        if m:
+            out.append(m.group(1))
+    return out[:n]
+
+
+def out_path(out: str, now: datetime) -> str:
+    """
+    --out با پسوند .md یعنی **فایل** — درس ک۱۴: پیش از این همیشه پوشه ساخته می‌شد و گزارش
+    هفتگی در reports/rotate-DATE.md/ می‌نشست. بی پسوند، رفتار پیشین: پوشه و نام تاریخ‌دار.
+    پوشه‌ای که نام فایل دارد خطای صریح است، نه نوشتن بی‌صدا داخلش.
+    """
+    if out.lower().endswith(".md"):
+        if os.path.isdir(out):
+            raise OutPathError(f"{out} پوشه است، نه فایل — گزارش قدیمی ک۱۴؛ جابه‌جایش کن")
+        return out
+    return os.path.join(out, f"ROTATE_{now.strftime('%Y%m%d_%H%M')}.md")
+
+
+def write_report(rep: str, out: str, now: datetime) -> str:
+    fn = out_path(out, now)
+    os.makedirs(os.path.dirname(fn) or ".", exist_ok=True)
+    with open(fn, "w", encoding="utf-8") as f:
+        f.write(rep)
+    return fn
+
+
 def score(row: dict) -> tuple:
     """
     امتیاز چرخش ۰ تا ۲. قانون سخت: قدرت نسبی باید در **هر دو** پنجره مثبت باشد،
@@ -450,7 +493,8 @@ def main() -> int:
     ap.add_argument("--deep", type=int, default=5,
                     help="برای چند نامزد برتر آزمون پامپ اجرا شود")
     ap.add_argument("--exclude", default="", help="نمادهای حذفی، جدا با کاما")
-    ap.add_argument("--out", default="out")
+    ap.add_argument("--out", default="out",
+                    help="فایل .md، یا پوشه برای نام تاریخ‌دار — ک۱۴")
     ap.add_argument("--stdout", action="store_true")
     a = ap.parse_args()
 
@@ -524,9 +568,11 @@ def main() -> int:
     if a.stdout:
         print(rep)
     else:
-        os.makedirs(a.out, exist_ok=True)
-        fn = os.path.join(a.out, f"ROTATE_{datetime.now(UTC).strftime('%Y%m%d_%H%M')}.md")
-        open(fn, "w", encoding="utf-8").write(rep)
+        try:
+            fn = write_report(rep, a.out, datetime.now(UTC))
+        except OutPathError as exc:
+            print(f"⛔ {exc}", file=sys.stderr)
+            return 5
         print(f"\n✅ {fn}  ({time.time()-t0:.0f} ثانیه)", file=sys.stderr)
     return 0
 

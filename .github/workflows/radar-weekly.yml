@@ -106,8 +106,9 @@ jobs:
         run: |
           D=$(date -u +%Y-%m-%d)
           if [ -f holdings.json ]; then
-            CANDS=$(grep -oE '^\| *[A-Z0-9]{2,10} ' "reports/rotate-$D.md" 2>/dev/null \
-                    | tr -d '| ' | head -5 | paste -sd, -) || CANDS=""
+            # سطرهای رتبه‌دار گزارش چرخش — بند ۵ متن ۱۸؛ الگو همان radar_rotate.CANDIDATE_SED
+            CANDS=$(sed -nE 's/^\| [0-9]+ \| \*\*([A-Z0-9]{2,10})\*\* .*/\1/p' \
+                    "reports/rotate-$D.md" 2>/dev/null | head -5 | paste -sd, -) || CANDS=""
             echo "نامزدها: ${CANDS:-هیچ}"
             if ! python radar_book.py \
                    --holdings holdings.json \
