@@ -285,6 +285,10 @@ jobs:
             { echo "## تازگی داده‌های دستی"; echo; echo "⚠️ سنجش تازگی خطا داد:"; echo
               echo '```'; tail -c 1500 /tmp/staleness.err; echo '```'; } > /tmp/staleness.md
           fi
+          # تقویم دستی ۷ روز آینده با ساعت تهران — بند ۳ متن ۲۰. بیرون از گروه، به همان دلیل
+          if ! python radar_calendar.py --section /tmp/calendar_section.md 2> /tmp/calendar.err; then
+            echo "::error::تقویم رویداد دستی خوانا نیست — events_calendar.json"
+          fi
           # سفارش‌های زنده — بند ۱ متن ۲۰؛ فقط نمایش. بیرون از گروه، به همان دلیل بالا
           if ! python radar_watch.py --orders --watch watch.json > /tmp/orders.md 2> /tmp/orders.err; then
             echo "::error::بخش سفارش‌های زنده خطا داد"
@@ -322,6 +326,12 @@ jobs:
               cat /tmp/context_section.md
             else
               echo "⚠️ لایه زمینه: بخش ساخته نشد"
+            fi
+            echo
+            if [ -s /tmp/calendar_section.md ]; then
+              cat /tmp/calendar_section.md
+            else
+              echo "⚠️ تقویم رویداد دستی: بخش ساخته نشد"
             fi
             echo
             cat /tmp/orders.md

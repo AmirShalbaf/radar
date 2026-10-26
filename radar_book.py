@@ -1049,7 +1049,8 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
                  reserve: dict | None = None,
                  regime_score: float | None = None,
                  summary: dict | None = None,
-                 rebuy: dict | None = None) -> str:
+                 rebuy: dict | None = None,
+                 event_actions: list[str] | None = None) -> str:
     """
     گزارش دو دفتر — تصمیم کاربر، ۲۵ سپتامبر ۲۰۲۶.
 
@@ -1069,7 +1070,8 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     پیشرفت نقشه را نشان می‌دهد نه فروش به ترتیب بخش ۵ — نشست ۳ب. summary اگر
     داده شود، میدان line می‌گیرد: خط بالای پیام روزانه از daily_line، با
     regime_score — بازبینی ۲۳ اکتبر. rebuy سهمیه همه نقشه‌ها و بودجه آزادشده است —
-    بند ۳ متن ۱۸؛ ردیف اقدام بودجه فقط در روز تغییر باند، یک بار — ک۹۵.
+    بند ۳ متن ۱۸؛ ردیف اقدام بودجه فقط در روز تغییر باند، یک بار — ک۹۵. event_actions
+    ردیف «موقعیت تازه نه» تقویم دستی است، فقط در پنجره‌اش — بند ۳ متن ۲۰؛ اول فهرست.
     """
     plan_live = bool(reserve and reserve["left"])
     regime_warnings = regime_warnings or []
@@ -1344,7 +1346,8 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
         o.extend(_reserve_lines(reserve, reg))
     if rebuy:
         o.extend(_rebuy_lines(rebuy))
-    actions: list[str] = []
+    # پنجره رویداد با اهمیت بالا — بند ۳ متن ۲۰؛ اول فهرست، چون هر اقدام خرید بعدی را می‌بندد
+    actions: list[str] = list(event_actions or [])
     rel = (rebuy or {}).get("release")
     if rel is not None and rel["day"] == rebuy.get("today"):
         amt = rebuy.get("amount")
@@ -1543,6 +1546,8 @@ def main() -> int:
                     help="یک خط بالای پیام روزانه — رژیم، هدف، ذخیره، کسری، اقدام سبد")
     ap.add_argument("--regime-history", dest="regime_history", default="regime_history.json",
                     help="تاریخچه رژیم — باند با هیسترزیس روزها برای بودجه آزادشده، متن ۱۸")
+    ap.add_argument("--events", default="events_calendar.json",
+                    help="تقویم رویداد دستی — ردیف «موقعیت تازه نه» در پنجره، بند ۳ متن ۲۰")
     a = ap.parse_args()
 
     if a.init:
@@ -1662,12 +1667,20 @@ def main() -> int:
             level_notes.append(f"⛔ سهمیه و بودجه بازخرید ساخته نشد — {type(exc).__name__}: "
                                f"{str(exc)[:200]}")
     save_state(state)
+    import radar_calendar as RC
+    try:
+        event_actions = RC.no_new_actions(RC.load(a.events), datetime.now(UTC))
+    except RC.CalendarError as exc:              # بلند در گزارش، نه بلعیده
+        event_actions = []
+        level_notes.append(f"⛔ تقویم رویداد خوانا نیست — {exc}. پنجره «موقعیت تازه نه» "
+                           "سنجیده نشد")
     summary: dict = {}
     txt = build_report(h, rows, reg, cands, info.source, baseline,
                        info.warnings, val=val, heat=heat, reentry=reentry,
                        tband=tband, tband_note=tband_note, level_notes=level_notes,
                        candle_notes=CANDLE_NOTES, reserve=rview,
-                       regime_score=info.score, summary=summary, rebuy=rebuy)
+                       regime_score=info.score, summary=summary, rebuy=rebuy,
+                       event_actions=event_actions)
     if a.line:
         with open(a.line, "w", encoding="utf-8") as f:
             f.write(summary["line"] + "\n")

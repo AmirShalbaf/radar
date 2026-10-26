@@ -1777,7 +1777,7 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
              path: str = WATCH_FILE, h: dict | None = None,
              now: datetime | None = None, regime_path: str | None = "regime.json",
              shake: bool = False, history_path: str | None = "regime_history.json",
-             budget: bool = False) -> int:
+             budget: bool = False, events_path: str | None = None) -> int:
     """
     h خالی یعنی holdings.json بار نشد — main پیش‌تر بلند گزارشش کرده. آن‌وقت
     فقط هشدار بازار سنجیده می‌شود، که به دفتر موقعیت وابسته نیست. shake هشدار تکان
@@ -1850,6 +1850,22 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
                 msg.commit(state)
             else:
                 print(f"  ⛔ پیام {msg.what} فرستاده نشد — کلیدش ثبت نشد؛ اجرای بعد دوباره")
+    # یادآوری رویداد تقویم دستی — بند ۳ متن ۲۰. کلید هر یادآوری فقط با رسید موفق
+    if events_path:
+        import radar_calendar as RC
+        try:
+            cal = RC.load(events_path)
+        except RC.CalendarError as exc:
+            print(f"  ⚠️ events_calendar: {exc} — یادآوری رویداد سنجیده نشد")
+            cal = None
+        for key, text in (RC.reminders(cal, state, now) if cal else []):
+            msg = Msg(text, "یادآوری رویداد", {key: True})
+            res = notify(msg, quiet=False)
+            n += 1
+            if res.ok:
+                msg.commit(state)
+            else:
+                print(f"  ⛔ پیام {msg.what} فرستاده نشد — کلیدش ثبت نشد؛ اجرای بعد دوباره")
     # پیام بسته هفتگی — نشست ۱۱. پس از سنجش‌های بالا، تا خطایش جلوی پیام نقض و
     # مهلت را نگیرد؛ بی holdings.json پوزیشنی برای گزارش نیست
     if h is not None:
@@ -1875,6 +1891,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--orders", action="store_true",
                     help="بخش سفارش‌های زنده برای گزارش روزانه و خروج — بند ۱ متن ۲۰")
     ap.add_argument("--holdings", default="holdings.json")
+    ap.add_argument("--events", default="events_calendar.json",
+                    help="تقویم رویداد دستی برای یادآوری — بند ۳ متن ۲۰")
     ap.add_argument("--regime-file", default="regime.json", dest="regime_file",
                     help="منبع میانگین ساده ۵۰ هفته بیت‌کوین برای هشدار بازار")
     a = ap.parse_args(argv)
@@ -1946,14 +1964,15 @@ def main(argv: list[str] | None = None) -> int:
         try:
             while True:
                 run_once(watch, state, a.quiet, path=a.watch, h=h,
-                         regime_path=a.regime_file, shake=True, budget=True)
+                         regime_path=a.regime_file, shake=True, budget=True,
+                         events_path=a.events)
                 time.sleep(a.loop)
         except KeyboardInterrupt:
             print("\nمتوقف شد.")
         return rc or _run_rc()
 
     run_once(watch, state, a.quiet, path=a.watch, h=h, regime_path=a.regime_file, shake=True,
-             budget=True)
+             budget=True, events_path=a.events)
     # کد ۲ و ۳ مقدم‌اند؛ سپس خطای پیام هفتگی، ۵، و ارسال ناموفق، ۴ — گام نبض با
     # هر کد جز صفر ::error:: می‌دهد
     return rc or _run_rc()
