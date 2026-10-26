@@ -423,3 +423,20 @@ def test_rebuy_view_reads_files_and_injected_data(tmp_path) -> None:
     assert rv["ev"]["ranked"][0]["usd"] > 0
     manual = B.rebuy_view(_watch(), _h(), val, {}, None, "x", "y", regime_manual=True)
     assert manual["release"] is None and "دستی" in manual["warn"]
+
+
+# ── بند ۸ متن ۱۹: created واقعی نقشه در فرمان reenter پیام بودجه ──
+
+def test_budget_lines_carry_real_plan_created() -> None:
+    q = RB.open_quota(RB.quota_table(_watch(), _h()))
+    assert q["ETH"]["by_plan"] == {P17["created"]: pytest.approx(0.074),
+                                   P24["created"]: pytest.approx(0.037)}
+    # HYPE 8.9 کمتر از ETH 4.0 + 5 — جای ارز دارای سهمیه را نمی‌گیرد
+    ev = RB.evaluate(_data(ETH=_d(2500.0, 2380.0, 4.0), HYPE=_d(100.0, 70.0, 8.9)), LISTED,
+                     q, 400.0)
+    txt = "\n".join(RB.lines({"from": "انقباضی", "to": "محتاط", "day": "2026-10-28",
+                              "target": 25, "old_target": 40}, 400.0, ev,
+                             {"stable_usd": 640.0, "total": 1600.0}))
+    assert "<created" not in txt
+    assert f"reenter --reserve-plan {P17['created']} --symbol ETH --qty <تا 0.074>" in txt
+    assert f"reenter --reserve-plan {P24['created']} --symbol ETH --qty <تا 0.037>" in txt

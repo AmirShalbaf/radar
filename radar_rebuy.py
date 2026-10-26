@@ -111,9 +111,11 @@ def open_quota(rows: list[dict]) -> dict[str, dict]:
         if r.get("symbol") is None or r["open"] <= P.TOL:
             continue
         q = out.setdefault(r["symbol"], {"qty": 0.0, "last_sale": None, "floor": None,
-                                         "plans": []})
+                                         "plans": [], "by_plan": {}})
         q["qty"] += r["open"]
         q["plans"].append(r["created"])
+        # سهمیه باز هر نقشه — created واقعی در فرمان reenter پیام بودجه، بند ۸ متن ۱۹
+        q["by_plan"][r["created"]] = q["by_plan"].get(r["created"], 0.0) + r["open"]
         if r["last_sale"] is not None and (q["last_sale"] is None or r["last_sale"] > q["last_sale"]):
             q["last_sale"], q["floor"] = r["last_sale"], r["floor"]
         elif q["floor"] is None:
@@ -213,6 +215,7 @@ def evaluate(data: dict, listed: list[str], quotas: dict, amount: float | None,
         q = quotas.get(sym)
         ranked.append({"symbol": sym, "price": px, "rs30": rs, "level": lvl,
                        "level_src": d.get("level_src"), "quota": q["qty"] if q else 0.0,
+                       "by_plan": dict(q.get("by_plan") or {}) if q else {},
                        "last_sale": q["last_sale"] if q else None, "usd": 0.0,
                        "replaces": None, "why": ""})
 
@@ -352,6 +355,10 @@ def lines(release: dict, amount: float | None, ev: dict | None, val: dict,
             "سقف تمرکز" in r["why"] for r in ev["rejected"]) else "")
         out.append(f"در ذخیره می‌ماند: {ev['left']:,.0f} دلار —{cap} نامزد پذیرفته‌شده دیگری "
                    "نیست.")
-    out.append("ثبت بازخرید همان ارز: radar_positions.py reenter --reserve-plan <created نقشه> "
-               f"--symbol <نماد> --qty <مقدار> --price <قیمت> --account <حساب> {P.RECEIPT_ARGS}")
+    # فرمان ثبت هر ارز دارای سهمیه با created واقعی هر نقشه — بند ۸ متن ۱۹
+    for r in got:
+        for created, qo in r.get("by_plan", {}).items():
+            out.append(f"ثبت بازخرید {r['symbol']}: radar_positions.py reenter --reserve-plan "
+                       f"{created} --symbol {r['symbol']} --qty <تا {_n(round(qo, 10))}> "
+                       f"--price <قیمت> --account <حساب> {P.RECEIPT_ARGS}")
     return out

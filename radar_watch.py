@@ -1269,11 +1269,13 @@ def _sigma_feed():
 
 def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
                  regime: dict | None = None, history: dict | None = None,
-                 sigma=None) -> list[Msg]:
+                 sigma=None, weekly=None) -> list[Msg]:
     """
     هشدارهای تکان این اجرا، حداکثر SHAKE_MAX_MSGS. state دست نمی‌خورد؛ کلید هر پیام
     با Msg.commit پس از رسید موفق. پوزیشن ناچیز — زیر DUST_USD — هشدار نمی‌گیرد.
     sigma(نماد، ساعت) انحراف معیار ۹۰ روزه — فقط وقتی حرکت از کف ثابت گذشت خوانده می‌شود.
+    weekly(نماد) آخرین بسته هفتگی — run_once همان بسته‌های check_positions را می‌دهد. اگر
+    زیر سطح است، اقدام فقط به پیام ابطال ارجاع می‌دهد — بند ۸ متن ۱۹.
     """
     hourly = hourly or _shake_feed()
     sigma = sigma or _sigma_feed()
@@ -1296,16 +1298,23 @@ def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
         p = pos.get(sym)
         if p is not None and P.position_qty(p) * px < P.DUST_USD:
             continue
-        lvl = None
+        lvl = since = None
         if p is not None and sym in items:
-            lvl = _position_level(items[sym], p)[0]
+            lvl, since = _position_level(items[sym], p)
         elif p is not None and _num(p.get("invalidation")):
-            lvl = float(p["invalidation"])
+            lvl, since = float(p["invalidation"]), P.level_since(p)
         orders = [s for s in left if s["symbol"] == sym and s["price"] is not None]
         wait = f"اقدامی تا بسته هفتگی لازم نیست — {week_at}."
         act = (f"اقدام: سفارش‌های باز {sym} را ببین — "
                + "، ".join(f"پله {_n(s['price'])}" for s in orders) + f"؛ جز آن {wait}"
                if orders else f"اقدام: {wait}")
+        # هفته نقض — بند ۸ متن ۱۹: ۲۶ اکتبر همان اجرا «خروج کامل» و «اقدامی لازم نیست» هر دو
+        # را می‌گفت. حکم با بسته هفتگی است و پیام ابطال جدا می‌آید؛ این هشدار فقط ارجاع
+        wk_last = weekly(sym)[0] if (weekly is not None and lvl is not None) else None
+        if wk_last and P.judged(wk_last["closed_at"], since) and wk_last["close"] < lvl:
+            act = (f"اقدام: بسته هفتگی تا {wk_last['closed_at'][:10]} زیر سطح بود — "
+                   f"{_n(wk_last['close'])}؛ پیام ابطال هفتگی {sym} را ببین. این هشدار حکم "
+                   "تازه‌ای نمی‌سازد.")
         crossed = False
         if lvl is not None:
             below = [r for r in rows[-24:] if r["low"] < lvl]
@@ -1728,8 +1737,9 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
     # هشدار تکان — بند ۲ متن ۱۸. کلید هر پیام فقط با رسید موفق
     if shake and h is not None:
         doc = regime if need else _read_regime(regime_path)
+        weekly = (lambda s: wk_cache[s] if s in wk_cache else P.weekly_close(s, now=now))
         for msg in shake_alerts(watch, h, state, now, regime=doc,
-                                history=_read_regime(history_path)):
+                                history=_read_regime(history_path), weekly=weekly):
             res = notify(msg, quiet=False)
             n += 1
             if res.ok:

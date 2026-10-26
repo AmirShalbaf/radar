@@ -325,3 +325,46 @@ def test_sigma_fetched_only_past_fixed_threshold() -> None:
     data = {"BTC": _bars(_flat(80000.0)), "SOL": _bars(_flat(110.0))}
     W.shake_alerts(_watch(), _h(), {}, NOW, hourly=_feed(data), sigma=sigma)
     assert asked == []
+
+
+# ── بند ۸ متن ۱۹: هفته نقض — اقدام فقط ارجاع به پیام ابطال ──
+
+def test_breached_week_action_points_to_invalidation_message() -> None:
+    sol = _flat(99.0, 30)
+    bars = _bars(sol, low={27: 96.2})                            # عبور درون‌روزی
+    weekly = lambda s: ({"close": 95.5, "closed_at": "2026-10-26T00:00:00+00:00",
+                         "venue": "okx"}, [])
+    msgs = W.shake_alerts(_watch(), _h(), {}, NOW, hourly=_feed({"BTC": _bars(_flat(80000.0)),
+                                                                  "SOL": bars}),
+                          sigma=lambda s, h: (None, []), weekly=weekly)
+    assert len(msgs) == 1
+    assert "پیام ابطال هفتگی SOL را ببین" in msgs[0] and "95.5" in msgs[0]
+    assert "اقدامی تا بسته هفتگی لازم نیست" not in msgs[0]
+
+
+def test_week_above_level_keeps_wait_action() -> None:
+    sol = _flat(99.0, 30)
+    bars = _bars(sol, low={27: 96.2})
+    weekly = lambda s: ({"close": 101.4, "closed_at": "2026-10-26T00:00:00+00:00",
+                         "venue": "okx"}, [])
+    msgs = W.shake_alerts(_watch(), _h(), {}, NOW, hourly=_feed({"BTC": _bars(_flat(80000.0)),
+                                                                  "SOL": bars}),
+                          sigma=lambda s, h: (None, []), weekly=weekly)
+    assert "اقدامی تا بسته هفتگی لازم نیست" in msgs[0]
+
+
+def test_run_once_passes_weekly_cache_to_shake(tmp_path, monkeypatch) -> None:
+    bars = _bars(_flat(99.0, 30), low={27: 96.2})
+    monkeypatch.setattr(W, "STATE_FILE", str(tmp_path / "state.json"))
+    monkeypatch.setattr(W, "_shake_feed", lambda: _feed({"BTC": _bars(_flat(80000.0)),
+                                                          "SOL": bars}))
+    monkeypatch.setattr(W, "_sigma_feed", lambda: (lambda s, h: (None, [])))
+    monkeypatch.setattr(W, "ticker", lambda s: None)
+    monkeypatch.setattr(W.P, "weekly_close", lambda s, now=None: (
+        {"close": 95.5, "closed_at": "2026-10-26T00:00:00+00:00", "venue": "okx"}, []))
+    sent = []
+    monkeypatch.setattr(TG, "send", lambda text: (sent.append(text), TG.Sent(True, "کد 200"))[1])
+    W.run_once(_watch(), {"weekly_digest_2026-10-26T00:00:00+00:00": {"sent": "x"}}, quiet=True,
+               path=str(tmp_path / "w.json"), h=_h(), now=NOW, regime_path=None, shake=True)
+    cross = [s for s in sent if "زیر سطح ابطال درون‌روز" in s]
+    assert cross and "پیام ابطال هفتگی SOL را ببین" in cross[0]
