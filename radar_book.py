@@ -744,14 +744,15 @@ def _plan_word(rv: dict | None) -> str:
     return "نقشه مهلت‌گذشته" if rv and rv["expired"] else "نقشه فعال"
 
 
-# پنجره بازخرید نزدیک ابطال — حکم از radar_watch.rebuy_status، رویداد ۹۸
+# پنجره بازخرید نزدیک ابطال — حکم از radar_watch.rebuy_status، رویداد ۹۸. متن ۱۸:
+# «سازنده‌شدن تأییدشده» جایش را به «بودجه آزادشده» داد — radar_rebuy.band_release
 REBUY_WINDOW = {
     "open": "**مجاز** — بالای کف و زیر سقف",
-    "above": "نه — بالای سقف؛ فقط با سازنده‌شدن باند",
+    "above": "نه — بالای سقف؛ فقط با بودجه آزادشده",
     "below": "نه — در کف یا زیر آن؛ ابطال",
-    "no_gap": "نه — سقف زیر کف، فروش نزدیک ابطال بود؛ فقط با سازنده‌شدن باند",
+    "no_gap": "نه — سقف زیر کف، فروش نزدیک ابطال بود؛ فقط با بودجه آزادشده",
     "unsold": "— هنوز فروشی نیست",
-    "no_sale": "داده ندارم — قیمت فروش در دفتر کل نیست؛ فقط با سازنده‌شدن باند",
+    "no_sale": "داده ندارم — قیمت فروش در دفتر کل نیست؛ فقط با بودجه آزادشده",
     "no_price": "داده ندارم — قیمت امروز نیامد",
 }
 
@@ -830,18 +831,21 @@ def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
             o += [rv["rebuy_note"], ""]
         gaps = "، ".join(fa(_n(g)) + "٪" for g in
                         sorted({r["min_below_sale_pct"] for r in rv["rebuy"]}))
-        o += ["بازخرید با سازنده‌شدن تأییدشده باند با هیسترزیس، فقط تا مقدار فروخته‌شده "
-              "همان نماد. بازخرید نزدیک ابطال فقط وقتی قیمت بالای کف — سطح ابطال — و "
-              f"دست‌کم {gaps} زیر قیمت واقعی فروش است؛ سقف همین مرز است — رویداد ۹۸.", "",
-              "| نماد | مقدار نقشه | فروخته‌شده تا امروز | قیمت فروش | کف | سقف نزدیک ابطال "
-              "| قیمت امروز | فاصله تا کف | بازخرید نزدیک ابطال |",
-              "|---|---|---|---|---|---|---|---|---|"]
+        o += ["بازخرید همان ارز تا سهمیه باز — فروخته‌شده منهای بازخریده. با بودجه آزادشده، "
+              "یعنی باند با هیسترزیس به هدف ذخیره پایین‌تر رسید، انتخاب ارز با کیفیت است — "
+              "زیربخش «بازخرید با انتخاب کیفی»، متن ۱۸. بازخرید نزدیک ابطال فقط وقتی قیمت "
+              f"بالای کف — سطح ابطال — و دست‌کم {gaps} زیر قیمت واقعی فروش است؛ سقف همین "
+              "مرز است — رویداد ۹۸.", "",
+              "| نماد | مقدار نقشه | فروخته‌شده تا امروز | بازخریده | سهمیه باز | قیمت فروش "
+              "| کف | سقف نزدیک ابطال | قیمت امروز | فاصله تا کف | بازخرید نزدیک ابطال |",
+              "|---|---|---|---|---|---|---|---|---|---|---|"]
         for r in rv["rebuy"]:
             px = _n(r["price"]) if r["price"] is not None else "—"
             dist = f"{r['dist_pct']:+.1f}٪" if r["dist_pct"] is not None else "داده ندارم"
             sale = _n(r["sale"]) if r["sale"] is not None else "—"
             ceil = _n(r["ceiling"]) if r["ceiling"] is not None else "—"
-            o.append(f"| {r['symbol']} | {_n(r['qty'])} | {_n(r['sold'])} | {sale} | "
+            o.append(f"| {r['symbol']} | {_n(r['qty'])} | {_n(r['sold'])} | "
+                     f"{_n(r['rebought'])} | {_n(r['open'])} | {sale} | "
                      f"{_n(r['floor'])} | {ceil} | {px} | {dist} | "
                      f"{REBUY_WINDOW[r['window']]} |")
         o.append("")
@@ -851,6 +855,41 @@ def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
                  f"پر حساب نشد. ثبت: `radar_positions.py trim --reason reserve {P.RECEIPT_ARGS}`")
     if rv["stray"]:
         o.append("")
+    return o
+
+
+def _rebuy_lines(rb: dict) -> list[str]:
+    """
+    سهمیه بازخرید باز همه نقشه‌ها و، با بودجه آزادشده، فهرست رتبه‌دار — بند ۳ متن ۱۸.
+    عددها از radar_rebuy؛ اینجا فقط قالب گزارش.
+    """
+    import radar_rebuy as RB
+    o = ["### سهمیه بازخرید باز — همه نقشه‌ها", "",
+         "فروخته‌شده از `radar_watch.rebuy_status`؛ فروش نقشه بایگانی فقط تا زمان بستنش. "
+         "بازخریده از ردیف‌های `reenter` با سهمیه reserve همان نقشه.", "",
+         "| نقشه | نماد | مقدار نقشه | فروخته‌شده | بازخریده | سهمیه باز | قیمت فروش | کف |",
+         "|---|---|---|---|---|---|---|---|"]
+    for r in rb["rows"]:
+        if r["symbol"] is None:
+            sold = "، ".join(f"{s} {_n(q)}" for s, q in r["sold_any"].items()) or "هیچ"
+            o.append(f"| {r['plan']} | — | — | {sold} | — | بی تعهد بازخرید | — | — |")
+            continue
+        sale = _n(r["sale"]) if r["sale"] is not None else "—"
+        o.append(f"| {r['plan']} | {r['symbol']} | {_n(r['qty'])} | {_n(r['sold'])} | "
+                 f"{_n(r['rebought'])} | **{_n(round(r['open'], 10))}** | {sale} | "
+                 f"{_n(r['floor'])} |")
+    o.append("")
+    rel = rb.get("release")
+    if rel is None:
+        why = rb.get("warn")
+        o += [f"بودجه آزادشده: نیست — {why}." if why else
+              "بودجه آزادشده: نیست — آخرین تغییر باند با هیسترزیس رو به هدف ذخیره پایین‌تر "
+              "نبود.", ""]
+        return o
+    o += ["### بازخرید با انتخاب کیفی", ""]
+    o += [ln if ln.startswith(("-", "|")) else ln + "  " for ln in
+          RB.lines(rel, rb["amount"], rb.get("ev"), rb["val"])]
+    o.append("")
     return o
 
 
@@ -866,11 +905,12 @@ def _plan_actions(rv: dict) -> list[str]:
     if st == "cancel":
         out.append(f"**{t}** — شرط لغو برقرار شد: باند با هیسترزیس {rv['band']}. لغو {n} "
                    f"پله مانده در {acct}؛ ثبت در `watch.json`، میدان cancelled با زمان و دلیل")
-        back = [r for r in rv.get("rebuy") or [] if r["sold"] > 0]
+        back = [r for r in rv.get("rebuy") or [] if r["open"] > 0]
         if back:
-            out.append(f"**بازخرید — {t}** — همان مقدار فروخته‌شده: "
-                       + "، ".join(f"{r['symbol']} {_n(r['sold'])}" for r in back)
-                       + ". ثبت بازخرید در دفتر کل هنوز فرمان ندارد — ک۸۸")
+            out.append(f"**بازخرید — {t}** — سهمیه باز: "
+                       + "، ".join(f"{r['symbol']} {_n(r['open'])}" for r in back)
+                       + ". انتخاب ارز با کیفیت — زیربخش «بازخرید با انتخاب کیفی»؛ ثبت همان "
+                       "ارز با `radar_positions.py reenter --reserve-plan <created>`")
     elif not rv["expired"]:
         out.append(f"**{t}** — {n} پله مانده، مهلت {dl}. هر پله پرشده: "
                    f"`radar_positions.py trim --reason reserve {P.RECEIPT_ARGS}`")
@@ -973,7 +1013,8 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
                  candle_notes: list[str] | None = None,
                  reserve: dict | None = None,
                  regime_score: float | None = None,
-                 summary: dict | None = None) -> str:
+                 summary: dict | None = None,
+                 rebuy: dict | None = None) -> str:
     """
     گزارش دو دفتر — تصمیم کاربر، ۲۵ سپتامبر ۲۰۲۶.
 
@@ -992,7 +1033,8 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     reserve نمای نقشه ذخیره watch.json از reserve_view است: با پله مانده، بخش ۶
     پیشرفت نقشه را نشان می‌دهد نه فروش به ترتیب بخش ۵ — نشست ۳ب. summary اگر
     داده شود، میدان line می‌گیرد: خط بالای پیام روزانه از daily_line، با
-    regime_score — بازبینی ۲۳ اکتبر.
+    regime_score — بازبینی ۲۳ اکتبر. rebuy سهمیه همه نقشه‌ها و بودجه آزادشده است —
+    بند ۳ متن ۱۸؛ ردیف اقدام بودجه فقط در روز تغییر باند، یک بار — ک۹۵.
     """
     plan_live = bool(reserve and reserve["left"])
     regime_warnings = regime_warnings or []
@@ -1264,7 +1306,18 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     W("")
     if reserve:
         o.extend(_reserve_lines(reserve, reg))
+    if rebuy:
+        o.extend(_rebuy_lines(rebuy))
     actions: list[str] = []
+    rel = (rebuy or {}).get("release")
+    if rel is not None and rel["day"] == rebuy.get("today"):
+        amt = rebuy.get("amount")
+        cell = ("داده ندارم — ارزش سبد ناقص" if amt is None else
+                f"{amt:,.0f} دلار؛ فهرست رتبه‌دار در زیربخش «بازخرید با انتخاب کیفی»"
+                if amt > 0 else "هیچ — ذخیره زیر یا برابر هدف تازه")
+        actions.append(f"**بودجه آزادشده** — باند با هیسترزیس از {rel['from']} به {rel['to']}؛ "
+                       f"هدف ذخیره {fa(rel['old_target'])}٪ به {fa(rel['target'])}٪. بودجه: "
+                       f"{cell}. رادار فقط پیشنهاد می‌دهد — تصمیم با تو")
     for r in live:
         p = r["pos"]
         if r["verdict"].startswith("⛔"):
@@ -1370,6 +1423,58 @@ def level_check(h: dict, watch_path: str) -> tuple[list[str], bool]:
     return notes, bool(bad)
 
 
+def _watch_doc(watch_path: str) -> dict | None:
+    """کل watch.json — برای نقشه‌های بایگانی و dormant. غایب یا ناخوانا: None."""
+    try:
+        with open(watch_path, encoding="utf-8") as f:
+            w = json.load(f)
+    except (OSError, ValueError):
+        return None
+    return w if isinstance(w, dict) else None
+
+
+def _json_doc(path: str) -> dict | None:
+    try:
+        with open(path, encoding="utf-8") as f:
+            d = json.load(f)
+    except (OSError, ValueError):
+        return None
+    return d if isinstance(d, dict) else None
+
+
+def rebuy_view(watch: dict, h: dict, val: dict, frames: dict, btc, regime_path: str,
+               history_path: str, regime_manual: bool = False,
+               now: datetime | None = None, gather=None, listed=None) -> dict:
+    """
+    سهمیه همه نقشه‌ها و بودجه آزادشده — بند ۳ متن ۱۸. رژیم دستی --regime باند با
+    هیسترزیس ندارد، پس بودجه سنجیده نمی‌شود. gather و listed تزریق‌پذیرند.
+    """
+    import radar_rebuy as RB
+    now = now or datetime.now(UTC)
+    rows = RB.quota_table(watch, h)
+    out = {"rows": rows, "release": None, "warn": None, "amount": None, "ev": None,
+           "val": val, "today": None}
+    if regime_manual:
+        out["warn"] = "رژیم دستی — باند با هیسترزیس سنجیده نشد"
+        return out
+    regime = _json_doc(regime_path)
+    rel, warn = RB.band_release(regime, _json_doc(history_path), now)
+    out.update(release=rel, warn=warn)
+    if regime and isinstance(regime.get("generated_at"), str):
+        out["today"] = f"{datetime.fromisoformat(regime['generated_at']).astimezone(UTC):%Y-%m-%d}"
+    if rel is None:
+        return out
+    out["amount"] = RB.budget(rel, val)
+    if out["amount"] is not None and out["amount"] > 0:
+        quotas = RB.open_quota(rows)
+        lst = (listed or RB.watch_list)()
+        cands = RB.candidates(lst, quotas)
+        data = (gather(cands, quotas) if gather else
+                RB.gather(cands, watch, h, quotas, frames=frames, btc=btc, now=now))
+        out["ev"] = RB.evaluate(data, lst, quotas, out["amount"])
+    return out
+
+
 def _reserve_plan(watch_path: str) -> dict | None:
     """
     بخش reserve_plan فایل پایش. فایل غایب یا ناخوانا اینجا None است — level_check
@@ -1400,6 +1505,8 @@ def main() -> int:
     ap.add_argument("--out", default=None)
     ap.add_argument("--line", default=None,
                     help="یک خط بالای پیام روزانه — رژیم، هدف، ذخیره، کسری، اقدام سبد")
+    ap.add_argument("--regime-history", dest="regime_history", default="regime_history.json",
+                    help="تاریخچه رژیم — باند با هیسترزیس روزها برای بودجه آزادشده، متن ۱۸")
     a = ap.parse_args()
 
     if a.init:
@@ -1509,13 +1616,22 @@ def main() -> int:
         except (RW.WatchError, KeyError, TypeError, ValueError) as exc:
             level_notes.append(f"⛔ نقشه ذخیره `watch.json` خوانا نیست — {exc}. بخش ۶ "
                                "بی‌نقشه ساخته شد؛ پیش از هر فروش، نقشه را درست کن.")
+    rebuy = None
+    wdoc = _watch_doc(a.watch)
+    if wdoc is not None:
+        try:
+            rebuy = rebuy_view(wdoc, h, val, frames, btc, a.regime_file, a.regime_history,
+                               regime_manual=a.regime is not None)
+        except Exception as exc:                 # بلند در گزارش، نه بلعیده
+            level_notes.append(f"⛔ سهمیه و بودجه بازخرید ساخته نشد — {type(exc).__name__}: "
+                               f"{str(exc)[:200]}")
     save_state(state)
     summary: dict = {}
     txt = build_report(h, rows, reg, cands, info.source, baseline,
                        info.warnings, val=val, heat=heat, reentry=reentry,
                        tband=tband, tband_note=tband_note, level_notes=level_notes,
                        candle_notes=CANDLE_NOTES, reserve=rview,
-                       regime_score=info.score, summary=summary)
+                       regime_score=info.score, summary=summary, rebuy=rebuy)
     if a.line:
         with open(a.line, "w", encoding="utf-8") as f:
             f.write(summary["line"] + "\n")

@@ -527,6 +527,17 @@ def validate_watch(w: dict) -> None:
             # بند ۴ ایستگاه آخر نشست ۳: عدد ثابت از بسته هفته بعد کهنه می‌شد
             raise WatchError(f"market ردیف {i}: عدد ثابت weekly_close_below مجاز نیست — "
                              "میانگین از regime.json میدان btc_sma50w خوانده می‌شود")
+    # پایش خفته — موقعیت ناچیز پس از فروش ذخیره، با سطح پیشینش؛ reenter با سهمیه reserve
+    # آن را به positions برمی‌گرداند — متن ۱۸
+    dm = w.get("dormant")
+    if dm is not None and not isinstance(dm, list):
+        raise WatchError("dormant باید فهرست باشد")
+    for i, d in enumerate(dm or [], 1):
+        if (not isinstance(d, dict) or not isinstance(d.get("symbol"), str)
+                or not _num(d.get("invalidation")) or d["invalidation"] <= 0
+                or not isinstance(d.get("reason"), str) or not d["reason"].strip()):
+            raise WatchError(f"dormant ردیف {i}: نماد، سطح ابطال مثبت و دلیل لازم است")
+        _aware(d.get("invalidation_since"), f"dormant ردیف {i}: invalidation_since — {FULL}")
     rp = w.get("reserve_plan")
     if rp is not None:
         _validate_plan(rp, "reserve_plan")
@@ -676,10 +687,14 @@ def reserve_progress(rp: dict, h: dict) -> list[dict]:
     return out
 
 
-def rebuy_status(rp: dict, h: dict, prices: dict) -> list[dict]:
+def rebuy_status(rp: dict, h: dict, prices: dict, until: datetime | None = None) -> list[dict]:
     """
-    نقشه بازخرید هر پله rebuy — تنها تعریف قانون بازخرید؛ سبد از همین می‌خواند و
-    گسترش reenter در ک۸۸ هم باید از همین بخواند.
+    نقشه بازخرید هر پله rebuy — تنها تعریف قانون بازخرید؛ سبد، radar_rebuy و reenter با
+    سهمیه reserve در radar_positions — ک۸۸ — همه از همین می‌خوانند.
+
+    until برای نقشه بایگانی است: فروش فقط تا زمان بستن نقشه شمرده می‌شود، تا فروش نقشه
+    بعدی دو بار شمرده نشود. rebought جمع ردیف‌های reenter با quota = reserve و plan همین
+    نقشه است، بی‌مرز زمانی؛ open = فروخته‌شده − بازخریده، نه کمتر از صفر — متن ۱۸.
 
     تصمیم کاربر، ۹ اکتبر ۲۰۲۶، رویداد ۹۸: بازخرید «نزدیک سطح ابطال» فقط وقتی مجاز
     است که قیمت بالای کف — سطح ابطال — و دست‌کم min_below_sale_pct زیر قیمت واقعی
@@ -699,7 +714,16 @@ def rebuy_status(rp: dict, h: dict, prices: dict) -> list[dict]:
     """
     sold: dict[str, float] = {}
     sale: dict[str, list] = {}
-    for s in reserve_progress(rp, h):
+    view = h if until is None else {**h, "ledger": [r for r in h.get("ledger", [])
+                                                    if _aware(r.get("at"), "زمان ردیف دفتر کل")
+                                                    <= until]}
+    created = _aware(rp["created"], "reserve_plan.created")
+    back: dict[str, float] = {}
+    for r in h.get("ledger", []):
+        if (r.get("action") == "reenter" and r.get("quota") == "reserve" and r.get("plan")
+                and _aware(r["plan"], "plan ردیف reenter") == created):
+            back[r["symbol"]] = back.get(r["symbol"], 0.0) + float(r["delta"])
+    for s in reserve_progress(rp, view):
         if s["filled"]:
             sold[s["symbol"]] = sold.get(s["symbol"], 0.0) + s["qty"]
             sale.setdefault(s["symbol"], []).append(s["fill_price"])
@@ -725,10 +749,42 @@ def rebuy_status(rp: dict, h: dict, prices: dict) -> list[dict]:
             window = "above"
         else:
             window = "open"
+        got = min(s["qty"], sold.get(sym, 0.0))
         out.append({"symbol": sym, "qty": s["qty"], "floor": floor,
-                    "min_below_sale_pct": gap, "sold": min(s["qty"], sold.get(sym, 0.0)),
+                    "min_below_sale_pct": gap, "sold": got,
+                    "rebought": back.get(sym, 0.0), "open": max(0.0, got - back.get(sym, 0.0)),
                     "sale": sp, "ceiling": ceiling, "price": p, "window": window})
     return out
+
+
+# حکم بازخرید همان ارز، از پنجره rebuy_status — رویداد ۹۸، و متن ۱۸: «سازنده‌شدن تأییدشده»
+# جایش را به «بودجه آزادشده» داد — باند با هیسترزیس به هدف ذخیره پایین‌تر رسید
+REBUY_WHY = {
+    "below": "قیمت در کف یا زیر آن — ابطال؛ بازخرید نه، حتی با بودجه آزادشده",
+    "above": "بالای سقف نزدیک ابطال و بودجه آزاد نشده",
+    "no_gap": "سقف زیر کف — فروش نزدیک ابطال بود؛ فقط با بودجه آزادشده",
+    "no_sale": "داده ندارم — قیمت فروش در دفتر کل نیست؛ فقط با بودجه آزادشده",
+    "no_price": "داده ندارم — قیمت امروز نیامد",
+    "unsold": "هنوز فروشی نیست",
+}
+
+
+def rebuy_verdict(row: dict, released: bool) -> tuple[bool, str]:
+    """
+    مجوز بازخرید همان ارز برای یک ردیف rebuy_status. تنها تعریف حکم؛ reenter با سهمیه
+    reserve و سبد از همین می‌خوانند. released یعنی بودجه آزادشده — radar_rebuy.band_release.
+    """
+    if row["open"] <= STEP_TOL * row["qty"]:
+        return False, "سهمیه باز نیست — فروخته‌شده بازخرید شده یا هنوز فروشی نیست"
+    w = row["window"]
+    if w == "below":
+        return False, REBUY_WHY[w]
+    if w == "open":
+        return True, (f"بازخرید نزدیک ابطال — بالای کف {_n(row['floor'])} و دست‌کم "
+                      f"{fa(_n(row['min_below_sale_pct']))}٪ زیر قیمت فروش")
+    if released:
+        return True, "بودجه آزادشده — باند با هیسترزیس به هدف ذخیره پایین‌تر رسید"
+    return False, REBUY_WHY.get(w, w)
 
 
 class Msg(str):
@@ -1057,10 +1113,11 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
 
         if rule == "cancel" and left:
             # شرط برقرار: پله پرنشده لغو می‌شود، پیش یا پس از مهلت؛ هشدار رسیدن قیمت نه
-            # باند سازنده: بازخرید مجاز است، بی‌شرط ۵٪ — رویداد ۹۸؛ مقدار از rebuy_status
-            rb = [(r["symbol"], r["sold"]) for r in rebuy_status(rp, h, {}) if r["sold"] > 0]
-            tail = ("\nبازخرید همان مقدار فروخته‌شده — " + "، ".join(
-                f"{sym} {_n(q)}" for sym, q in rb) if rb else
+            # بازخرید با انتخاب کیفی — متن ۱۸: پیام بودجه آزادشده جدا می‌آید؛ اینجا فقط سهمیه
+            rb = [(r["symbol"], r["open"]) for r in rebuy_status(rp, h, {}) if r["open"] > 0]
+            tail = ("\nسهمیه بازخرید باز — " + "، ".join(
+                f"{sym} {_n(q)}" for sym, q in rb) + ". انتخاب ارز با کیفیت؛ پیام بودجه "
+                "آزادشده جدا می‌آید." if rb else
                     "\nهنوز پله‌ای پر نشده؛ بازخریدی نیست.") if rp.get("rebuy") else ""
             _once(state, f"reserve_cancel_{rp['created']}", msgs,
                   f"🟢 شرط لغو {title} برقرار شد — باند با هیسترزیس {band} (مهلت {dl}). "
@@ -1250,6 +1307,40 @@ def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
         print(f"  هشدار تکان: {fa(len(fresh) - SHAKE_MAX_MSGS)} رویداد بیرون از سقف "
               f"{fa(SHAKE_MAX_MSGS)} پیام — اجرای بعد")
     return [Msg(text, f"تکان {kind}", {key: True}) for kind, _, key, text in fresh[:SHAKE_MAX_MSGS]]
+
+
+# ─────────────────────── بودجه آزادشده — ک۹۵، بند ۳ متن ۱۸ ───────────────────────
+
+def budget_alert(watch: dict, h: dict, state: dict, now: datetime, regime: dict | None,
+                 history: dict | None, price=None, gather=None, listed=None) -> list[Msg]:
+    """
+    یک پیام برای هر تغییر باند با هیسترزیس رو به هدف ذخیره پایین‌تر — حتی اگر همه پله‌های
+    نقشه فروخته شده باشند، ک۹۵. کلید فقط پس از رسید موفق. بودجه، سهمیه، پذیرش و رتبه از
+    radar_rebuy؛ رادار فقط پیشنهاد می‌دهد.
+    """
+    import radar_rebuy as RB                    # دیر: radar_rebuy خودش این پرونده را می‌خواند
+    release, warn = RB.band_release(regime, history, now)
+    if release is None:
+        if warn:
+            print(f"  بودجه آزادشده: {warn} — سنجیده نشد")
+        return []
+    key = f"rebuy_budget_{release['day']}_{release['to']}"
+    if state.get(key):
+        return []
+    price = price or ticker
+    syms = {p["symbol"] for p in h.get("positions", []) if p.get("status") == "open"}
+    val = P.value(h, {s: price(s) for s in sorted(syms)})
+    amount = RB.budget(release, val)
+    quotas = RB.open_quota(RB.quota_table(watch, h))
+    ev = None
+    if amount is not None and amount > 0:
+        lst = (listed or RB.watch_list)()
+        cands = RB.candidates(lst, quotas)
+        data = (gather(cands, quotas) if gather else
+                RB.gather(cands, watch, h, quotas, now=now))
+        ev = RB.evaluate(data, lst, quotas, amount)
+    text = "\n".join(RB.lines(release, amount, ev, val, plain=True))
+    return [Msg(text, "بودجه آزادشده", {key: True})]
 
 
 # ─────────────────────── پیام بسته هفتگی — نشست ۱۱ ───────────────────────
@@ -1504,7 +1595,8 @@ def _read_regime(path: str | None) -> dict | None:
 def run_once(watch: dict, state: dict, quiet: bool = False,
              path: str = WATCH_FILE, h: dict | None = None,
              now: datetime | None = None, regime_path: str | None = "regime.json",
-             shake: bool = False, history_path: str | None = "regime_history.json") -> int:
+             shake: bool = False, history_path: str | None = "regime_history.json",
+             budget: bool = False) -> int:
     """
     h خالی یعنی holdings.json بار نشد — main پیش‌تر بلند گزارشش کرده. آن‌وقت
     فقط هشدار بازار سنجیده می‌شود، که به دفتر موقعیت وابسته نیست. shake هشدار تکان
@@ -1560,6 +1652,16 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
         doc = regime if need else _read_regime(regime_path)
         for msg in shake_alerts(watch, h, state, now, regime=doc,
                                 history=_read_regime(history_path)):
+            res = notify(msg, quiet=False)
+            n += 1
+            if res.ok:
+                msg.commit(state)
+            else:
+                print(f"  ⛔ پیام {msg.what} فرستاده نشد — کلیدش ثبت نشد؛ اجرای بعد دوباره")
+    # بودجه آزادشده — ک۹۵، بند ۳ متن ۱۸. کلید فقط با رسید موفق
+    if budget and h is not None:
+        doc = regime if need else _read_regime(regime_path)
+        for msg in budget_alert(watch, h, state, now, doc, _read_regime(history_path)):
             res = notify(msg, quiet=False)
             n += 1
             if res.ok:
@@ -1650,13 +1752,14 @@ def main(argv: list[str] | None = None) -> int:
         try:
             while True:
                 run_once(watch, state, a.quiet, path=a.watch, h=h,
-                         regime_path=a.regime_file, shake=True)
+                         regime_path=a.regime_file, shake=True, budget=True)
                 time.sleep(a.loop)
         except KeyboardInterrupt:
             print("\nمتوقف شد.")
         return rc or _run_rc()
 
-    run_once(watch, state, a.quiet, path=a.watch, h=h, regime_path=a.regime_file, shake=True)
+    run_once(watch, state, a.quiet, path=a.watch, h=h, regime_path=a.regime_file, shake=True,
+             budget=True)
     # کد ۲ و ۳ مقدم‌اند؛ سپس خطای پیام هفتگی، ۵، و ارسال ناموفق، ۴ — گام نبض با
     # هر کد جز صفر ::error:: می‌دهد
     return rc or _run_rc()

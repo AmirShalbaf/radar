@@ -28,7 +28,10 @@ holdings.json نسخه ۲ بر پایه **مقدار** است، نه دلار. �
 
     trim     کاهش، با دلیل reserve (ذخیره) یا rebalance (بازتوازن)
     exit     خروج کامل با ابطال؛ سطح و مقدار، سهمیه ورود دوباره می‌سازند
-    reenter  ورود دوباره، فقط اگر بسته هفتگی بالای همان سطح رفت، تا سهمیه
+    reenter  ورود دوباره، فقط اگر بسته هفتگی بالای همان سطح رفت، تا سهمیه. با
+             --reserve-plan بازخرید سهمیه reserve یک نقشه ذخیره، تا سهمیه باز همان نقشه —
+             ک۸۸، متن ۱۸: رسید --gross و --fee اجباری و نقد کم می‌شود؛ حکم منفی
+             radar_watch.rebuy_verdict فقط با --deviation و شناسه RD با برچسب سرپیچی
     add      افزایش، فقط با شناسه تصمیم و ستاپ ثبت‌شده در دفترچه با
              book = position
     adjust   پاداش سهام‌گذاری یا کارمزد، حداکثر ۱٪ مقدار نماد در هر ردیف
@@ -60,6 +63,9 @@ radar_book.py بتواند بی‌آنکه استقلالش بشکند ایمپ�
         --gross 180 --fee 0.18 --order-id ... --at 2026-10-17T15:33:55+00:00
     python radar_positions.py exit --symbol SOL --price 95 --level 100 --gross ... --fee ...
     python radar_positions.py reenter --symbol SOL --qty 4 --price 105 --account LBank
+    python radar_positions.py reenter --reserve-plan 2026-10-24T03:46:49+00:00 --symbol TAO \
+        --qty 0.153 --price 233 --account LBank --gross 35.649 --fee 0.0713 --order-id ... \
+        --at 2026-10-27T08:00:00+00:00
     python radar_positions.py add --symbol LINK --qty 10 --price 14 --account LBank \\
         --decision-id D-... --setup-name ...
     python radar_positions.py adjust --symbol SOL --qty 0.02 --reason "پاداش سهام‌گذاری"
@@ -402,6 +408,17 @@ def _replay(h: dict, jidx: dict, check_journal: bool = True) -> dict:
             if not _num(r.get("level")) or not _num(r.get("price")):
                 raise PositionsError(f"{where}: سطح یا قیمت خروج نیست")
             _allow(reentry, sym, float(r["level"]), cur, r["at"])
+        elif act == "reenter" and r.get("quota") == "reserve":
+            # بازخرید نقشه ذخیره — ک۸۸، متن ۱۸. سهمیه با watch.json هنگام فرمان سنجیده
+            # می‌شود؛ اینجا شکل ردیف و هزینه نقدش
+            fee_coin = r.get("fee_asset") == sym
+            if (not d > 0 or not isinstance(r.get("plan"), str) or not _num(r.get("price"))
+                    or not _num(r.get("gross")) or not _num(r.get("fee")) or r["fee"] < 0
+                    or not _num(r.get("cost"))
+                    or not _close(r["cost"], r["gross"] + (0.0 if fee_coin else r["fee"]))):
+                raise PositionsError(f"{where}: بازخرید reserve نقشه، قیمت و رسید --gross و --fee "
+                                     "و هزینه نقد سازگار لازم دارد")
+            _ts(r["plan"], f"{where}: plan")
         elif act == "reenter":
             st = reentry.get(sym)
             if st is None:
@@ -469,7 +486,7 @@ def cash_expected(h: dict) -> dict:
     """
     نقد انتظاری هر (دارایی، حساب) از دفتر کل — ناوردای نقد، بازبینی ۲۳ اکتبر:
 
-        نقد منجمد + خالص فروش‌ها + درآمد − برداشت‌ها = نقد فعلی
+        نقد منجمد + خالص فروش‌ها + درآمد − برداشت‌ها − هزینه بازخرید = نقد فعلی
 
     خالص هر ردیف رسیددار به تتر همان حساب می‌رود — همان کار _receipt. درآمد و
     برداشت از میدان cash همان ردیف می‌آیند، برداشت چه نقد تنها، چه کنار کوین.
@@ -482,6 +499,10 @@ def cash_expected(h: dict) -> dict:
         if r.get("action") in ("trim", "exit") and _num(r.get("net")):
             k = ("USDT", r.get("account"))
             out[k] = out.get(k, 0.0) + float(r["net"])
+        elif r.get("action") == "reenter" and _num(r.get("cost")):
+            # بازخرید نقشه ذخیره با رسید — ک۸۸؛ هزینه از تتر همان حساب
+            k = ("USDT", r.get("account"))
+            out[k] = out.get(k, 0.0) - float(r["cost"])
         elif r.get("action") in ("withdraw", "income") and isinstance(r.get("cash"), dict):
             c = r["cash"]
             k = (c.get("asset"), c.get("account"))
@@ -746,8 +767,13 @@ def sma_weekly(symbol: str, n: int = 50, get=None, now: datetime | None = None
 
 # ═══════════════════════ فرمان‌ها ═══════════════════════
 
+def _clock() -> datetime:
+    """ساعت فرمان‌ها — آزمون جایش ساعت ثابت می‌گذارد."""
+    return datetime.now(UTC)
+
+
 def _now() -> str:
-    return datetime.now(UTC).isoformat()
+    return _clock().isoformat()
 
 
 def _find(h: dict, sym: str, book: str = "position") -> dict | None:
@@ -761,7 +787,7 @@ def _receipt_at(raw: str, h: dict) -> str:
     منجمد — فروش پیش از آن در مقدار منجمد نشسته است.
     """
     t = _ts(raw, "--at — مهر کامل با منطقه زمانی لازم است")
-    if t > datetime.now(UTC) + timedelta(minutes=10):
+    if t > _clock() + timedelta(minutes=10):
         raise PositionsError(f"--at در آینده است: {raw}")
     day = datetime.strptime(h["frozen"]["date"], "%Y-%m-%d").replace(tzinfo=UTC)
     if t < day:
@@ -829,11 +855,100 @@ def _take(p: dict, qty: float, account: str | None) -> str:
     return account
 
 
-def _apply(h: dict, a, journal: dict) -> dict:
+def _reserve_reenter(h: dict, a, journal: dict, ctx: dict, row: dict, p: dict | None) -> dict:
+    """
+    بازخرید سهمیه reserve یک نقشه نام‌برده — ک۸۸، متن ۱۸. سهمیه و حکم فقط از
+    radar_watch.rebuy_status و rebuy_verdict؛ بودجه آزادشده از radar_rebuy.band_release.
+    موقعیت بی‌سطحی که در watch.json بخش dormant سطح پیشین دارد، با همان سطح به پایش
+    برمی‌گردد — TAO با 202.5065.
+    """
+    import radar_rebuy as RB
+    import radar_watch as RW
+    sym = row["symbol"]
+    if p is None:
+        raise PositionsError(f"{sym} در دفتر موقعیت نیست — بازخرید ارز تازه با add است")
+    watch = ctx["watch"]
+    found = RB.find_plan(watch, a.reserve_plan)
+    if found is None:
+        raise PositionsError(f"نقشه با created {a.reserve_plan} در watch.json نیست — نه فعال، نه "
+                             "بایگانی")
+    rp, until = found
+    if not rp.get("rebuy"):
+        raise PositionsError(f"{rp.get('title') or a.reserve_plan}: نقشه تعهد بازخرید ندارد")
+    st = next((r for r in RW.rebuy_status(rp, h, {sym: a.price}, until=until)
+               if r["symbol"] == sym), None)
+    if st is None:
+        raise PositionsError(f"{sym} در پله‌های rebuy نقشه {rp.get('title') or ''} نیست")
+    if a.qty > st["open"] + TOL:
+        raise PositionsError(f"{sym}: بیش از سهمیه باز نقشه — باز {st['open']}، فروخته "
+                             f"{st['sold']}، بازخریده {st['rebought']}")
+    now = _clock()
+    release, _ = RB.band_release(ctx.get("regime"), ctx.get("history"), now)
+    ok, why = RW.rebuy_verdict(st, released=release is not None)
+    if not ok:
+        rd = a.deviation
+        dec = next((d for d in journal.get("decisions", []) if d.get("decision_id") == rd), None)
+        if not rd:
+            raise PositionsError(f"{sym}: حکم بازخرید منفی — {why}. فقط با --deviation و شناسه RD "
+                                 f"که در دفترچه با برچسب سرپیچی ثبت شده")
+        if dec is None or dec.get("human") != "defied":
+            raise PositionsError(f"{sym}: {rd} در دفترچه با برچسب سرپیچی نیست — ثبت با "
+                                 "radar_journal.py decide --human defied")
+        row["deviation"] = rd
+    if a.gross is None or a.fee is None:
+        raise PositionsError("رسید لازم است: --gross و --fee هر دو — بازخرید بی رسید نقد را "
+                             "کم نمی‌کند و از دفتر پنهان می‌ماند")
+    if not math.isclose(a.gross, a.qty * a.price, rel_tol=1e-6):
+        raise PositionsError(f"مجموع رسید {a.gross} با مقدار × قیمت {a.qty * a.price} نمی‌خواند")
+    fee_coin = a.fee_asset.upper() == sym
+    if a.fee_asset.upper() not in ("USDT", sym):
+        raise PositionsError(f"--fee-asset باید USDT یا {sym} باشد")
+    if not (_num(a.fee) and 0 <= a.fee < (a.qty if fee_coin else a.gross)):
+        raise PositionsError(f"کارمزد نامعتبر: {a.fee}")
+    cost = round(a.gross + (0.0 if fee_coin else a.fee), 10)
+    got = round(a.qty - a.fee, 12) if fee_coin else a.qty
+    c = next((c for c in h["cash"] if c.get("asset") == "USDT" and c.get("account") == a.account),
+             None)
+    if c is None or c["qty"] + TOL < cost:
+        raise PositionsError(f"نقد تتر حساب {a.account} برای هزینه {cost} کافی نیست")
+    c["qty"] = round(c["qty"] - cost, 10)
+    p["lots"].append({"qty": got, "account": a.account, "entry": a.price})
+    p["status"] = "open"
+    row.update(delta=got, price=a.price, account=a.account, quota="reserve",
+               plan=rp["created"], gross=a.gross, fee=a.fee, fee_asset=a.fee_asset.upper(),
+               cost=cost, window=st["window"], verdict=why)
+    if a.order_id:
+        row["order_id"] = a.order_id
+    if p.get("invalidation") is None:
+        dm = [d for d in watch.get("dormant") or [] if d["symbol"].upper() == sym]
+        if dm:
+            item = {k: v for k, v in dm[0].items() if k != "reason"}
+            p["invalidation"] = item["invalidation"]
+            p["invalidation_since"] = item["invalidation_since"]
+            watch["dormant"] = [d for d in watch["dormant"] if d is not dm[0]]
+            if not watch["dormant"]:
+                watch.pop("dormant")
+            watch.setdefault("positions", []).append(item)
+            ctx["watch_changed"] = True
+            ctx["notes"].append(f"{sym} با سطح ابطال {item['invalidation']} به پایش برگشت — "
+                                "watch.json و holdings.json")
+        else:
+            ctx["notes"].append(f"⚠️ {sym} سطح ابطال ندارد و در dormant هم نیست — سطح در "
+                                "بازبینی هفتگی")
+    h["ledger"].append(row)
+    h["updated"] = _now()
+    return row
+
+
+def _apply(h: dict, a, journal: dict, ctx: dict | None = None) -> dict:
     sym = a.symbol.upper()
     row = {"at": _now(), "action": a.cmd, "symbol": sym}
     if a.cmd in ("trim", "exit", "withdraw", "income") and a.at is not None:
         row["at"] = _receipt_at(a.at, h)
+    if a.cmd == "reenter" and getattr(a, "reserve_plan", None):
+        if a.at is not None:
+            row["at"] = _receipt_at(a.at, h)
+        return _reserve_reenter(h, a, journal, ctx, row, _find(h, sym))
     if a.cmd in ("trim", "exit") and a.order_id:
         row["order_id"] = a.order_id
     p = _find(h, sym)
@@ -956,6 +1071,26 @@ def _apply(h: dict, a, journal: dict) -> dict:
     return row
 
 
+def _reserve_ctx(a) -> dict:
+    """watch.json، regime.json و تاریخچه رژیم برای بازخرید reserve — خطا صریح."""
+    import radar_watch as RW
+    try:
+        watch = RW.load_json(a.watch, {})
+        RW.validate_watch(watch)
+    except RW.WatchError as exc:
+        raise PositionsError(f"watch.json: {exc}") from exc
+    docs = {}
+    for k, path in (("regime", a.regime_file), ("history", a.regime_history)):
+        try:
+            with open(path, encoding="utf-8") as f:
+                docs[k] = json.load(f)
+        except OSError:
+            docs[k] = None                      # غایب: بودجه آزادشده «نه»، محافظه‌کارانه
+        except ValueError as exc:
+            raise PositionsError(f"{path} خوانا نیست: {type(exc).__name__}") from exc
+    return {"watch": watch, **docs, "watch_changed": False, "notes": []}
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="دو دفتر و دفتر کل تغییرات — رادار ۷")
     ap.add_argument("--holdings", default=HOLDINGS_FILE)
@@ -972,10 +1107,25 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--qty", type=float, required=True)
         if name not in ("adjust", "withdraw"):
             p.add_argument("--price", type=float, required=True)
-        if name in ("trim", "exit", "withdraw"):
+        if name in ("trim", "exit", "withdraw", "reenter"):
             # رسید صرافی — نشست ۳: زمان فروش، نه زمان ثبت؛ برداشت هم از ۳ اکتبر
             p.add_argument("--at", default=None,
                            help="زمان رسید یا برداشت، مهر کامل با منطقه زمانی؛ پیش‌فرض اکنون")
+        if name == "reenter":
+            # بازخرید سهمیه reserve — ک۸۸، متن ۱۸
+            p.add_argument("--reserve-plan", dest="reserve_plan", default=None,
+                           help="created نقشه ذخیره، فعال یا بایگانی؛ بی آن ورود دوباره پس از ابطال")
+            p.add_argument("--gross", type=float, default=None, help="مجموع رسید خرید به تتر")
+            p.add_argument("--fee", type=float, default=None, help="کارمزد خرید")
+            p.add_argument("--fee-asset", dest="fee_asset", default="USDT",
+                           help="دارایی کارمزد: USDT یا خود نماد")
+            p.add_argument("--order-id", dest="order_id", default=None)
+            p.add_argument("--deviation", default=None,
+                           help="شناسه RD با برچسب سرپیچی در دفترچه، برای حکم منفی بازخرید")
+            p.add_argument("--watch", default="watch.json")
+            p.add_argument("--regime-file", dest="regime_file", default="regime.json")
+            p.add_argument("--regime-history", dest="regime_history",
+                           default="regime_history.json")
         if name in ("trim", "exit"):
             # نقد خالص به تتر همان حساب
             p.add_argument("--gross", type=float, default=None,
@@ -1024,12 +1174,23 @@ def main(argv: list[str] | None = None) -> int:
         if a.cmd in ("reenter", "add") and not a.account:
             raise PositionsError("--account برای افزایش لازم است")
         h2 = json.loads(json.dumps(h))
-        row = _apply(h2, a, journal)
+        ctx = _reserve_ctx(a) if a.cmd == "reenter" and a.reserve_plan else None
+        row = _apply(h2, a, journal, ctx)
         validate(h2, journal)          # هیچ تغییری بی‌آنکه ناوردا برقرار بماند
+        if ctx and ctx.get("watch_changed"):
+            import radar_watch as RW
+            RW.validate_watch(ctx["watch"])
+            if level_mismatches(h2, ctx["watch"]):
+                raise PositionsError("بازگشت سطح از dormant ناهمخوانی ساخت: "
+                                     + "؛ ".join(level_mismatches(h2, ctx["watch"])))
     except PositionsError as exc:
         print(f"⛔ {exc}", file=sys.stderr)
         return 2
     save(a.holdings, h2)
+    if ctx and ctx.get("watch_changed"):
+        save(a.watch, ctx["watch"])
+    for n in (ctx or {}).get("notes", []):
+        print(n)
     print(f"✅ ثبت شد: {row['action']} {row['symbol']} delta {row['delta']}")
     # هر خروج با ابطال و هر کاهش در دفتر هزینه فرصت، با پیگیری ۱۴ و ۳۰ روزه
     if a.cmd in ("trim", "exit"):
