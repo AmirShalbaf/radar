@@ -31,11 +31,18 @@ def files():
     return w, h
 
 
+def _plan(w: dict) -> dict:
+    """نقشه ۲۴ اکتبر، فعال یا بایگانی — متن ۱۹ آن را بست."""
+    plans = ([w["reserve_plan"]] if w.get("reserve_plan") else []) + w.get("reserve_archive", [])
+    (rp,) = [p for p in plans if p["created"] == CREATED]
+    return rp
+
+
 def test_plan_shape(files) -> None:
     w, h = files
     W.validate_watch(w)
     assert P.level_mismatches(h, w) == [] and P.anchor_violations(w) == []
-    rp = w["reserve_plan"]
+    rp = _plan(w)
     assert rp["title"] == "نقشه ذخیره ۲۴ اکتبر — باند انقباضی"
     assert (rp["created"], rp["deadline"], rp["account"]) == \
         (CREATED, "2026-10-26T00:00:00+00:00", "LBank")
@@ -46,7 +53,11 @@ def test_plan_shape(files) -> None:
     assert [s["executed"]["order_id"] for s in rp["steps"][:3]] == [
         "4395c156-03ce-4604-83c3-ed74a5d55961", "a39a661a-34f9-4e1a-b9d6-7e244b797cca",
         "fe063a55-bd90-47aa-935d-c7817c807f3d"]
-    assert "executed" not in rp["steps"][3]
+    # پله ۴ با ابطال اجرا شد — متن ۱۹، ۲۶ اکتبر؛ سهمیه بازخرید نمی‌سازد
+    ex = rp["steps"][3]["executed"]
+    assert (ex["reason"], ex["level"], ex["order_id"], ex["at"]) == (
+        "invalidation", 2380.5606, "3eb65762-9c82-48cb-83ff-ec340c3ea623",
+        "2026-10-26T07:35:00+00:00")
     assert [(s["symbol"], s["qty"], s["floor"], s["min_below_sale_pct"])
             for s in rp["rebuy"]["steps"]] == \
         [("TAO", 0.1538, 202.51, 5), ("ETH", 0.0742, 2380.56, 5), ("SOL", 0.15, 96.71, 5)]
@@ -60,18 +71,17 @@ def test_old_plan_archived(files) -> None:
 
 def test_three_steps_filled_from_ledger(files) -> None:
     w, h = files
-    prog = W.reserve_progress(w["reserve_plan"], h)
+    prog = W.reserve_progress(_plan(w), h)
     assert [s["filled"] for s in prog] == [True, True, True, False]
     assert [s["fill_price"] for s in prog[:3]] == [254.4, 2381.81, 102.56]
-    assert W.unfilled_steps(w["reserve_plan"], h) == [
-        {"symbol": "ETH", "qty": 0.0372, "price": 2430}]
-    # فروش ۲۱ اکتبر ETH پیش از ساخت نقشه است و پله ۴ را پر نمی‌کند
-    assert not any(s["filled"] for s in prog[3:])
+    # پله ۴ با ابطال بسته شد — نه مانده، نه پرشده؛ فروش ابطال ۲۶ اکتبر پرش نمی‌کند
+    assert prog[3]["by_invalidation"]
+    assert W.unfilled_steps(_plan(w), h) == []
 
 
 def test_rebuy_ceilings_and_sol_defiance_stays_outside_rule(files) -> None:
     w, h = files
-    rb = {r["symbol"]: r for r in W.rebuy_status(w["reserve_plan"], h,
+    rb = {r["symbol"]: r for r in W.rebuy_status(_plan(w), h,
                                                   {"TAO": 233.0, "ETH": 2400.0, "SOL": 97.60})}
     assert rb["TAO"]["ceiling"] == pytest.approx(241.68) and rb["TAO"]["window"] == "open"
     assert rb["ETH"]["ceiling"] == pytest.approx(2262.7195) and rb["ETH"]["window"] == "no_gap"

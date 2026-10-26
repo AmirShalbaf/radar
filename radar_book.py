@@ -680,8 +680,10 @@ def reserve_view(rp: dict | None, h: dict, prices: dict, val: dict,
         return None
     import radar_watch as RW      # دیر: radar_watch بی requests بیرون می‌رود
     steps = RW.reserve_progress(rp, h)
-    # پله لغوشده مانده نیست: نه در «اگر همه پر شوند»، نه در بالاترین قیمت ک۴۲
-    left = [s for s in steps if not s["filled"] and not s.get("cancelled")]
+    # پله لغوشده مانده نیست: نه در «اگر همه پر شوند»، نه در بالاترین قیمت ک۴۲. پله
+    # اجراشده با ابطال هم نه — بند ۲ متن ۱۹
+    left = [s for s in steps if not s["filled"] and not s.get("cancelled")
+            and not s.get("by_invalidation")]
     syms = sorted({s["symbol"] for s in left})
     missing = [s for s in syms if prices.get(s) is None]
     # مقدار نگه‌داشته هر نماد — همان صافی P.value: باز و غیرفرضی
@@ -716,7 +718,9 @@ def reserve_view(rp: dict | None, h: dict, prices: dict, val: dict,
             "band": band, "rebuy": rebuy, "rebuy_note": (rp.get("rebuy") or {}).get("note"),
             "steps": steps, "left": left,
             "cancelled": [s for s in steps if s.get("cancelled")],
-            "stray": [s for s in steps if s.get("executed") and not s["filled"]],
+            "by_invalidation": [s for s in steps if s.get("by_invalidation")],
+            "stray": [s for s in steps if s.get("executed") and not s["filled"]
+                      and not s.get("by_invalidation")],
             "deadline": deadline, "now": now, "expired": now >= deadline,
             "account": rp.get("account") or "حساب نقشه",
             "stable": val["stable_usd"], "pct": 100 * val["stable_usd"] / total if total else 0.0,
@@ -781,6 +785,12 @@ def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
             o.append(f"| {s['symbol']} | {_n(s['qty'])} | "
                      f"{'بازار' if s['price'] is None else _n(s['price'])} |")
         o.append("")
+    for s in rv.get("by_invalidation") or []:
+        e = s["executed"]
+        at = datetime.fromisoformat(e["at"]).astimezone(UTC)
+        o += [f"**اجراشده با ابطال:** {s['symbol']} {_n(s['qty'])} — بسته هفتگی زیر سطح "
+              f"{_n(e['level'])}، سفارش {e['order_id']} ({at:%Y-%m-%d %H:%M} UTC). فقط سهمیه ورود "
+              "دوباره ابطال در دفتر کل، نه سهمیه بازخرید — یک فروش، یک سهمیه", ""]
     for s in rv.get("cancelled") or []:
         c = s["cancelled"]
         at = datetime.fromisoformat(c["at"]).astimezone(UTC)
@@ -1302,7 +1312,7 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     if plan_live:
         # هم‌خوانی حساب می‌شود، نه نوشته: نمادهای نقشه همان نمادهای سر این فهرست‌اند؟
         syms = list(dict.fromkeys(s["symbol"] for s in reserve["steps"]
-                                  if not s.get("cancelled")))
+                                  if not s.get("cancelled") and not s.get("by_invalidation")))
         head = [r["pos"]["symbol"] for r in order[:len(syms)]]
         word = _plan_word(reserve)
         if set(syms) == set(head):

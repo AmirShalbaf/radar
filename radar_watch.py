@@ -578,6 +578,12 @@ def _validate_plan(rp: dict, where: str) -> None:
                     or not ex["order_id"]:
                 raise WatchError(f"{where} پله {i}: executed باید زمان و order_id داشته باشد")
             _aware(ex.get("at"), f"{where} پله {i}: executed.at — {FULL}")
+            # پله‌ای که با ابطال اجرا شد — بند ۲ متن ۱۹: سطح نقض‌شده لازم است
+            if ex.get("reason") not in (None, "invalidation"):
+                raise WatchError(f"{where} پله {i}: executed.reason فقط invalidation")
+            if ex.get("reason") == "invalidation" and not (_num(ex.get("level"))
+                                                           and ex["level"] > 0):
+                raise WatchError(f"{where} پله {i}: اجرای با ابطال سطح نقض‌شده level می‌خواهد")
         # لغو پله — تصمیم کاربر، ۲۹ سپتامبر ۲۰۲۶: پله پاک نمی‌شود، زمان و دلیل می‌گیرد
         cx = s.get("cancelled")
         if cx is not None:
@@ -610,15 +616,25 @@ def _validate_plan(rp: dict, where: str) -> None:
                                  f"{fa(REBUY_MIN_BELOW_SALE_PCT)} تا زیر ۱۰۰ باشد — رویداد ۹۸")
 
 
+def by_invalidation(s: dict) -> bool:
+    """
+    پله ذخیره‌ای که با فروش ابطال بسته شد — بند ۲ متن ۱۹. مثل پله لغوشده: نه مانده، نه
+    پرشده؛ پس سهمیه بازخرید نمی‌سازد. فروشش فقط سهمیه ورود دوباره ابطال دفتر کل را دارد —
+    یک فروش، یک سهمیه.
+    """
+    return (s.get("executed") or {}).get("reason") == "invalidation"
+
+
 def unfilled_steps(rp: dict, h: dict) -> list[dict]:
     """
     پله‌های پرنشده نقشه ذخیره. پرشده یعنی پوشش‌داده با کاهش reserve دفتر کل
     پس از ساخت نقشه. پله‌های هر نماد به ترتیب نقشه پر می‌شوند. پله لغوشده
-    مانده نیست — نه در یادآوری، نه در هشدار مهلت و رسیدن قیمت.
+    مانده نیست — نه در یادآوری، نه در هشدار مهلت و رسیدن قیمت. پله اجراشده با
+    ابطال هم مانده نیست.
     """
     return [{"symbol": s["symbol"], "qty": s["qty"], "price": s.get("price")}
             for s, filled in zip(rp.get("steps") or [], step_filled(rp, h))
-            if not filled and not s.get("cancelled")]
+            if not filled and not s.get("cancelled") and not by_invalidation(s)]
 
 
 def step_filled(rp: dict, h: dict) -> list[bool]:
@@ -637,7 +653,7 @@ def step_filled(rp: dict, h: dict) -> list[bool]:
                 done[r["symbol"]] = done.get(r["symbol"], 0.0) - float(r["delta"])
     out, cum = [], {}
     for s in rp.get("steps") or []:
-        if s.get("cancelled"):
+        if s.get("cancelled") or by_invalidation(s):
             out.append(False)
             continue
         sym = s["symbol"]
@@ -667,7 +683,8 @@ def reserve_progress(rp: dict, h: dict) -> list[dict]:
     for s, filled in zip(rp.get("steps") or [], step_filled(rp, h)):
         rec = {"symbol": s["symbol"], "qty": s["qty"], "price": s.get("price"),
                "filled": filled, "fill_price": None, "fill_at": None,
-               "executed": s.get("executed"), "cancelled": s.get("cancelled")}
+               "executed": s.get("executed"), "cancelled": s.get("cancelled"),
+               "by_invalidation": by_invalidation(s)}
         if filled:
             need, took, rows = s["qty"], [], pool.get(s["symbol"], [])
             while rows and need > 1e-12:
@@ -1093,7 +1110,7 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
 
         # علامت اجراشده‌ای که دفتر کل پوشش نمی‌دهد: پله پر حساب نمی‌شود، بلند است
         stray = [s for s, filled in zip(rp.get("steps") or [], step_filled(rp, h))
-                 if s.get("executed") and not filled]
+                 if s.get("executed") and not filled and not by_invalidation(s)]
         if stray:
             rows = "\n".join(f"- {s['symbol']} {_n(s['qty'])} — {label(s)}، سفارش "
                              f"{s['executed']['order_id']}" for s in stray)
