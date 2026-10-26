@@ -94,3 +94,22 @@ def test_reject_followup_uses_closed_candle(tmp_path, monkeypatch) -> None:
     RO.cmd_followup(type("A", (), {"refill": None})())
     d = json.loads(p.read_text(encoding="utf-8"))
     assert d["rejects"][0]["p14"] == 1015.0
+
+
+def test_refill_reject_rewrites_old_record(tmp_path, monkeypatch) -> None:
+    """ک۱۰۶، متن ۱۹: رد ZEC ۲۲ اوت — عمر بیش از ۳۵ روز و R پرشده؛ فقط با --refill-reject."""
+    now = datetime.now(UTC)
+    start = (now - timedelta(days=60)).replace(hour=0, minute=0, second=0, microsecond=0)
+    bars = _bars(start - timedelta(days=2), 70, now)
+    monkeypatch.setattr(RO, "candles_since", lambda sym, days: bars)
+    p = tmp_path / "oc.json"
+    rec = {"id": 1, "date": start.strftime("%Y-%m-%d"), "symbol": "ZEC", "price": 1000.0,
+           "blocker": "x", "entry": 1000.0, "stop": 900.0, "target": 1100.0, "p14": 1234.5,
+           "p30": 2345.6, "r_lost": 0.5, "r_note": "پیشین"}
+    p.write_text(json.dumps({"rejects": [rec], "sessions": [], "exits": []}), encoding="utf-8")
+    monkeypatch.setattr(RO, "FILE", str(p))
+    RO.cmd_followup(type("A", (), {"refill": None, "refill_reject": None})())
+    assert json.loads(p.read_text(encoding="utf-8"))["rejects"][0]["p14"] == 1234.5
+    RO.cmd_followup(type("A", (), {"refill": None, "refill_reject": "1"})())
+    r = json.loads(p.read_text(encoding="utf-8"))["rejects"][0]
+    assert r["p14"] == 1015.0 and r["p30"] == 1031.0

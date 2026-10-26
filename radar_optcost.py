@@ -294,10 +294,16 @@ def cmd_followup(a) -> None:
     ids = [int(x) for x in (getattr(a, "refill", None) or "").split(",") if x.strip()]
     if ids:
         print(f"  پرکردن دوباره خروج‌های {'، '.join(map(str, ids))}: {refill(d, ids)} رکورد — ت۱")
+    # رد قدیمی با R پرشده دیگر پیگیری نمی‌شود؛ پرکردن دوباره فقط با شناسه — ک۱۰۶، متن ۱۹
+    rej = [int(x) for x in (getattr(a, "refill_reject", None) or "").split(",") if x.strip()]
+    for r in d["rejects"]:
+        if r["id"] in rej:
+            r["p14"] = r["p30"] = None
+            print(f"  پرکردن دوباره رد {r['id']} {r['symbol']} — ک۱۰۶")
     for r in d["rejects"]:
         age = (datetime.now(UTC) - datetime.strptime(r["date"], "%Y-%m-%d")
                .replace(tzinfo=UTC)).days
-        if r["r_lost"] is not None and age > 35:
+        if r["r_lost"] is not None and age > 35 and r["id"] not in rej:
             continue
         bars = candles_since(r["symbol"], max(age + 2, 5))
         if not bars:
@@ -502,6 +508,8 @@ def main() -> int:
     p = sp.add_parser("followup", help="پرکردن قیمت ۱۴ و ۳۰ روزه و محاسبه R ازدست‌رفته")
     p.add_argument("--refill", default=None,
                    help="شناسه خروج‌ها، جدا با کاما: پیگیری‌شان پاک و دوباره پر شود — ت۱")
+    p.add_argument("--refill-reject", dest="refill_reject", default=None,
+                   help="شناسه ردها، جدا با کاما: قیمت ۱۴ و ۳۰ روزه پاک و دوباره پر شود — ک۱۰۶")
     p.set_defaults(func=cmd_followup)
 
     p = sp.add_parser("report", help="گزارش خودسنجی چارچوب")
