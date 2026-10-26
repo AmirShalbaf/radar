@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "updated": "2026-10-24T04:02:00+00:00",
+  "updated": "2026-10-26T18:55:29.357576+00:00",
   "source": "اسکرین‌شات‌های LBank، ۲۴ اکتبر ۲۰۲۶، 04:02 UTC — جمع 1625.64 دلار، شامل مقدار قفل‌شده در سفارش‌های باز",
   "frozen": {
     "date": "2026-09-25",
@@ -31,7 +31,7 @@
   "cash": [
     {
       "asset": "USDT",
-      "qty": 561.87837649,
+      "qty": 647.97826649,
       "account": "LBank"
     }
   ],
@@ -54,11 +54,10 @@
       "symbol": "ETH",
       "book": "position",
       "status": "open",
-      "invalidation": 2380.5606,
-      "invalidation_since": "2026-09-25T21:34:47+00:00",
+      "invalidation": null,
       "lots": [
         {
-          "qty": 0.03725700000000003,
+          "qty": 5.700000000003619e-05,
           "account": "LBank",
           "entry": null
         }
@@ -330,6 +329,20 @@
       "gross": 15.384,
       "fee": 0.015384,
       "net": 15.368616
+    },
+    {
+      "at": "2026-10-26T07:35:00+00:00",
+      "action": "trim",
+      "symbol": "ETH",
+      "order_id": "3eb65762-9c82-48cb-83ff-ec340c3ea623",
+      "delta": -0.0372,
+      "price": 2316.83,
+      "reason": "invalidation",
+      "account": "LBank",
+      "level": 2380.5606,
+      "gross": 86.186076,
+      "fee": 0.086186,
+      "net": 86.09989
     }
   ]
 }

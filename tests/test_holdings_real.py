@@ -14,6 +14,7 @@
 """
 import json
 import sys
+from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -58,10 +59,14 @@ def _ledger_by_account(h, field) -> dict:
 
 
 def test_updated_not_before_screenshot(h) -> None:
-    """منبع تازه — اسکرین‌شات ۲۴ اکتبر ۲۰۲۶، متن ۱۶؛ frozen همان اسکرین‌شات ۲۵ سپتامبر می‌ماند."""
+    """
+    منبع — اسکرین‌شات ۲۴ اکتبر ۲۰۲۶، متن ۱۶؛ frozen همان اسکرین‌شات ۲۵ سپتامبر می‌ماند.
+    متن ۱۹: فروش ETH با ابطال از رسید ثبت شد و فرمان updated را به زمان ثبت برد؛ پس
+    updated پیش از اسکرین‌شات نیست، برابر هم نیست.
+    """
     assert "LBank" in h["source"] and "۲۴ اکتبر ۲۰۲۶" in h["source"]
     assert "04:02 UTC" in h["source"] and "1625.64" in h["source"]
-    assert h["updated"] == "2026-10-24T04:02:00+00:00"
+    assert datetime.fromisoformat(h["updated"]) >= datetime.fromisoformat(AT_1024)
 
 
 def test_quantities_match_screenshots(h) -> None:
@@ -267,6 +272,7 @@ SEEN_1024 = {"SOL": 5.48105369, "AAVE": 1.04895, "LINK": 11.09889, "ETH": 0.0372
              "SUI": 81.6183, "ONDO": 115.43866, "BNB": 0.0007579, "TRX": 0.6704,
              "TAO": 0.000092}
 USDT_1024 = 561.87837649
+AT_1024 = "2026-10-24T04:02:00+00:00"
 SALES_1024 = [  # نماد، مقدار، قیمت، زمان، سفارش، ناخالص، کارمزد
     ("ETH", 0.074, 2490.0, "2026-10-21T13:06:34+00:00", "7e76721a-0cc5-408a-b3a0-e07b135189bd",
      184.26, 0.18426),
@@ -279,13 +285,28 @@ SALES_1024 = [  # نماد، مقدار، قیمت، زمان، سفارش، ن�
 ]
 
 
+def _after(h, at: str) -> list[dict]:
+    t0 = datetime.fromisoformat(at)
+    return [r for r in h["ledger"] if datetime.fromisoformat(r["at"]) > t0]
+
+
 def test_1024_matches_screenshot(h) -> None:
+    """
+    اسکرین‌شات ۲۴ اکتبر = وضعیت فعلی منهای ردیف‌های دفتر کل پس از آن — متن ۱۹: فروش ETH
+    با ابطال و سود تتر ۲۶ اکتبر. پیش از این برابری مستقیم بود و با هر ثبت تازه می‌شکست.
+    """
     pos = {p["symbol"]: p for p in h["positions"]}
     assert {s for s, p in pos.items() if p["status"] == "open"} == set(SEEN_1024)
+    later = _after(h, AT_1024)
     for sym, q in SEEN_1024.items():
-        assert P.position_qty(pos[sym]) == pytest.approx(q, abs=1e-12), sym
-    assert [(c["account"], c["qty"]) for c in h["cash"]] == [("LBank", pytest.approx(USDT_1024,
-                                                                                    abs=1e-9))]
+        moved = sum(r["delta"] for r in later if r["symbol"] == sym and sym != "USDT")
+        assert P.position_qty(pos[sym]) - moved == pytest.approx(q, abs=1e-12), sym
+    cash = sum(r.get("net") or 0.0 for r in later if r["action"] in ("trim", "exit"))
+    cash += sum(r["cash"]["qty"] for r in later if r["action"] == "income")
+    cash -= sum(r["cash"]["qty"] for r in later if r["action"] == "withdraw")
+    cash -= sum(r.get("cost") or 0.0 for r in later if r["action"] == "reenter")
+    assert [c["account"] for c in h["cash"]] == ["LBank"]
+    assert h["cash"][0]["qty"] - cash == pytest.approx(USDT_1024, abs=1e-9)
 
 
 def test_1024_sales_rows_and_optcost(h) -> None:
