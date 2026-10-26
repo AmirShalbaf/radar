@@ -92,6 +92,32 @@ def save(d: dict, path: str | None = None) -> None:
 #     دلار جلوگیری‌شده = مقدار × (قیمت فروش − قیمت بعدی) — مثبت یعنی کمک کرد
 # هزینه ساختن ذخیره هم همین‌جا دیده می‌شود.
 EXIT_HORIZONS = (14, 30)
+DAY_MS = 86_400_000
+
+
+def close_at(bars: list[dict], close_ms: int, now_ms: int | None = None) -> float | None:
+    """
+    بسته کندل روزانه‌ای که دقیقاً در close_ms بسته شد — ت۱ بازبینی ۲۳ اکتبر، متن ۱۸. پیش
+    از این نزدیک‌ترین کندل به آن لحظه برداشته می‌شد، که در ساعت اجرای گردش‌کار کندل باز
+    همان روز بود؛ خروج ۳ ETH با 2478.62 ثبت شد، بسته درستش 2441.81. کندل باز یا غایب یعنی
+    None — «داده ندارم»، نه نزدیک‌ترین جانشین.
+    """
+    now_ms = now_ms if now_ms is not None else int(datetime.now(UTC).timestamp() * 1000)
+    if close_ms > now_ms:
+        return None
+    b = next((b for b in bars if b["ts"] == close_ms - DAY_MS), None)
+    return None if b is None else b["c"]
+
+
+def refill(d: dict, ids: list[int]) -> int:
+    """پاک‌کردن پیگیری رکوردهای خروج نام‌برده تا followup دوباره پرشان کند — ت۱."""
+    n = 0
+    for r in d["exits"]:
+        if r["id"] in ids:
+            for h in EXIT_HORIZONS:
+                r.update({f"p{h}": None, f"chg{h}": None, f"saved{h}": None})
+            n += 1
+    return n
 
 
 def add_exit(d: dict, *, symbol: str, action: str, qty: float, price: float,
@@ -129,15 +155,23 @@ def _followup_exits(d: dict) -> int:
         if not bars:
             print(f"  {r['symbol']}: داده در دسترس نیست — خروج {r['id']} پیگیری نشد")
             continue
+        done = []
         for h in due:
             tgt = int((start + timedelta(days=h)).timestamp() * 1000)
-            px = min(bars, key=lambda b: abs(b["ts"] - tgt))["c"]
+            px = close_at(bars, tgt)
+            if px is None:
+                print(f"  {r['symbol']}: خروج {r['id']} — داده ندارم: کندل روزانه بسته در "
+                      f"{start + timedelta(days=h):%Y-%m-%d} 00:00 UTC نیامد")
+                continue
             r[f"p{h}"] = px
             r[f"chg{h}"] = 100 * (px / r["price"] - 1)
             r[f"saved{h}"] = r["qty"] * (r["price"] - px)
+            done.append(h)
+        if not done:
+            continue
         updated += 1
         print(f"  {r['symbol']}: خروج {r['id']} — "
-              + "، ".join(f"{h} روز {r[f'chg{h}']:+.1f}٪" for h in due))
+              + "، ".join(f"{h} روز {r[f'chg{h}']:+.1f}٪" for h in done))
     return updated
 
 
@@ -257,6 +291,9 @@ def cmd_session(a) -> None:
 def cmd_followup(a) -> None:
     d = load()
     updated = 0
+    ids = [int(x) for x in (getattr(a, "refill", None) or "").split(",") if x.strip()]
+    if ids:
+        print(f"  پرکردن دوباره خروج‌های {'، '.join(map(str, ids))}: {refill(d, ids)} رکورد — ت۱")
     for r in d["rejects"]:
         age = (datetime.now(UTC) - datetime.strptime(r["date"], "%Y-%m-%d")
                .replace(tzinfo=UTC)).days
@@ -269,9 +306,8 @@ def cmd_followup(a) -> None:
         start = datetime.strptime(r["date"], "%Y-%m-%d").replace(tzinfo=UTC)
         for k, dd in (("p14", 14), ("p30", 30)):
             if r[k] is None and age >= dd:
-                tgt = int((start + timedelta(days=dd)).timestamp() * 1000)
-                near = min(bars, key=lambda b: abs(b["ts"] - tgt))
-                r[k] = near["c"]
+                # همان قاعده ت۱: فقط کندل بسته در روز رد + dd، نه نزدیک‌ترین کندل
+                r[k] = close_at(bars, int((start + timedelta(days=dd)).timestamp() * 1000))
         rl, note = path_r(r, bars)
         r["r_lost"], r["r_note"] = rl, note
         updated += 1
@@ -464,6 +500,8 @@ def main() -> int:
     p.set_defaults(func=cmd_session)
 
     p = sp.add_parser("followup", help="پرکردن قیمت ۱۴ و ۳۰ روزه و محاسبه R ازدست‌رفته")
+    p.add_argument("--refill", default=None,
+                   help="شناسه خروج‌ها، جدا با کاما: پیگیری‌شان پاک و دوباره پر شود — ت۱")
     p.set_defaults(func=cmd_followup)
 
     p = sp.add_parser("report", help="گزارش خودسنجی چارچوب")

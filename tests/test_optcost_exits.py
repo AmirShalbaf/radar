@@ -58,9 +58,11 @@ def test_followup_fills_14_and_30_days(db, monkeypatch) -> None:
                     reason="reserve")
     r["date"] = start.strftime("%Y-%m-%d")
     RO.save(d)
+    # ت۱ متن ۱۸: قیمت ۱۴ روزه بسته کندلی است که در روز ۱۴ بسته شد — باز شده در روز ۱۳.
+    # پیش از این همین آزمون کندل باز شده در روز ۱۴ را قیمت ۱۴ روزه می‌دانست
     monkeypatch.setattr(RO, "candles_since", lambda sym, days: _bars(
         start.replace(hour=0, minute=0, second=0, microsecond=0),
-        {0: 100.0, 14: 90.0, 30: 110.0}))
+        {0: 100.0, 13: 90.0, 14: 1e9, 29: 110.0, 30: 1e9}))
     RO.cmd_followup(None)
     r = RO.load()["exits"][0]
     assert r["p14"] == 90.0 and r["p30"] == 110.0
