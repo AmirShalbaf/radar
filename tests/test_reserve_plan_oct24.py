@@ -92,7 +92,7 @@ def test_rebuy_ceilings_and_sol_defiance_stays_outside_rule(files) -> None:
 
 
 def test_notes_carry_decision(files) -> None:
-    rp = files[0]["reserve_plan"]
+    rp = _plan(files[0])
     for x in ("RD-20261024-01", "-0.946", "1625.64", "419.42", "561.88", "652.2",
               "15ad3c3b-f2aa-406c-ba81-5e43706fe87a", "2380.56", "exit",
               "e01c4e5c-d85c-41fc-aac4-805c985be802", "ب۱"):
@@ -117,3 +117,17 @@ def test_journal_decision(files) -> None:
         (CREATED, "followed", "انقباضی", -0.946)
     assert r["symbols"] == ["TAO", "ETH", "SOL"]
     assert "سرپیچی کوچک" in r["note"] and "97.60" in r["note"] and "97.432" in r["note"]
+
+
+def test_closed_in_archive_with_live_orders(files) -> None:
+    """متن ۱۹: همه پله‌ها اجرا شد — پله ۴ با ابطال؛ ذخیره ۴۰٫۸٪ بالای هدف ۴۰٪، نقشه تازه نه."""
+    w, _ = files
+    assert "reserve_plan" not in w
+    rp = _plan(w)
+    assert rp in w["reserve_archive"]
+    assert rp["closed"]["at"] == "2026-10-26T07:35:00+00:00"
+    assert "ابطال" in rp["closed"]["reason"]
+    for x in ("e01c4e5c-d85c-41fc-aac4-805c985be802", "2535", "2550", "ب۱",
+              "d320d08b-4974-4ce2-9bd5-ec6b472ec7c8", "0.153", "233", "۴۰٫۸٪"):
+        assert x in rp["note"], x
+    assert 648.14463149 / 1588.35 == pytest.approx(0.408, abs=0.0005)
