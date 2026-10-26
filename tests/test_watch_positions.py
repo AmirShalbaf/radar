@@ -304,6 +304,8 @@ def test_main_runs_position_checks(tmp_path, monkeypatch) -> None:
     monkeypatch.setattr(W.P, "weekly_close", lambda s, now=None, get=None: (
         {"close": {"SOL": 95.0}.get(s, 1e9), "closed_at": WEEK1, "venue": "okx"}, []))
     monkeypatch.setattr(W, "ticker", lambda s: PX.get(s))
+    # هشدار تکان بند ۲ متن ۱۸ شمع ساعتی می‌خواند — آزمون بی‌شبکه
+    monkeypatch.setattr(W, "_shake_feed", lambda: (lambda s: (None, ["آزمون"])))
     assert W.main(["--once", "--watch", "watch.json", "--holdings", "holdings.json"]) == 0
     assert any("SOL" in m and "ابطال هفتگی" in m for m in sent)
 

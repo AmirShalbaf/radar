@@ -1108,6 +1108,150 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
     return msgs
 
 
+# ─────────────────────── هشدار تکان — بند ۲ متن ۱۸ ───────────────────────
+#
+# برای BTC و هر موقعیت باز دفتر موقعیت، در مسیر نبض و از همان منبع داده نبض: شمع بسته
+# ساعتی اوکی‌اکس، گیت پشتیبان — radar_history.history، یک واکشی، نه دو. فقط اطلاع؛
+# ابطال دفتر موقعیت همچنان فقط با بسته هفتگی است. هر رویداد برای هر نماد در هر روز
+# وقت جهانی یک بار؛ کلید فقط پس از ارسال موفق — Msg، مثل رفع نقض بسته یک. سقف ۳ پیام
+# در هر اجرا؛ رویداد بیرون از سقف کلید نمی‌گیرد و اجرای بعد می‌آید.
+
+SHAKE_MOVES = ((4, 5.0), (24, 8.0))    # (ساعت، درصد) — تصمیم کاربر، متن ۱۸
+SHAKE_NEAR_PCT = 2.0                    # فاصله قیمت تا بالای سطح ابطال، درصد
+SHAKE_MAX_MSGS = 3
+SHAKE_HOURS = 26                        # پنجره شمع ساعتی: ۲۴ ساعت به‌علاوه پایه
+# ترتیب اولویت در سقف: عبور، نزدیکی، باند رژیم، حرکت ۲۴ ساعت، حرکت ۴ ساعت
+_SHAKE_RANK = {"cross": 0, "near": 1, "regime": 2, "move24": 3, "move4": 4}
+
+
+def _tehran(t: datetime) -> str:
+    return f"{t.astimezone(A.TEHRAN):%Y-%m-%d %H:%M} تهران"
+
+
+def _hourly_closed(symbol: str, now: datetime | None = None) -> tuple[list | None, list[str]]:
+    """
+    شمع‌های بسته ساعتی ۲۶ ساعت اخیر از radar_history — اوکی‌اکس اول، گیت فقط اگر
+    اوکی‌اکس چیزی نداد. هر ردیف: open، close، low و high. خطا یعنی None با دلیل.
+    """
+    now = now or datetime.now(UTC)
+    import radar_history as RH                  # دیر: pandas فقط در مسیر نبض لازم است
+    try:
+        s = RH.history(symbol, "1h", now - timedelta(hours=SHAKE_HOURS + 1), now,
+                       cache_dir=None, now=now)
+    except RH.HistoryError as exc:
+        return None, [str(exc)[:200]]
+    df = s.df[s.df["confirm"] == 1]
+    return [{"open": t.to_pydatetime(), "close": float(c), "low": float(lo), "high": float(hi)}
+            for t, c, lo, hi in zip(df["ts"], df["close"], df["low"], df["high"])], []
+
+
+def _shake_feed():
+    """تابع شمع ساعتی هشدار تکان — آزمون جایش داده ساختگی می‌گذارد."""
+    return _hourly_closed
+
+
+def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
+                 regime: dict | None = None, history: dict | None = None) -> list[Msg]:
+    """
+    هشدارهای تکان این اجرا، حداکثر SHAKE_MAX_MSGS. state دست نمی‌خورد؛ کلید هر پیام
+    با Msg.commit پس از رسید موفق. پوزیشن ناچیز — زیر DUST_USD — هشدار نمی‌گیرد.
+    """
+    hourly = hourly or _shake_feed()
+    day = now.astimezone(UTC).strftime("%Y-%m-%d")
+    week_at = _tehran(_week_close(now) + timedelta(days=7))
+    pos = {p["symbol"].upper(): p for p in h.get("positions", [])
+           if p.get("book") == "position" and p.get("status") == "open" and P.position_qty(p) > 0}
+    items = {it["symbol"].upper(): it for it in watch.get("positions") or []}
+    rp = watch.get("reserve_plan")
+    left = unfilled_steps(rp, h) if rp else []
+    events: list[tuple] = []
+
+    for order, sym in enumerate(["BTC"] + [s for s in pos if s != "BTC"]):
+        rows, why = hourly(sym)
+        if not rows:
+            print(f"  هشدار تکان {sym}: داده ندارم — {'؛ '.join(why) or 'بی‌دلیل'}")
+            continue
+        last = rows[-1]
+        px, at = last["close"], last["open"] + timedelta(hours=1)
+        p = pos.get(sym)
+        if p is not None and P.position_qty(p) * px < P.DUST_USD:
+            continue
+        lvl = None
+        if p is not None and sym in items:
+            lvl = _position_level(items[sym], p)[0]
+        elif p is not None and _num(p.get("invalidation")):
+            lvl = float(p["invalidation"])
+        orders = [s for s in left if s["symbol"] == sym and s["price"] is not None]
+        wait = f"اقدامی تا بسته هفتگی لازم نیست — {week_at}."
+        act = (f"اقدام: سفارش‌های باز {sym} را ببین — "
+               + "، ".join(f"پله {_n(s['price'])}" for s in orders) + f"؛ جز آن {wait}"
+               if orders else f"اقدام: {wait}")
+        crossed = False
+        if lvl is not None:
+            below = [r for r in rows[-24:] if r["low"] < lvl]
+            if below:
+                c = below[-1]
+                c_at = c["open"] + timedelta(hours=1)
+                key = f"shake_cross_{sym}_{c_at.astimezone(UTC):%Y-%m-%d}"
+                crossed = True
+                events.append(("cross", order, key, (
+                    f"⛔ {sym} زیر سطح ابطال درون‌روز — کمینه {_n(c['low'])} در شمع ساعتی تا "
+                    f"{_tehran(c_at)}، سطح {_n(lvl)}؛ قیمت اکنون {_n(px)}.\n"
+                    "قاعده: حکم فقط با بسته هفتگی است — عبور درون‌روزی خروج نمی‌سازد.\n" + act)))
+            dist = 100 * (px / lvl - 1)
+            if not crossed and 0 < dist <= SHAKE_NEAR_PCT + 1e-9:
+                events.append(("near", order, f"shake_near_{sym}_{day}", (
+                    f"⚠️ {sym} نزدیک سطح ابطال — قیمت {_n(px)}، {dist:.1f}٪ بالای سطح {_n(lvl)}؛ "
+                    f"بسته ساعتی {_tehran(at)}.\n"
+                    f"قاعده: حکم فقط با بسته هفتگی است — این هشدار تا "
+                    f"{fa(f'{SHAKE_NEAR_PCT:g}')}٪ بالای سطح است و خروج نمی‌سازد.\n" + act)))
+        opens = {r["open"]: r for r in rows}
+        for hrs, pct in SHAKE_MOVES:
+            base = opens.get(last["open"] - timedelta(hours=hrs))
+            if base is None:
+                print(f"  هشدار تکان {sym}: شمع {fa(hrs)} ساعت پیش نیست — حرکت {fa(hrs)} ساعته "
+                      "سنجیده نشد")
+                continue
+            chg = 100 * (px / base["close"] - 1)
+            if abs(chg) < pct - 1e-9:            # «۵٪ یا بیشتر» — مرز دقیق با خطای ممیز
+                continue
+            rule = (f"ابطال دفتر موقعیت فقط با بسته هفتگی، سطح {_n(lvl)}" if lvl is not None
+                    else "خروج نمی‌سازد")
+            events.append((f"move{hrs}", order, f"shake_move{hrs}_{sym}_{day}", (
+                f"{'📈' if chg > 0 else '📉'} تکان {sym} — حرکت {fa(hrs)} ساعت {chg:+.1f}٪: از "
+                f"{_n(base['close'])} به {_n(px)}؛ بسته ساعتی {_tehran(at)}.\n"
+                f"قاعده: آستانه {fa(f'{pct:g}')}٪ در {fa(hrs)} ساعت — فقط اطلاع؛ {rule}.\n" + act)))
+
+    # تغییر باند خام رژیم نسبت به گزارش قبلی — regime.json در برابر روز پیش در تاریخچه
+    if isinstance(regime, dict) and isinstance(history, dict):
+        warn = _regime_warn(regime, now)
+        band = (regime.get("band") or {}).get("name")
+        if warn:
+            print(f"  هشدار تکان رژیم: {warn} — تغییر باند سنجیده نشد")
+        elif band in BG.BAND_ORDER:
+            gen = _aware(regime["generated_at"], "regime.json generated_at")
+            days = history.get("days") or {}
+            prev_day = max((d for d in days if d < f"{gen.astimezone(UTC):%Y-%m-%d}"), default=None)
+            prev = (days.get(prev_day) or {}).get("band") if prev_day else None
+            if prev in BG.BAND_ORDER and prev != band:
+                old, new = BG.band_by_name(prev), BG.band_by_name(band)
+                tb = (regime.get("trade_band") or {}).get("name") or "نامعلوم"
+                score = regime.get("score")
+                sc = f"امتیاز {score:+.3f}، " if _num(score) else ""
+                events.append(("regime", -1, f"shake_regime_{gen.astimezone(UTC):%Y-%m-%d}", (
+                    f"🧭 باند خام رژیم عوض شد — از {prev} به {band}؛ {sc}گزارش {_tehran(gen)}.\n"
+                    f"قاعده: هدف ذخیره دفتر موقعیت از باند خام است — {fa(old['stable'])}٪ به "
+                    f"{fa(new['stable'])}٪؛ سقف ریسک دفتر معامله با باند با هیسترزیس، امروز {tb}.\n"
+                    "اقدام: کسری یا مازاد ذخیره و ردیف اقدام گزارش سبد امروز را ببین.")))
+
+    fresh = sorted((e for e in events if not state.get(e[2])),
+                   key=lambda e: (_SHAKE_RANK[e[0]], e[1]))
+    if len(fresh) > SHAKE_MAX_MSGS:
+        print(f"  هشدار تکان: {fa(len(fresh) - SHAKE_MAX_MSGS)} رویداد بیرون از سقف "
+              f"{fa(SHAKE_MAX_MSGS)} پیام — اجرای بعد")
+    return [Msg(text, f"تکان {kind}", {key: True}) for kind, _, key, text in fresh[:SHAKE_MAX_MSGS]]
+
+
 # ─────────────────────── پیام بسته هفتگی — نشست ۱۱ ───────────────────────
 #
 # یک پیام کوتاه برای هر هفته بسته‌شده: هر دارایی سبد در برابر سطح ابطالش، و اقدام
@@ -1359,10 +1503,13 @@ def _read_regime(path: str | None) -> dict | None:
 
 def run_once(watch: dict, state: dict, quiet: bool = False,
              path: str = WATCH_FILE, h: dict | None = None,
-             now: datetime | None = None, regime_path: str | None = "regime.json") -> int:
+             now: datetime | None = None, regime_path: str | None = "regime.json",
+             shake: bool = False, history_path: str | None = "regime_history.json") -> int:
     """
     h خالی یعنی holdings.json بار نشد — main پیش‌تر بلند گزارشش کرده. آن‌وقت
-    فقط هشدار بازار سنجیده می‌شود، که به دفتر موقعیت وابسته نیست.
+    فقط هشدار بازار سنجیده می‌شود، که به دفتر موقعیت وابسته نیست. shake هشدار تکان
+    بند ۲ متن ۱۸ را روشن می‌کند — main روشنش می‌کند؛ پیش‌فرض خاموش تا آزمون‌های
+    دیگر run_once به شبکه نروند.
     """
     now = now or datetime.now(UTC)
     ts = now.strftime("%Y-%m-%d %H:%M UTC")
@@ -1408,6 +1555,17 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
             else:
                 print(f"  ⛔ پیام {msg.what} فرستاده نشد — کلید هفته ثبت نشد؛ اجرای بعد "
                       "دوباره می‌فرستد")
+    # هشدار تکان — بند ۲ متن ۱۸. کلید هر پیام فقط با رسید موفق
+    if shake and h is not None:
+        doc = regime if need else _read_regime(regime_path)
+        for msg in shake_alerts(watch, h, state, now, regime=doc,
+                                history=_read_regime(history_path)):
+            res = notify(msg, quiet=False)
+            n += 1
+            if res.ok:
+                msg.commit(state)
+            else:
+                print(f"  ⛔ پیام {msg.what} فرستاده نشد — کلیدش ثبت نشد؛ اجرای بعد دوباره")
     # پیام بسته هفتگی — نشست ۱۱. پس از سنجش‌های بالا، تا خطایش جلوی پیام نقض و
     # مهلت را نگیرد؛ بی holdings.json پوزیشنی برای گزارش نیست
     if h is not None:
@@ -1492,13 +1650,13 @@ def main(argv: list[str] | None = None) -> int:
         try:
             while True:
                 run_once(watch, state, a.quiet, path=a.watch, h=h,
-                         regime_path=a.regime_file)
+                         regime_path=a.regime_file, shake=True)
                 time.sleep(a.loop)
         except KeyboardInterrupt:
             print("\nمتوقف شد.")
         return rc or _run_rc()
 
-    run_once(watch, state, a.quiet, path=a.watch, h=h, regime_path=a.regime_file)
+    run_once(watch, state, a.quiet, path=a.watch, h=h, regime_path=a.regime_file, shake=True)
     # کد ۲ و ۳ مقدم‌اند؛ سپس خطای پیام هفتگی، ۵، و ارسال ناموفق، ۴ — گام نبض با
     # هر کد جز صفر ::error:: می‌دهد
     return rc or _run_rc()

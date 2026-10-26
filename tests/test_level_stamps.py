@@ -161,6 +161,8 @@ def test_watcher_mismatch_is_loud_and_uses_conservative_level(tmp_path, monkeypa
     monkeypatch.setattr(W.P, "weekly_close", lambda s, now=None, get=None: (
         {"close": {"SOL": 95.0, "ETH": 3000.0}[s], "closed_at": MON, "venue": "okx"}, []))
     monkeypatch.setattr(W, "ticker", lambda s: None)
+    # هشدار تکان بند ۲ متن ۱۸ شمع ساعتی می‌خواند — آزمون بی‌شبکه
+    monkeypatch.setattr(W, "_shake_feed", lambda: (lambda s: (None, ["آزمون"])))
     assert W.main(["--once", "--watch", "watch.json", "--holdings", "holdings.json"]) == 2
     assert any("ناهمخوانی" in m and "SOL" in m for m in sent)
     # بسته 95 زیر سطح بالاتر (96.71) است، نه زیر 91 — محافظه‌کارانه‌تر داوری شد

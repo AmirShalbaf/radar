@@ -103,6 +103,7 @@ from typing import Callable
 from urllib.parse import urlparse
 
 import radar_frames as F
+from radar_anchor import TEHRAN      # وقت تهران ثابت — تنها منبع، متن ۱۸
 import radar_history as H            # حکم و جمع‌بندی وارسی سطح — نشست ۷
 import radar_intake as I
 from radar_one import video_id as _video_id     # تنها منبع الگوی شناسه ویدیو
@@ -1207,8 +1208,6 @@ def new_cli(a, deps: Deps, now: datetime) -> int:
 
 LIST_NAME = "video_list.json"     # فهرست شماره‌دار آخرین --list — زیر intake/_local/، محلی
 LIST_MAX_AGE = timedelta(hours=24)
-# ایران از ۱۴۰۱ ساعت تابستانی ندارد — وقت تهران ثابت، ۳:۳۰ جلوتر از جهانی
-TEHRAN = timezone(timedelta(hours=3, minutes=30), "Tehran")
 _PICK = re.compile(r"[0-9]+(?:\s*,\s*[0-9]+)*")      # اسکی — \d رقم فارسی را هم می‌گیرد
 _LIST_RUN_KEYS = ("short", "stale", "off_topic", "feed_failures")
 

@@ -31,9 +31,13 @@ radar_watch.py و radar_positions.py بی‌آنکه استقلالشان بشک
 from __future__ import annotations
 
 import numbers
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 UTC = timezone.utc
+
+# وقت تهران — ایران از ۱۴۰۱ ساعت تابستانی ندارد، پس ثابت و ۳:۳۰ جلوتر از جهانی. تنها
+# منبع: فهرست radar_video و هشدار تکان پایشگر — متن ۱۸
+TEHRAN = timezone(timedelta(hours=3, minutes=30), "Tehran")
 
 # نام درخواستی هر صرافی برای نام داخلی تایم‌فریم. فقط لنگر وقت جهانی.
 # radar_fetch3.BAR همین شیء است؛ مسیرهای تک‌صرافی از همین ردیف‌ها می‌خوانند.
