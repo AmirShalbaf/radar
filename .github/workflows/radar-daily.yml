@@ -241,6 +241,23 @@ jobs:
             echo "⚠️ تقویم رویداد خطا داد — reports/events-error-$D.md" > /tmp/events_line.txt
           fi
 
+      # لایه زمینه — بند ۲ متن ۲۰: برنت، بازده ۱۰ ساله و شاخص دلار از FRED؛ فقط نمایش،
+      # آزمون‌نشده. کد ۲ یعنی سری‌ای نیامد ولی بخش با «داده ندارم» نوشته شد
+      - name: لایه زمینه
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          rc=0
+          python radar_context.py --section /tmp/context_section.md \
+            --line /tmp/context_line.txt > /tmp/context.log 2>&1 || rc=$?
+          if [ "$rc" -eq 2 ]; then
+            echo "::warning::لایه زمینه: سری‌ای از FRED نیامد — بخش «داده ندارم» دارد"
+          elif [ "$rc" -ne 0 ]; then
+            echo "::error::لایه زمینه خطا داد — کد $rc"
+            { echo "## لایه زمینه — فقط نمایش"; echo; echo "⚠️ ساخته نشد — کد $rc:"
+              tail -c 500 /tmp/context.log; } > /tmp/context_section.md
+          fi
+
       - name: به‌روزرسانی پیگیری دفتر هزینه فرصت
         env:
           PYTHONUTF8: "1"
@@ -299,6 +316,12 @@ jobs:
               cat /tmp/pump_line.txt
             else
               echo "⚠️ اسکنر پامپ: خط ساخته نشد"
+            fi
+            echo
+            if [ -s /tmp/context_section.md ]; then
+              cat /tmp/context_section.md
+            else
+              echo "⚠️ لایه زمینه: بخش ساخته نشد"
             fi
             echo
             cat /tmp/orders.md

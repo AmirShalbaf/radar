@@ -1061,10 +1061,11 @@ FRED_SERIES = {
 }
 
 
-def fred_series(sid: str, http_text) -> tuple[float, datetime, float | None] | None:
+def fred_rows(sid: str, http_text) -> list[tuple[str, float]] | None:
     """
-    آخرین مقدار + تاریخ + مقدار ۳۰ روز قبل.
-    مسیر fredgraph.csv کلید نمی‌خواهد — همیشه در دسترس.
+    همه مشاهده‌های یک سری FRED به ترتیب تاریخ: (تاریخ، مقدار). خانه خالی و «.» —
+    روز تعطیل — کنار می‌رود. تنها تجزیه‌گر CSV فدرال‌رزرو سنت‌لوئیس: سری‌های رژیم و
+    لایه زمینه، بند ۲ متن ۲۰، هر دو از همین. مسیر fredgraph.csv کلید نمی‌خواهد.
     """
     txt = http_text(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}",
                     label=f"[FRED] {sid}")
@@ -1082,6 +1083,15 @@ def fred_series(sid: str, http_text) -> tuple[float, datetime, float | None] | N
             rows.append((parts[0].strip(), float(v)))
         except ValueError:
             continue
+    return rows or None
+
+
+def fred_series(sid: str, http_text) -> tuple[float, datetime, float | None] | None:
+    """
+    آخرین مقدار + تاریخ + مقدار ۳۰ روز قبل.
+    مسیر fredgraph.csv کلید نمی‌خواهد — همیشه در دسترس.
+    """
+    rows = fred_rows(sid, http_text)
     if not rows:
         return None
     d, val = rows[-1]
