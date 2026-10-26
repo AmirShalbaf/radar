@@ -165,10 +165,7 @@ def _crons(name: str) -> list[str]:
     return re.findall(r'-\s*cron:\s*"([^"]+)"', _text(name))
 
 
-def test_pulse_every_two_hours_on_quiet_minute() -> None:
-    (c,) = _crons("radar-pulse.yml")
-    minute, hour = c.split()[:2]
-    assert hour == "*/2" and minute not in ("0", "15", "30", "45")
+# نبض ساعتی از بند ۴ متن ۲۰ — tests/test_pulse_event_window.py
 
 
 @pytest.mark.parametrize("wf", ["radar-daily.yml", "radar-weekly.yml"])

@@ -19,10 +19,14 @@ radar_schedule.py — نگهبان تکرار زمان‌بندی گیت‌ها�
 راه‌حل بی‌راز تازه: نوبت بیشتر در دقیقه خلوت، و این نگهبان تا نوبت اضافه کار تکراری
 نکند. نگهبان فقط از داده مخزن می‌خواند، نه از حافظه اجرا:
 
-    نبض      هر دو ساعت. بی‌کار اگر آخرین نبض موفق کمتر از ۳ ساعت پیش بود — مگر
-             پس از آن یک بسته روزانه وقت جهانی آمده باشد. دلیل استثنا: پیام بسته
-             هفتگی ۲۶ اکتبر 04:41 رفت؛ نبض 22:30 یکشنبه نباید نوبت 00:41 دوشنبه را
-             ببندد. موفق یعنی عکس نبض و پایشگر هر دو با کد ۰ — دفتر pulse_log.json.
+    نبض      هر ساعت از متن ۲۰، پیش از آن هر دو ساعت. بی‌کار اگر آخرین نبض موفق
+             کمتر از ۳ ساعت پیش بود — مگر پس از آن یک بسته روزانه وقت جهانی آمده
+             باشد. دلیل استثنا: پیام بسته هفتگی ۲۶ اکتبر 04:41 رفت؛ نبض 22:30 یکشنبه
+             نباید نوبت 00:41 دوشنبه را ببندد. موفق یعنی عکس نبض و پایشگر هر دو با
+             کد ۰ — دفتر pulse_log.json.
+             نزدیک رویداد — بند ۴ متن ۲۰: در پنجره ۶ ساعت پیش تا ۶ ساعت پس از رویداد
+             با اهمیت بالا و ساعت‌دار تقویم دستی events_calendar.json — پس از کنفرانس
+             اگر هست — فاصله ۵۰ دقیقه. تقویم خراب یعنی همان ۳ ساعت، بلند در دلیل.
     روزانه   نوبت دوم دو ساعت بعد. بی‌کار اگر reports/LATEST.md گزارش همان روز است.
     هفتگی    نوبت دوم دو ساعت بعد. بی‌کار اگر گزارش خودسنجی یا بازبینی هفتگی سبد
              از یکشنبه همین هفته به بعد هست.
@@ -34,6 +38,7 @@ radar_schedule.py — نگهبان تکرار زمان‌بندی گیت‌ها�
     python radar_schedule.py due pulse --event schedule --github-output "$GITHUB_OUTPUT"
     python radar_schedule.py record --snapshot-rc 0 --watch-rc 0
     python radar_schedule.py health
+    python radar_schedule.py plan --from 2026-10-27 --days 3
 """
 from __future__ import annotations
 
@@ -45,6 +50,8 @@ import sys
 import tempfile
 from datetime import datetime, timedelta, timezone
 
+# تقویم دستی — پنجره نبض نزدیک رویداد، بند ۴ متن ۲۰؛ آن هم فقط کتابخانه استاندارد
+import radar_calendar as RC
 # تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
 from radar_text import fa
 
@@ -52,6 +59,11 @@ UTC = timezone.utc
 PULSE_LOG = "pulse_log.json"
 # کمینه فاصله دو نبض با کار — تصمیم کاربر، متن ۱۸
 PULSE_MIN_GAP_HOURS = 3
+# همان، در پنجره رویداد با اهمیت بالا — تصمیم کاربر، بند ۴ متن ۲۰. کمتر از ۶۰ تا نوبت
+# ساعتی با تأخیر کوتاه گیت‌هاب جا نماند
+PULSE_EVENT_GAP_MIN = 50
+# دقیقه خلوت cron نبض ساعتی — برنامه شبیه‌سازی‌شده، plan
+PULSE_MINUTE = 41
 # شمار ردیف نگه‌داشته — با نبض دوساعته حدود ده روز
 PULSE_KEEP = 120
 LATEST = os.path.join("reports", "LATEST.md")
@@ -120,17 +132,24 @@ def last_ok(log: dict) -> datetime | None:
 
 # ═══════════════════════ نگهبان تکرار ═══════════════════════
 
-def pulse_due(log: dict, now: datetime) -> tuple[bool, str]:
+def pulse_due(log: dict, now: datetime, cal: dict | None = None) -> tuple[bool, str]:
+    """cal تقویم دستی است؛ None یعنی بی پنجره رویداد — همان ۳ ساعت."""
     last = last_ok(log)
     if last is None:
         return True, "نبض موفقی در دفتر نیست"
     if last.date() < now.astimezone(UTC).date():
         return True, (f"آخرین نبض موفق {last:%Y-%m-%d %H:%M} UTC پیش از بسته روزانه امروز است")
     age = (now - last).total_seconds() / 3600
-    if age < PULSE_MIN_GAP_HOURS:
+    ev = RC.pulse_window(cal, now) if cal else None
+    if ev is not None:
+        gap, gap_txt = PULSE_EVENT_GAP_MIN / 60, f"{fa(PULSE_EVENT_GAP_MIN)} دقیقه"
+        where = f" — پنجره رویداد {ev['name']}"
+    else:
+        gap, gap_txt, where = PULSE_MIN_GAP_HOURS, f"{fa(PULSE_MIN_GAP_HOURS)} ساعت", ""
+    if age < gap - 1e-9:
         return False, (f"آخرین نبض موفق {last:%H:%M} UTC، {age:.1f} ساعت پیش — کمتر از "
-                       f"{fa(PULSE_MIN_GAP_HOURS)} ساعت")
-    return True, f"آخرین نبض موفق {age:.1f} ساعت پیش"
+                       f"{gap_txt}{where}")
+    return True, f"آخرین نبض موفق {age:.1f} ساعت پیش{where}"
 
 
 def daily_due(now: datetime, latest: str = LATEST) -> tuple[bool, str]:
@@ -169,7 +188,8 @@ def weekly_due(now: datetime, reports: str = REPORTS) -> tuple[bool, str]:
 
 
 def due(kind: str, now: datetime, event: str = "schedule", log_path: str = PULSE_LOG,
-        latest: str = LATEST, reports: str = REPORTS) -> tuple[bool, str]:
+        latest: str = LATEST, reports: str = REPORTS,
+        events_path: str = RC.CALENDAR_FILE) -> tuple[bool, str]:
     if event == "workflow_dispatch":
         return True, "اجرای دستی — نگهبان تکرار کنار می‌رود"
     if kind == "daily":
@@ -181,7 +201,32 @@ def due(kind: str, now: datetime, event: str = "schedule", log_path: str = PULSE
     except ScheduleError as exc:
         # نبض اضافه بهتر از نبض گم‌شده است — اجرا، ولی بلند
         return True, f"{exc} — نگهبان سنجیده نشد"
-    return pulse_due(log, now)
+    try:
+        cal = RC.load(events_path)
+    except RC.CalendarError as exc:
+        # تقویم خراب پنجره رویداد را خاموش می‌کند، نه نبض را — بلند در دلیل
+        run, why = pulse_due(log, now, None)
+        return run, f"{why}؛ ⚠️ تقویم رویداد: {exc} — پنجره رویداد سنجیده نشد"
+    return pulse_due(log, now, cal)
+
+
+def plan(start: datetime, days: int, cal: dict | None,
+         minute: int = PULSE_MINUTE) -> list[tuple[datetime, str]]:
+    """
+    برنامه شبیه‌سازی‌شده نبض: هر نوبت ساعتی سر دقیقه minute به‌موقع اجرا می‌شود و هر
+    اجرای با کار موفق است — رفتار خود نگهبان، بی تأخیر و جاافتادن زمان‌بند گیت‌هاب.
+    """
+    log = {"version": 1, "runs": []}
+    out = []
+    t = start.astimezone(UTC).replace(minute=minute, second=0, microsecond=0)
+    end = start + timedelta(days=days)
+    while t < end:
+        run, why = pulse_due(log, t, cal)
+        if run:
+            log["runs"].append({"at": t.isoformat(), "snapshot_rc": 0, "watch_rc": 0})
+            out.append((t, why))
+        t += timedelta(hours=1)
+    return out
 
 
 # ═══════════════════════ خط سلامت گزارش روزانه ═══════════════════════
@@ -230,6 +275,11 @@ def main(argv: list[str] | None = None, now: datetime | None = None) -> int:
     p.add_argument("--event", default="schedule")
     p.add_argument("--github-output", dest="github_output", default=None)
     p.add_argument("--log", default=PULSE_LOG)
+    p.add_argument("--events", default=RC.CALENDAR_FILE)
+    p = sp.add_parser("plan", help="برنامه شبیه‌سازی‌شده نبض ساعتی — بند ۴ متن ۲۰")
+    p.add_argument("--from", dest="start", required=True, help="روز آغاز، YYYY-MM-DD وقت جهانی")
+    p.add_argument("--days", type=int, default=3)
+    p.add_argument("--events", default=RC.CALENDAR_FILE)
     p = sp.add_parser("record", help="ثبت یک نبض با کار")
     p.add_argument("--snapshot-rc", dest="snapshot_rc", type=int, required=True)
     p.add_argument("--watch-rc", dest="watch_rc", type=int, required=True)
@@ -240,11 +290,28 @@ def main(argv: list[str] | None = None, now: datetime | None = None) -> int:
     now = now or datetime.now(UTC)
 
     if a.cmd == "due":
-        run, why = due(a.kind, now, a.event, a.log)
+        run, why = due(a.kind, now, a.event, a.log, events_path=a.events)
         print(f"{'▶️ اجرا' if run else '⏭ بی‌کار'} — {why}")
         if a.github_output:
             with open(a.github_output, "a", encoding="utf-8") as f:
                 f.write(f"run={'true' if run else 'false'}\n")
+        return 0
+    if a.cmd == "plan":
+        start = datetime.strptime(a.start, "%Y-%m-%d").replace(tzinfo=UTC)
+        try:
+            cal = RC.load(a.events)
+        except RC.CalendarError as exc:
+            print(f"⛔ {exc}")
+            return 2
+        runs = plan(start, a.days, cal)
+        print(f"برنامه شبیه‌سازی‌شده نبض — نوبت ساعتی دقیقه {PULSE_MINUTE}، هر نوبت به‌موقع و موفق")
+        day = None
+        for t, why in runs:
+            if t.date() != day:
+                day = t.date()
+                n = sum(1 for x, _ in runs if x.date() == day)
+                print(f"\n{day} — {fa(n)} نبض")
+            print(f"- {t:%H:%M} UTC، {t.astimezone(RC.TEHRAN):%H:%M} تهران — {why}")
         return 0
     if a.cmd == "record":
         e = record(a.log, now, a.snapshot_rc, a.watch_rc)
