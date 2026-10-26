@@ -1283,6 +1283,9 @@ SHAKE_SIGMA_DAYS = 90
 SHAKE_NEAR_PCT = 2.0                    # فاصله قیمت تا بالای سطح ابطال، درصد
 SHAKE_MAX_MSGS = 3
 SHAKE_HOURS = 26                        # پنجره شمع ساعتی: ۲۴ ساعت به‌علاوه پایه
+# برچسب هشدار ساخته‌شده شنبه یا یکشنبه UTC — تصمیم کاربر، بند ۶ متن ۲۰. بازار آمریکا بسته
+# است و حرکت کم‌عمق آخر هفته بی تأیید آن سنجیده نمی‌شود
+SHAKE_WEEKEND_LABEL = "حرکت آخر هفته — تا باز شدن بازار آمریکا تأییدنشده"
 # ترتیب اولویت در سقف: عبور، نزدیکی، باند رژیم، حرکت ۲۴ ساعت، حرکت ۴ ساعت
 _SHAKE_RANK = {"cross": 0, "near": 1, "regime": 2, "move24": 3, "move4": 4}
 
@@ -1486,7 +1489,8 @@ def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
     if len(fresh) > SHAKE_MAX_MSGS:
         print(f"  هشدار تکان: {fa(len(fresh) - SHAKE_MAX_MSGS)} رویداد بیرون از سقف "
               f"{fa(SHAKE_MAX_MSGS)} پیام — اجرای بعد")
-    return [Msg(text + tail, f"تکان {kind}", {key: True})
+    head = f"{SHAKE_WEEKEND_LABEL}\n" if now.astimezone(UTC).weekday() >= 5 else ""
+    return [Msg(head + text + tail, f"تکان {kind}", {key: True})
             for kind, _, key, text in fresh[:SHAKE_MAX_MSGS]]
 
 
