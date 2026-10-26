@@ -21,8 +21,11 @@ name: رادار — اسکن روزانه
 
 on:
   schedule:
-    # ۰۶:۳۰ به وقت هماهنگ جهانی — پس از بسته‌شدن کندل روزانه
-    - cron: "30 6 * * *"
+    # پس از بسته‌شدن کندل روزانه، دقیقه ۳۷ دور از ازدحام سرِ ساعت و نیم‌ساعت. نوبت دوم
+    # دو ساعت بعد — ت۵، متن ۱۸: ۳۰ روز 4.6 تا 9.4 ساعت دیر ساخته شد. کار due نوبت دوم را
+    # بی‌کار می‌کند اگر reports/LATEST.md گزارش همان روز است
+    - cron: "37 6 * * *"
+    - cron: "37 8 * * *"
   workflow_dispatch:
     inputs:
       preset:
@@ -40,7 +43,32 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # نگهبان تکرار — ت۵. فقط برداشت مخزن و کتابخانه استاندارد؛ اجرای دستی همیشه کار می‌کند
+  due:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      run: ${{ steps.due.outputs.run }}
+    steps:
+      - name: برداشت مخزن
+        uses: actions/checkout@v4
+
+      - name: نصب پایتون
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: نگهبان تکرار
+        id: due
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          python radar_schedule.py due daily --event "${{ github.event_name }}" \
+            --github-output "$GITHUB_OUTPUT"
+
   scan:
+    needs: due
+    if: needs.due.outputs.run == 'true'
     # ثابت روی 24.04 — برچسب شناور گیت‌هاب از ۱۹ اکتبر ۲۰۲۶ به 26.04 می‌رود؛ رویداد ۹۰
     runs-on: ubuntu-24.04
     # از ۲۵ به ۴۰ با اسکنر پامپ — نشست ۹؛ گام اسکنر خودش سقف ۱۲ دقیقه دارد
@@ -292,6 +320,9 @@ jobs:
             else
               echo "هنوز نبض چهارساعته اجرا نشده."
             fi
+            echo
+            # خط سلامت — ت۵: شمار نبض ۲۴ ساعت و بیشترین فاصله، از pulse_log.json
+            python radar_schedule.py health
             echo
             python radar_state.py --opening
           } > reports/LATEST.md

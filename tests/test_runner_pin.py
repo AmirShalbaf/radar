@@ -35,9 +35,10 @@ def test_no_floating_runner() -> None:
 
 
 def test_scheduled_flows_pinned() -> None:
+    # دو کار در هر گردش‌کار زمان‌بندی‌شده — نگهبان تکرار due و کار اصلی، ت۵ متن ۱۸
     for name in ("radar-daily.yml", "radar-pulse.yml", "radar-weekly.yml"):
         runs = re.findall(r"runs-on:\s*(\S+)", _text(name))
-        assert runs == [PIN], (name, runs)
+        assert runs == [PIN, PIN], (name, runs)
 
 
 def test_probe_runner_input_defaults_to_pin() -> None:

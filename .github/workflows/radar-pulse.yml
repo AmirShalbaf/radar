@@ -3,7 +3,7 @@ name: رادار — نبض چهارساعته
 # ─────────────────────────────────────────────────────────────
 # مسیر فایل: .github/workflows/radar-pulse.yml
 #
-# چه می‌کند: هر چهار ساعت
+# چه می‌کند: حدود هر چهار ساعت
 #   ۱) radar_snapshot.py — عکس سبک قیمت، فاندینگ و بهره باز
 #   ۲) radar_watch.py --once — سنجش ابطال، پله ورود، هدف و هشدار قیمتی
 # و نتیجه را کامیت می‌کند. اگر کلید تلگرام تنظیم باشد، هشدارها
@@ -11,12 +11,17 @@ name: رادار — نبض چهارساعته
 #
 # چرا مهم است: قانون تازگی فاز ۱. هر جلسه رادار حداکثر با داده
 # چهارساعته شروع می‌شود، بی‌وابستگی به روشن‌بودن کامپیوتر کاربر.
+#
+# زمان‌بندی — ت۵، متن ۱۸: با «17 */4» گیت‌هاب در ۳۰ روز 108 اجرا از 180 نوبت
+# ساخت و بقیه را دیر ساخت یا نساخت؛ هیچ اجرایی شکست نخورد. حالا نوبت هر دو ساعت،
+# و کار due: اگر آخرین نبض موفق کمتر از ۳ ساعت پیش بود و پس از آن بسته روزانه
+# تازه‌ای نیامده، بی‌کار تمام می‌شود — از pulse_log.json مخزن، radar_schedule.py.
 # ─────────────────────────────────────────────────────────────
 
 on:
   schedule:
-    # دقیقه ۱۷ برای دوری از ازدحام سرِ ساعت رانرها
-    - cron: "17 */4 * * *"
+    # دقیقه ۴۱، دور از ازدحام سرِ ساعت و نیم‌ساعت؛ هر دو ساعت — ت۵
+    - cron: "41 */2 * * *"
   workflow_dispatch:
 
 permissions:
@@ -27,7 +32,32 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # نگهبان تکرار — ت۵. فقط برداشت مخزن و کتابخانه استاندارد؛ اجرای دستی همیشه کار می‌کند
+  due:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      run: ${{ steps.due.outputs.run }}
+    steps:
+      - name: برداشت مخزن
+        uses: actions/checkout@v4
+
+      - name: نصب پایتون
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: نگهبان تکرار
+        id: due
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          python radar_schedule.py due pulse --event "${{ github.event_name }}" \
+            --github-output "$GITHUB_OUTPUT"
+
   pulse:
+    needs: due
+    if: needs.due.outputs.run == 'true'
     # ثابت روی 24.04 — برچسب شناور گیت‌هاب از ۱۹ اکتبر ۲۰۲۶ به 26.04 می‌رود؛ رویداد ۹۰
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -52,10 +82,13 @@ jobs:
           PYTHONUTF8: "1"
         run: |
           mkdir -p reports
+          # کد خروج برای دفتر نبض — ت۵؛ خطا همچنان سند خطا می‌سازد
+          rc=0
           python radar_snapshot.py \
             --out reports/SNAPSHOT.md \
-            --json snapshot.json 2> /tmp/snap.log \
-          || {
+            --json snapshot.json 2> /tmp/snap.log || rc=$?
+          echo "$rc" > /tmp/snap_rc
+          if [ "$rc" -ne 0 ]; then
             D=$(date -u '+%Y-%m-%d %H:%M UTC')
             {
               echo "# خطای نبض — $D"
@@ -64,7 +97,7 @@ jobs:
               tail -c 3000 /tmp/snap.log
               echo '```'
             } > reports/SNAPSHOT.md
-          }
+          fi
 
       - name: پایش زنده سطوح
         env:
@@ -79,6 +112,7 @@ jobs:
             # پایشگر بی‌صدا می‌ماند.
             rc=0
             python radar_watch.py --once > /tmp/watch.log 2>&1 || rc=$?
+            echo "$rc" > /tmp/watch_rc
             {
               echo "# پایش زنده — $D"
               echo
@@ -97,13 +131,25 @@ jobs:
             echo "# پایش زنده — $D" > reports/WATCH.md
             echo >> reports/WATCH.md
             echo "watch.json نیست — پایش رد شد." >> reports/WATCH.md
+            echo 0 > /tmp/watch_rc
           fi
+
+      # دفتر نبض — ت۵. نگهبان due و خط سلامت گزارش روزانه از همین می‌خوانند. کد غایب
+      # یعنی گام پیش از نوشتن افتاد: 99، پس این نبض موفق شمرده نمی‌شود
+      - name: ثبت دفتر نبض
+        if: always()
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          python radar_schedule.py record \
+            --snapshot-rc "$(cat /tmp/snap_rc 2>/dev/null || echo 99)" \
+            --watch-rc "$(cat /tmp/watch_rc 2>/dev/null || echo 99)"
 
       - name: کامیت
         run: |
           git config user.name  "radar-bot"
           git config user.email "radar-bot@users.noreply.github.com"
-          git add reports/SNAPSHOT.md reports/WATCH.md snapshot.json watch_state.json 2>/dev/null || true
+          git add reports/SNAPSHOT.md reports/WATCH.md snapshot.json watch_state.json pulse_log.json 2>/dev/null || true
           if git diff --staged --quiet; then
             echo "تغییری نبود."
           else

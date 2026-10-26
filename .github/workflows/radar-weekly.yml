@@ -14,8 +14,11 @@ name: رادار — چرخش و کالیبراسیون هفتگی
 
 on:
   schedule:
-    # یکشنبه ۰۷:۰۰ به وقت هماهنگ جهانی
-    - cron: "0 7 * * 0"
+    # یکشنبه، دقیقه ۱۱ دور از ازدحام سرِ ساعت. نوبت دوم دو ساعت بعد — ت۵، متن ۱۸:
+    # 4.4 تا 6.6 ساعت دیر ساخته شد. کار due نوبت دوم را بی‌کار می‌کند اگر گزارش خودسنجی
+    # یا بازبینی هفتگی سبد از یکشنبه همین هفته هست
+    - cron: "11 7 * * 0"
+    - cron: "11 9 * * 0"
   workflow_dispatch:
     inputs:
       regime:
@@ -35,7 +38,32 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # نگهبان تکرار — ت۵. فقط برداشت مخزن و کتابخانه استاندارد؛ اجرای دستی همیشه کار می‌کند
+  due:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      run: ${{ steps.due.outputs.run }}
+    steps:
+      - name: برداشت مخزن
+        uses: actions/checkout@v4
+
+      - name: نصب پایتون
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: نگهبان تکرار
+        id: due
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          python radar_schedule.py due weekly --event "${{ github.event_name }}" \
+            --github-output "$GITHUB_OUTPUT"
+
   weekly:
+    needs: due
+    if: needs.due.outputs.run == 'true'
     # ثابت روی 24.04 — برچسب شناور گیت‌هاب از ۱۹ اکتبر ۲۰۲۶ به 26.04 می‌رود؛ رویداد ۹۰
     runs-on: ubuntu-24.04
     timeout-minutes: 45
