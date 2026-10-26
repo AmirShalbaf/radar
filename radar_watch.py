@@ -1190,7 +1190,12 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
 # وقت جهانی یک بار؛ کلید فقط پس از ارسال موفق — Msg، مثل رفع نقض بسته یک. سقف ۳ پیام
 # در هر اجرا؛ رویداد بیرون از سقف کلید نمی‌گیرد و اجرای بعد می‌آید.
 
-SHAKE_MOVES = ((4, 5.0), (24, 8.0))    # (ساعت، درصد) — تصمیم کاربر، متن ۱۸
+SHAKE_MOVES = ((4, 5.0), (24, 8.0))    # (ساعت، درصد) — کف ثابت، تصمیم کاربر، متن ۱۸
+# آستانه نسبی به نوسان — ک۱۰۵، تصمیم کاربر ۲۶ اکتبر، متن ۱۹: آستانه هر افق بیشینه کف ثابت
+# و این ضریب × انحراف معیار بازده همان افق در ۹۰ روز اخیر. دلیل: شمارش ۳۰ روزه با کف ثابت
+# برای SUI و ONDO هر کدام ۱۱ و برای AAVE ۸ پیام حرکت ساخت — بیش از یکی در هفته
+SHAKE_SIGMA = {4: 4.0, 24: 3.0}
+SHAKE_SIGMA_DAYS = 90
 SHAKE_NEAR_PCT = 2.0                    # فاصله قیمت تا بالای سطح ابطال، درصد
 SHAKE_MAX_MSGS = 3
 SHAKE_HOURS = 26                        # پنجره شمع ساعتی: ۲۴ ساعت به‌علاوه پایه
@@ -1224,13 +1229,54 @@ def _shake_feed():
     return _hourly_closed
 
 
+def move_sigma(closes: list[float], hrs: int) -> float | None:
+    """
+    انحراف معیار نمونه بازده hrs ساعته، درصد، از بسته‌های ساعتی پیاپی — بازده‌ها روی‌هم
+    می‌افتند، همان تعریف شمارش ۳۰ روزه ک۱۰۵. کمتر از دو بازده یعنی None.
+    """
+    rets = [100 * (closes[i] / closes[i - hrs] - 1) for i in range(hrs, len(closes))
+            if closes[i - hrs] > 0]
+    if len(rets) < 2:
+        return None
+    mu = sum(rets) / len(rets)
+    return math.sqrt(sum((x - mu) ** 2 for x in rets) / (len(rets) - 1))
+
+
+def _sigma_90d(symbol: str, hrs: int, now: datetime | None = None
+               ) -> tuple[float | None, list[str]]:
+    """انحراف معیار بازده hrs ساعته در ۹۰ روز اخیر، از شمع بسته ساعتی radar_history."""
+    now = now or datetime.now(UTC)
+    import radar_history as RH
+    try:
+        s = RH.history(symbol, "1h", now - timedelta(days=SHAKE_SIGMA_DAYS), now,
+                       cache_dir=None, now=now)
+    except RH.HistoryError as exc:
+        return None, [str(exc)[:200]]
+    closes = [float(c) for c in s.df.loc[s.df["confirm"] == 1, "close"]]
+    return move_sigma(closes, hrs), []
+
+
+def _sigma_feed():
+    """تابع انحراف معیار هشدار تکان — آزمون جایش عدد ساختگی می‌گذارد."""
+    cache: dict = {}
+
+    def sigma(sym: str, hrs: int):
+        if (sym, hrs) not in cache:
+            cache[(sym, hrs)] = _sigma_90d(sym, hrs)
+        return cache[(sym, hrs)]
+    return sigma
+
+
 def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
-                 regime: dict | None = None, history: dict | None = None) -> list[Msg]:
+                 regime: dict | None = None, history: dict | None = None,
+                 sigma=None) -> list[Msg]:
     """
     هشدارهای تکان این اجرا، حداکثر SHAKE_MAX_MSGS. state دست نمی‌خورد؛ کلید هر پیام
     با Msg.commit پس از رسید موفق. پوزیشن ناچیز — زیر DUST_USD — هشدار نمی‌گیرد.
+    sigma(نماد، ساعت) انحراف معیار ۹۰ روزه — فقط وقتی حرکت از کف ثابت گذشت خوانده می‌شود.
     """
     hourly = hourly or _shake_feed()
+    sigma = sigma or _sigma_feed()
     day = now.astimezone(UTC).strftime("%Y-%m-%d")
     week_at = _tehran(_week_close(now) + timedelta(days=7))
     pos = {p["symbol"].upper(): p for p in h.get("positions", [])
@@ -1289,12 +1335,27 @@ def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
             chg = 100 * (px / base["close"] - 1)
             if abs(chg) < pct - 1e-9:            # «۵٪ یا بیشتر» — مرز دقیق با خطای ممیز
                 continue
+            # آستانه نسبی — ک۱۰۵. انحراف معیار فقط اینجا خوانده می‌شود: کف ثابت گذشته است
+            k = SHAKE_SIGMA[hrs]
+            sd, why_sd = sigma(sym, hrs)
+            thr = max(pct, k * sd) if sd is not None else pct
+            if abs(chg) < thr - 1e-9:
+                print(f"  هشدار تکان {sym}: حرکت {fa(hrs)} ساعت {chg:+.1f}٪ زیر آستانه نسبی "
+                      f"{thr:.1f}٪ — انحراف معیار {sd:.2f}٪")
+                continue
+            if sd is not None:
+                how = (f"بیشینه {fa(f'{pct:g}')}٪ و {fa(f'{k:g}')} برابر انحراف معیار بازده "
+                       f"{fa(hrs)} ساعته {fa(SHAKE_SIGMA_DAYS)} روز، {sd:.2f}٪")
+            else:
+                how = (f"کف {fa(f'{pct:g}')}٪ — انحراف معیار: داده ندارم"
+                       + (f" ({'؛ '.join(why_sd)})" if why_sd else ""))
             rule = (f"ابطال دفتر موقعیت فقط با بسته هفتگی، سطح {_n(lvl)}" if lvl is not None
                     else "خروج نمی‌سازد")
             events.append((f"move{hrs}", order, f"shake_move{hrs}_{sym}_{day}", (
                 f"{'📈' if chg > 0 else '📉'} تکان {sym} — حرکت {fa(hrs)} ساعت {chg:+.1f}٪: از "
                 f"{_n(base['close'])} به {_n(px)}؛ بسته ساعتی {_tehran(at)}.\n"
-                f"قاعده: آستانه {fa(f'{pct:g}')}٪ در {fa(hrs)} ساعت — فقط اطلاع؛ {rule}.\n" + act)))
+                f"قاعده: آستانه {thr:.1f}٪ در {fa(hrs)} ساعت — {how}. فقط اطلاع؛ {rule}.\n"
+                + act)))
 
     # تغییر باند خام رژیم نسبت به گزارش قبلی — regime.json در برابر روز پیش در تاریخچه
     if isinstance(regime, dict) and isinstance(history, dict):

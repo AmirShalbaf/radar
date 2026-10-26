@@ -68,8 +68,10 @@ def _feed(data):
 
 
 def _run(data, state, watch=None, h=None, regime=None, history=None, now=NOW):
+    # انحراف معیار غایب: کف ثابت — آستانه نسبی ک۱۰۵ در آزمون‌های جدا، پایین همین پرونده
     return W.shake_alerts(watch or _watch(), h or _h(), state, now, hourly=_feed(data),
-                          regime=regime, history=history)
+                          regime=regime, history=history,
+                          sigma=lambda sym, hrs: (None, ["آزمون"]))
 
 
 # ── حرکت ──
@@ -239,6 +241,7 @@ def test_run_once_commits_shake_key_only_after_receipt(tmp_path, monkeypatch) ->
     data = {"BTC": _bars(_flat(80000.0)), "SOL": _bars(up)}
     monkeypatch.setattr(W, "STATE_FILE", str(tmp_path / "state.json"))
     monkeypatch.setattr(W, "_shake_feed", lambda: _feed(data))
+    monkeypatch.setattr(W, "_sigma_feed", lambda: (lambda sym, hrs: (None, ["آزمون"])))
     monkeypatch.setattr(W, "ticker", lambda s: None)
     monkeypatch.setattr(W.P, "weekly_close", lambda s, now=None: (None, ["آزمون"]))
     sent = []
@@ -259,3 +262,66 @@ def test_tehran_offset_single_source() -> None:
     import radar_video as V
     assert V.TEHRAN is A.TEHRAN
     assert A.TEHRAN.utcoffset(None) == timedelta(hours=3, minutes=30)
+
+
+# ── ک۱۰۵، متن ۱۹: آستانه نسبی به نوسان ──
+
+def _sig(**sd):
+    """انحراف معیار ساختگی: نماد ← {ساعت: درصد}؛ غایب یعنی داده ندارم."""
+    def sigma(sym, hrs):
+        v = (sd.get(sym) or {}).get(hrs)
+        return (v, []) if v is not None else (None, ["آزمون: داده نیست"])
+    return sigma
+
+
+def test_move_sigma_definition() -> None:
+    closes = [100.0, 101.0, 100.0, 102.0, 101.0]
+    rets = [100 * (closes[i] / closes[i - 1] - 1) for i in range(1, 5)]   # بازده ۱ ساعته، درصد
+    mu = sum(rets) / 4
+    sd = (sum((x - mu) ** 2 for x in rets) / 3) ** 0.5
+    assert W.move_sigma(closes, 1) == pytest.approx(sd)
+    assert W.move_sigma([100.0, 101.0], 1) is None
+
+
+def test_relative_threshold_suppresses_noisy_move() -> None:
+    up = _flat(100.0, 26) + [101, 102, 104, 106.0]               # +6٪ در ۴ ساعت
+    data = {"BTC": _bars(_flat(80000.0)), "SOL": _bars(up)}
+    msgs = W.shake_alerts(_watch(inv=50.0), _h(inv=50.0), {}, NOW, hourly=_feed(data),
+                          sigma=_sig(SOL={4: 2.0, 24: 3.0}))     # آستانه max(5، 8) = 8٪
+    assert msgs == []
+
+
+def test_relative_threshold_keeps_big_move_and_says_rule() -> None:
+    up = _flat(100.0, 26) + [102, 104, 106, 109.0]               # +9٪
+    data = {"BTC": _bars(_flat(80000.0)), "SOL": _bars(up)}
+    msgs = W.shake_alerts(_watch(inv=50.0), _h(inv=50.0), {}, NOW, hourly=_feed(data),
+                          sigma=_sig(SOL={4: 2.0, 24: 4.0}))   # ۲۴ ساعت: آستانه 12٪
+    assert len(msgs) == 1
+    assert "آستانه 8.0٪" in msgs[0] and "۴ برابر انحراف معیار" in msgs[0] and "2.00٪" in msgs[0]
+
+
+def test_low_volatility_keeps_fixed_floor() -> None:
+    up = _flat(100.0, 26) + [101, 102, 104, 105.5]               # +5.5٪، σ کوچک
+    data = {"BTC": _bars(_flat(80000.0)), "SOL": _bars(up)}
+    msgs = W.shake_alerts(_watch(inv=50.0), _h(inv=50.0), {}, NOW, hourly=_feed(data),
+                          sigma=_sig(SOL={4: 0.5, 24: 1.0}))
+    assert len(msgs) == 1 and "آستانه 5.0٪" in msgs[0]
+
+
+def test_sigma_missing_falls_back_to_fixed() -> None:
+    up = _flat(100.0, 26) + [101, 102, 104, 106.0]
+    data = {"BTC": _bars(_flat(80000.0)), "SOL": _bars(up)}
+    msgs = W.shake_alerts(_watch(inv=50.0), _h(inv=50.0), {}, NOW, hourly=_feed(data),
+                          sigma=_sig())
+    assert len(msgs) == 1 and "انحراف معیار: داده ندارم" in msgs[0]
+
+
+def test_sigma_fetched_only_past_fixed_threshold() -> None:
+    asked = []
+
+    def sigma(sym, hrs):
+        asked.append((sym, hrs))
+        return None, []
+    data = {"BTC": _bars(_flat(80000.0)), "SOL": _bars(_flat(110.0))}
+    W.shake_alerts(_watch(), _h(), {}, NOW, hourly=_feed(data), sigma=sigma)
+    assert asked == []
