@@ -323,7 +323,8 @@ def test_1024_sales_rows_and_optcost(h) -> None:
 
 
 def test_1023_usdt_income(h) -> None:
-    rows = [r for r in h["ledger"] if r["action"] == "income"]
+    rows = [r for r in h["ledger"] if r["action"] == "income"
+            and r["at"] == "2026-10-23T12:50:00+00:00"]
     assert len(rows) == 1
     r = rows[0]
     assert (r["symbol"], r["delta"], r["account"], r["at"]) ==         ("USDT", 0.357453, "LBank", "2026-10-23T12:50:00+00:00")
@@ -347,3 +348,16 @@ def test_1024_tao_dust_has_no_level(h) -> None:
     assert tao["invalidation"] is None and "invalidation_since" not in tao
     assert {k for k in tao if k != "lots"} == {k for k in bnb if k != "lots"}
     assert 0.000092 * 254.4 < P.DUST_USD
+
+
+def test_1026_usdt_income(h) -> None:
+    """متن ۱۹: تتر دیده‌شده 07:35 UTC برابر 648.14463149، یعنی 0.166365 بیش از دفتر."""
+    rows = [r for r in h["ledger"] if r["action"] == "income"
+            and r["at"] == "2026-10-26T07:35:00+00:00"]
+    assert len(rows) == 1
+    r = rows[0]
+    assert (r["symbol"], r["delta"], r["account"]) == ("USDT", 0.166365, "LBank")
+    assert r["reason"] == "سود خودکار تتر LBank، ۲۴ تا ۲۶ اکتبر"
+    assert r["cash"] == {"asset": "USDT", "qty": 0.166365, "account": "LBank"}
+    assert 561.87837649 + 86.186076 - 0.086186 == pytest.approx(647.97826649, abs=1e-9)
+    assert 647.97826649 + 0.166365 == pytest.approx(648.14463149, abs=1e-9)
