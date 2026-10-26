@@ -1472,6 +1472,67 @@
      "d7": null
     }
    }
+  },
+  {
+   "id": "pce:2026-11-25",
+   "kind": "pce",
+   "title": "تورم مصرف شخصی (PCE)",
+   "importance": "medium",
+   "at": "2026-11-25T13:30:00Z",
+   "source": "fred.stlouisfed.org rid=54 — برنامه BLS/BEA",
+   "first_seen": "2026-10-26T13:30:48Z",
+   "prices": {
+    "BTC": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "SOL": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "ETH": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "BNB": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "AAVE": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "LINK": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "SUI": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "ONDO": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "TAO": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "TRX": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    }
+   }
   }
  ]
 }
