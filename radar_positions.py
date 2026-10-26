@@ -111,6 +111,9 @@ STABLE_PRICE = 1.0            # استیبل با قیمت ثابت ۱ دلار 
 DUST_USD = 1.0                # زیر ۱ دلار «ناچیز»: در سرمایه هست، سطح و نردبان نه
 NON_ALT = {"BTC", "XAUT", "PAXG"} | STABLE_ASSETS
 CORR_ALT_LONGS = 3            # بند ۸.۳ اسکیل: از سه لانگ آلت هم‌زمان به بالا
+# سقف تمرکز — تصمیم کاربر ۲۵ اکتبر ۲۰۲۶، بند ۴ متن ۱۸: سهم هیچ ارزی پس از خرید از این درصد
+# کل سرمایه بیشتر نمی‌شود — add، reenter و پیشنهاد بازخرید. فروش اجباری نیست. تنها منبع
+CONCENTRATION_CAP_PCT = 30
 CORR_FACTOR = 1.5
 TOL = 1e-9
 WEEK = timedelta(days=7)
@@ -612,6 +615,71 @@ def value(h: dict, prices: dict) -> dict:
             "unpriced_cash": other_cash}
 
 
+def coin_value(val: dict, sym: str) -> float:
+    """ارزش زنده یک ارز در همه دفترها، بی فرضی — از خروجی value."""
+    return sum(r["value"] for r in val.get("rows") or []
+               if r["symbol"] == sym and not r.get("paper") and r.get("value") is not None)
+
+
+def share_pct(val: dict, sym: str) -> float:
+    return 100 * coin_value(val, sym) / val["total"] if val["total"] else 0.0
+
+
+def cap_room(val: dict, sym: str) -> float:
+    """جای خرید تا سقف تمرکز، به دلار، وقتی خرید از نقد است و کل سرمایه ثابت می‌ماند."""
+    return max(0.0, CONCENTRATION_CAP_PCT / 100 * val["total"] - coin_value(val, sym))
+
+
+def share_after(val: dict, sym: str, usd: float, spent_cash: float) -> float:
+    """سهم پس از خرید usd دلار؛ spent_cash آنچه از نقد همان سبد کم می‌شود."""
+    total = val["total"] + usd - spent_cash
+    return 100 * (coin_value(val, sym) + usd) / total if total else 0.0
+
+
+def _prices(symbols: list[str]) -> dict:
+    """قیمت زنده برای سقف تمرکز — پایشگر، اوکی‌اکس. آزمون جایش قیمت ساختگی می‌گذارد."""
+    import radar_watch as RW
+    return {s: RW.ticker(s) for s in symbols}
+
+
+def cap_check(h: dict, sym: str, usd: float, spent_cash: float, price: float
+              ) -> tuple[float | None, str | None]:
+    """
+    سقف تمرکز یک خرید، پیش از اعمالش. قیمت هر ارز باز دیگر زنده؛ ارز خرید با قیمت
+    خرید. قیمتی نیامد یعنی «داده ندارم» و خرید بی‌سنجش نه.
+    """
+    syms = sorted({p["symbol"] for p in h["positions"]
+                   if p["status"] == "open" and not p.get("paper")} | {sym})
+    px = _prices([s for s in syms if s != sym])
+    px[sym] = price
+    gone = [s for s in syms if px.get(s) is None]
+    if gone:
+        return None, (f"داده ندارم — قیمت {'، '.join(gone)} نیامد؛ سقف تمرکز سنجیده نشد")
+    s = share_after(value(h, px), sym, usd, spent_cash)
+    if s > CONCENTRATION_CAP_PCT + 1e-9:
+        return s, (f"سقف تمرکز: سهم {sym} پس از خرید {s:.1f}٪ — بیش از "
+                   f"{CONCENTRATION_CAP_PCT}٪ کل سرمایه")
+    return s, None
+
+
+def _deviation(a, journal: dict, problems: list[str]) -> str | None:
+    """
+    حکم منفی خرید — بازخرید یا سقف تمرکز — فقط با --deviation و شناسه RD که در دفترچه
+    برچسب سرپیچی دارد. هیچ دورزدن بی‌صدایی نیست.
+    """
+    if not problems:
+        return None
+    rd = getattr(a, "deviation", None)
+    if not rd:
+        raise PositionsError("؛ ".join(problems) + ". فقط با --deviation و شناسه RD که در "
+                             "دفترچه با برچسب سرپیچی ثبت شده")
+    dec = next((d for d in journal.get("decisions", []) if d.get("decision_id") == rd), None)
+    if dec is None or dec.get("human") != "defied":
+        raise PositionsError(f"{rd} در دفترچه با برچسب سرپیچی نیست — ثبت با "
+                             "radar_journal.py decide --human defied")
+    return rd
+
+
 def _trade_risk(p: dict) -> float:
     s = 1 if p.get("side", "long") == "long" else -1
     return sum(l["qty"] * s * (l["entry"] - p["stop"]) for l in p["lots"])
@@ -885,16 +953,6 @@ def _reserve_reenter(h: dict, a, journal: dict, ctx: dict, row: dict, p: dict | 
     now = _clock()
     release, _ = RB.band_release(ctx.get("regime"), ctx.get("history"), now)
     ok, why = RW.rebuy_verdict(st, released=release is not None)
-    if not ok:
-        rd = a.deviation
-        dec = next((d for d in journal.get("decisions", []) if d.get("decision_id") == rd), None)
-        if not rd:
-            raise PositionsError(f"{sym}: حکم بازخرید منفی — {why}. فقط با --deviation و شناسه RD "
-                                 f"که در دفترچه با برچسب سرپیچی ثبت شده")
-        if dec is None or dec.get("human") != "defied":
-            raise PositionsError(f"{sym}: {rd} در دفترچه با برچسب سرپیچی نیست — ثبت با "
-                                 "radar_journal.py decide --human defied")
-        row["deviation"] = rd
     if a.gross is None or a.fee is None:
         raise PositionsError("رسید لازم است: --gross و --fee هر دو — بازخرید بی رسید نقد را "
                              "کم نمی‌کند و از دفتر پنهان می‌ماند")
@@ -907,6 +965,13 @@ def _reserve_reenter(h: dict, a, journal: dict, ctx: dict, row: dict, p: dict | 
         raise PositionsError(f"کارمزد نامعتبر: {a.fee}")
     cost = round(a.gross + (0.0 if fee_coin else a.fee), 10)
     got = round(a.qty - a.fee, 12) if fee_coin else a.qty
+    share, cap = cap_check(h, sym, got * a.price, cost, a.price)
+    rd = _deviation(a, journal, ([] if ok else [f"{sym}: حکم بازخرید منفی — {why}"])
+                    + ([cap] if cap else []))
+    if rd:
+        row["deviation"] = rd
+    if share is not None:
+        row["share_after_pct"] = round(share, 2)
     c = next((c for c in h["cash"] if c.get("asset") == "USDT" and c.get("account") == a.account),
              None)
     if c is None or c["qty"] + TOL < cost:
@@ -938,6 +1003,16 @@ def _reserve_reenter(h: dict, a, journal: dict, ctx: dict, row: dict, p: dict | 
     h["ledger"].append(row)
     h["updated"] = _now()
     return row
+
+
+def _cap_row(h: dict, a, journal: dict, row: dict, sym: str) -> None:
+    """سقف تمرکز add و ورود دوباره پس از ابطال — هر دو نقد را کم نمی‌کنند."""
+    share, cap = cap_check(h, sym, a.qty * a.price, 0.0, a.price)
+    rd = _deviation(a, journal, [cap] if cap else [])
+    if rd:
+        row["deviation"] = rd
+    if share is not None:
+        row["share_after_pct"] = round(share, 2)
 
 
 def _apply(h: dict, a, journal: dict, ctx: dict | None = None) -> dict:
@@ -1009,11 +1084,13 @@ def _apply(h: dict, a, journal: dict, ctx: dict | None = None) -> dict:
             raise PositionsError(f"{sym}: آخرین بسته هفتگی {w['closed_at']} پس از خروج "
                                  f"{st['exit_at']} نیست — ورود دوباره فقط با بسته‌ای پس از "
                                  "خروج؛ منتظر بسته بعد")
+        _cap_row(h, a, journal, row, sym)
         p["lots"].append({"qty": a.qty, "account": a.account, "entry": a.price})
         p["status"] = "open"
         row.update(delta=a.qty, price=a.price, weekly_close=w["close"],
                    week_close_at=w["closed_at"], venue=w["venue"])
     elif a.cmd == "add":
+        _cap_row(h, a, journal, row, sym)
         if p is None:
             p = {"symbol": sym, "book": "position", "status": "open", "lots": [],
                  "invalidation": None}
@@ -1144,6 +1221,8 @@ def main(argv: list[str] | None = None) -> int:
         if name == "add":
             p.add_argument("--decision-id", dest="decision_id", required=True)
             p.add_argument("--setup-name", dest="setup_name", required=True)
+            p.add_argument("--deviation", default=None,
+                           help="شناسه RD با برچسب سرپیچی، برای خرید بالای سقف تمرکز")
         if name == "adjust":
             p.add_argument("--reason", required=True)
         if name == "withdraw":

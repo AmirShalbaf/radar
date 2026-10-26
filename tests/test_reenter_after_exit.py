@@ -91,6 +91,9 @@ def files(tmp_path):
 
 
 def _cli(files, monkeypatch, closed_at) -> int:
+    # سقف تمرکز بند ۴ متن ۱۸ جدا آزموده می‌شود — test_concentration_cap؛ اینجا قاعده دیگر
+    monkeypatch.setattr(P, "_prices", lambda syms: {s: 100.0 for s in syms})
+    monkeypatch.setattr(P, "CONCENTRATION_CAP_PCT", 100)
     monkeypatch.setattr(P, "weekly_close", lambda sym, get=None, now=None: (
         {"close": 98.0, "closed_at": closed_at, "venue": "okx"}, []))
     hp, jp = files

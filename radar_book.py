@@ -858,6 +858,31 @@ def _reserve_lines(rv: dict, reg: dict | None) -> list[str]:
     return o
 
 
+def _share_lines(val: dict) -> list[str]:
+    """
+    سهم هر ارز از کل سرمایه و سقف تمرکز — بند ۴ متن ۱۸. فروش اجباری نیست؛ ارز در سقف یا
+    بالای آن فقط خرید تازه نمی‌گیرد. ناچیز و فرضی نمی‌آیند.
+    """
+    if not val.get("rows") or not val.get("total"):
+        return []
+    cap = P.CONCENTRATION_CAP_PCT
+    syms = list(dict.fromkeys(r["symbol"] for r in val["rows"]
+                              if not r.get("paper") and not r.get("dust")
+                              and r.get("value") is not None))
+    syms.sort(key=lambda s: -P.coin_value(val, s))
+    o = [f"### سهم هر ارز — سقف تمرکز {fa(cap)}٪", "",
+         "سهم پس از هر خرید — add، reenter و پیشنهاد بازخرید — از سقف بیشتر نمی‌شود. فروش "
+         "اجباری نیست.", "", "| نماد | ارزش | سهم | وضعیت |", "|---|---|---|---|"]
+    for s in syms:
+        pct, room = P.share_pct(val, s), P.cap_room(val, s)
+        state = ("⛔ بالای سقف — خرید تازه ممنوع" if pct > cap + 1e-9 else
+                 "⛔ در سقف — خرید تازه ممنوع" if room <= 0.5 else
+                 f"زیر سقف — جا {room:,.0f} دلار")
+        o.append(f"| {s} | {P.coin_value(val, s):,.0f} | {pct:.1f}٪ | {state} |")
+    o.append("")
+    return o
+
+
 def _rebuy_lines(rb: dict) -> list[str]:
     """
     سهمیه بازخرید باز همه نقشه‌ها و، با بودجه آزادشده، فهرست رتبه‌دار — بند ۳ متن ۱۸.
@@ -1168,6 +1193,7 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     W("نه ردیف اقدام، نه دلیل فروش — تا معیار نسخه ۷، نشست ۱۲. ابطال با بسته هفتگی")
     W("همان است.")
     W("")
+    o.extend(_share_lines(val))
     if reentry:
         W("### ورود دوباره — خارج‌شده با ابطال")
         W("")
@@ -1471,7 +1497,7 @@ def rebuy_view(watch: dict, h: dict, val: dict, frames: dict, btc, regime_path: 
         cands = RB.candidates(lst, quotas)
         data = (gather(cands, quotas) if gather else
                 RB.gather(cands, watch, h, quotas, frames=frames, btc=btc, now=now))
-        out["ev"] = RB.evaluate(data, lst, quotas, out["amount"])
+        out["ev"] = RB.evaluate(data, lst, quotas, out["amount"], val=val)
     return out
 
 

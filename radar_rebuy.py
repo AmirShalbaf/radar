@@ -21,6 +21,8 @@ radar_rebuy.py — بازخرید با انتخاب کیفی، بند ۳ متن 
              ارز بی‌سهمیه فقط با دست‌کم ۵ واحد درصد قدرت نسبی بیشتر جای ارز دارای سهمیه را
              می‌گیرد؛ فقط در هم‌ترازی، ترتیب عکس فروش: فروش تازه‌تر اول.
     مقدار    پرکردن بودجه به ترتیب رتبه؛ ارز دارای سهمیه تا سهمیه بازش.
+    سقف      سقف تمرکز ۳۰٪ — بند ۴ متن ۱۸، P.CONCENTRATION_CAP_PCT. ارز در سقف یا بالای آن
+             رد؛ سهمی که سقف جلویش را گرفت به نامزد پذیرفته‌شده بعدی؛ نماند، در ذخیره.
 
 سطح ابطال نامزد، به ترتیب: سطح watch.json؛ کف پله rebuy نقشه — همان سطح ابطال روز فروش؛
 یا سطح تازه با radar_levels.pick_invalidation، روش سطح‌های فعلی دفتر موقعیت. ناحیه ارزش
@@ -169,7 +171,8 @@ def candidates(listed: list[str], quotas: dict) -> list[str]:
     return list(dict.fromkeys(syms))
 
 
-def evaluate(data: dict, listed: list[str], quotas: dict, amount: float | None) -> dict:
+def evaluate(data: dict, listed: list[str], quotas: dict, amount: float | None,
+             val: dict | None = None) -> dict:
     """
     پذیرش، رتبه و تقسیم بودجه — بی‌شبکه. data[نماد] = {price, level, level_src, va,
     rs30 به درصد}. listed فهرست پایش است — مرجع «یک‌سوم پایین». هر رد دلیل دارد.
@@ -201,6 +204,9 @@ def evaluate(data: dict, listed: list[str], quotas: dict, amount: float | None) 
             why = f"قدرت نسبی ۳۰ روزه {rs:+.1f}٪ در یک‌سوم پایین فهرست پایش"
         elif cut is not None and sym not in listed and rs <= cut:
             why = f"قدرت نسبی ۳۰ روزه {rs:+.1f}٪ هم‌تراز یک‌سوم پایین فهرست پایش"
+        elif val is not None and P.cap_room(val, sym) <= 0.5:
+            why = (f"بالای سقف تمرکز — سهم {P.share_pct(val, sym):.1f}٪، سقف "
+                   f"{fa(P.CONCENTRATION_CAP_PCT)}٪؛ خرید تازه ممنوع")
         if why:
             rejected.append({"symbol": sym, "why": why})
             continue
@@ -231,13 +237,19 @@ def evaluate(data: dict, listed: list[str], quotas: dict, amount: float | None) 
             r["why"] = f"قدرت نسبی ۳۰ روزه {r['rs30']:+.1f}٪"
 
     left = amount if amount is not None and amount > 0 else 0.0
+    blocked = 0.0
     for r in ranked:
-        cap = r["quota"] * r["price"] if r["quota"] > P.TOL else math.inf
-        take = min(left, cap)
+        quota = r["quota"] * r["price"] if r["quota"] > P.TOL else math.inf
+        room = P.cap_room(val, r["symbol"]) if val is not None else math.inf
+        take = min(left, quota, room)
+        if room < min(left, quota):
+            r["capped"] = min(left, quota) - room
+            blocked += r["capped"]
+            r["why"] += (f"؛ سقف تمرکز جلوی {r['capped']:,.0f} دلار را گرفت — به نامزد بعدی")
         if take > 0:
             r["usd"] = take
             left -= take
-    return {"ranked": ranked, "rejected": rejected, "left": left,
+    return {"ranked": ranked, "rejected": rejected, "left": left, "blocked": blocked,
             "budget": amount, "rs_cut": cut}
 
 
@@ -336,7 +348,10 @@ def lines(release: dict, amount: float | None, ev: dict | None, val: dict,
         out.append("رد:")
         out += [f"- {r['symbol']} — {r['why']}" for r in ev["rejected"]]
     if ev["left"] > 0.5:
-        out.append(f"در ذخیره می‌ماند: {ev['left']:,.0f} دلار — نامزد پذیرفته‌شده دیگری نیست.")
+        cap = (" سقف تمرکز جلوی بخشی را گرفت و" if ev.get("blocked", 0) > 0.5 or any(
+            "سقف تمرکز" in r["why"] for r in ev["rejected"]) else "")
+        out.append(f"در ذخیره می‌ماند: {ev['left']:,.0f} دلار —{cap} نامزد پذیرفته‌شده دیگری "
+                   "نیست.")
     out.append("ثبت بازخرید همان ارز: radar_positions.py reenter --reserve-plan <created نقشه> "
                f"--symbol <نماد> --qty <مقدار> --price <قیمت> --account <حساب> {P.RECEIPT_ARGS}")
     return out

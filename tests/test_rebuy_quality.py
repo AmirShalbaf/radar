@@ -261,9 +261,19 @@ def test_verdict_from_rebuy_status() -> None:
 
 # ── ک۸۸: reenter با سهمیه reserve ──
 
+PX = {"SOL": 100.0, "ETH": 2500.0, "BNB": 700.0, "TAO": 233.0, "AAVE": 150.0}
+
+
 @pytest.fixture
 def files(tmp_path, monkeypatch):
+    return make_files(tmp_path, monkeypatch)
+
+
+def make_files(tmp_path, monkeypatch):
+    """پرونده‌های فرمان در پوشه موقت؛ قیمت سقف تمرکز ساختگی — بند ۴ متن ۱۸."""
     monkeypatch.chdir(tmp_path)
+    if hasattr(P, "_prices"):
+        monkeypatch.setattr(P, "_prices", lambda syms: {s: PX.get(s) for s in syms})
     (tmp_path / "holdings.json").write_text(json.dumps(_h(), ensure_ascii=False), encoding="utf-8")
     (tmp_path / "watch.json").write_text(json.dumps(_watch(), ensure_ascii=False), encoding="utf-8")
     (tmp_path / "radar_journal.json").write_text(json.dumps({"version": 1, "trades": [], "decisions": [

@@ -519,6 +519,9 @@ def test_cli_trim_multi_account_needs_account(files) -> None:
 
 
 def test_cli_exit_then_reenter(files, monkeypatch) -> None:
+    # سقف تمرکز بند ۴ متن ۱۸ جدا آزموده می‌شود — test_concentration_cap؛ اینجا قاعده دیگر
+    monkeypatch.setattr(P, "_prices", lambda syms: {s: 100.0 for s in syms})
+    monkeypatch.setattr(P, "CONCENTRATION_CAP_PCT", 100)
     # ت۲، بازبینی ۲۳ اکتبر: پیش از این خروجِ اکنون با بسته ۲۱ سپتامبر دوباره وارد می‌شد.
     # حالا خروج با زمان رسید و بسته‌ای که پس از آن بسته شد
     assert _run(files, "exit", "--symbol", "SOL", "--price", "95", "--level", "100",
@@ -556,7 +559,10 @@ def test_cli_reenter_without_data_is_refused(files, monkeypatch) -> None:
                 "--account", "A") != 0
 
 
-def test_cli_add_needs_position_journal(files) -> None:
+def test_cli_add_needs_position_journal(files, monkeypatch) -> None:
+    # سقف تمرکز بند ۴ متن ۱۸ جدا آزموده می‌شود — test_concentration_cap؛ اینجا قاعده دیگر
+    monkeypatch.setattr(P, "_prices", lambda syms: {s: 100.0 for s in syms})
+    monkeypatch.setattr(P, "CONCENTRATION_CAP_PCT", 100)
     hp, jp = files
     assert _run(files, "add", "--symbol", "LINK", "--qty", "10", "--price", "14",
                 "--account", "A", "--decision-id", "D-9", "--setup-name", "الف۱") != 0

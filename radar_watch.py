@@ -1338,7 +1338,7 @@ def budget_alert(watch: dict, h: dict, state: dict, now: datetime, regime: dict 
         cands = RB.candidates(lst, quotas)
         data = (gather(cands, quotas) if gather else
                 RB.gather(cands, watch, h, quotas, now=now))
-        ev = RB.evaluate(data, lst, quotas, amount)
+        ev = RB.evaluate(data, lst, quotas, amount, val=val)
     text = "\n".join(RB.lines(release, amount, ev, val, plain=True))
     return [Msg(text, "بودجه آزادشده", {key: True})]
 
