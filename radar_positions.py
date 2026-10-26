@@ -778,6 +778,77 @@ def weekly_close(symbol: str, get=None, now: datetime | None = None
     return None, why
 
 
+DAY = timedelta(days=1)
+OKX_DAY_BAR = A.BAR["okx"]["1D"]
+GATE_DAY_INTERVAL = A.BAR["gate"]["1D"]
+
+
+def _okx_day(symbol: str, get, open_at: datetime) -> tuple[list, str]:
+    # after: سطرهای پیش از این لحظه — نخستین، همان کندلی است که در open_at + ۱ روز بسته شد
+    r = get(OKX, params={"instId": f"{symbol.upper()}-USDT", "bar": OKX_DAY_BAR,
+                         "after": str(int((open_at + DAY).timestamp() * 1000)), "limit": "3"},
+            timeout=20)
+    js = r.json()
+    if r.status_code != 200 or str(js.get("code")) != "0" or not js.get("data"):
+        return [], f"اوکی‌اکس {OKX_DAY_BAR}: پاسخ نداد (کد {js.get('code')})"
+    return [(datetime.fromtimestamp(int(x[0]) / 1000, UTC), float(x[4]),
+             x[8] == "1" if len(x) > 8 else None) for x in js["data"]], ""
+
+
+def _gate_day(symbol: str, get, open_at: datetime) -> tuple[list, str]:
+    t = int(open_at.timestamp())
+    r = get(GATE, params={"currency_pair": f"{symbol.upper()}_USDT",
+                          "interval": GATE_DAY_INTERVAL, "from": t, "to": t}, timeout=20)
+    js = r.json()
+    if r.status_code != 200 or not isinstance(js, list) or not js:
+        return [], f"گیت {GATE_DAY_INTERVAL}: پاسخ نداد"
+    return [(datetime.fromtimestamp(int(float(x[0])), UTC), float(x[2]), None) for x in js], ""
+
+
+def daily_close_at(symbol: str, close_at: datetime, get=None, now: datetime | None = None
+                   ) -> tuple[dict | None, list[str]]:
+    """
+    بسته کندل روزانه وقت جهانی که در close_at بسته می‌شود — همان منبع و ترتیب
+    weekly_close: اوکی‌اکس 1Dutc، سپس گیت 1d. دفتر پیش‌بینی، بند ۷ متن ۲۰.
+    close_at باید ۰۰:۰۰ UTC باشد، وگرنه ValueError. پیش از بسته‌شدن، یا کندل تأییدنشده،
+    یعنی None با دلیل — هرگز قیمت زنده جانشین نمی‌شود.
+    """
+    close_at = close_at.astimezone(UTC)
+    if not A.anchor_ok(close_at, "1D"):
+        raise ValueError(f"مهلت {close_at.isoformat()} لنگر روزانه ۰۰:۰۰ UTC نیست")
+    now = now or datetime.now(UTC)
+    if now < close_at:
+        return None, [f"کندل روزانه تا {close_at.isoformat()} هنوز بسته نشده"]
+    if get is None:
+        if requests is None:
+            return None, ["requests نصب نیست"]
+        get = requests.get
+    open_at = close_at - DAY
+    why: list[str] = []
+    for venue, fetch in (("okx", _okx_day), ("gate", _gate_day)):
+        try:
+            rows, err = fetch(symbol, get, open_at)
+        except (ValueError, KeyError, IndexError, TypeError) as exc:
+            why.append(f"{venue}: پاسخ نامعتبر ({type(exc).__name__})")
+            continue
+        except NET_ERRORS as exc:
+            why.append(f"{venue}: خطای شبکه ({type(exc).__name__})")
+            continue
+        if err:
+            why.append(err)
+            continue
+        row = next((r for r in rows if r[0] == open_at), None)
+        if row is None:
+            why.append(f"{venue}: کندل باز شدن {open_at.isoformat()} در پاسخ نیست")
+            continue
+        if row[2] is False or (row[2] is None and open_at + DAY > now):
+            why.append(f"{venue}: کندل {open_at.isoformat()} هنوز تأیید بسته ندارد")
+            continue
+        return {"close": row[1], "open_at": open_at.isoformat(), "closed_at": close_at.isoformat(),
+                "venue": venue}, why
+    return None, why
+
+
 def weekly_closes(symbol: str, n: int, get=None, now: datetime | None = None
                   ) -> tuple[list[dict] | None, list[str]]:
     """

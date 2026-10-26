@@ -149,11 +149,30 @@ jobs:
             echo "چارچوب سخت‌گیر است یا شل. با radar_optcost.py add شروع کن."
           fi
 
+      # دفتر پیش‌بینی — بند ۷ متن ۲۰: نمره Brier پیش‌بینی‌های سررسیده از بسته روزانه همان
+      # منبع بسته هفتگی. کد ۲ یعنی بسته‌ای نیامد — بلند، ولی گزارش نوشته می‌شود
+      - name: دفتر پیش‌بینی
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          D=$(date -u +%Y-%m-%d)
+          if [ -f forecasts.json ]; then
+            if ! python radar_forecast.py score; then
+              echo "::warning::دفتر پیش‌بینی: نمره‌ای ساخته نشد — دلیل بالا"
+            fi
+            if ! python radar_forecast.py report --out "reports/forecasts-$D.md" \
+                   --line /tmp/forecast_line.txt > /dev/null; then
+              echo "::error::گزارش دفتر پیش‌بینی ساخته نشد"
+              echo "⚠️ دفتر پیش‌بینی: گزارش ساخته نشد" > /tmp/forecast_line.txt
+            fi
+          fi
+
       - name: کامیت
         run: |
           git config user.name  "radar-bot"
           git config user.email "radar-bot@users.noreply.github.com"
           git add reports/ radar_optcost.json book_state.json 2>/dev/null || true
+          if [ -f forecasts.json ]; then git add forecasts.json; fi
           if git diff --staged --quiet; then
             echo "تغییری نبود."
           else
@@ -171,6 +190,12 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          if ! python radar_telegram.py --text "گزارش هفتگی رادار آماده شد. سه فایل: چرخش، بازبینی سبد، خودسنجی چارچوب."; then
+          TEXT="گزارش هفتگی رادار آماده شد. چهار فایل: چرخش، بازبینی سبد، خودسنجی چارچوب، دفتر پیش‌بینی."
+          # خلاصه نمره‌های دفتر پیش‌بینی — بند ۷ متن ۲۰
+          if [ -s /tmp/forecast_line.txt ]; then
+            TEXT="$TEXT
+          $(cat /tmp/forecast_line.txt)"
+          fi
+          if ! python radar_telegram.py --text "$TEXT"; then
             echo "::error::پیام تلگرام هفتگی نرسید — رسید بالا"
           fi
