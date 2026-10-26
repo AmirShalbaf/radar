@@ -928,6 +928,55 @@ def _rebuy_lines(rb: dict) -> list[str]:
     return o
 
 
+# ─────────────── ظرفیت دفتر معامله — بند ۸ متن ۲۰، فقط نمایش ───────────────
+
+# نمونه فاصله حد ضرر برای اسمی آتی — فقط برای خواندن عدد، نه قاعده
+CAPACITY_EXAMPLE_STOP_PCT = 5
+
+
+def trade_capacity(val: dict, reg: dict | None, tband: dict | None, heat: dict | None,
+                   orders: list | None) -> dict:
+    """
+    ظرفیت نقدی = ذخیره − هدف ذخیره باند خام روز. ظرفیت آتی = سقف ریسک باز باند با
+    هیسترزیس − ریسک مؤثر دفتر معامله، از trade_heat. تعهد سفارش‌های خرید زنده watch.json
+    جدا. هیچ‌کدام قاعده نیست — تصمیم کاربر درباره آتی هنوز نیامده.
+    """
+    out = {"target_usd": None, "cash": None, "risk_cap": None, "risk_used": None,
+           "risk_left": None, "cash_after_orders": None,
+           "orders_usd": sum(o["qty"] * o["price"] for o in orders or [] if o.get("side") == "buy")}
+    if reg is not None:
+        out["target_usd"] = reg["stable"] / 100 * val["total"]
+        out["cash"] = val["stable_usd"] - out["target_usd"]
+        out["cash_after_orders"] = out["cash"] - out["orders_usd"]
+    if heat is not None:
+        out.update(risk_cap=heat["cap_usd"], risk_used=heat["effective"],
+                   risk_left=heat["cap_usd"] - heat["effective"])
+    return out
+
+
+def _capacity_lines(c: dict, val: dict, reg: dict | None, tband: dict | None) -> list[str]:
+    o = ["### ظرفیت دفتر معامله — فقط نمایش", "",
+         "قاعده نیست: تصمیم اجرای دفتر معامله با آتی هنوز نیامده؛ نه ردیف اقدام می‌سازد، نه "
+         "مانعی — بند ۸ متن ۲۰.", ""]
+    if reg is None:
+        return o + ["⚠️ رژیم کهنه — ظرفیت نقدی و آتی عدد ندارند.", ""]
+    o += ["| مورد | مقدار |", "|---|---|"]
+    word = " — کسری، ظرفیت نقدی نیست" if c["cash"] < 0 else ""
+    o.append(f"| ظرفیت نقدی = ذخیره − هدف ذخیره {reg['stable']}٪ | {val['stable_usd']:,.2f} − "
+             f"{c['target_usd']:,.2f} = {c['cash']:+,.2f} دلار{word} |")
+    if c["orders_usd"]:
+        o.append(f"| سفارش‌های خرید زنده watch.json — تعهد نقدی | {c['orders_usd']:,.2f} دلار؛ "
+                 f"ظرفیت نقدی اگر همه پر شوند {c['cash_after_orders']:+,.2f} دلار |")
+    if c["risk_left"] is not None and tband is not None:
+        o.append(f"| ظرفیت آتی بر پایه ریسک = سقف ریسک باز − ریسک مؤثر | {c['risk_cap']:,.2f} − "
+                 f"{c['risk_used']:,.2f} = {c['risk_left']:,.2f} دلار ریسک — باند "
+                 f"{tband['name']}، سقف {tband['cap']}٪ کل سرمایه |")
+        k = CAPACITY_EXAMPLE_STOP_PCT
+        o.append(f"| اسمی آتی = ریسک باقی ÷ فاصله ورود تا حد ضرر | نمونه، نه قاعده: با فاصله "
+                 f"{fa(k)}٪ یعنی {max(c['risk_left'], 0) / (k / 100):,.0f} دلار اسمی |")
+    return o + [""]
+
+
 def _plan_actions(rv: dict) -> list[str]:
     """
     ردیف اقدام نقشه ذخیره با پله مانده. حکم مهلت از شرط on_deadline — رویداد ۸۹؛
@@ -1050,7 +1099,8 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
                  regime_score: float | None = None,
                  summary: dict | None = None,
                  rebuy: dict | None = None,
-                 event_actions: list[str] | None = None) -> str:
+                 event_actions: list[str] | None = None,
+                 orders: list | None = None) -> str:
     """
     گزارش دو دفتر — تصمیم کاربر، ۲۵ سپتامبر ۲۰۲۶.
 
@@ -1072,6 +1122,7 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
     regime_score — بازبینی ۲۳ اکتبر. rebuy سهمیه همه نقشه‌ها و بودجه آزادشده است —
     بند ۳ متن ۱۸؛ ردیف اقدام بودجه فقط در روز تغییر باند، یک بار — ک۹۵. event_actions
     ردیف «موقعیت تازه نه» تقویم دستی است، فقط در پنجره‌اش — بند ۳ متن ۲۰؛ اول فهرست.
+    orders سفارش‌های زنده watch.json است، برای تعهد نقدی ظرفیت دفتر معامله — بند ۸ متن ۲۰.
     """
     plan_live = bool(reserve and reserve["left"])
     regime_warnings = regime_warnings or []
@@ -1275,6 +1326,7 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
                     why.append("بیش از حداکثر پوزیشن هم‌جهت")
                 W(f"⛔ **ورود تازه در دفتر معامله مجاز نیست** — {'، '.join(why)}.")
     W("")
+    o.extend(_capacity_lines(trade_capacity(val, reg, tband, heat, orders), val, reg, tband))
 
     # ── ۴ جانشینی
     W("## ۴ — آزمون جانشینی — اطلاعی")
@@ -1680,7 +1732,7 @@ def main() -> int:
                        tband=tband, tband_note=tband_note, level_notes=level_notes,
                        candle_notes=CANDLE_NOTES, reserve=rview,
                        regime_score=info.score, summary=summary, rebuy=rebuy,
-                       event_actions=event_actions)
+                       event_actions=event_actions, orders=(wdoc or {}).get("orders"))
     if a.line:
         with open(a.line, "w", encoding="utf-8") as f:
             f.write(summary["line"] + "\n")
