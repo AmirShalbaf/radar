@@ -26,6 +26,15 @@ radar_regime.py — امتیاز رژیم بازار، رادار ۷
 
 ورودی بدون منبع، یا کهنه‌تر از مهلت آهنگ انتشارش، غایب است — نه صفر.
 
+م۳، تصمیم کاربر — متن ۱۸: ورودی غایب امروز آخرین امتیاز معتبرش را از regime_history.json
+تا دو برابر مهلت تازگی‌اش نگه می‌دارد. دلیل: وقتی جمع منفی است نهایی همان نرمال است و
+نرمال یعنی «غایب مثل میانگین بقیه»؛ پس غیبت ورودی جریمه‌کننده‌تر از میانگین امتیاز را بهتر
+می‌کرد. کمینه خام و نرمال بی‌تغییر؛ کمینه سه‌تایی رد شد.
+
+ت۴ — متن ۱۸: هر روزی که مجموعه ورودی‌های حاضر عوض شود، مرز سری در regime_history.json
+میدان series_boundaries ثبت می‌شود — ورودی افزوده یا کاسته، پوشش پیش و پس، اثر بر امتیاز.
+ورودی وابسته به تاریخچه ۳۰ روزه یک خط از پیش در گزارش می‌گیرد: «از تاریخ Y فعال می‌شود».
+
 خروجی:
     regime.json              قرارداد با radar_book.py: score و generated_at
     regime_history.json      تسلط‌ها برای روند ۳۰ روزه، و امتیازها برای
@@ -172,6 +181,32 @@ FRESH_DAYS = {
 FUTURE_SKEW = timedelta(days=1)
 LOW_COVERAGE = 0.50
 
+# سری‌های منبع هر ورودی. مهلت ورودی کمینه مهلت سری‌هایش است — همان min(limits) در
+# _fred_value؛ برای نگه‌داشتن آخرین امتیاز معتبر، م۳
+INPUT_SOURCES = {
+    "money_price": ("DGS2", "DFEDTARU", "DFEDTARL", "DGS10", "T10YIE"),
+    "curve": ("DGS30", "DGS2"),
+    "net_liq": ("WALCL", "RRPONTSYD", "WTREGEN"),
+    "dollar": ("DTWEXBGS",),
+    "ma50w": ("candle_1W",),
+    "ethbtc": ("candle_1D",),
+    "dom_ex": ("CoinGecko",),
+    "usdt_dom": ("CoinGecko",),
+    "stable": ("DefiLlama",),
+    "fng": ("Alternative.me",),
+}
+# م۳ — دو برابر مهلت تازگی، تصمیم کاربر
+CARRY_FACTOR = 2
+# پنجره تغییر ۳۰ روزه از تاریخچه — نزدیک‌ترین روز به ۳۰ روز قبل
+HISTORY_WINDOW = (27, 33)
+# ورودی‌هایی که روند ۳۰ روزه‌شان از تاریخچه خود رژیم می‌آید — نام میدان تاریخچه
+HISTORY_FIELDS = {"dom_ex": "btc_dom_ex_stable", "usdt_dom": "usdt_dominance"}
+
+
+def input_window(key: str) -> int:
+    """مهلت تازگی یک ورودی به روز."""
+    return min(FRESH_DAYS[s] for s in INPUT_SOURCES[key])
+
 
 def is_low_coverage(coverage: float) -> bool:
     """«زیر ۵۰٪» پوشش کم است؛ خود ۵۰٪ نه."""
@@ -205,6 +240,7 @@ class Input:
     reason: str = ""
     detail: str = ""
     obs: dict = field(default_factory=dict)   # مشاهده خام برای تاریخچه
+    carried: dict | None = None               # آخرین امتیاز معتبر، م۳ — None یعنی اندازه امروز
 
 
 def _blank(key: str) -> Input:
@@ -253,11 +289,12 @@ def _history_change(history: dict, name: str, current: float, now: datetime
     """
     today = now.date()
     best = None
+    lo, hi = HISTORY_WINDOW
     for day, rec in (history.get("days") or {}).items():
         # کلیدها در load_history اعتبارسنجی شده‌اند — خراب یعنی خطای صریح
         back = (today - datetime.strptime(day, "%Y-%m-%d").date()).days
         v = rec.get(name)
-        if 27 <= back <= 33 and isinstance(v, (int, float)):
+        if lo <= back <= hi and isinstance(v, (int, float)):
             if best is None or abs(back - 30) < abs(best[0] - 30):
                 best = (back, float(v))
     if best is None:
@@ -400,7 +437,55 @@ def measure(src: dict, history: dict, now: datetime) -> dict[str, Input]:
     return inp
 
 
+# ═══════════════════════ آخرین امتیاز معتبر — م۳ ═══════════════════════
+
+def carry_forward(inp: dict[str, Input], history: dict, now: datetime) -> list[str]:
+    """
+    ورودی غایب امروز آخرین امتیاز معتبرش را از تاریخچه می‌گیرد، تا CARRY_FACTOR برابر مهلت
+    تازگی‌اش. «معتبر» یعنی اندازه همان روز: روزی که ورودی را در carried دارد شمرده نمی‌شود،
+    تا جانشین زنجیره نشود. عمر از زمان مشاهده — میدان input_ts روز. روزهای پیش از متن ۱۸
+    input_ts ندارند؛ برایشان بدترین حالت: generated_at آن روز منهای مهلت. خروجی: کلیدهای
+    جانشین‌شده.
+    """
+    today = now.date()
+    days = sorted(((datetime.strptime(d, "%Y-%m-%d").date(), rec)
+                   for d, rec in (history.get("days") or {}).items()), key=lambda x: x[0])
+    out = []
+    for key, i in inp.items():
+        if i.score is not None:
+            continue
+        win = input_window(key)
+        for day, rec in reversed(days):
+            s = (rec.get("inputs") or {}).get(key)
+            if (day >= today or isinstance(s, bool) or not isinstance(s, (int, float))
+                    or key in (rec.get("carried") or {})):
+                continue
+            raw_ts = (rec.get("input_ts") or {}).get(key)
+            try:
+                obs = (datetime.fromisoformat(raw_ts) if raw_ts else
+                       datetime.fromisoformat(rec["generated_at"]) - timedelta(days=win))
+            except (KeyError, TypeError, ValueError):
+                break                                 # عمر نامعلوم: جانشین نه
+            age = (now - obs).total_seconds() / 86400
+            if age <= CARRY_FACTOR * win:
+                i.score = float(s)
+                i.carried = {"from": day.isoformat(), "observed": _iso(obs),
+                             "age_days": round(age, 2), "limit_days": CARRY_FACTOR * win,
+                             "why_absent": i.reason}
+                out.append(key)
+            break                                     # فقط آخرین روز معتبر
+    return out
+
+
 # ═══════════════════════ تجمیع ═══════════════════════
+
+def _score_of(scores: dict[str, float]) -> float:
+    """امتیاز نهایی از نگاشت کلید به امتیاز — همان قاعده aggregate؛ برای اثر مرز سری."""
+    w = weights()
+    num = sum(w[k] * s for k, s in scores.items())
+    have = sum(w[k] for k in scores)
+    return min(num / sum(w.values()), num / have) if have else float("nan")
+
 
 def aggregate(inp: dict[str, Input]) -> dict:
     """قانون سوگیری صفر: خام، نرمال، و کمینه آن دو به‌عنوان امتیاز نهایی."""
@@ -426,7 +511,9 @@ def aggregate(inp: dict[str, Input]) -> dict:
             "low_coverage": is_low_coverage(coverage),
             "band": regime_band(score), "columns": cols,
             "missing": [{"key": i.key, "label": i.label, "reason": i.reason}
-                        for i in inp.values() if i.score is None]}
+                        for i in inp.values() if i.score is None],
+            "carried": [{"key": i.key, "label": i.label, **i.carried}
+                        for i in inp.values() if i.carried]}
 
 
 # ═══════════════════════ خروجی ═══════════════════════
@@ -460,10 +547,33 @@ def _sma_field(sma: dict | None, why: list[str] | None) -> dict:
     return {"value": None, "reason": "؛ ".join(why or ["محاسبه نشد"]), "definition": SMA_DEF}
 
 
+def activations(history: dict, inp: dict[str, Input], now: datetime) -> list[dict]:
+    """
+    ورودی وابسته به تاریخچه ۳۰ روزه که هنوز اندازه ندارد: از کدام روز فعال می‌شود — ت۴.
+    نخستین روز تاریخچه با میدانش به‌علاوه کف پنجره. امروز تاریخچه نداشت ولی مشاهده دارد:
+    از امروز.
+    """
+    out = []
+    for key, name in HISTORY_FIELDS.items():
+        i = inp[key]
+        if i.score is not None and not i.carried:
+            continue
+        days = sorted(d for d, rec in (history.get("days") or {}).items()
+                      if isinstance(rec.get(name), (int, float)))
+        first = days[0] if days else (f"{now:%Y-%m-%d}" if name in i.obs else None)
+        if first is None:
+            continue
+        on = datetime.strptime(first, "%Y-%m-%d").date() + timedelta(days=HISTORY_WINDOW[0])
+        if on > now.date():
+            out.append({"key": key, "label": i.label, "date": on.isoformat(), "first": first})
+    return out
+
+
 def build_doc(res: dict, inp: dict[str, Input], now: datetime,
               trade_band: str | None = None, btc_sma50w: dict | None = None,
               btc_sma50w_why: list[str] | None = None,
-              anchor_boundary: dict | None = None) -> dict:
+              anchor_boundary: dict | None = None,
+              boundary: dict | None = None, activation: list | None = None) -> dict:
     """
     سند regime.json. قرارداد با radar_book.py دو میدان اجباری دارد —
     score (امتیاز نهایی محافظه‌کارانه) و generated_at (با منطقه زمانی) —
@@ -484,9 +594,13 @@ def build_doc(res: dict, inp: dict[str, Input], now: datetime,
                     "weight": i.weight, "value": i.value, "score": i.score,
                     "ts": _iso(i.ts), "max_age_days": i.max_age_days,
                     "reason": i.reason, "detail": i.detail,
-                    "obs": {k: v for k, v in i.obs.items() if k != "components"}}
+                    "obs": {k: v for k, v in i.obs.items() if k != "components"},
+                    **({"carried": i.carried} if i.carried else {})}
                    for i in inp.values()],
         "missing": res["missing"],
+        "carried": res.get("carried", []),
+        **({"series_boundary": boundary} if boundary else {}),
+        **({"activations": activation} if activation else {}),
         "freshness_days": dict(FRESH_DAYS),
         **({"trade_band": BG.band_by_name(trade_band)} if trade_band else {}),
         **sma,
@@ -570,7 +684,33 @@ def update_history(history: dict, res: dict, inp: dict[str, Input],
     rec = {"generated_at": _iso(now), "raw": res["raw"], "norm": res["norm"],
            "score": res["score"], "band": res["band"]["name"],
            "coverage": res["coverage"], "anchor": CANDLE_ANCHOR,
-           "inputs": {k: i.score for k, i in inp.items()}}
+           "inputs": {k: i.score for k, i in inp.items()},
+           # زمان مشاهده هر ورودی اندازه‌گرفته — عمر آخرین امتیاز معتبر، م۳
+           "input_ts": {k: _iso(i.ts) for k, i in inp.items()
+                        if i.score is not None and not i.carried and i.ts}}
+    carried = {k: i.carried["from"] for k, i in inp.items() if i.carried}
+    if carried:
+        rec["carried"] = carried
+    # مرز سری — ت۴: مجموعه ورودی‌های حاضر در برابر آخرین روز پیشین
+    prev_day = max((d for d in h["days"] if d < today), default=None)
+    bounds = [b for b in h.get("series_boundaries") or [] if b.get("date") != today]
+    if prev_day:
+        prev = h["days"][prev_day]
+        pin = prev.get("inputs") or {}
+        before = {k for k, v in pin.items() if isinstance(v, (int, float)) and k in INPUTS}
+        after = {k for k, i in inp.items() if i.score is not None}
+        added, removed = sorted(after - before), sorted(before - after)
+        if added or removed:
+            cf = {k: i.score for k, i in inp.items() if i.score is not None and k not in added}
+            cf.update({k: float(pin[k]) for k in removed})
+            without = _score_of(cf) if cf else None
+            bounds.append({"date": today, "previous": prev_day, "added": added,
+                           "removed": removed, "coverage_before": prev.get("coverage"),
+                           "coverage_after": res["coverage"], "score": res["score"],
+                           "score_without_change": without,
+                           "score_effect": None if without is None else res["score"] - without})
+    if bounds or "series_boundaries" in h:
+        h["series_boundaries"] = bounds
     if trade_band:
         rec["trade_band"] = trade_band
     for i in inp.values():
@@ -662,6 +802,20 @@ def render_md(doc: dict) -> str:
               ""]
     if doc["low_coverage"]:
         L += [f"> ⚠️ **پوشش کم:** فقط {100 * doc['coverage']:.0f}٪ وزن ورودی‌ها موجود است.", ""]
+    for a in doc.get("activations") or []:
+        L += [f"> ℹ️ ورودی **{a['label']}** از {a['date']} فعال می‌شود — نخستین روز تاریخچه "
+              f"{a['first']} و کف پنجره {fa(HISTORY_WINDOW[0])} روز. آن روز مرز سری در "
+              "`regime_history.json` میدان `series_boundaries` ثبت می‌شود — ت۴.", ""]
+    sb = doc.get("series_boundary")
+    if sb:
+        names = {k: INPUTS[k][1] for k in INPUTS}
+        parts = ([f"افزوده: {'، '.join(names[k] for k in sb['added'])}"] if sb["added"] else []) + \
+                ([f"کاسته: {'، '.join(names[k] for k in sb['removed'])}"] if sb["removed"] else [])
+        eff = "—" if sb["score_effect"] is None else f"{sb['score_effect']:+.3f}"
+        cb = "—" if sb["coverage_before"] is None else f"{sb['coverage_before']:.2f}"
+        L += [f"> ℹ️ **مرز سری امروز** — {'؛ '.join(parts)}. پوشش "
+              f"{cb} به {sb['coverage_after']:.2f}؛ اثر بر امتیاز {eff}. سنجش اعتبار رژیم و هیسترزیس "
+              "دو سوی مرز را یک سری نشمارند — ک۳۵.", ""]
     L += ["| سنجه | مقدار |", "|---|---|",
           f"| امتیاز خام | {_num(doc['raw'], 3)} |",
           f"| امتیاز نرمال | {_num(doc['norm'], 3)} |",
@@ -688,6 +842,12 @@ def render_md(doc: dict) -> str:
         L.append(f"| {col} | {i['label']} | {_num(i['value'], 3)} | {day} | "
                  f"{i['max_age_days'] or '—'} | {_num(i['score'])} | "
                  f"{100 * i['weight']:.2f}٪ |")
+    if doc.get("carried"):
+        L += ["", "## ورودی‌های غایب با آخرین امتیاز معتبر — م۳", "",
+              f"تا {fa(CARRY_FACTOR)} برابر مهلت تازگی هر ورودی؛ امتیاز همان روز اندازه.", ""]
+        L += [f"- **{c['label']}** — امتیاز روز {c['from']}، مشاهده {c['observed'][:16]}، عمر "
+              f"{c['age_days']:.1f} از سقف {c['limit_days']} روز. غیبت امروز: {c['why_absent']}"
+              for c in doc["carried"]]
     if doc["missing"]:
         L += ["", "## ورودی‌های غایب", "",
               "غایب یعنی از مخرج نرمال کم شد، نه صفر.", ""]
@@ -747,6 +907,7 @@ def main(argv: list[str] | None = None, now: datetime | None = None) -> int:
         history = load_history(a.history)
         src = gather(order, now)
         inp = measure(src, history, now)
+        carry_forward(inp, history, now)          # م۳ — آخرین امتیاز معتبر ورودی غایب
         res = aggregate(inp)
         # هشدار بازار پایشگر و ورودی ma50w — یک واکشی، یک عدد؛ نشست ۳ب
         sma, sma_why = src.get("sma50w"), src.get("sma50w_why") or []
@@ -763,8 +924,12 @@ def main(argv: list[str] | None = None, now: datetime | None = None) -> int:
 
     tb = trade_band_for(history, res["band"]["name"], now)
     new_hist = update_history(history, res, inp, now, tb)
+    today = now.strftime("%Y-%m-%d")
     doc = build_doc(res, inp, now, tb, btc_sma50w=sma, btc_sma50w_why=sma_why,
-                    anchor_boundary=new_hist.get("anchor_boundary"))
+                    anchor_boundary=new_hist.get("anchor_boundary"),
+                    boundary=next((b for b in new_hist.get("series_boundaries") or []
+                                   if b.get("date") == today), None),
+                    activation=activations(history, inp, now))
     md = render_md(doc)
     if a.stdout:
         print(md)
