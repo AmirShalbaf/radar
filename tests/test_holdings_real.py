@@ -59,14 +59,10 @@ def _ledger_by_account(h, field) -> dict:
 
 
 def test_updated_not_before_screenshot(h) -> None:
-    """
-    منبع — اسکرین‌شات ۲۴ اکتبر ۲۰۲۶، متن ۱۶؛ frozen همان اسکرین‌شات ۲۵ سپتامبر می‌ماند.
-    متن ۱۹: فروش ETH با ابطال از رسید ثبت شد و فرمان updated را به زمان ثبت برد؛ پس
-    updated پیش از اسکرین‌شات نیست، برابر هم نیست.
-    """
-    assert "LBank" in h["source"] and "۲۴ اکتبر ۲۰۲۶" in h["source"]
-    assert "04:02 UTC" in h["source"] and "1625.64" in h["source"]
-    assert datetime.fromisoformat(h["updated"]) >= datetime.fromisoformat(AT_1024)
+    """منبع تازه — اسکرین‌شات ۲۶ اکتبر ۲۰۲۶، متن ۱۹؛ frozen همان اسکرین‌شات ۲۵ سپتامبر می‌ماند."""
+    assert "LBank" in h["source"] and "۲۶ اکتبر ۲۰۲۶" in h["source"]
+    assert "07:35 UTC" in h["source"] and "1588.35" in h["source"]
+    assert h["updated"] == "2026-10-26T07:35:00+00:00"
 
 
 def test_quantities_match_screenshots(h) -> None:
@@ -361,3 +357,34 @@ def test_1026_usdt_income(h) -> None:
     assert r["cash"] == {"asset": "USDT", "qty": 0.166365, "account": "LBank"}
     assert 561.87837649 + 86.186076 - 0.086186 == pytest.approx(647.97826649, abs=1e-9)
     assert 647.97826649 + 0.166365 == pytest.approx(648.14463149, abs=1e-9)
+
+
+# ═══════════════ متن ۱۹ — ۲۶ اکتبر ۲۰۲۶ ═══════════════
+# اسکرین‌شات LBank 2026-10-26 07:35 UTC، جمع 1588.35 دلار؛ تتر شامل تتر قفل‌شده در سفارش‌های باز.
+
+SEEN_1026 = {"SOL": 5.48105369, "AAVE": 1.04895, "LINK": 11.09889, "SUI": 81.6183,
+             "ONDO": 115.43866, "BNB": 0.0007579, "TRX": 0.6704, "ETH": 0.000057,
+             "TAO": 0.000092}
+USDT_1026 = 648.14463149
+
+
+def test_1026_matches_screenshot(h) -> None:
+    """دفتر دقیق می‌خواند — فقط باقی‌مانده ممیز شناور، ک۴۰."""
+    pos = {p["symbol"]: p for p in h["positions"]}
+    assert {s for s, p in pos.items() if p["status"] == "open"} == set(SEEN_1026)
+    for sym, q in SEEN_1026.items():
+        assert P.position_qty(pos[sym]) == pytest.approx(q, abs=1e-12), sym
+    assert [(c["account"], c["qty"]) for c in h["cash"]] == [("LBank", pytest.approx(USDT_1026,
+                                                                                    abs=1e-9))]
+
+
+def test_1026_eth_invalidation_sale(h) -> None:
+    rows = [r for r in h["ledger"] if r.get("order_id") == "3eb65762-9c82-48cb-83ff-ec340c3ea623"]
+    assert len(rows) == 1
+    r = rows[0]
+    assert (r["action"], r["symbol"], r["delta"], r["price"], r["reason"], r["level"], r["at"]) ==         ("trim", "ETH", -0.0372, 2316.83, "invalidation", 2380.5606, "2026-10-26T07:35:00+00:00")
+    assert (r["gross"], r["fee"]) == (86.186076, 0.086186)
+    assert r["gross"] == pytest.approx(0.0372 * 2316.83, abs=1e-9)
+    eth = next(p for p in h["positions"] if p["symbol"] == "ETH")
+    assert eth["invalidation"] is None and "invalidation_since" not in eth
+    assert 0.000057 * 2316.83 < P.DUST_USD
