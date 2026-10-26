@@ -538,6 +538,7 @@ def validate_watch(w: dict) -> None:
                 or not isinstance(d.get("reason"), str) or not d["reason"].strip()):
             raise WatchError(f"dormant ردیف {i}: نماد، سطح ابطال مثبت و دلیل لازم است")
         _aware(d.get("invalidation_since"), f"dormant ردیف {i}: invalidation_since — {FULL}")
+    _validate_orders(w.get("orders"))
     rp = w.get("reserve_plan")
     if rp is not None:
         _validate_plan(rp, "reserve_plan")
@@ -559,6 +560,89 @@ def validate_watch(w: dict) -> None:
                 or not cl["reason"].strip():
             raise WatchError(f"{where}: closed باید زمان و دلیل داشته باشد")
         _aware(cl.get("at"), f"{where}: closed.at — {FULL}")
+
+
+# ─────────────────────── سفارش‌های زنده — بند ۱ متن ۲۰ ───────────────────────
+#
+# فهرست ساده سفارش‌های پرنشده صرافی، فقط برای نمایش در پیام روزانه و هشدار تکان. هیچ
+# قاعده‌ای از آن نمی‌خواند؛ پرشدن هر سفارش با radar_positions.py ثبت می‌شود و ردیفش دستی
+# از این فهرست برمی‌دارد.
+
+ORDER_SIDE = {"buy": "خرید", "sell": "فروش"}
+ORDER_TYPE = {"limit": "محدود", "trigger": "ماشه‌دار"}
+ORDER_BOOK = {"position": "دفتر موقعیت", "trade": "دفتر معامله"}
+
+
+def _validate_orders(orders) -> None:
+    if orders is None:
+        return
+    if not isinstance(orders, list):
+        raise WatchError("orders باید فهرست باشد")
+    seen: set = set()
+    for i, o in enumerate(orders, 1):
+        where = f"orders ردیف {i}"
+        if not isinstance(o, dict) or not isinstance(o.get("symbol"), str) \
+                or not o["symbol"].strip():
+            raise WatchError(f"{where}: نماد نیست")
+        where += f" ({o['symbol']})"
+        if o.get("side") not in ORDER_SIDE:
+            raise WatchError(f"{where}: سمت باید {' یا '.join(ORDER_SIDE)} باشد")
+        if o.get("type") not in ORDER_TYPE:
+            raise WatchError(f"{where}: نوع باید {' یا '.join(ORDER_TYPE)} باشد")
+        if not _num(o.get("qty")) or o["qty"] <= 0:
+            raise WatchError(f"{where}: مقدار عدد مثبت نیست")
+        if not _num(o.get("price")) or o["price"] <= 0:
+            raise WatchError(f"{where}: قیمت عدد مثبت نیست")
+        trig = o.get("trigger")
+        if o["type"] == "trigger" and not (_num(trig) and trig > 0):
+            raise WatchError(f"{where}: سفارش ماشه‌دار ماشه مثبت می‌خواهد")
+        if o["type"] == "limit" and trig is not None:
+            raise WatchError(f"{where}: سفارش محدود ماشه ندارد")
+        oid = o.get("order_id")
+        if not isinstance(oid, str) or not oid.strip():
+            raise WatchError(f"{where}: شناسه سفارش order_id لازم است")
+        if oid in seen:
+            raise WatchError(f"{where}: شناسه سفارش تکراری — {oid}")
+        seen.add(oid)
+        if o.get("book") not in ORDER_BOOK:
+            raise WatchError(f"{where}: دفتر باید {' یا '.join(ORDER_BOOK)} باشد")
+        if not isinstance(o.get("purpose"), str) or not o["purpose"].strip():
+            raise WatchError(f"{where}: هدف سفارش purpose لازم است")
+        _aware(o.get("recorded_at"), f"{where}: recorded_at — {FULL}")
+        if "note" in o and not isinstance(o["note"], str):
+            raise WatchError(f"{where}: یادداشت متن نیست")
+
+
+def _order_text(o: dict) -> str:
+    """یک سفارش در یک سطر: «خرید ماشه‌دار ETH 0.037 — ماشه 2535، حد 2550»."""
+    head = f"{ORDER_SIDE[o['side']]} {ORDER_TYPE[o['type']]} {o['symbol']} {_n(o['qty'])}"
+    if o["type"] == "trigger":
+        return f"{head} — ماشه {_n(o['trigger'])}، حد {_n(o['price'])}"
+    return f"{head} در {_n(o['price'])}"
+
+
+def order_lines(watch: dict) -> list[str]:
+    """سطر کامل هر سفارش زنده: دفتر، هدف، شناسه و یادداشت — گزارش روزانه."""
+    out = []
+    for o in watch.get("orders") or []:
+        line = (f"{_order_text(o)}؛ {ORDER_BOOK[o['book']]}؛ هدف: {o['purpose']}؛ شناسه "
+                f"{o['order_id'][:8]}")
+        if o.get("note"):
+            line += f" — {o['note']}"
+        out.append(line)
+    return out
+
+
+def orders_section(watch: dict) -> str:
+    """بخش «سفارش‌های زنده» گزارش روزانه و پیام تلگرام."""
+    lines = order_lines(watch)
+    o = ["## سفارش‌های زنده", ""]
+    if not lines:
+        return "\n".join(o + ["سفارش زنده‌ای ثبت نشده — watch.json بخش orders."])
+    o += [f"- {x}" for x in lines]
+    o += ["", "فقط نمایش — از watch.json بخش orders؛ پرشدن هر سفارش با radar_positions.py "
+              "ثبت می‌شود."]
+    return "\n".join(o)
 
 
 def _validate_plan(rp: dict, where: str) -> None:
@@ -1286,6 +1370,10 @@ def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
     items = {it["symbol"].upper(): it for it in watch.get("positions") or []}
     rp = watch.get("reserve_plan")
     left = unfilled_steps(rp, h) if rp else []
+    live = watch.get("orders") or []
+    # سطر سفارش‌های زنده ته هر هشدار — بند ۱ متن ۲۰: ETH و TAO موقعیت باز نیستند و هشدار
+    # تکان خودشان را نمی‌گیرند، ولی حرکت بازار می‌تواند سفارششان را پر کند
+    tail = ("\nسفارش‌های زنده: " + "؛ ".join(_order_text(o) for o in live) + ".") if live else ""
     events: list[tuple] = []
 
     for order, sym in enumerate(["BTC"] + [s for s in pos if s != "BTC"]):
@@ -1304,10 +1392,15 @@ def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
         elif p is not None and _num(p.get("invalidation")):
             lvl, since = float(p["invalidation"]), P.level_since(p)
         orders = [s for s in left if s["symbol"] == sym and s["price"] is not None]
+        mine = [o for o in live if o["symbol"].upper() == sym]
         wait = f"اقدامی تا بسته هفتگی لازم نیست — {week_at}."
         act = (f"اقدام: سفارش‌های باز {sym} را ببین — "
                + "، ".join(f"پله {_n(s['price'])}" for s in orders) + f"؛ جز آن {wait}"
                if orders else f"اقدام: {wait}")
+        if mine:
+            # سفارش زنده همان ارز — بند ۱ متن ۲۰؛ فقط ارجاع، حکم نمی‌سازد
+            act = (f"اقدام: سفارش زنده {sym} را ببین — "
+                   + "؛ ".join(_order_text(o) for o in mine) + f". جز آن {wait}")
         # هفته نقض — بند ۸ متن ۱۹: ۲۶ اکتبر همان اجرا «خروج کامل» و «اقدامی لازم نیست» هر دو
         # را می‌گفت. حکم با بسته هفتگی است و پیام ابطال جدا می‌آید؛ این هشدار فقط ارجاع
         wk_last = weekly(sym)[0] if (weekly is not None and lvl is not None) else None
@@ -1393,7 +1486,8 @@ def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
     if len(fresh) > SHAKE_MAX_MSGS:
         print(f"  هشدار تکان: {fa(len(fresh) - SHAKE_MAX_MSGS)} رویداد بیرون از سقف "
               f"{fa(SHAKE_MAX_MSGS)} پیام — اجرای بعد")
-    return [Msg(text, f"تکان {kind}", {key: True}) for kind, _, key, text in fresh[:SHAKE_MAX_MSGS]]
+    return [Msg(text + tail, f"تکان {kind}", {key: True})
+            for kind, _, key, text in fresh[:SHAKE_MAX_MSGS]]
 
 
 # ─────────────────────── بودجه آزادشده — ک۹۵، بند ۳ متن ۱۸ ───────────────────────
@@ -1778,6 +1872,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--quiet", action="store_true")
     ap.add_argument("--staleness", action="store_true",
                     help="بخش تازگی holdings.json و watch.json برای گزارش روزانه و خروج")
+    ap.add_argument("--orders", action="store_true",
+                    help="بخش سفارش‌های زنده برای گزارش روزانه و خروج — بند ۱ متن ۲۰")
     ap.add_argument("--holdings", default="holdings.json")
     ap.add_argument("--regime-file", default="regime.json", dest="regime_file",
                     help="منبع میانگین ساده ۵۰ هفته بیت‌کوین برای هشدار بازار")
@@ -1787,6 +1883,16 @@ def main(argv: list[str] | None = None) -> int:
 
     if a.staleness:
         print(staleness_report(a.holdings, a.watch)[0])
+        return 0
+
+    if a.orders:
+        try:
+            w = load_json(a.watch, {})
+            _validate_orders(w.get("orders"))
+        except WatchError as exc:
+            print(f"## سفارش‌های زنده\n\n⚠️ {exc}")
+            return 2
+        print(orders_section(w))
         return 0
 
     if a.ping:

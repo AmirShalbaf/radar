@@ -268,6 +268,12 @@ jobs:
             { echo "## تازگی داده‌های دستی"; echo; echo "⚠️ سنجش تازگی خطا داد:"; echo
               echo '```'; tail -c 1500 /tmp/staleness.err; echo '```'; } > /tmp/staleness.md
           fi
+          # سفارش‌های زنده — بند ۱ متن ۲۰؛ فقط نمایش. بیرون از گروه، به همان دلیل بالا
+          if ! python radar_watch.py --orders --watch watch.json > /tmp/orders.md 2> /tmp/orders.err; then
+            echo "::error::بخش سفارش‌های زنده خطا داد"
+            { cat /tmp/orders.md; echo; tail -c 500 /tmp/orders.err; } > /tmp/orders.tmp
+            mv /tmp/orders.tmp /tmp/orders.md
+          fi
           {
             echo "# گزارش رادار — $D"
             echo
@@ -294,6 +300,8 @@ jobs:
             else
               echo "⚠️ اسکنر پامپ: خط ساخته نشد"
             fi
+            echo
+            cat /tmp/orders.md
             echo
             cat /tmp/staleness.md
             echo
