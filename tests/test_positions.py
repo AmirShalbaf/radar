@@ -530,14 +530,24 @@ def test_cli_exit_then_reenter(files, monkeypatch) -> None:
     assert next(p for p in h["positions"] if p["symbol"] == "SOL")["status"] == "exited"
     monkeypatch.setattr(P, "weekly_close", lambda sym, get=None, now=None: (
         {"close": 104.0, "closed_at": MON2.isoformat(), "venue": "okx"}, []))
+    # SOL این داده سطح ابطال ندارد: بازگشت بی سطح تازه پذیرفته نیست — بند ۹ متن ۲۰
     assert _run(files, "reenter", "--symbol", "SOL", "--qty", "4", "--price", "105",
-                "--account", "A") == 2                     # بسته ۲۱ سپتامبر پیش از خروج
+                "--account", "A") == 2
+    monkeypatch.setattr(P, "level_proposal", lambda sym, price: {
+        "level": 90.0, "anchor": 104.0, "atr_w": 10.0, "price": price, "week_close": 104.0,
+        "week_closed_at": "2026-09-28T00:00:00+00:00", "distance_atr": 1.4})
+    wp = files[0].parent / "watch.json"
+    wp.write_text('{"positions": []}', encoding="utf-8")
+    lv = ("--level", "90", "--watch", str(wp))
+    assert _run(files, "reenter", "--symbol", "SOL", "--qty", "4", "--price", "105",
+                "--account", "A", *lv) == 2                # بسته ۲۱ سپتامبر پیش از خروج
     monkeypatch.setattr(P, "weekly_close", lambda sym, get=None, now=None: (
         {"close": 104.0, "closed_at": "2026-09-28T00:00:00+00:00", "venue": "okx"}, []))
     assert _run(files, "reenter", "--symbol", "SOL", "--qty", "4", "--price", "105",
-                "--account", "A") == 0
+                "--account", "A", *lv) == 0
     h = _read(files[0])
     assert next(p for p in h["positions"] if p["symbol"] == "SOL")["status"] == "open"
+    assert next(p for p in h["positions"] if p["symbol"] == "SOL")["invalidation"] == 90.0
     assert h["ledger"][-1]["weekly_close"] == 104.0
     P.validate(h, _j())
 

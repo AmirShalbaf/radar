@@ -1418,8 +1418,11 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
         wk = e.get("weekly")
         if (wk is not None and wk["close"] > e["state"]["level"]
                 and P.after_exit(wk["closed_at"], e["state"])):
+            # بی سطح ابطال — بند ۹ متن ۲۰: ثبت بی سطح تازه پذیرفته نیست
+            lv = (" --level <سطح تازه>`؛ پیشنهاد با `--suggest-level`" if e.get("no_level")
+                  else "`")
             actions.append(f"**{e['symbol']}** — ورود دوباره مجاز است؛ ثبت با "
-                           "`radar_positions.py reenter`")
+                           f"`radar_positions.py reenter{lv}")
     if plan_live:
         actions += _plan_actions(reserve)
         g = gap_after_plan(reserve, reg)
@@ -1686,7 +1689,8 @@ def main() -> int:
             if st is None or st["used"] >= st["max_qty"] - P.TOL:
                 continue
             wk, why = P.weekly_close(p["symbol"])
-            reentry.append({"symbol": p["symbol"], "state": st, "weekly": wk, "why": why})
+            reentry.append({"symbol": p["symbol"], "state": st, "weekly": wk, "why": why,
+                            "no_level": p.get("invalidation") is None})
 
     cands = []
     for s in [x.strip().upper() for x in a.candidates.split(",") if x.strip()]:

@@ -994,6 +994,93 @@ def _take(p: dict, qty: float, account: str | None) -> str:
     return account
 
 
+# ─────────────── بازگشت بی‌سطح — بند ۹ متن ۲۰ ───────────────
+#
+# ETH پس از ابطال ۲۶ اکتبر ناچیز و بی‌سطح شد؛ سطح 2380.5606 با بسته هفتگی نقض شد و دیگر
+# معتبر نیست. بازخرید ذخیره یا ورود دوباره چنین ارزی بی سطح تازه پذیرفته نیست: --level، یا
+# پیشنهاد --suggest-level با همان pick_invalidation و تأیید کاربر با --level. ارز با همان
+# سطح، با لنگرش، به پایش برمی‌گردد. TAO با سطح پیشینش در dormant همان مسیر متن ۱۸ را دارد.
+
+def level_proposal(sym: str, price: float) -> dict:
+    """
+    پیشنهاد سطح ابطال با روش سطح‌های دفتر موقعیت — radar_levels.pick_invalidation روی کندل
+    بسته روزانه و هفتگی اوکی‌اکس وقت جهانی. لنگر و ATR هفتگی همین خروجی، قاعده لنگر سطح
+    --level را هم می‌سنجد. داده نیامد یعنی PositionsError صریح.
+    """
+    try:
+        import radar_levels as L
+        daily = L.okx_candles(f"{sym}-USDT", "1D")
+        weekly = L.okx_candles(f"{sym}-USDT", "1W", 200)
+    except Exception as exc:              # CandleError، شبکه یا نبود pandas — صریح، نه بلعیده
+        raise PositionsError(f"کندل {sym} نیامد ({type(exc).__name__}: {str(exc)[:150]})") from exc
+    if daily is None or weekly is None:
+        raise PositionsError(f"کندل روزانه یا هفتگی {sym} نیامد")
+    dl = daily[daily["confirm"] == 1].reset_index(drop=True)
+    wk = weekly[weekly["confirm"] == 1].reset_index(drop=True)
+    res = L.pick_invalidation(dl, wk, price)
+    res["week_closed_at"] = (wk["ts"].iloc[-1].to_pydatetime() + WEEK).isoformat()
+    return res
+
+
+def _level_gate(p: dict, a, watch: dict, sym: str) -> None:
+    """پیش از هر تغییر: ارز بی‌سطح بی --level و بی dormant رد؛ ارز با سطح --level نمی‌گیرد."""
+    lvl = getattr(a, "level", None)
+    if p.get("invalidation") is not None:
+        if lvl is not None:
+            raise PositionsError(f"{sym} سطح ابطال {p['invalidation']} دارد — --level فقط برای ارز "
+                                 "بی‌سطح است؛ سطح فقط در بازبینی هفتگی عوض می‌شود")
+        return
+    dormant = any(d["symbol"].upper() == sym for d in watch.get("dormant") or [])
+    if lvl is None and not dormant:
+        raise PositionsError(f"{sym} سطح ابطال ندارد — ثبت بازگشت بی سطح تازه پذیرفته نیست، بند ۹ "
+                             "متن ۲۰. سطح را با --level بده، یا با --suggest-level پیشنهاد روش "
+                             "pick_invalidation را ببین و با --level تأیید کن")
+    if lvl is not None and not (_num(lvl) and 0 < lvl < a.price):
+        raise PositionsError(f"{sym}: سطح ابطال {lvl} باید مثبت و زیر قیمت ورود {a.price} باشد")
+
+
+def _return_level(a, ctx: dict, p: dict, sym: str, row: dict) -> None:
+    """پس از افزودن لات: ارز بی‌سطح با سطح --level یا سطح dormant به پایش برمی‌گردد."""
+    if p.get("invalidation") is not None:
+        return
+    watch = ctx["watch"]
+    dm = [d for d in watch.get("dormant") or [] if d["symbol"].upper() == sym]
+    lvl = getattr(a, "level", None)
+    if lvl is None:
+        # سطح پیشین dormant — متن ۱۸؛ دروازه بالا وجودش را سنجیده
+        item = {k: v for k, v in dm[0].items() if k != "reason"}
+        p["invalidation"] = item["invalidation"]
+        p["invalidation_since"] = item["invalidation_since"]
+        ctx["notes"].append(f"{sym} با سطح ابطال {item['invalidation']} به پایش برگشت — "
+                            "watch.json و holdings.json")
+    else:
+        try:
+            info, why = level_proposal(sym, a.price), None
+        except PositionsError as exc:
+            info, why = None, str(exc)
+        item = {"symbol": sym, "invalidation": lvl, "invalidation_since": row["at"],
+                "warnings": []}
+        if info is not None:
+            if not anchor_ok(lvl, info["anchor"], info["atr_w"]):
+                raise PositionsError(
+                    f"{sym}: سطح {lvl} فقط {(info['anchor'] - lvl) / info['atr_w']:.2f} دامنه "
+                    f"واقعی هفتگی (ATR) زیر لنگر {info['anchor']} است؛ دست‌کم ۱ لازم است — "
+                    "قاعده لنگر")
+            item.update(anchor=info["anchor"], anchor_atr_w=info["atr_w"], anchor_price=a.price,
+                        anchor_week_close=info["week_close"],
+                        anchor_week_closed_at=info.get("week_closed_at"), anchor_at=row["at"])
+        p["invalidation"], p["invalidation_since"] = lvl, row["at"]
+        row["invalidation"] = lvl
+        ctx["notes"].append(f"{sym} با سطح ابطال تازه {lvl} به پایش برگشت — watch.json و "
+                            "holdings.json" + (f"؛ ⚠️ لنگر سنجیده نشد — {why}" if why else ""))
+    if dm:
+        watch["dormant"] = [d for d in watch["dormant"] if d is not dm[0]]
+        if not watch["dormant"]:
+            watch.pop("dormant")
+    watch.setdefault("positions", []).append(item)
+    ctx["watch_changed"] = True
+
+
 def _reserve_reenter(h: dict, a, journal: dict, ctx: dict, row: dict, p: dict | None) -> dict:
     """
     بازخرید سهمیه reserve یک نقشه نام‌برده — ک۸۸، متن ۱۸. سهمیه و حکم فقط از
@@ -1007,6 +1094,7 @@ def _reserve_reenter(h: dict, a, journal: dict, ctx: dict, row: dict, p: dict | 
     if p is None:
         raise PositionsError(f"{sym} در دفتر موقعیت نیست — بازخرید ارز تازه با add است")
     watch = ctx["watch"]
+    _level_gate(p, a, watch, sym)
     found = RB.find_plan(watch, a.reserve_plan)
     if found is None:
         raise PositionsError(f"نقشه با created {a.reserve_plan} در watch.json نیست — نه فعال، نه "
@@ -1055,22 +1143,7 @@ def _reserve_reenter(h: dict, a, journal: dict, ctx: dict, row: dict, p: dict | 
                cost=cost, window=st["window"], verdict=why)
     if a.order_id:
         row["order_id"] = a.order_id
-    if p.get("invalidation") is None:
-        dm = [d for d in watch.get("dormant") or [] if d["symbol"].upper() == sym]
-        if dm:
-            item = {k: v for k, v in dm[0].items() if k != "reason"}
-            p["invalidation"] = item["invalidation"]
-            p["invalidation_since"] = item["invalidation_since"]
-            watch["dormant"] = [d for d in watch["dormant"] if d is not dm[0]]
-            if not watch["dormant"]:
-                watch.pop("dormant")
-            watch.setdefault("positions", []).append(item)
-            ctx["watch_changed"] = True
-            ctx["notes"].append(f"{sym} با سطح ابطال {item['invalidation']} به پایش برگشت — "
-                                "watch.json و holdings.json")
-        else:
-            ctx["notes"].append(f"⚠️ {sym} سطح ابطال ندارد و در dormant هم نیست — سطح در "
-                                "بازبینی هفتگی")
+    _return_level(a, ctx, p, sym, row)
     h["ledger"].append(row)
     h["updated"] = _now()
     return row
@@ -1089,7 +1162,7 @@ def _cap_row(h: dict, a, journal: dict, row: dict, sym: str) -> None:
 def _apply(h: dict, a, journal: dict, ctx: dict | None = None) -> dict:
     sym = a.symbol.upper()
     row = {"at": _now(), "action": a.cmd, "symbol": sym}
-    if a.cmd in ("trim", "exit", "withdraw", "income") and a.at is not None:
+    if a.cmd in ("trim", "exit", "withdraw", "income", "reenter") and a.at is not None:
         row["at"] = _receipt_at(a.at, h)
     if a.cmd == "reenter" and getattr(a, "reserve_plan", None):
         if a.at is not None:
@@ -1141,6 +1214,7 @@ def _apply(h: dict, a, journal: dict, ctx: dict | None = None) -> dict:
     elif a.cmd == "reenter":
         if p is None:
             raise PositionsError(f"{sym} در دفتر موقعیت نیست")
+        _level_gate(p, a, ctx["watch"], sym)
         st = _replay(h, _journal_index(journal))["reentry"].get(sym)
         if st is None:
             raise PositionsError(f"{sym}: خروج با ابطالی ثبت نشده — ورود دوباره ممکن نیست")
@@ -1160,6 +1234,7 @@ def _apply(h: dict, a, journal: dict, ctx: dict | None = None) -> dict:
         p["status"] = "open"
         row.update(delta=a.qty, price=a.price, weekly_close=w["close"],
                    week_close_at=w["closed_at"], venue=w["venue"])
+        _return_level(a, ctx, p, sym, row)
     elif a.cmd == "add":
         _cap_row(h, a, journal, row, sym)
         if p is None:
@@ -1219,6 +1294,24 @@ def _apply(h: dict, a, journal: dict, ctx: dict | None = None) -> dict:
     return row
 
 
+def _suggest_level(a) -> int:
+    """--suggest-level: پیشنهاد pick_invalidation و فرمان تأیید؛ هیچ ثبتی نمی‌شود."""
+    sym = a.symbol.upper()
+    res = level_proposal(sym, a.price)
+    print(f"پیشنهاد سطح ابطال {sym} — روش pick_invalidation، با قاعده لنگر:")
+    if res.get("level") is None:
+        print(f"- {res.get('reason') or 'سطحی نیامد'}")
+        print("هیچ ثبتی نشد. سطح ساختاری را دستی بنویس و با --level بده.")
+        return 2
+    print(f"- سطح {res['level']:g}، خوشه کف {res.get('tf', '—')}، {res.get('touches', '—')} برخورد، "
+          f"{res['distance_atr']:.2f} دامنه واقعی هفتگی (ATR) زیر لنگر {res['anchor']:g}")
+    print(f"- لنگر = min(قیمت {res['price']:g}، بسته هفتگی {res['week_close']:g}) = "
+          f"{res['anchor']:g}؛ ATR هفتگی {res['atr_w']:g}")
+    print(f"هیچ ثبتی نشد. برای تأیید همان فرمان را بی --suggest-level و با --level "
+          f"{res['level']:g} اجرا کن.")
+    return 0
+
+
 def _reserve_ctx(a) -> dict:
     """watch.json، regime.json و تاریخچه رژیم برای بازخرید reserve — خطا صریح."""
     import radar_watch as RW
@@ -1274,6 +1367,11 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--regime-file", dest="regime_file", default="regime.json")
             p.add_argument("--regime-history", dest="regime_history",
                            default="regime_history.json")
+            # بازگشت بی‌سطح — بند ۹ متن ۲۰
+            p.add_argument("--level", type=float, default=None,
+                           help="سطح ابطال تازه برای ارز بی‌سطح؛ با قاعده لنگر")
+            p.add_argument("--suggest-level", dest="suggest_level", action="store_true",
+                           help="پیشنهاد سطح با pick_invalidation؛ هیچ ثبتی نمی‌کند")
         if name in ("trim", "exit"):
             # نقد خالص به تتر همان حساب
             p.add_argument("--gross", type=float, default=None,
@@ -1323,8 +1421,11 @@ def main(argv: list[str] | None = None) -> int:
             raise PositionsError("مقدار باید مثبت باشد")
         if a.cmd in ("reenter", "add") and not a.account:
             raise PositionsError("--account برای افزایش لازم است")
+        if a.cmd == "reenter" and a.suggest_level:
+            return _suggest_level(a)
         h2 = json.loads(json.dumps(h))
-        ctx = _reserve_ctx(a) if a.cmd == "reenter" and a.reserve_plan else None
+        # watch.json برای هر دو مسیر reenter — بازگشت سطح، بند ۹ متن ۲۰
+        ctx = _reserve_ctx(a) if a.cmd == "reenter" else None
         row = _apply(h2, a, journal, ctx)
         validate(h2, journal)          # هیچ تغییری بی‌آنکه ناوردا برقرار بماند
         if ctx and ctx.get("watch_changed"):

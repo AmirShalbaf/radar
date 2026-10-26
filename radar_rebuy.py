@@ -361,4 +361,8 @@ def lines(release: dict, amount: float | None, ev: dict | None, val: dict,
             out.append(f"ثبت بازخرید {r['symbol']}: radar_positions.py reenter --reserve-plan "
                        f"{created} --symbol {r['symbol']} --qty <تا {_n(round(qo, 10))}> "
                        f"--price <قیمت> --account <حساب> {P.RECEIPT_ARGS}")
+    if got:
+        # بازگشت بی‌سطح — بند ۹ متن ۲۰
+        out.append("ارز بی سطح ابطال و بی ردیف dormant — مثل ETH پس از ابطال ۲۶ اکتبر — بی "
+                   "--level پذیرفته نیست؛ پیشنهاد سطح با --suggest-level، تأیید با --level.")
     return out
