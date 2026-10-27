@@ -20,16 +20,27 @@ radar_probe.py — سنجش دسترسی منابع، نشست ۱۰ رادار �
 منبع بسته داده سنجش است، نه خطای اسکریپت: اجرا با کد ۰ تمام می‌شود و همه
 سطرها در گزارش می‌آیند. فقط خرابی خود اسکریپت گام گردش‌کار را می‌اندازد.
 
+سنجش CoinGlass — متن ۲۲، ۲۷ اکتبر ۲۰۲۶
+----------------------------------------
+با --coinglass: یازده نقطه پایانی v4 و سرور MCP رسمی، با کلید COINGLASS_API_KEY. کلید فقط با
+سرآیند CG-API-KEY و فقط به میزبان‌های CoinGlass می‌رود — cg_headers — و در هر درخواست جدا،
+بی نشست مشترک. از هر پاسخ فقط کد HTTP، کد و پیام خود CoinGlass تا ۱۲۰ نویسه با پوشاندن هر
+رشته شبیه کلید، داده آمد یا نه، شمار ردیف و تاریخ آخرین ردیف نگه داشته می‌شود؛ از MCP فقط
+پذیرفته شد یا نه و شمار ابزار. مخزن عمومی است: کلید هرگز چاپ و ثبت نمی‌شود. کلید غایب یعنی
+گزارش «کلید تنظیم نشده»، بی درخواست و بی شکست. فقط مسیر دستی radar-probe.yml.
+
 نمونه اجرا
 ----------
     python radar_probe.py
     python radar_probe.py --out reports/probe-sources-2026-10-06.md
     python radar_probe.py --only bls-ics,farside-btc
+    python radar_probe.py --coinglass --out reports/probe-coinglass-2026-10-27.md
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import sys
@@ -37,6 +48,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import NamedTuple
+from urllib.parse import urlencode, urlparse
 
 # تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
 from radar_text import fa
@@ -232,14 +244,302 @@ def render(rows: list[dict], where: str, country: str, now: datetime, env) -> st
     return "\n".join(o) + "\n"
 
 
+# ═══════════════════════ سنجش CoinGlass — متن ۲۲ ═══════════════════════
+
+CG_BASE = "https://open-api-v4.coinglass.com"
+CG_MCP = "https://api-mcp.coinglass.com/mcp"
+CG_HOSTS = frozenset({"open-api-v4.coinglass.com", "api-mcp.coinglass.com"})
+CG_HEADER = "CG-API-KEY"
+CG_ENV = "COINGLASS_API_KEY"
+# طرح پایه ۳۰ درخواست در دقیقه — مکث ۲٫۵ ثانیه زیر سقف می‌ماند
+CG_PAUSE = 2.5
+CG_MSG_MAX = 120
+MCP_PROTOCOL = "2025-06-18"
+# تنها میدان‌هایی که از پاسخ هر نقطه نگه داشته می‌شود — آزمون قفلش می‌کند
+CG_ROW_FIELDS = frozenset({"key", "name", "path", "params", "status", "cg_code", "cg_msg",
+                           "has_data", "rows", "last", "why"})
+# رشته شبیه کلید: دست‌کم ۱۶ نویسه حرف و رقم پیوسته
+_KEYLIKE = re.compile(r"[A-Za-z0-9_-]{16,}")
+
+
+class CGEndpoint(NamedTuple):
+    key: str        # شناسه ماشین، لاتین
+    name: str       # نام فارسی
+    path: str       # مسیر دقیق مستندات v4
+    params: dict    # پارامترهای درخواست
+
+
+# مسیر و پارامتر هر کدام از مستندات رسمی v4، docs.coinglass.com، ۲۷ اکتبر ۲۰۲۶. بازه روزانه:
+# طرح پایه بازه کمتر از ۴ ساعت نمی‌دهد. نقشه گرمایی در مستندات فقط از طرح Professional
+CG_ENDPOINTS = [
+    CGEndpoint("cg-liq-history-btc", "انحلال تجمیعی تاریخی BTC",
+               "/api/futures/liquidation/aggregated-history",
+               {"exchange_list": "Binance,OKX,Bybit", "symbol": "BTC", "interval": "1d",
+                "limit": "30"}),
+    CGEndpoint("cg-liq-history-eth", "انحلال تجمیعی تاریخی ETH",
+               "/api/futures/liquidation/aggregated-history",
+               {"exchange_list": "Binance,OKX,Bybit", "symbol": "ETH", "interval": "1d",
+                "limit": "30"}),
+    CGEndpoint("cg-liq-coin-list", "انحلال ۲۴ ساعته بر اساس ارز، بایننس",
+               "/api/futures/liquidation/coin-list", {"exchange": "Binance"}),
+    CGEndpoint("cg-liq-exchange-list", "انحلال ۲۴ ساعته بر اساس صرافی، همه ارزها",
+               "/api/futures/liquidation/exchange-list", {"symbol": "", "range": "24h"}),
+    CGEndpoint("cg-etf-btc", "جریان صندوق‌های نقدی بیت‌کوین", "/api/etf/bitcoin/flow-history",
+               {}),
+    CGEndpoint("cg-etf-eth", "جریان صندوق‌های نقدی اتر", "/api/etf/ethereum/flow-history", {}),
+    CGEndpoint("cg-oi-history-btc", "بهره باز تجمیعی تاریخی BTC",
+               "/api/futures/open-interest/aggregated-history",
+               {"symbol": "BTC", "interval": "1d", "limit": "30"}),
+    CGEndpoint("cg-funding-oiw-btc", "نرخ تأمین مالی وزنی تاریخی BTC",
+               "/api/futures/funding-rate/oi-weight-history",
+               {"symbol": "BTC", "interval": "1d", "limit": "30"}),
+    CGEndpoint("cg-ls-global-btc", "نسبت لانگ به شورت سراسری BTC، بایننس",
+               "/api/futures/global-long-short-account-ratio/history",
+               {"exchange": "Binance", "symbol": "BTCUSDT", "interval": "1d", "limit": "30"}),
+    CGEndpoint("cg-coinbase-premium", "شاخص صرف Coinbase", "/api/coinbase-premium-index",
+               {"interval": "1d", "limit": "30"}),
+    CGEndpoint("cg-liq-heatmap-btc", "نقشه گرمایی انحلال BTC، مدل ۱",
+               "/api/futures/liquidation/aggregated-heatmap/model1",
+               {"symbol": "BTC", "range": "3d"}),
+]
+
+
+def cg_headers(url: str, key: str | None, extra: dict | None = None) -> dict:
+    """سرآیند یک درخواست؛ کلید فقط وقتی میزبان دقیقاً یکی از میزبان‌های CoinGlass است."""
+    h = {"User-Agent": UA["bot"], "Accept": "application/json", **(extra or {})}
+    if key and urlparse(url).hostname in CG_HOSTS:
+        h[CG_HEADER] = key
+    return h
+
+
+def cg_mask(text, key: str | None) -> str:
+    """کلید و هر رشته شبیه کلید پوشانده، سپس امن برای جدول و بریده تا ۱۲۰ نویسه."""
+    s = str(text or "")
+    if key:
+        s = s.replace(key, "‹کلید›")
+    s = _KEYLIKE.sub("‹پوشانده›", s)
+    s = re.sub(r"\s+", " ", s.replace("|", "/")).strip()
+    return s[:CG_MSG_MAX]
+
+
+def _day(v) -> str | None:
+    """مهر زمانی ثانیه یا میلی‌ثانیه به تاریخ UTC؛ از بزرگی عدد."""
+    try:
+        x = float(v)
+    except (TypeError, ValueError):
+        return None
+    if x > 1e11:
+        x /= 1000
+    return datetime.fromtimestamp(x, UTC).strftime("%Y-%m-%d")
+
+
+def _shape(data) -> tuple[int | None, str | None]:
+    """شمار ردیف و تاریخ آخرین ردیف — فقط همین دو از داده."""
+    if isinstance(data, dict):                    # نقشه گرمایی: ردیف‌ها شمع قیمت‌اند
+        data = data.get("price_candlesticks")
+    if not isinstance(data, list):
+        return None, None
+    ts = []
+    for r in data:
+        if isinstance(r, dict):
+            v = r.get("time", r.get("timestamp"))
+        elif isinstance(r, list) and r:
+            v = r[0]
+        else:
+            v = None
+        if v is not None:
+            ts.append(v)
+    days = [d for d in (_day(v) for v in ts) if d]
+    return len(data), (max(days) if days else None)
+
+
+def cg_endpoint(ep: CGEndpoint, key: str, request, pause: float = CG_PAUSE) -> dict:
+    """یک نقطه پایانی. هیچ خطایی بیرون نمی‌رود؛ از بدنه فقط میدان‌های CG_ROW_FIELDS."""
+    row = {"key": ep.key, "name": ep.name, "path": ep.path, "params": dict(ep.params),
+           "status": None, "cg_code": None, "cg_msg": None, "has_data": False, "rows": None,
+           "last": None, "why": ""}
+    url = CG_BASE + ep.path
+    try:
+        r = request("GET", url, headers=cg_headers(url, key), params=dict(ep.params),
+                    timeout=TIMEOUT)
+    except Exception as exc:
+        row["why"] = cg_mask(f"{type(exc).__name__}: {exc}", key)
+    else:
+        row["status"] = r.status_code
+        try:
+            js = json.loads((r.content or b"").decode("utf-8", "replace"))
+        except ValueError:
+            js = None
+        if isinstance(js, dict):
+            row["cg_code"] = cg_mask(js.get("code"), key) or None
+            row["cg_msg"] = cg_mask(js.get("msg"), key) or None
+            data = js.get("data")
+            row["has_data"] = bool(data)
+            if row["has_data"]:
+                row["rows"], row["last"] = _shape(data)
+        else:
+            row["why"] = "پاسخ JSON نیست"
+    if pause:
+        time.sleep(pause)
+    return row
+
+
+def _rpc(r) -> dict | None:
+    """پاسخ JSON-RPC از بدنه JSON یا رویدادهای SSE — Streamable HTTP."""
+    raw = (r.content or b"").decode("utf-8", "replace")
+    try:
+        js = json.loads(raw)
+        return js if isinstance(js, dict) else None
+    except ValueError:
+        pass
+    for line in raw.splitlines():
+        if line.startswith("data:"):
+            try:
+                js = json.loads(line[5:].strip())
+            except ValueError:
+                continue
+            if isinstance(js, dict) and ("result" in js or "error" in js):
+                return js
+    return None
+
+
+def _hdr(r, name: str) -> str | None:
+    for k, v in (getattr(r, "headers", None) or {}).items():
+        if k.lower() == name.lower():
+            return v
+    return None
+
+
+def cg_mcp(key: str, request, pause: float = CG_PAUSE) -> list[dict]:
+    """
+    initialize، اعلان initialized، سپس tools/list با شناسه جلسه — Streamable HTTP. فقط
+    پذیرفته شد یا نه، کد HTTP، شمار ابزار و پیام خطای پوشانده. شناسه جلسه ثبت نمی‌شود.
+    """
+    base = {"Content-Type": "application/json", "Accept": "application/json, text/event-stream"}
+    steps: list[dict] = []
+
+    def call(step, body, extra=None):
+        out = {"step": step, "ok": False, "status": None, "tools": None, "why": ""}
+        try:
+            r = request("POST", CG_MCP, headers=cg_headers(CG_MCP, key, {**base, **(extra or {})}),
+                        json=body, timeout=TIMEOUT)
+        except Exception as exc:
+            out["why"] = cg_mask(f"{type(exc).__name__}: {exc}", key)
+            steps.append(out)
+            return None, out
+        finally:
+            if pause:
+                time.sleep(pause)
+        out["status"] = r.status_code
+        steps.append(out)
+        return r, out
+
+    r, s = call("initialize", {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {
+        "protocolVersion": MCP_PROTOCOL, "capabilities": {},
+        "clientInfo": {"name": "radar-probe", "version": VERSION}}})
+    if r is None:
+        return steps
+    js = _rpc(r)
+    if not (200 <= r.status_code < 300 and js and "result" in js):
+        err = (js or {}).get("error") or {}
+        s["why"] = cg_mask(err.get("message") or "پاسخ initialize نتیجه ندارد", key)
+        return steps
+    s["ok"] = True
+    sid = _hdr(r, "Mcp-Session-Id")
+    proto = (js["result"].get("protocolVersion") or MCP_PROTOCOL)
+    s["why"] = "شناسه جلسه دریافت شد" if sid else "شناسه جلسه در پاسخ نبود"
+    extra = {"MCP-Protocol-Version": proto}
+    if sid:
+        extra["Mcp-Session-Id"] = sid
+    r, s = call("notifications/initialized",
+                {"jsonrpc": "2.0", "method": "notifications/initialized"}, extra)
+    if r is not None:
+        s["ok"] = 200 <= r.status_code < 300
+    r, s = call("tools/list", {"jsonrpc": "2.0", "id": 2, "method": "tools/list"}, extra)
+    if r is None:
+        return steps
+    js = _rpc(r)
+    tools = ((js or {}).get("result") or {}).get("tools")
+    if 200 <= r.status_code < 300 and isinstance(tools, list):
+        s["ok"], s["tools"] = True, len(tools)
+    else:
+        err = (js or {}).get("error") or {}
+        s["why"] = cg_mask(err.get("message") or "فهرست ابزار نیامد", key)
+    return steps
+
+
+def render_cg(rows: list[dict], mcp: list[dict], where: str, country: str, now: datetime,
+              env, has_key: bool) -> str:
+    o = [f"# سنجش دسترسی CoinGlass — {now:%Y-%m-%d}", "",
+         f"`radar_probe.py --coinglass` {VERSION} — متن ۲۲. فقط مسیر دستی؛ کلید چاپ و ثبت نمی‌شود.",
+         "", "| مورد | مقدار |", "|---|---|",
+         f"| محیط | {where} |", f"| کشور آی‌پی خروجی | {country} |",
+         f"| زمان | {now:%Y-%m-%d %H:%M} UTC |",
+         f"| کلید | {'کلید تنظیم‌شده' if has_key else 'کلید تنظیم نشده'} — {CG_ENV} |"]
+    if env.get("GITHUB_RUN_ID"):
+        o.append(f"| اجرای گردش‌کار | `{env['GITHUB_RUN_ID']}` |")
+    if not has_key:
+        return "\n".join(o + ["", f"کلید تنظیم نشده — {CG_ENV} در محیط نیست. هیچ درخواستی "
+                                  "فرستاده نشد."]) + "\n"
+    got = sum(1 for r in rows if r["has_data"])
+    o += ["", f"{fa(got)} از {fa(len(rows))} نقطه داده داد. «کد CoinGlass» و «پیام» از خود پاسخ‌اند؛ "
+              "هر رشته شبیه کلید پوشانده شده. از بدنه هیچ چیز دیگری نگه داشته نشد.", "",
+          "| نقطه | نام | مسیر و پارامتر | HTTP | کد CoinGlass | پیام | داده | ردیف | آخرین ردیف |",
+          "|---|---|---|---|---|---|---|---|---|"]
+    for r in rows:
+        q = f"`{r['path']}" + (f"?{urlencode(r['params'])}`" if r["params"] else "`")
+        msg = r["cg_msg"] or r["why"] or "—"
+        o.append(f"| `{r['key']}` | {r['name']} | {q} | {r['status'] if r['status'] is not None else '—'} "
+                 f"| {r['cg_code'] or '—'} | {msg} | {'✅' if r['has_data'] else '❌'} "
+                 f"| {r['rows'] if r['rows'] is not None else '—'} | {r['last'] or '—'} |")
+    o += ["", f"## سرور MCP رسمی — `{CG_MCP}`", "",
+          "| گام | پذیرفته | HTTP | شمار ابزار | توضیح |", "|---|---|---|---|---|"]
+    for s in mcp:
+        o.append(f"| {s['step']} | {'✅' if s['ok'] else '❌'} | "
+                 f"{s['status'] if s['status'] is not None else '—'} | "
+                 f"{s['tools'] if s['tools'] is not None else '—'} | {s['why'] or '—'} |")
+    return "\n".join(o) + "\n"
+
+
+def main_coinglass(out: str | None, env, now: datetime, request, pause: float) -> int:
+    key = env.get(CG_ENV) or None
+    where = place(env)
+    if not key:
+        txt = render_cg([], [], where, "نامعلوم", now, env, has_key=False)
+    else:
+        country = egress(lambda url, **k: request("GET", url, **k))
+        rows = [cg_endpoint(ep, key, request, pause) for ep in CG_ENDPOINTS]
+        mcp = cg_mcp(key, request, pause)
+        txt = render_cg(rows, mcp, where, country, now, env, has_key=True)
+        txt = cg_mask_doc(txt, key)
+    if out:
+        Path(out).parent.mkdir(parents=True, exist_ok=True)
+        Path(out).write_text(txt, encoding="utf-8")
+    print(txt)
+    return 0
+
+
+def cg_mask_doc(txt: str, key: str) -> str:
+    """کمربند دوم: اگر کلید به هر راهی در متن گزارش رسید، پوشانده شود."""
+    return txt.replace(key, "‹کلید›") if key else txt
+
+
 def main(argv=None, get=None, env=None, now: datetime | None = None,
-         pause: float = PAUSE) -> int:
+         pause: float | None = None, request=None) -> int:
     ap = argparse.ArgumentParser(description="سنجش دسترسی منابع نشست ۱۰")
     ap.add_argument("--out", help="مسیر فایل گزارش مارک‌داون")
     ap.add_argument("--only", help="فقط این شناسه‌ها، جدا با کاما")
+    ap.add_argument("--coinglass", action="store_true",
+                    help="سنجش CoinGlass با کلید COINGLASS_API_KEY — متن ۲۲")
     a = ap.parse_args(argv)
     now = now or datetime.now(UTC)
     env = os.environ if env is None else env
+    if a.coinglass:
+        if request is None:
+            import requests
+            request = requests.request          # هر درخواست جدا، بی نشست مشترک
+        return main_coinglass(a.out, env, now, request, CG_PAUSE if pause is None else pause)
+    pause = PAUSE if pause is None else pause
     if get is None:
         import requests
         get = requests.Session().get
