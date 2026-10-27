@@ -7,6 +7,7 @@
 اسکریپت؛ پس اجرا با کد ۰ تمام می‌شود و گزارش همه سطرها را دارد.
 گردش‌کار فقط دستی است — بی‌زمان‌بندی — و فقط گزارش خودش را کامیت می‌کند.
 """
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -157,13 +158,66 @@ def test_main_rejects_unknown_only(tmp_path) -> None:
 
 # ═══════════════ گردش‌کار ═══════════════
 
-def test_workflow_is_manual_and_commits_only_its_report() -> None:
+def test_workflow_is_manual_and_commits_only_its_reports() -> None:
     text = FLOW.read_text(encoding="utf-8")
     assert "workflow_dispatch" in text
-    assert "schedule" not in text and "cron" not in text
+    # بی زمان‌بندی؛ «schedule» فقط در نام radar_schedule.py — بند ۲ متن ۲۲
+    assert not re.search(r"^\s*schedule:", text, re.M) and "cron" not in text
     assert "python radar_probe.py" in text and 'reports/probe-sources-$D.md' in text
     assert "|| true" not in text
-    adds = [l.strip() for l in text.splitlines() if l.strip().startswith("git add")]
-    assert adds == ['git add "reports/probe-sources-$D.md"']
+    adds = [l.strip() for l in text.splitlines() if "git add" in l and not l.strip().startswith("#")]
+    assert adds == ['[ -f "reports/probe-sources-$D.md" ] && git add "reports/probe-sources-$D.md"',
+                    '[ -f "reports/probe-coinglass-$D.md" ] && git add "reports/probe-coinglass-$D.md"']
     assert "contents: write" in text
     assert 'python-version: "3.11"' in text
+
+
+# ═══════════════ گردش‌کار — بند ۲ متن ۲۲ ═══════════════
+
+def _steps(text: str) -> dict:
+    """هر گام به متن خودش، با نام گام."""
+    out, name, buf = {}, None, []
+    for line in text.splitlines():
+        m = re.match(r"^      - name: (.+)$", line)
+        if m:
+            if name:
+                out[name] = "\n".join(buf)
+            name, buf = m.group(1).strip(), []
+        elif name:
+            buf.append(line)
+    if name:
+        out[name] = "\n".join(buf)
+    return out
+
+
+def test_workflow_scope_choice() -> None:
+    text = FLOW.read_text(encoding="utf-8")
+    head = text[:text.index("jobs:")]
+    assert "scope:" in head and "type: choice" in head
+    assert re.search(r"options: \[همه, فقط CoinGlass\]", head)
+    assert 'default: "همه"' in head
+    st = _steps(text)
+    assert "if: ${{ (inputs.scope || 'همه') == 'همه' }}" in st["سنجش منابع"]
+    assert "if:" not in st["سنجش CoinGlass"]                 # هر دو گزینه CoinGlass را می‌سنجند
+
+
+def test_key_only_in_coinglass_step_env() -> None:
+    text = FLOW.read_text(encoding="utf-8")
+    lines = [l for l in text.splitlines() if "COINGLASS_API_KEY" in l and not l.strip().startswith("#")]
+    assert lines == ["          COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}"]
+    st = _steps(text)
+    cg = st["سنجش CoinGlass"]
+    assert "COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}" in cg
+    assert 'python radar_probe.py --coinglass --out "reports/probe-coinglass-$D.md"' in cg
+    assert all("COINGLASS" not in v for k, v in st.items() if k != "سنجش CoinGlass")
+    # نه سطح گردش‌کار، نه سطح کار: env پیش از steps نیست
+    assert "env:" not in text[:text.index("steps:")]
+
+
+def test_commit_pushes_with_retry_no_rebase() -> None:
+    text = FLOW.read_text(encoding="utf-8")
+    code = "\n".join(l for l in text.splitlines() if not l.strip().startswith("#"))
+    assert "rebase" not in code.lower() and "--force" not in code
+    commit = _steps(text)["کامیت گزارش"]
+    assert "python radar_schedule.py push" in commit
+    assert not re.search(r"^\s*git push", commit, re.M)

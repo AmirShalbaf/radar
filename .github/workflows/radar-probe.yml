@@ -11,6 +11,11 @@ name: رادار — سنجش دسترسی منابع
 # فقط دستی، بی‌زمان‌بندی. هیچ داده‌ای ذخیره نمی‌شود؛ فقط همین گزارش
 # کامیت می‌شود. منبع بسته داده سنجش است، نه خطا؛ گام فقط با خرابی خود
 # اسکریپت می‌افتد.
+#
+# سنجش CoinGlass — متن ۲۲: یازده نقطه پایانی v4 و سرور MCP رسمی با کلید
+# COINGLASS_API_KEY، در reports/probe-coinglass-<تاریخ>.md. کلید فقط در env همان
+# گام است، نه سطح کار و نه سطح گردش‌کار؛ radar_probe.py آن را فقط با سرآیند
+# CG-API-KEY و فقط به میزبان CoinGlass می‌فرستد و هرگز چاپ نمی‌کند. مخزن عمومی است.
 # ─────────────────────────────────────────────────────────────
 
 on:
@@ -24,6 +29,13 @@ on:
         default: "ubuntu-24.04"
         type: choice
         options: [ubuntu-24.04, ubuntu-26.04]
+      # «فقط CoinGlass» گام سنجش منابع را رد می‌کند — متن ۲۲
+      scope:
+        description: "دامنه سنجش"
+        required: false
+        default: "همه"
+        type: choice
+        options: [همه, فقط CoinGlass]
 
 permissions:
   contents: write
@@ -53,24 +65,37 @@ jobs:
           pip install -r requirements.txt
 
       - name: سنجش منابع
+        if: ${{ (inputs.scope || 'همه') == 'همه' }}
         env:
           PYTHONUTF8: "1"
         run: |
           D=$(date -u +%Y-%m-%d)
           python radar_probe.py --out "reports/probe-sources-$D.md"
 
+      # کلید فقط همین‌جا — متن ۲۲. کلید غایب یعنی گزارش «کلید تنظیم نشده»، نه شکست
+      - name: سنجش CoinGlass
+        env:
+          PYTHONUTF8: "1"
+          COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
+        run: |
+          D=$(date -u +%Y-%m-%d)
+          python radar_probe.py --coinglass --out "reports/probe-coinglass-$D.md" > /dev/null
+          echo "گزارش: reports/probe-coinglass-$D.md"
+
       - name: کامیت گزارش
         run: |
           D=$(date -u +%Y-%m-%d)
           git config user.name  "radar-bot"
           git config user.email "radar-bot@users.noreply.github.com"
-          git add "reports/probe-sources-$D.md"
+          [ -f "reports/probe-sources-$D.md" ] && git add "reports/probe-sources-$D.md"
+          [ -f "reports/probe-coinglass-$D.md" ] && git add "reports/probe-coinglass-$D.md"
           if git diff --staged --quiet; then
             echo "تغییری نبود."
           else
-            git pull --rebase --autostash
             git commit -m "سنجش دسترسی منابع — $D"
-            git push
+            # push با تلاش دوباره — متن ۲۲، همان راه متن ۲۰: ردشده تا ۳ بار با fetch و
+            # merge --no-edit؛ بی بازنویسی تاریخچه؛ تداخل واقعی با ::error:: روشن می‌افتد
+            python radar_schedule.py push
           fi
 
       # پس از کامیت، تا گزارش سنجش در هر حال بماند. شکست آزمون گام را می‌اندازد —
