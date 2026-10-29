@@ -6215,7 +6215,11 @@
      "candle_open": "2026-10-22T11:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 0.002097,
+     "candle_open": "2026-10-28T11:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -6320,7 +6324,11 @@
      "candle_open": "2026-10-22T11:00:00Z",
      "venue": "gate"
     },
-    "d7": null
+    "d7": {
+     "close": 0.020167,
+     "candle_open": "2026-10-28T11:00:00Z",
+     "venue": "gate"
+    }
    }
   },
   {
@@ -6389,7 +6397,11 @@
      "candle_open": "2026-10-22T11:00:00Z",
      "venue": "gate"
     },
-    "d7": null
+    "d7": {
+     "close": 1.7351,
+     "candle_open": "2026-10-28T11:00:00Z",
+     "venue": "gate"
+    }
    }
   },
   {
@@ -6476,7 +6488,11 @@
      "candle_open": "2026-10-22T11:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 24.55,
+     "candle_open": "2026-10-28T11:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -6552,7 +6568,11 @@
      "candle_open": "2026-10-22T11:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 0.0008114,
+     "candle_open": "2026-10-28T11:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -6666,7 +6686,11 @@
      "candle_open": "2026-10-22T11:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 0.007822,
+     "candle_open": "2026-10-28T11:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -6755,7 +6779,11 @@
      "candle_open": "2026-10-22T11:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 0.0004504,
+     "candle_open": "2026-10-28T11:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -9257,7 +9285,11 @@
    "lbank": "در LBank نیست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.059358,
+     "candle_open": "2026-10-28T09:00:00Z",
+     "venue": "gate"
+    },
     "d7": null
    }
   },
@@ -9328,7 +9360,11 @@
    "lbank": "در LBank نیست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.15177,
+     "candle_open": "2026-10-28T09:00:00Z",
+     "venue": "gate"
+    },
     "d7": null
    }
   },
@@ -9389,7 +9425,11 @@
    "lbank": "در LBank نیست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.15884,
+     "candle_open": "2026-10-28T09:00:00Z",
+     "venue": "okx"
+    },
     "d7": null
    }
   },
@@ -9474,7 +9514,11 @@
    "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.02822,
+     "candle_open": "2026-10-28T09:00:00Z",
+     "venue": "okx"
+    },
     "d7": null
    }
   },
@@ -9575,7 +9619,11 @@
    "lbank": "در LBank نیست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.0007044,
+     "candle_open": "2026-10-28T09:00:00Z",
+     "venue": "gate"
+    },
     "d7": null
    }
   },
@@ -9636,7 +9684,11 @@
    "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.08684,
+     "candle_open": "2026-10-28T09:00:00Z",
+     "venue": "gate"
+    },
     "d7": null
    }
   },
@@ -9716,7 +9768,11 @@
    "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 9.048,
+     "candle_open": "2026-10-28T09:00:00Z",
+     "venue": "okx"
+    },
     "d7": null
    }
   },
@@ -9797,7 +9853,11 @@
    "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 5.0475e-06,
+     "candle_open": "2026-10-29T05:00:00Z",
+     "venue": "okx"
+    },
     "d7": null
    }
   },
@@ -9857,7 +9917,11 @@
    "lbank": "در LBank نیست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.06039,
+     "candle_open": "2026-10-29T05:00:00Z",
+     "venue": "gate"
+    },
     "d7": null
    }
   },
@@ -9926,7 +9990,11 @@
    "lbank": "در LBank نیست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.1433,
+     "candle_open": "2026-10-29T05:00:00Z",
+     "venue": "gate"
+    },
     "d7": null
    }
   },
@@ -9997,7 +10065,11 @@
    "lbank": "در LBank نیست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 1.0859,
+     "candle_open": "2026-10-29T05:00:00Z",
+     "venue": "gate"
+    },
     "d7": null
    }
   },
@@ -10079,7 +10151,11 @@
    "lbank": "در LBank نیست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.79336,
+     "candle_open": "2026-10-29T05:00:00Z",
+     "venue": "gate"
+    },
     "d7": null
    }
   },
@@ -10161,7 +10237,11 @@
    "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 281.47,
+     "candle_open": "2026-10-29T05:00:00Z",
+     "venue": "okx"
+    },
     "d7": null
    }
   },
@@ -10245,7 +10325,11 @@
    "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.2775,
+     "candle_open": "2026-10-29T05:00:00Z",
+     "venue": "okx"
+    },
     "d7": null
    }
   },
@@ -10326,6 +10410,286 @@
    },
    "labels": [],
    "lbank": "در LBank نیست",
+   "status": "آزمون‌نشده",
+   "prices": {
+    "h24": {
+     "close": 0.07347,
+     "candle_open": "2026-10-29T05:00:00Z",
+     "venue": "okx"
+    },
+    "d7": null
+   }
+  },
+  {
+   "id": "2026-10-29:PEPE",
+   "at": "2026-10-29T06:28:13Z",
+   "symbol": "PEPE",
+   "venue": "okx",
+   "price": 5.011e-06,
+   "signs": [
+    "بهره باز"
+   ],
+   "placements": [
+    {
+     "side": "long",
+     "section": "long",
+     "group": 2,
+     "setup": {
+      "name": "الف‌۱",
+      "side": "long",
+      "state": "pre",
+      "level": 5.0000889869888486e-06,
+      "range_low": 3.763e-06,
+      "retest_low": null,
+      "atr": 3.424833619268616e-07
+     },
+     "dist_atr": 0.8840589859673653,
+     "veto": {
+      "status": "unknown",
+      "why": "در DefiLlama نیست"
+     },
+     "card": {
+      "ok": true,
+      "why": null,
+      "tag": "نقدی",
+      "entry": 5.0000889869888486e-06,
+      "stop": 4.9144681465071334e-06,
+      "target": 6.237177973977698e-06,
+      "target_25r": 5.214141088193137e-06,
+      "rr": 12.145450900786793,
+      "rr_gross": 14.448456474251001,
+      "grade": "ب",
+      "risk_pct": 0.8999999999999999
+     }
+    }
+   ],
+   "metrics": {
+    "z1h": 1.8275664450430462,
+    "z1h_ago": 3,
+    "z1h_rel": 1.8974851261389587,
+    "z1h_btc": -0.7796470317978532,
+    "z1h_gate": 1.3599433539588426,
+    "z1h_why": null,
+    "z4h": 1.7204139134351593,
+    "z4h_rel": 1.3374733204852012,
+    "z4h_btc": 0.38294059294995797,
+    "z4h_gate": 1.3374733204852012,
+    "z4h_why": null,
+    "chg24_closed": 0.05552070263488096,
+    "abn_ratio": 4.470473206781816,
+    "abn_flag": false,
+    "ratio24": 9.466553459264375,
+    "ratio7": 8.896220386034965,
+    "shift": 0.06213838708772442,
+    "shift_why": null,
+    "oi": 10020284000000.002,
+    "d4": 0.022609750623983738,
+    "d24": 0.2745645965246082,
+    "oi_why": null,
+    "oi_usd": 50211643.12400001,
+    "funding_8h": 0.0001,
+    "vol_btc": 551.4296835940384,
+    "rs7": 11.806358150886275,
+    "rs30": 21.939835464104686
+   },
+   "labels": [],
+   "lbank": "هست",
+   "status": "آزمون‌نشده",
+   "prices": {
+    "h24": null,
+    "d7": null
+   }
+  },
+  {
+   "id": "2026-10-29:DOS",
+   "at": "2026-10-29T06:28:13Z",
+   "symbol": "DOS",
+   "venue": "okx",
+   "price": 0.2179,
+   "signs": [
+    "بهره باز"
+   ],
+   "placements": [
+    {
+     "side": "short",
+     "section": "short",
+     "group": 1,
+     "setup": {
+      "name": "ج‌۲",
+      "side": "short",
+      "state": "trigger",
+      "level": 0.3081,
+      "h1": 0.7691,
+      "h2": 0.3081,
+      "l2": 0.161,
+      "atr": 0.05116934855559543
+     },
+     "dist_atr": 0.11360162895173205,
+     "veto": {
+      "status": "unknown",
+      "why": "در DefiLlama نیست"
+     },
+     "card": {
+      "ok": false,
+      "why": "کارت ندارد — نسبت کافی نیست",
+      "tag": "فیوچرز",
+      "entry": 0.2179,
+      "stop": 0.32089233713889886,
+      "target": 0.161,
+      "target_25r": -0.03958084284724714,
+      "rr": 0.542676802245925,
+      "rr_gross": 0.5524682862887439,
+      "grade": null,
+      "risk_pct": null
+     }
+    }
+   ],
+   "metrics": {
+    "z1h": 1.2708651693715303,
+    "z1h_ago": 4,
+    "z1h_rel": 1.627640274935675,
+    "z1h_btc": -0.7796470317978532,
+    "z1h_gate": 0.8479932431378219,
+    "z1h_why": null,
+    "z4h": 1.356284064668616,
+    "z4h_rel": 0.9733434717186581,
+    "z4h_btc": 0.38294059294995797,
+    "z4h_gate": 0.9733434717186581,
+    "z4h_why": null,
+    "chg24_closed": -0.18067382450944103,
+    "abn_ratio": 8.550190503942341,
+    "abn_flag": true,
+    "ratio24": 4.661683029183203,
+    "ratio7": 2.6173934958701444,
+    "shift": 0.5771975743160712,
+    "shift_why": null,
+    "oi": 9237490.0,
+    "d4": 0.02280568497882962,
+    "d24": 0.47057259661612716,
+    "oi_why": null,
+    "oi_usd": 2012849.071,
+    "funding_8h": -0.0002179819730134,
+    "vol_btc": 208.16472082461743,
+    "rs7": 13.615870450913892,
+    "rs30": 11.411318244598101
+   },
+   "labels": [
+    "شمع غیرعادی"
+   ],
+   "lbank": "هست",
+   "status": "آزمون‌نشده",
+   "prices": {
+    "h24": null,
+    "d7": null
+   }
+  },
+  {
+   "id": "2026-10-29:ADA",
+   "at": "2026-10-29T06:28:13Z",
+   "symbol": "ADA",
+   "venue": "okx",
+   "price": 0.1987,
+   "signs": [
+    "حجم چهارساعته"
+   ],
+   "placements": [
+    {
+     "side": "long",
+     "section": "long",
+     "group": 2,
+     "setup": {
+      "name": "الف‌۳",
+      "side": "long",
+      "state": "pre",
+      "level": 0.2306,
+      "hi": 0.2306,
+      "lo": 0.2004,
+      "atr": 0.012627772619163088,
+      "exp_vol": false
+     },
+     "dist_atr": 2.5261778907541177,
+     "veto": {
+      "status": "unknown",
+      "why": "در DefiLlama نیست"
+     },
+     "card": {
+      "ok": false,
+      "why": "کارت ندارد — نسبت کافی نیست",
+      "tag": "نقدی",
+      "entry": 0.2306,
+      "stop": 0.2004,
+      "target": 0.29100000000000004,
+      "target_25r": 0.30610000000000004,
+      "rr": 1.932817122990568,
+      "rr_gross": 2.000000000000001,
+      "grade": null,
+      "risk_pct": null
+     }
+    },
+    {
+     "side": "short",
+     "section": "short",
+     "group": 1,
+     "setup": {
+      "name": "ج‌۱",
+      "side": "short",
+      "state": "trigger",
+      "level": 0.21953639468690703,
+      "fail_high": 0.2306,
+      "range_low": 0.2111,
+      "atr": 0.012627772619163088
+     },
+     "dist_atr": 1.317412139018572,
+     "veto": {
+      "status": "unknown",
+      "why": "در DefiLlama نیست"
+     },
+     "card": {
+      "ok": false,
+      "why": "کارت ندارد — هندسه وارونه",
+      "tag": "فیوچرز",
+      "entry": 0.1987,
+      "stop": 0.23375694315479076,
+      "target": 0.2111,
+      "target_25r": null,
+      "rr": null,
+      "rr_gross": null,
+      "grade": null,
+      "risk_pct": null
+     }
+    }
+   ],
+   "metrics": {
+    "z1h": 3.0873064115909745,
+    "z1h_ago": 4,
+    "z1h_rel": 1.6851610832886796,
+    "z1h_btc": 1.114071686967309,
+    "z1h_gate": 1.6851610832886796,
+    "z1h_why": null,
+    "z4h": 2.435339239805347,
+    "z4h_rel": 2.052398646855389,
+    "z4h_btc": 0.38294059294995797,
+    "z4h_gate": 2.052398646855389,
+    "z4h_why": null,
+    "chg24_closed": -0.03205439533754251,
+    "abn_ratio": 2.8288423475776354,
+    "abn_flag": false,
+    "ratio24": 8.735459843321811,
+    "ratio7": 10.039082712727625,
+    "shift": -0.139095160846225,
+    "shift_why": null,
+    "oi": 134328300.00000003,
+    "d4": -0.006366127759129592,
+    "d24": 0.0578143450512314,
+    "oi_why": null,
+    "oi_usd": 26691033.210000005,
+    "funding_8h": -0.000121552136484,
+    "vol_btc": 67.93848127577314,
+    "rs7": -5.255884634303909,
+    "rs30": -14.08603808084331
+   },
+   "labels": [],
+   "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
     "h24": null,
@@ -14332,7 +14696,232 @@
      "venue": "okx"
     }
    }
+  },
+  {
+   "at": "2026-10-29T06:28:13Z",
+   "prices": {
+    "AAVE": {
+     "price": 130.91,
+     "venue": "okx"
+    },
+    "ADA": {
+     "price": 0.1987,
+     "venue": "okx"
+    },
+    "AIN": {
+     "price": 0.1415,
+     "venue": "gate"
+    },
+    "AKE": {
+     "price": 0.020748,
+     "venue": "gate"
+    },
+    "ARB": {
+     "price": 0.16598,
+     "venue": "okx"
+    },
+    "AVAX": {
+     "price": 8.725,
+     "venue": "okx"
+    },
+    "BCH": {
+     "price": 280.4,
+     "venue": "okx"
+    },
+    "BEAT": {
+     "price": 0.08672,
+     "venue": "gate"
+    },
+    "BNB": {
+     "price": 755.2,
+     "venue": "okx"
+    },
+    "CT": {
+     "price": 0.14406,
+     "venue": "okx"
+    },
+    "DGAI": {
+     "price": 0.79779,
+     "venue": "gate"
+    },
+    "DOGE": {
+     "price": 0.07833,
+     "venue": "okx"
+    },
+    "DOS": {
+     "price": 0.2179,
+     "venue": "okx"
+    },
+    "DOT": {
+     "price": 0.979,
+     "venue": "okx"
+    },
+    "ELIZAOS": {
+     "price": 0.00031229,
+     "venue": "gate"
+    },
+    "ENA": {
+     "price": 0.19674,
+     "venue": "okx"
+    },
+    "ETH": {
+     "price": 2316.54,
+     "venue": "okx"
+    },
+    "EVAA": {
+     "price": 1.2731,
+     "venue": "gate"
+    },
+    "FIL": {
+     "price": 0.8784,
+     "venue": "okx"
+    },
+    "HYPE": {
+     "price": 79.227,
+     "venue": "okx"
+    },
+    "INJ": {
+     "price": 7.656,
+     "venue": "gate"
+    },
+    "IRYS": {
+     "price": 0.02303,
+     "venue": "okx"
+    },
+    "KORUG": {
+     "price": 12.744,
+     "venue": "gate"
+    },
+    "LINK": {
+     "price": 11.472,
+     "venue": "okx"
+    },
+    "LIT": {
+     "price": 2.8541,
+     "venue": "okx"
+    },
+    "LTC": {
+     "price": 57.45,
+     "venue": "okx"
+    },
+    "MPLX": {
+     "price": 0.06311,
+     "venue": "gate"
+    },
+    "NEAR": {
+     "price": 4.465,
+     "venue": "okx"
+    },
+    "OKB": {
+     "price": 111.59,
+     "venue": "okx"
+    },
+    "ONDO": {
+     "price": 0.4085,
+     "venue": "okx"
+    },
+    "PEPE": {
+     "price": 5.011e-06,
+     "venue": "okx"
+    },
+    "PONS": {
+     "price": 0.2787,
+     "venue": "okx"
+    },
+    "PUMP": {
+     "price": 0.004254,
+     "venue": "okx"
+    },
+    "Q": {
+     "price": 0.052287,
+     "venue": "gate"
+    },
+    "SHIB": {
+     "price": 4.874e-06,
+     "venue": "okx"
+    },
+    "SOL": {
+     "price": 100.14,
+     "venue": "okx"
+    },
+    "STRK": {
+     "price": 0.04634,
+     "venue": "okx"
+    },
+    "SUI": {
+     "price": 0.9133,
+     "venue": "okx"
+    },
+    "TAO": {
+     "price": 248.6,
+     "venue": "okx"
+    },
+    "TRUMP": {
+     "price": 1.681,
+     "venue": "okx"
+    },
+    "TRX": {
+     "price": 0.33112,
+     "venue": "okx"
+    },
+    "UNI": {
+     "price": 7.053,
+     "venue": "okx"
+    },
+    "WLD": {
+     "price": 0.4156,
+     "venue": "okx"
+    },
+    "XCRCL": {
+     "price": 79.65,
+     "venue": "okx"
+    },
+    "XGOOGL": {
+     "price": 294.4,
+     "venue": "okx"
+    },
+    "XLM": {
+     "price": 0.16825,
+     "venue": "okx"
+    },
+    "XMSTR": {
+     "price": 141.03,
+     "venue": "okx"
+    },
+    "XPL": {
+     "price": 0.07507,
+     "venue": "okx"
+    },
+    "XRP": {
+     "price": 1.2948,
+     "venue": "okx"
+    },
+    "XSKHY": {
+     "price": 161.73,
+     "venue": "okx"
+    },
+    "XSNDK": {
+     "price": 1360.7,
+     "venue": "okx"
+    },
+    "XSOXL": {
+     "price": 99.65,
+     "venue": "okx"
+    },
+    "XSPCX": {
+     "price": 144.19,
+     "venue": "okx"
+    },
+    "ZEC": {
+     "price": 1248.84,
+     "venue": "okx"
+    },
+    "ZEUS": {
+     "price": 0.00797,
+     "venue": "gate"
+    }
+   }
   }
  ],
- "updated": "2026-10-28T06:17:30Z"
+ "updated": "2026-10-29T06:28:13Z"
 }
