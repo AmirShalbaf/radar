@@ -147,11 +147,7 @@
     {"symbol": "ETH", "side": "buy", "type": "trigger", "qty": 0.037, "price": 2550, "trigger": 2535,
      "order_id": "e01c4e5c-d85c-41fc-aac4-805c985be802", "book": "trade", "purpose": "ستاپ ب۱",
      "recorded_at": "2026-10-26T07:35:00+00:00", "account": "LBank",
-     "note": "استثنای آگاهانه: اگر پر شود، ذخیره موقتاً حدود ۳۵٪"},
-    {"symbol": "TAO", "side": "buy", "type": "limit", "qty": 0.153, "price": 233, "trigger": null,
-     "order_id": "d320d08b-4974-4ce2-9bd5-ec6b472ec7c8", "book": "position", "purpose": "بازخرید",
-     "recorded_at": "2026-10-26T07:35:00+00:00", "account": "LBank",
-     "note": "سهمیه بازخرید نقشه ۲۴ اکتبر، TAO 0.1538"}
+     "note": "استثنای آگاهانه: اگر پر شود، ذخیره موقتاً حدود ۳۵٪"}
   ],
   "items": []
 }
