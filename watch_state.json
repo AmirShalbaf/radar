@@ -94,5 +94,7 @@
   "event_day_pce-2026-09": true,
   "event_near_fomc-2026-10": true,
   "shake_cross_SOL_2026-10-29": true,
-  "shake_move4_LINK_2026-10-29": true
+  "shake_move4_LINK_2026-10-29": true,
+  "shake_cross_SOL_2026-10-30": true,
+  "shake_cross_LINK_2026-10-30": true
 }
