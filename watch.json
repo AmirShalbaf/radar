@@ -143,11 +143,6 @@
      "anchor_week_closed_at": "2026-09-21T00:00:00+00:00", "anchor_at": "2026-09-26T05:01:55+00:00",
      "reason": "پایش خفته — مانده TAO پس از فروش ذخیره ۲۴ اکتبر ناچیز شد و از positions بیرون رفت، رویداد ۱۰۴. همان ردیف پیشین، از ثبت پیش از 5654d1e. اگر بازخرید TAO با radar_positions.py reenter --reserve-plan ثبت شد، با همین سطح 202.5065 به positions و holdings.json برمی‌گردد — متن ۱۸"}
   ],
-  "orders": [
-    {"symbol": "ETH", "side": "buy", "type": "trigger", "qty": 0.037, "price": 2550, "trigger": 2535,
-     "order_id": "e01c4e5c-d85c-41fc-aac4-805c985be802", "book": "trade", "purpose": "ستاپ ب۱",
-     "recorded_at": "2026-10-26T07:35:00+00:00", "account": "LBank",
-     "note": "استثنای آگاهانه: اگر پر شود، ذخیره موقتاً حدود ۳۵٪"}
-  ],
+  "orders": [],
   "items": []
 }

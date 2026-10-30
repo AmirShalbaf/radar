@@ -81,15 +81,14 @@ def test_orders_must_be_list() -> None:
 # ── داده واقعی: از دو سفارش نقشه ۲۴ اکتبر فقط ETH مانده ──
 # TAO در ۲۹ اکتبر لغو شد — ک۱۱۲ متن ۲۵، RD-20261029-02؛ پر نشد، پس دفتر کل دست نخورد
 
+# ETH در ۳۰ اکتبر لغو شد — RD-20261030-01؛ پر نشد
 def test_real_watch_has_the_live_orders() -> None:
     w = _real()
     W.validate_watch(w)
-    got = {o["order_id"]: o for o in w["orders"]}
-    assert set(got) == {ETH["order_id"]}
+    assert w["orders"] == []
+    got = {o["order_id"] for o in w["orders"]}
+    assert ETH["order_id"] not in got
     assert TAO["order_id"] not in got
-    o = got[ETH["order_id"]]
-    for k, v in ETH.items():
-        assert o.get(k) == v, ("ETH", k, o.get(k))
 
 
 # ── نمایش ──
