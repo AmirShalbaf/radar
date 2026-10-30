@@ -49,6 +49,8 @@ def test_real_calendar_events() -> None:
         "pce-2026-09": ("2026-10-29T12:30:00+00:00", "high"),
         "gdp-2026q3-advance": ("2026-10-30T12:30:00+00:00", "medium"),
         "btc-options-2026-10-30": ("2026-10-30T08:00:00+00:00", "medium"),
+        "nfp-2026-10": ("2026-11-06T13:30:00+00:00", "high"),
+        "cpi-2026-10": ("2026-11-10T13:30:00+00:00", "high"),
     }
     for k, (at, imp) in want.items():
         assert by[k]["at"] == at and by[k]["importance"] == imp, k
