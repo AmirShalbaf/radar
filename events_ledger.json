@@ -1076,7 +1076,11 @@
       "candle_open": "2026-10-28T17:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 80904.0,
+      "candle_open": "2026-10-29T17:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "SOL": {
@@ -1085,7 +1089,11 @@
       "candle_open": "2026-10-28T17:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 101.08,
+      "candle_open": "2026-10-29T17:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "ETH": {
@@ -1094,7 +1102,11 @@
       "candle_open": "2026-10-28T17:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 2341.28,
+      "candle_open": "2026-10-29T17:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "BNB": {
@@ -1103,7 +1115,11 @@
       "candle_open": "2026-10-28T17:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 745.97,
+      "candle_open": "2026-10-29T17:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "AAVE": {
@@ -1112,7 +1128,11 @@
       "candle_open": "2026-10-28T17:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 133.75,
+      "candle_open": "2026-10-29T17:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "LINK": {
@@ -1121,7 +1141,11 @@
       "candle_open": "2026-10-28T17:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 11.746,
+      "candle_open": "2026-10-29T17:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "SUI": {
@@ -1130,7 +1154,11 @@
       "candle_open": "2026-10-28T17:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 0.9364,
+      "candle_open": "2026-10-29T17:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "ONDO": {
@@ -1139,7 +1167,11 @@
       "candle_open": "2026-10-28T17:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 0.4207,
+      "candle_open": "2026-10-29T17:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "TAO": {
@@ -1148,7 +1180,11 @@
       "candle_open": "2026-10-28T17:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 254.11,
+      "candle_open": "2026-10-29T17:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "TRX": {
@@ -1157,7 +1193,11 @@
       "candle_open": "2026-10-28T17:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 0.33138,
+      "candle_open": "2026-10-29T17:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     }
    }
@@ -1172,52 +1212,92 @@
    "first_seen": "2026-10-08T07:10:41Z",
    "prices": {
     "BTC": {
-     "before": null,
+     "before": {
+      "close": 80164.9,
+      "candle_open": "2026-10-29T11:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "SOL": {
-     "before": null,
+     "before": {
+      "close": 100.36,
+      "candle_open": "2026-10-29T11:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "ETH": {
-     "before": null,
+     "before": {
+      "close": 2325.12,
+      "candle_open": "2026-10-29T11:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "BNB": {
-     "before": null,
+     "before": {
+      "close": 740.04,
+      "candle_open": "2026-10-29T11:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "AAVE": {
-     "before": null,
+     "before": {
+      "close": 133.09,
+      "candle_open": "2026-10-29T11:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "LINK": {
-     "before": null,
+     "before": {
+      "close": 11.626,
+      "candle_open": "2026-10-29T11:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "SUI": {
-     "before": null,
+     "before": {
+      "close": 0.9224,
+      "candle_open": "2026-10-29T11:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "ONDO": {
-     "before": null,
+     "before": {
+      "close": 0.4125,
+      "candle_open": "2026-10-29T11:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "TAO": {
-     "before": null,
+     "before": {
+      "close": 251.86,
+      "candle_open": "2026-10-29T11:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "TRX": {
-     "before": null,
+     "before": {
+      "close": 0.33162,
+      "candle_open": "2026-10-29T11:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     }
@@ -1515,6 +1595,33 @@
      "d7": null
     },
     "TRX": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    }
+   }
+  },
+  {
+   "id": "unlock:MORPHO:2026-11-20",
+   "kind": "unlock",
+   "title": "آزادسازی MORPHO",
+   "importance": "medium",
+   "at": "2026-11-20T11:00:00Z",
+   "symbol": "MORPHO",
+   "tokens": 1000000.0,
+   "pct_circ": 0.1422,
+   "categories": [
+    "liquidity"
+   ],
+   "source": "defillama-datasets emissions/morpho",
+   "first_seen": "2026-10-30T06:28:03Z",
+   "prices": {
+    "MORPHO": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "BTC": {
      "before": null,
      "h24": null,
      "d7": null
