@@ -47,7 +47,7 @@ def test_real_calendar_events() -> None:
     want = {
         "fomc-2026-10": ("2026-10-28T18:00:00+00:00", "high"),
         "pce-2026-09": ("2026-10-29T12:30:00+00:00", "high"),
-        "gdp-2026q3-advance": ("2026-10-30T12:30:00+00:00", "medium"),
+        "gdp-2026q3-advance": ("2026-10-29T12:30:00+00:00", "medium"),
         "btc-options-2026-10-30": ("2026-10-30T08:00:00+00:00", "medium"),
         "nfp-2026-10": ("2026-11-06T13:30:00+00:00", "high"),
         "cpi-2026-10": ("2026-11-10T13:30:00+00:00", "high"),
@@ -98,8 +98,8 @@ def test_missing_file_is_empty_bad_file_is_loud(tmp_path) -> None:
 def test_upcoming_seven_days_tehran() -> None:
     cal = _real()
     ids = [e["id"] for e in RC.upcoming(cal, NOW, 7)]
-    assert ids == ["fomc-2026-10", "pce-2026-09", "btc-options-2026-10-30",
-                   "gdp-2026q3-advance", "us-midterms-2026"]
+    assert ids == ["fomc-2026-10", "pce-2026-09", "gdp-2026q3-advance",
+                   "btc-options-2026-10-30", "us-midterms-2026"]
     # رویداد گذشته و بیرون از ۷ روز نه
     assert RC.upcoming(cal, datetime(2026, 10, 29, 13, 0, tzinfo=UTC), 1)[0]["id"] == \
         "btc-options-2026-10-30"
