@@ -1364,7 +1364,11 @@
       "candle_open": "2026-10-31T01:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 0.9003,
+      "candle_open": "2026-11-01T01:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "BTC": {
@@ -1373,7 +1377,11 @@
       "candle_open": "2026-10-31T01:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 77693.3,
+      "candle_open": "2026-11-01T01:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     }
    }
@@ -1394,12 +1402,20 @@
    "first_seen": "2026-10-08T07:10:41Z",
    "prices": {
     "SUI": {
-     "before": null,
+     "before": {
+      "close": 0.9024,
+      "candle_open": "2026-11-01T04:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "BTC": {
-     "before": null,
+     "before": {
+      "close": 77780.1,
+      "candle_open": "2026-11-01T04:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     }
@@ -1731,6 +1747,33 @@
      "d7": null
     },
     "TRX": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    }
+   }
+  },
+  {
+   "id": "unlock:SUI:2026-11-30",
+   "kind": "unlock",
+   "title": "آزادسازی SUI",
+   "importance": "medium",
+   "at": "2026-11-30T13:00:00Z",
+   "symbol": "SUI",
+   "tokens": 6069367.0,
+   "pct_circ": 0.1474,
+   "categories": [
+    "noncirculating"
+   ],
+   "source": "defillama-datasets emissions/sui-foundation",
+   "first_seen": "2026-11-01T06:51:51Z",
+   "prices": {
+    "SUI": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "BTC": {
      "before": null,
      "h24": null,
      "d7": null
