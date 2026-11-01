@@ -1,0 +1,2699 @@
+{
+ "schema": 1,
+ "kind": "radar-chart-cards",
+ "video_id": "oWbpOcZIHts",
+ "doc_id": "2026-10-29_tekrargar_oWbpOcZI",
+ "doc": "intake/tekrargar/2026-10-29_تحلیل-بیت-کوین-بعد-از-فدرال-رزرو؛-مراقب_oWbpOc.md",
+ "source": "tekrargar",
+ "url": "https://www.youtube.com/watch?v=oWbpOcZIHts",
+ "title": "تحلیل بیت کوین بعد از فدرال رزرو؛ مراقب باشید!",
+ "frames_tool": "radar_frames 1.1",
+ "guide": "references/chart-reading.md",
+ "read_by": "مدل — متن ۳۰، پیشنهاد امیر",
+ "read_at": "2026-11-01",
+ "cards": [
+  {
+   "frame_id": "oWbpOcZIHts_01m57.0s",
+   "t": 117.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-29T03:46:40+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نمودار کوون — ضبط او، نه گوینده؛ شمارش روزانه 21:13:19 می‌خواند؛ روز از توییت‌های 29 اکتبر 06:18 — د۳۹",
+    "seen": "03:46:40 UTC+1"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل نماد و خط برگزیده فهرست"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: Bitcoin / U.S. Dollar • INDEX"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش 21:13:19 با بسته روزانه می‌خواند: 02:46:41 + 21:13:19 = 24:00:00 وقت جهانی"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 2,000 محور همه حدود 18.8 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 126000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 56000,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین صورتی — تنظیم زیر دوربین چهره، د۷",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "ویدیوی «Bitcoin: Post-FOMC» کوون در یوتیوب؛ نشانی 21mBnslOLd0؛ زمان پخش 1:12 / 20:36",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت زنده 79,676.95؛ سرخط C61,017.73 −1,650.92 (−2.63%) — شمع زیر نشانگر، د۲",
+     "confidence": "medium"
+    },
+    {
+     "text": "نشانگر موس روی Wed 24 Jun '26 و حدود 123,031.76 — د۲",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "گوینده افزونه خودش را برای خلاصه و دوبله فارسی معرفی می‌کند، سپس به تحلیل کوون می‌رود.",
+   "method_notes": [
+    "پوشش ویدیو ترجمه «Bitcoin: Post-FOMC» کوون است؛ صفحه ویدیوی زنده او، سپس اسکرین‌شات"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف تبلیغ افزونه است و نمودار از آن نمی‌گوید"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "بنجامین کوون",
+    "evidence": "ویدیوی کوون در یوتیوب با نام کانال و چهره او — د۳۹"
+   },
+   "chart_end": {
+    "value": "2026-10-29T02:46:40+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط کوون — نمودار زنده او، د۳۱ و د۳۹"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_04m51.5s",
+   "t": 291.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "seen": null
+   },
+   "coin": {
+    "value": "USIRYY",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Bureau of Labour Statistics",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط نمودار"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W و سرخط"
+   },
+   "chart_type": {
+    "value": "line",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 0.5 محور همه حدود 34 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 10,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 1,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "ابر سبز و سرخ دو میانگین — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "سرخط: 3.7 +0.3 (+8.82%)؛ برچسب USIRYY 3.7",
+     "confidence": "high"
+    },
+    {
+     "text": "خط سرخ دستی گوینده حدود 2.4، از اواخر ۲۰۲۳ تا پس از ۲۰۲۶ — درون‌یابی میان 2.5 و 2",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "به گفته او تورم آمریکا 3.7 است و سال‌هاست بالای هدف ۲٪ مانده.",
+   "method_notes": [
+    "تورم سالانه را با ابر میانگین می‌خواند و می‌گوید دوباره صعودی شده؛ تعبیر او از هدف ۲٪ روی خط دستی است"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": false,
+    "note": "عدد 3.7 می‌خواند؛ ولی حرف خط سرخ را «تورم ۲» می‌نامد و خط حدود 2.4 است"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "حمیدرضا برزگر",
+    "evidence": "تریدینگ‌ویو خود گوینده با نشانی chart/zch3uZgG — ابزار داده، د۲۸"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_06m18.0s",
+   "t": 378.0,
+   "is_chart": false,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 5,
+     "time": "06:07",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "texts": [
+    {
+     "text": "توییت @benjamincowen: PCE Inflation rises 0.5% MoM, the largest increase since March 2026",
+     "confidence": "high"
+    },
+    {
+     "text": "1:34 PM · Oct 29, 2026؛ 60.6K Views",
+     "confidence": "high"
+    },
+    {
+     "text": "میله ماهانه U.S. Bureau of Economic Analysis، اکتبر تا سپتامبر؛ سپتامبر حدود 0.50 و مارس حدود 0.60؛ ژوئن منفی",
+     "confidence": "medium"
+    },
+    {
+     "text": "بیضی سرخ دستی گوینده دور میله سپتامبر",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او PCE ماهانه بیشترین رشد از مارس بود و این برگشت تورمی به نفع قیمت نیست.",
+   "method_notes": [
+    "«اینفلیشن.۵» زیرنویس همان 0.5% است — صفر افتاده، د۲۰"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "رقم 0.5 و مارس ۲۰۲۶ با توییت می‌خواند"
+   },
+   "screen_source": {
+    "kind": "tweet",
+    "who": "بنجامین کوون",
+    "evidence": "نشانی x.com/benjamincowen/status/2115784350964785388، نام و نشان حساب"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_06m42.0s",
+   "t": 402.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-29T03:49:59+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نمودار کوون — ضبط او، نه گوینده، د۳۹",
+    "seen": "03:49:59 UTC+1"
+   },
+   "coin": {
+    "value": "WTI",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: US Crude Oil SPOT • CFI"
+   },
+   "venue": {
+    "value": "CFI",
+    "confidence": "medium",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 2.000 محور همه حدود 20 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 120,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 52,
+     "confidence": "medium",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین صورتی — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "قیمت 102.857؛ سرخط −2.705 (−3.28%) — شمع زیر نشانگر، د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "برچسب آبی 66.732 و 57.150 — لنگر پیکان زرد کوون، نه سطح، د۱",
+     "confidence": "high"
+    },
+    {
+     "text": "نشانگر موس 101.209؛ بیضی سرخ دستی گوینده دور سقف مه و پیکان زرد کوون",
+     "confidence": "medium"
+    },
+    {
+     "text": "زیرنویس کوون: This final high was in the month of May and then it went down into July.",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او سقف نفت و افتش تا کف، معکوس حرکت PCE است و برگشت نفت PCE را بالا می‌برد.",
+   "method_notes": [
+    "نفت را پیشروی تورم می‌خواند — ر۶۸. نمودار سرخ PCE که حرف می‌گوید در این فریم نیست"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "سقف مه و افت تا ژوئیه با زیرنویس کوون و صفحه می‌خواند؛ نمودار PCE فریم ندارد"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "بنجامین کوون",
+    "evidence": "اسکرین‌شات ویدیوی کوون؛ نام کانال و عنوان Bitcoin: Post-FOMC — د۳۹"
+   },
+   "chart_end": {
+    "value": "2026-10-29T02:49:59+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط کوون، د۳۱ و د۳۹"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_10m42.5s",
+   "t": 642.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-29T03:54:24+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نمودار کوون، د۳۹",
+    "seen": "03:54:24 UTC+1"
+   },
+   "coin": {
+    "value": "US10Y",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: US Government Bonds 10 YR Y"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "هر 1.000 درصد حدود 221 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 6,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 3,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [
+    {
+     "kind": "projection",
+     "label": "پیکان زرد کوون از حدود 4.954٪ تا حدود 5.345٪",
+     "p1": {
+      "time": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      },
+      "price": {
+       "value": 4.954,
+       "confidence": "high",
+       "from": "image",
+       "how": "برچسب آبی لنگر، د۱"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      },
+      "price": {
+       "value": 5.345,
+       "confidence": "high",
+       "from": "image",
+       "how": "برچسب آبی لنگر، د۱"
+      }
+     }
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین صورتی — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "قیمت 4.991% −0.012؛ L4.976% C4.991% −0.012 (−0.24%)",
+     "confidence": "high"
+    },
+    {
+     "text": "نشانگر موس 4.682% — د۲؛ نوار تاریخ Tue 09 Mar '27",
+     "confidence": "medium"
+    },
+    {
+     "text": "زیرنویس کوون: to 53 is because the Fed is unwilling to raise rates when they should.",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او چون فدرال نرخ را بالا نمی‌برد، اوراق ۱۰ ساله حرکت بالا می‌کند.",
+   "method_notes": [
+    "«روز پن سومیم» زیرنویس با «to 53» و برچسب 5.345% صفحه جور است — رقم و ممیز جابه‌جا، د۲۰. مسیر زرد پیش‌بینی است — د۱۸"
+   ],
+   "claims": [
+    {
+     "text": "بازده ۱۰ ساله آمریکا — صعودی — تا حدود ۵.۳٪ — بی‌مهلت؛ چون فدرال نرخ را وقتی باید بالا نمی‌برد",
+     "origin": "بنجامین کوون",
+     "url": "https://www.youtube.com/watch?v=21mBnslOLd0"
+    }
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "پیکان زرد و زیرنویس کوون با حرف می‌خواند؛ رقم از زیرنویس خودکار گوینده مخدوش است"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "بنجامین کوون",
+    "evidence": "اسکرین‌شات ویدیوی کوون؛ زیرنویس و عنوان Bitcoin: Post-FOMC — د۳۹"
+   },
+   "chart_end": {
+    "value": "2026-10-29T02:54:24+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط کوون، د۳۱ و د۳۹"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_10m47.5s",
+   "t": 647.5,
+   "is_chart": false,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 8,
+     "time": "10:54",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "texts": [
+    {
+     "text": "فهرست کوون روی نمودار: 1) 2nd Weekly Close by BTC <$83k 2) Fakeout Confirmed 3) Fed Holds Rates 4) PCE Comes in Hot",
+     "confidence": "high"
+    },
+    {
+     "text": "ادامه فهرست: 5) Long End Spikes 6) Oil Spike to $120 due to the Iran War 7) Stocks Drop 8) BTC Drops in Q4",
+     "confidence": "high"
+    }
+   ],
+   "speech": "مرور زنجیره کوون؛ سپس از نفت و جنگ ایران می‌گوید.",
+   "method_notes": [
+    "زنجیره هشت‌گام کوون، از فیک‌اوت هفتگی تا افت فصل چهارم — ر۶۱ و ر۵۹"
+   ],
+   "claims": [
+    {
+     "text": "بیت‌کوین — نزولی — دومین بسته هفتگی زیر 83 هزار فیک‌اوت را تأیید کرد — بی‌مهلت",
+     "origin": "بنجامین کوون",
+     "url": "https://www.youtube.com/watch?v=21mBnslOLd0"
+    }
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف همان بندهای فهرست را می‌خواند"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "بنجامین کوون",
+    "evidence": "متن روی نمودار اسکرین‌شات ویدیوی کوون، با چهره او — د۳۹"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_10m54.0s",
+   "t": 654.0,
+   "is_chart": false,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 8,
+     "time": "10:54",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "texts": [
+    {
+     "text": "همان فهرست؛ خط سرخ دستی گوینده زیر بند 6: Oil Spike to $120 due to the Iran War",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او نفت تا ۱۲۰ دلار می‌تواند برود، سپس سهام و بیت‌کوین در فصل چهارم می‌افتند.",
+   "method_notes": [
+    "این آخرین حلقه زنجیره کوون است؛ کف فصل چهارم بیت‌کوین را نتیجه جهش نفت می‌گیرد — ر۶۸ و ر۵۹"
+   ],
+   "claims": [
+    {
+     "text": "نفت — صعودی — جهش تا 120 دلار به‌خاطر جنگ ایران، سپس افت سهام و افت بیت‌کوین — مهلت پایان فصل چهارم، 2026-12-31",
+     "origin": "بنجامین کوون",
+     "url": "https://www.youtube.com/watch?v=21mBnslOLd0"
+    }
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "۱۲۰ دلار حرف با $120 فهرست می‌خواند"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "بنجامین کوون",
+    "evidence": "متن روی نمودار اسکرین‌شات ویدیوی کوون، با چهره او — د۳۹"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_12m04.5s",
+   "t": 724.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-29T03:57:23+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نمودار کوون، د۳۹",
+    "seen": "03:57:23 UTC+1"
+   },
+   "coin": {
+    "value": "GOLD",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: Gold • TVC"
+   },
+   "venue": {
+    "value": "TVC",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 100 محور حدود 30 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 5600,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 3400,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین صورتی — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "قیمت 4,049.320",
+     "confidence": "high"
+    },
+    {
+     "text": "برچسب آبی 3,914.609 و 3,479.131 — لنگر پیکان زرد سوم، نه قیمت کف، د۱ و د۴۱",
+     "confidence": "high"
+    },
+    {
+     "text": "نشانگر موس 3,848.367 — د۲؛ سه پیکان زرد کوون: کف فصل اول، کف تابستان و کف جاری",
+     "confidence": "medium"
+    },
+    {
+     "text": "زیرنویس کوون: have your Q1 low, your summer low, and now it's trying to form the Q4 low.",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او طلا کف تابستان را زد و در فصل چهارم کف پایین‌تری ساخت.",
+   "method_notes": [
+    "الگوی سه کف را روی طلا نشان می‌دهد — ر۵۹ و ر۶۷. خط سرخ دستی گوینده زیر زیرنویس کوون"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": false,
+    "note": "حرف «کف پایین‌تر»؛ برش بزرگ‌شده: کف جاری کمی بالای کف تابستان است و زیرنویس فقط «می‌کوشد کف بسازد» — د۴۱"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "بنجامین کوون",
+    "evidence": "اسکرین‌شات ویدیوی کوون؛ زیرنویس و عنوان Bitcoin: Post-FOMC — د۳۹"
+   },
+   "chart_end": {
+    "value": "2026-10-29T02:57:23+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط کوون، د۳۱ و د۳۹"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_12m28.5s",
+   "t": 748.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-29T03:57:38+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نمودار کوون، د۳۹",
+    "seen": "03:57:38 UTC+1"
+   },
+   "coin": {
+    "value": "KOSPI",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: KOSPI Composite Index"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "هر 1,000 حدود 102 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 9400,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 2800,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین صورتی — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "قیمت 5,890.99؛ سرخط C5,469.47 −80.83 (−1.46%) — شمع زیر نشانگر، د۲",
+     "confidence": "medium"
+    },
+    {
+     "text": "نشانگر موس 5,317.72 روی Mon 26 Oct '26 — د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "خط افقی سفید کوون حدود 6,350 — درون‌یابی میان 6,400 و 6,200",
+     "confidence": "medium"
+    },
+    {
+     "text": "زیرنویس کوون: summer low and now it's trying to form the Q4 low,",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او شاخص کره هم همان الگو را نشان داد و وارش از اقتصاد کره گفت.",
+   "method_notes": [
+    "کره را بازار پیشرو می‌گیرد — ر۶۷"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": false,
+    "note": "حرف کف پایین‌تر؛ برش بزرگ‌شده: کف جاری کمی بالای کف تابستان، زیر خط نشانگر — د۴۱"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "بنجامین کوون",
+    "evidence": "اسکرین‌شات ویدیوی کوون؛ زیرنویس و عنوان Bitcoin: Post-FOMC — د۳۹"
+   },
+   "chart_end": {
+    "value": "2026-10-29T02:57:38+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط کوون، د۳۱ و د۳۹"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_14m02.5s",
+   "t": 842.5,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-29T03:57:57+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نمودار کوون، د۳۹",
+    "seen": "03:57:57 UTC+1"
+   },
+   "coin": {
+    "value": "HSI",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: Hang Seng Index"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 250 محور حدود 20 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 29250,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 21000,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین صورتی — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "قیمت 23,158.61؛ سرخط +360.66 (+2.06%) — شمع زیر نشانگر، د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "برچسب آبی 22,833.62 و 21,782.70 — لنگر پیکان زرد سوم، د۱",
+     "confidence": "high"
+    },
+    {
+     "text": "نوار تاریخ Tue 27 Oct '26؛ نشانگر موس 28,397.31 — د۲",
+     "confidence": "medium"
+    },
+    {
+     "text": "زیرنویس کوون: your summer low, and now it's trying to form the Q4 low. So",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او چین هم کف پایین‌تر زد، بیت‌کوین خلاف روند ماند و کوون هنوز آن کف را انتظار دارد.",
+   "method_notes": [
+    "افزوده خود گوینده، نه کوون: دستکاری از سوی بایننس و سی‌زی برای جلوگیری از انباشت شرکت‌ها؛ با تصریح خودش که کوون این را نمی‌گوید، بی‌آزمون"
+   ],
+   "claims": [
+    {
+     "text": "بیت‌کوین — نزولی — کف فصل چهارم که هنوز نزده، همان کف عقب‌افتاده تابستان — مهلت 2026-12-31؛ آستانه عددی نگفت",
+     "origin": "بنجامین کوون",
+     "url": "https://www.youtube.com/watch?v=21mBnslOLd0"
+    }
+   ],
+   "speech_vs_screen": {
+    "agree": false,
+    "note": "حرف کف پایین‌تر؛ برش بزرگ‌شده: کف جاری هنگ‌سنگ حدود ۱۵ پیکسل بالای کف تابستان — د۴۱. صفحه هنگ‌سنگ است و حرف «بورس چین»"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "بنجامین کوون",
+    "evidence": "اسکرین‌شات ویدیوی کوون؛ زیرنویس و عنوان Bitcoin: Post-FOMC — د۳۹"
+   },
+   "chart_end": {
+    "value": "2026-10-29T02:57:57+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط کوون، د۳۱ و د۳۹"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_14m37.0s",
+   "t": 877.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 9,
+     "time": "14:37",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "seen": null
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط: Bitcoin / U.S. Dollar · 1W · INDEX"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه W و شمارش 3d 9h؛ تا بسته هفتگی دوشنبه ۲ نوامبر می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 4,000 همه 51 پیکسل، با وجود نام چیدمان Daily Log — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 96000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 52000,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 82100,
+      "confidence": "medium",
+      "from": "image",
+      "how": "خط در y=413؛ نشانگر 71,291.34 در y=551 و 78.4 دلار بر پیکسل"
+     },
+     "kind": "horizontal",
+     "label": "خط سیاه گوینده روی سقف مه",
+     "drawn_by": "speaker",
+     "drawn_at": "بدنه",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 82100.0,
+      "cutoff": "2026-10-29T15:34:32+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-10-19T00:00:00+00:00",
+      "atr": 6109.619279413646,
+      "touches": null,
+      "nearest": 85179.8359375,
+      "nearest_touches": 2,
+      "distance_atr": 0.5040962123249648,
+      "distance_pct": 3.751322700974421,
+      "chance_pct": 30.684657671164416,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین سرخ — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "میانگین بنفش — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "قیمت 81,433.95 و شمارش 3d 9h",
+     "confidence": "high"
+    },
+    {
+     "text": "سرخط شمع زیر نشانگر Mon 04 May '26: H82,814.03 L78,196.65 C82,179.70 +3,620.38 (+4.61%) — د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "نشانگر موس 71,291.34 — د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او اگر این ناحیه فیک بوده و بازار بیاید پایین، نقاط پایین‌تر برای ورود جذاب‌اند.",
+   "method_notes": [
+    "خط روی بسته مه کشیده شد؛ بسته 82,179.70 و سایه 82,814.03 — بدنه، نه سایه، د۶ و د۳۲"
+   ],
+   "claims": [
+    "بیت‌کوین — اگر ناحیه حدود 82 هزار فیک بوده باشد، منطقه حدود 72,800 حمایت مهم و جای ورود است — بی‌مهلت، به گفته او"
+   ],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "در این لحظه خط 72,800 هنوز روی صفحه نیست؛ در فریم بعد آمد"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "حمیدرضا برزگر",
+    "evidence": "تریدینگ‌ویو خود گوینده، chart/sahQkRJt؛ واترمارک تلگرام Tekrargar_Research"
+   },
+   "chart_end": {
+    "value": "2026-10-29T15:34:32+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت همان نشست در 25:01؛ شمارش هفتگی 3d 9h با آن می‌خواند — د۳۱"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_14m52.0s",
+   "t": 892.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 10,
+     "time": "14:57",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "seen": null
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 4,000 همه 51 پیکسل — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 96000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 52000,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 72800,
+      "confidence": "medium",
+      "from": "image",
+      "how": "خط در y=532؛ نشانگر 71,291.34 در y=551 در فریم پیش و 78.4 دلار بر پیکسل"
+     },
+     "kind": "horizontal",
+     "label": "خط سیاه دوم گوینده — حمایت حدود 72,800",
+     "drawn_by": "speaker",
+     "drawn_at": "نامعلوم",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 72800.0,
+      "cutoff": "2026-10-29T15:34:32+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-10-19T00:00:00+00:00",
+      "atr": 6109.619279413646,
+      "touches": null,
+      "nearest": 75085.13640699524,
+      "nearest_touches": 2,
+      "distance_atr": 0.3740227176994488,
+      "distance_pct": 3.138923635982472,
+      "chance_pct": 30.684657671164416,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین سرخ — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    },
+    {
+     "name": {
+      "value": "میانگین بنفش — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "قیمت 81,457.46 و شمارش 3d 9h؛ سرخط H81,747.52 L79,287.76 C81,457.46 +1,385.74 (+1.73%) — آخرین شمع، د۱۶",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او حدود ۷۲۸۰۰ حمایت مهم است و هنوز برای سطوح پایین‌تر زود است.",
+   "method_notes": [
+    "درون‌یابی تصویر با حرف می‌خواند؛ عدد حرف فقط در speech"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "خط حدود 72,800 با عدد حرف می‌خواند"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "حمیدرضا برزگر",
+    "evidence": "تریدینگ‌ویو خود گوینده، chart/sahQkRJt"
+   },
+   "chart_end": {
+    "value": "2026-10-29T15:34:32+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت همان نشست در 25:01 — د۳۱"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_14m57.5s",
+   "t": 897.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 10,
+     "time": "14:57",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "seen": null
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 4,000 همه 51 پیکسل — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 96000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 52000,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "نشانگر موس 65,847.12 روی Mon 08 Jun '26 — د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "سرخط شمع زیر نشانگر: H65,748.29 L60,732.43 C65,697.30 +2,363.29 (+3.73%)",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او اگر 72,800 از دست برود، تازه می‌شود از ناحیه ۶۵ تا ۶۶ هزار گفت.",
+   "method_notes": [
+    "موس را روی بسته شمع ژوئن گذاشت؛ سطح بعدی از بدنه شمع می‌آید — د۳۲"
+   ],
+   "claims": [
+    "بیت‌کوین — نزولی شرطی — اگر حدود 72,800 از دست برود، ناحیه 65 تا 66 هزار — بی‌مهلت، به گفته او"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "نشانگر 65,847.12 در بازه حرف است"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "حمیدرضا برزگر",
+    "evidence": "تریدینگ‌ویو خود گوینده، chart/sahQkRJt"
+   },
+   "chart_end": {
+    "value": "2026-10-29T15:34:32+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت همان نشست در 25:01 — د۳۱"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_15m00.0s",
+   "t": 900.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 10,
+     "time": "14:57",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "seen": null
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1W",
+    "confidence": "high",
+    "from": "image"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 4,000 همه 51 پیکسل — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 96000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 52000,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 65930.88,
+      "confidence": "medium",
+      "from": "image",
+      "how": "برچسب نشانگر روی سر خط در حال رسم؛ فریم بعدی عدد نهایی نداد — د۳۴"
+     },
+     "kind": "horizontal",
+     "label": "خط سیاه سوم گوینده، در حال رسم",
+     "drawn_by": "speaker",
+     "drawn_at": "بدنه",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1W",
+      "class": "structural",
+      "level": 65930.88,
+      "cutoff": "2026-10-29T15:34:32+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "not_near",
+      "strength": null,
+      "bars": 200,
+      "last_bar": "2026-10-19T00:00:00+00:00",
+      "atr": 6109.619279413646,
+      "touches": null,
+      "nearest": 70110.59403479703,
+      "nearest_touches": 4,
+      "distance_atr": 0.6841202116931522,
+      "distance_pct": 6.339539279313467,
+      "chance_pct": 30.684657671164416,
+      "strong_min_touches": 4,
+      "chance_at_touches_pct": null,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "خط از Mon 08 Jun '26 تا Mon 08 Feb '27 — نوار آبی زمان",
+     "confidence": "high"
+    },
+    {
+     "text": "قیمت 81,463.51 و شمارش 3d 9h",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او این ناحیه همان حمایت سوم تایم روزانه است.",
+   "method_notes": [
+    "خط از سر شمع ژوئن کشیده شد؛ لبه بدنه با C65,697.30 نزدیک است"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": false,
+    "note": "حرف همین خط را حمایت سوم روزانه می‌نامد؛ ولی Support III روزانه در 25:01 برابر 66,938.36 است، حدود هزار دلار بالاتر"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "حمیدرضا برزگر",
+    "evidence": "تریدینگ‌ویو خود گوینده، chart/sahQkRJt"
+   },
+   "chart_end": {
+    "value": "2026-10-29T15:34:32+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت همان نشست در 25:01 — د۳۱"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_17m29.0s",
+   "t": 1049.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-29T04:02:10+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نمودار کوون؛ شمارش 20:57:49 می‌خواند، د۳۹",
+    "seen": "04:02:10 UTC+1"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "INDEX",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image",
+    "how": "03:02:10 + 20:57:49 = 23:59:59 وقت جهانی — بسته روزانه"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 2,000 همه حدود 18.8 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 126000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 56000,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین صورتی — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "قیمت 79,938.45؛ سرخط C79,938.45 −1,348.68 (−1.66%)",
+     "confidence": "high"
+    },
+    {
+     "text": "زیرنویس کوون: start to rally, right? Crypto might then bounce one more time into the midterms",
+     "confidence": "high"
+    }
+   ],
+   "speech": "از 16:40 تا اینجا: انتظار افزایش نرخ دسامبر و دو افزایش ۲۰۲۷، و جهش پیش از انتخابات میان‌دوره‌ای ۵ روز دیگر.",
+   "method_notes": [
+    "جهش تا انتخابات و افت پس از نتیجه — ر۷۰؛ عرضه اولیه اسپیس‌ایکس و آنتروپیک، از 15:33 — ر۶۹؛ هر دو بی‌فریم نمودار"
+   ],
+   "claims": [
+    {
+     "text": "بیت‌کوین — یک جهش دیگر تا انتخابات میان‌دوره‌ای، 2026-11-03، و سپس افت تا کف فصل چهارم — مهلت 2026-12-31",
+     "origin": "بنجامین کوون",
+     "url": "https://www.youtube.com/watch?v=21mBnslOLd0"
+    },
+    {
+     "text": "بیت‌کوین — نزولی — عرضه اولیه آنتروپیک می‌تواند الگوی خروج نقدینگی اسپیس‌ایکس را تکرار کند — مهلت 2026-12-31",
+     "origin": "بنجامین کوون",
+     "url": "https://www.youtube.com/watch?v=21mBnslOLd0"
+    },
+    "نرخ بهره فدرال — صعودی — بازار ۸۰٪ افزایش در نشست دسامبر ۲۰۲۶ و دو افزایش در ۲۰۲۷ را انتظار دارد — مهلت 2027-12-31، به گفته او؛ درصد فقط از حرف"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "جهش تا انتخابات با زیرنویس کوون می‌خواند؛ ۸۰٪ روی صفحه نیست"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "بنجامین کوون",
+    "evidence": "اسکرین‌شات ویدیوی کوون؛ زیرنویس و عنوان Bitcoin: Post-FOMC — د۳۹"
+   },
+   "chart_end": {
+    "value": "2026-10-29T03:02:10+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط کوون، د۳۱ و د۳۹"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_18m17.0s",
+   "t": 1097.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-29T04:03:20+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نمودار کوون، د۳۹",
+    "seen": "04:03:20 UTC+1"
+   },
+   "coin": {
+    "value": "EWZ",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: iShares MSCI Brazil ETF"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "برچسب‌های ناهم‌گام پایین محور، مثل 25.10 و 24.25"
+   },
+   "price_axis": {
+    "top": {
+     "value": 44,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 24.25,
+     "confidence": "medium",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین صورتی — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "قیمت 33.62؛ پیش از بازار Overnight 33.25 −0.38",
+     "confidence": "high"
+    },
+    {
+     "text": "نشانگر موس 32.45 روی Fri 23 Oct '26 — د۲؛ سرخط +0.74 (+1.77%) شمع زیر نشانگر",
+     "confidence": "medium"
+    },
+    {
+     "text": "زیرنویس کوون: unexpected result and then Brazil like dropped 20% overnight.",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او پس از نتیجه انتخابات برزیل، بازار ریزش بزرگی داشت و انگیزه سیاسی نگه‌داشتن قیمت رفت.",
+   "method_notes": [
+    "یک نمونه برگزیده پس از رخداد — ر۷۰. نمودار صندوق EWZ است، نه خود بورس برزیل"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "شکاف بزرگ پایین روی EWZ؛ حرف «بورس برزیل» و صفحه صندوق EWZ؛ ۲۰٪ فقط از زیرنویس کوون"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "بنجامین کوون",
+    "evidence": "اسکرین‌شات ویدیوی کوون؛ زیرنویس و عنوان Bitcoin: Post-FOMC — د۳۹"
+   },
+   "chart_end": {
+    "value": "2026-10-29T03:03:20+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط کوون، د۳۱ و د۳۹"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_21m32.0s",
+   "t": 1292.0,
+   "is_chart": true,
+   "refs": [],
+   "recorded_at": {
+    "value": "2026-10-29T04:04:23+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نمودار کوون، د۳۹",
+    "seen": "04:04:23 UTC+1"
+   },
+   "coin": {
+    "value": "SPX",
+    "confidence": "high",
+    "from": "image",
+    "how": "پنل: S&P 500 Index"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "timeframe": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "برچسب‌های ناهم‌گام پایین محور، مثل 6,261.00 و 6,218.50"
+   },
+   "price_axis": {
+    "top": {
+     "value": 7800,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 6218.5,
+     "confidence": "medium",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین صورتی — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "قیمت 7,743.98؛ برچسب سبز 7,743.98",
+     "confidence": "high"
+    },
+    {
+     "text": "ابزار اندازه‌گیری −384.40 (−5.04%) −38,440 از برچسب آبی 7,621.12؛ محاسبه‌شده 384.40 ÷ 7,621.12 = 5.04٪ — د۳",
+     "confidence": "high"
+    },
+    {
+     "text": "نشانگر موس 7,224.09 — د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "زیرنویس کوون: into the Q4 low. I know it's not a popular view at this point,",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او کوون منطق الف، ب و پ کلان را می‌چیند و همان واکنش گذشته را انتظار دارد؛ روی بیت‌کوین رخ نداد.",
+   "method_notes": [
+    "استدلال الگومحور: چند شرط کلان تکرار شد، پس واکنش بازار هم باید تکرار شود — فرض ثبات واکنش، ر۶۷"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "زیرنویس کوون هم می‌گوید این دیدگاه محبوب نیست"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "بنجامین کوون",
+    "evidence": "اسکرین‌شات ویدیوی کوون؛ زیرنویس و عنوان Bitcoin: Post-FOMC — د۳۹"
+   },
+   "chart_end": {
+    "value": "2026-10-29T03:04:23+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط کوون، د۳۱ و د۳۹"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_22m15.0s",
+   "t": 1335.0,
+   "is_chart": false,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 12,
+     "time": "22:20",
+     "role": "claim",
+     "strength": 3,
+     "year_only": true,
+     "claim_id": null
+    }
+   ],
+   "texts": [
+    {
+     "text": "BTC ROI After September Midterm Rate Hike؛ ROI since the Sep 2026 hike: 1.049 (1 Year)",
+     "confidence": "high"
+    },
+    {
+     "text": "متن صفحه: افزایش‌های September 26, 2018، September 21, 2022 و September 16, 2026؛ 0.8 یعنی ۲۰٪ زیر قیمت روز افزایش",
+     "confidence": "high"
+    },
+    {
+     "text": "متن Usage: Two cases are a small sample, so treat this as context rather than a forecast.",
+     "confidence": "high"
+    },
+    {
+     "text": "منبع داده: CoinGecko و EOD Historical Data؛ کادر سرخ دستی گوینده دور ۵۰ روز اول",
+     "confidence": "high"
+    },
+    {
+     "text": "زیرنویس کوون: Bitcoin normally does after a rate hike in September of a midterm year,",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او پس از افزایش نرخ سال میان‌دوره‌ای، بیت‌کوین مدتی واکنش نداد و سپس افت کرد؛ امروز روز ۴۳ و افت حدود روز ۵۰.",
+   "method_notes": [
+    "روز ۴۳ از صفحه: 2026-09-16 + 43 = 2026-10-29. روز ۵۰ = 2026-11-05 — ر۶۲. گوینده هشدار دو نمونه‌ای سایت را نگفت — د۴۲"
+   ],
+   "claims": [
+    {
+     "text": "بیت‌کوین — نزولی — افت حدود روز ۵۰ پس از افزایش نرخ 16 سپتامبر — مهلت حدود 2026-11-05، محاسبه‌شده از تاریخ صفحه",
+     "origin": "بنجامین کوون",
+     "url": "https://www.youtube.com/watch?v=21mBnslOLd0"
+    }
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "روز ۴۳ با تاریخ صفحه می‌خواند؛ ولی حرف هشدار «دو نمونه، زمینه نه پیش‌بینی» سایت را نمی‌گوید"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "بنجامین کوون",
+    "evidence": "اسکرین‌شات ویدیوی کوون، با صفحه سایت او؛ زیرنویس و نام کانال"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_24m56.5s",
+   "t": 1496.5,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 14,
+     "time": "25:01",
+     "role": "before",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-29T04:00:18+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "از شمارش 20:59:42: 03:00:18 وقت جهانی؛ ساعت نوار پایین در برش نیست، د۳۹",
+    "seen": "شمارش 20:59:42"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image",
+    "how": "خط برگزیده فهرست"
+   },
+   "venue": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image",
+    "how": "شمارش 20:59:42 با بسته روزانه می‌خواند"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 2,000 همه حدود 51.5 پیکسل در این بزرگ‌نمایی"
+   },
+   "price_axis": {
+    "top": {
+     "value": 96000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 60000,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [
+    {
+     "kind": "projection",
+     "label": "مسیر زرد دستی کوون: بالا و پایین کوتاه، سپس ریزش تا حدود 71,300",
+     "p1": {
+      "time": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      },
+      "price": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      }
+     },
+     "p2": {
+      "time": {
+       "value": null,
+       "confidence": null,
+       "from": "image",
+       "note": "ناخوانا"
+      },
+      "price": {
+       "value": 71300,
+       "confidence": "low",
+       "from": "image",
+       "how": "نوک پیکان در y=785، میان 72,000 و 70,000 — د۱۸"
+      }
+     }
+    }
+   ],
+   "zones": [],
+   "patterns": [],
+   "indicators": [
+    {
+     "name": {
+      "value": "میانگین صورتی — تنظیم ناخوانا",
+      "confidence": "medium",
+      "from": "image"
+     }
+    }
+   ],
+   "texts": [
+    {
+     "text": "قیمت 79,915.63 و شمارش 20:59:42",
+     "confidence": "high"
+    },
+    {
+     "text": "منوی راست‌کلیک: Copy price 62,379.56 — جای موس، د۲",
+     "confidence": "medium"
+    },
+    {
+     "text": "نوار Instagram: Tekrargar_Research",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او انتظار کوون کمی بالا، پایین، بالا و در نهایت ریزش است؛ از شنونده نظر می‌خواهد.",
+   "method_notes": [
+    "مسیر زرد روی آینده پیش‌بینی است — د۱۸؛ از 23:12 گوینده شباهت فیک‌بریک‌اوت را رد می‌کند و واگرایی مکدی را امید کوتاه‌مدت می‌خواند، بی‌فریم"
+   ],
+   "claims": [
+    {
+     "text": "بیت‌کوین — کمی بالا و پایین و سپس ریزش تا حدود 71 هزار، از مسیر زرد روی صفحه — بی‌مهلت",
+     "origin": "بنجامین کوون",
+     "url": "https://www.youtube.com/watch?v=21mBnslOLd0"
+    }
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "حرف بالا و پایین و ریزش با مسیر زرد می‌خواند؛ عدد مقصد را حرف نگفت، از صفحه است"
+   },
+   "screen_source": {
+    "kind": "other",
+    "who": "بنجامین کوون",
+    "evidence": "اسکرین‌شات ویدیوی کوون، بزرگ‌شده؛ فهرست نماد و مسیر زرد او — د۳۹"
+   },
+   "chart_end": {
+    "value": "2026-10-29T03:00:18+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط کوون از شمارش، د۳۱ و د۳۹"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_25m01.0s",
+   "t": 1501.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 14,
+     "time": "25:01",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": "2026-10-29T16:34:32+01:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نوار پایین؛ شمارش 08:25:27 با 15:34:33 وقت جهانی می‌خواند؛ روز از شمارش هفتگی و انتشار — د۸",
+    "seen": "16:34:32 UTC+1"
+   },
+   "coin": {
+    "value": "BTCUSD",
+    "confidence": "high",
+    "from": "image"
+   },
+   "venue": {
+    "value": "Coinbase",
+    "confidence": "high",
+    "from": "image",
+    "how": "سرخط: Bitcoin / U.S. Dollar · 1D · Coinbase"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "high",
+    "from": "image",
+    "how": "دکمه D و شمارش 08:25:27"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "log",
+    "confidence": "medium",
+    "from": "image",
+    "how": "برچسب‌های ناهم‌گام 66,500، 65,000 و 63,800، با وجود نام چیدمان 4H No Log — د۲۹"
+   },
+   "price_axis": {
+    "top": {
+     "value": 88000,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 56650,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 76375.11,
+      "confidence": "high",
+      "from": "image",
+      "how": "یادداشت قیمت آبی روی خط"
+     },
+     "kind": "horizontal",
+     "label": "Support II",
+     "drawn_by": "speaker",
+     "drawn_at": "نامعلوم",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 76375.11,
+      "cutoff": "2026-10-29T15:34:32+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-10-28T00:00:00+00:00",
+      "atr": 1969.0147113299365,
+      "touches": 4,
+      "nearest": 76317.25217391303,
+      "nearest_touches": 4,
+      "distance_atr": 0.029384151247854286,
+      "distance_pct": 0.07575481866666903,
+      "chance_pct": 34.282858570714644,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 22.338830584707647,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 66938.36,
+      "confidence": "high",
+      "from": "image",
+      "how": "یادداشت قیمت آبی روی خط"
+     },
+     "kind": "horizontal",
+     "label": "Support III",
+     "drawn_by": "speaker",
+     "drawn_at": "نامعلوم",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 66938.36,
+      "cutoff": "2026-10-29T15:34:32+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-10-28T00:00:00+00:00",
+      "atr": 1969.0147113299365,
+      "touches": 2,
+      "nearest": 67116.45017793594,
+      "nearest_touches": 2,
+      "distance_atr": 0.09044634197560318,
+      "distance_pct": 0.266051002647721,
+      "chance_pct": 34.282858570714644,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 34.282858570714644,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 74800,
+      "confidence": "medium",
+      "from": "image",
+      "how": "خط در y=497؛ لگاریتمی از 76,375.11 در y=461، حدود 0.00058 بر پیکسل — د۵"
+     },
+     "kind": "horizontal",
+     "label": "خط سیاه زیر Support II، بی‌نام",
+     "drawn_by": "speaker",
+     "drawn_at": "سایه",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 74800.0,
+      "cutoff": "2026-10-29T15:34:32+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-10-28T00:00:00+00:00",
+      "atr": 1969.0147113299365,
+      "touches": 4,
+      "nearest": 74537.0442043222,
+      "nearest_touches": 4,
+      "distance_atr": 0.1335468923440353,
+      "distance_pct": 0.3515451813874342,
+      "chance_pct": 34.282858570714644,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 22.338830584707647,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 87250,
+      "confidence": "medium",
+      "from": "image",
+      "how": "خط در y=230؛ درون‌یابی لگاریتمی از 88,000 در y=215 — د۵"
+     },
+     "kind": "horizontal",
+     "label": "خط سیاه بالا، بی‌نام",
+     "drawn_by": "speaker",
+     "drawn_at": "سایه",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": "BTC/USDT",
+      "venue": "okx",
+      "tf": "1D",
+      "class": "structural",
+      "level": 87250.0,
+      "cutoff": "2026-10-29T15:34:32+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "confirmed",
+      "strength": "weak",
+      "bars": 200,
+      "last_bar": "2026-10-28T00:00:00+00:00",
+      "atr": 1969.0147113299365,
+      "touches": 2,
+      "nearest": 87317.44420190995,
+      "nearest_touches": 2,
+      "distance_atr": 0.0342527668898916,
+      "distance_pct": 0.07729994488246592,
+      "chance_pct": 34.282858570714644,
+      "strong_min_touches": 5,
+      "chance_at_touches_pct": 34.282858570714644,
+      "reason": null,
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": 80850,
+      "confidence": "medium",
+      "from": "image",
+      "how": "لبه پایین در y=364، از قیمت 81,561 در y=349"
+     },
+     "high": {
+      "value": 81250,
+      "confidence": "medium",
+      "from": "image",
+      "how": "لبه بالا در y=356"
+     },
+     "label": "Support I — نوار سبز"
+    }
+   ],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "سرخط O81,249.32 H81,640.13 L79,586.17 C81,561.69 +312.38 (+0.38%)؛ شمارش 08:25:27",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او نقدینگی کمی زیر پای قیمت است؛ روی این چیدمان فقط سطوح را نشان می‌دهد.",
+   "method_notes": [
+    "سه حمایت نام‌دار روی تایم روزانه با یادداشت قیمت؛ ساختار سطح‌های پیش‌ساخته او، نه خط همان لحظه"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": null,
+    "note": "حرف از نقدینگی است و نمودار حمایت‌ها را نشان می‌دهد؛ ولی Support III اینجا 66,938.36 است، نه ۶۵ تا ۶۶ هزار حرف 14:57"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "حمیدرضا برزگر",
+    "evidence": "تریدینگ‌ویو خود گوینده، chart/mDXBQhyS؛ نمودار رسم‌شده خودش"
+   },
+   "chart_end": {
+    "value": "2026-10-29T15:34:32+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط از ساعت نوار پایین — د۳۱"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_25m07.0s",
+   "t": 1507.0,
+   "is_chart": true,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 14,
+     "time": "25:01",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "recorded_at": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا",
+    "seen": null
+   },
+   "coin": {
+    "value": "BTC",
+    "confidence": "high",
+    "from": "image",
+    "how": "BTC Liquidation Heatmap، نمای Symbol"
+   },
+   "venue": {
+    "value": "Coinglass",
+    "confidence": "high",
+    "from": "image"
+   },
+   "timeframe": {
+    "value": "2 week",
+    "confidence": "high",
+    "from": "image",
+    "how": "گزینه بازه نقشه"
+   },
+   "chart_type": {
+    "value": "heatmap",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "هر 5,000 حدود 157.5 پیکسل"
+   },
+   "price_axis": {
+    "top": {
+     "value": 92457,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 72445,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [
+    {
+     "low": {
+      "value": 78750,
+      "confidence": "medium",
+      "from": "image",
+      "how": "لبه پایین نوار زرد در y=818، از 80000 در y=779 و 31.5 پیکسل بر هزار"
+     },
+     "high": {
+      "value": 79200,
+      "confidence": "medium",
+      "from": "image",
+      "how": "لبه بالا در y=805"
+     },
+     "label": "نوار پرنور زیر قیمت — برآورد مدل، د۳۵"
+    }
+   ],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "Liquidation Heatmap (Model 2)؛ Liquidity Threshold = 0.88؛ بیشینه نوار رنگ 405.09M",
+     "confidence": "high"
+    },
+    {
+     "text": "راهنمای نشانگر: 29 Oct 2026, 14:00 · Price 78889.3 · Liquidation Leverage 351.88M — جای موس، د۳۵",
+     "confidence": "high"
+    },
+    {
+     "text": "نوارهای کم‌نورتر بالای قیمت حدود 82,500 و 84,900 — از جای پیکسل",
+     "confidence": "low"
+    }
+   ],
+   "speech": "به گفته او خوشه بزرگ نقدینگی حدود ۷۸ تا ۷۹ هزار زیر قیمت است.",
+   "method_notes": [
+    "خوشه زیر قیمت را مقصد محتمل می‌خواند — ر۵۰. نقشه برآورد مدل است، نه سفارش واقعی"
+   ],
+   "claims": [
+    "بیت‌کوین — نزولی کوتاه‌مدت — خوشه نقدینگی 78 تا 79 هزار زیر قیمت — بی‌مهلت، به گفته او"
+   ],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "۷۸ تا ۷۹ هزار حرف با نوار و راهنمای 78889.3 می‌خواند"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "حمیدرضا برزگر",
+    "evidence": "ابزار داده Coinglass با تنظیم خود گوینده، آستانه 0.88 — د۲۸ و ف۲۲"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_25m18.0s",
+   "t": 1518.0,
+   "is_chart": false,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 15,
+     "time": "25:18",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "texts": [
+    {
+     "text": "24h Rekt $382.59M؛ Long $208.16M؛ Short $174.43M؛ سهم Long 54.4% و Short 45.6%",
+     "confidence": "high"
+    },
+    {
+     "text": "1h Rekt $52.87M؛ 4h $85.71M؛ 12h $128.90M؛ 83,573 معامله‌گر",
+     "confidence": "high"
+    },
+    {
+     "text": "BTC $90.22M، Long 51.6%؛ ETH $80.37M، Short 57.2%؛ بزرگ‌ترین سفارش $6.53M، Binance ETHUSDT Short",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او روز هیجانی معامله کم بود و فقط ۳۸۲ میلیون دلار لیکوئید شد.",
+   "method_notes": [],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "۳۸۲ میلیون حرف با 24h Rekt $382.59M می‌خواند"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "حمیدرضا برزگر",
+    "evidence": "ابزار داده Coinglass — د۲۸ و ف۲۲"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_25m27.5s",
+   "t": 1527.5,
+   "is_chart": false,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 15,
+     "time": "25:18",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    },
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 16,
+     "time": "25:26",
+     "role": "claim",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "texts": [
+    {
+     "text": "Farside، بیت‌کوین: 28 Oct جمع 137.3 با بیضی سرخ؛ IBIT 136.0؛ 27 Oct 176.0؛ 26 Oct 110.3",
+     "confidence": "high"
+    },
+    {
+     "text": "23 Oct (137.9)؛ 22 Oct (635.6)؛ 21 Oct 524.8؛ ردیف 29 Oct هنوز خالی",
+     "confidence": "high"
+    },
+    {
+     "text": "جمع کل 57,674؛ میانگین 82.2؛ بیشینه 1,373.8؛ کمینه (1,113.7)",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او ورود پول به صندوق بیت‌کوین هست ولی قدرتمند نیست.",
+   "method_notes": [
+    "سه روز ورود پیاپی پس از دو روز خروج — ر۵۲"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "۱۳۷ میلیون حرف با 137.3 جدول می‌خواند؛ عدد مال ۲۸ اکتبر است، نه ۲۹"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "حمیدرضا برزگر",
+    "evidence": "ابزار داده Farside — د۲۸ و ف۲۲"
+   }
+  },
+  {
+   "frame_id": "oWbpOcZIHts_25m32.5s",
+   "t": 1532.5,
+   "is_chart": false,
+   "refs": [
+    {
+     "doc": "2026-10-29_tekrargar_oWbpOcZI",
+     "row": 16,
+     "time": "25:26",
+     "role": "after",
+     "strength": 3,
+     "year_only": false,
+     "claim_id": null
+    }
+   ],
+   "texts": [
+    {
+     "text": "Coinbase Bitcoin Premium Index؛ Current Premium −0.14%؛ 30D Average −0.09%؛ 1-Year Average −0.06%",
+     "confidence": "high"
+    },
+    {
+     "text": "1-Year Percentile 9.59%؛ Z-Score (1Y) −1.43؛ Negative Streak 36 day، Since 2026-09-23",
+     "confidence": "high"
+    },
+    {
+     "text": "نمای 1 day از 5 Jan تا 18 Oct؛ محور پریمیوم 0.2294% تا −0.2294%",
+     "confidence": "high"
+    }
+   ],
+   "speech": "به گفته او پریمیوم کوین‌بیس حتی در تایم یک دقیقه سبز نشد و ETF اتر خروج داشت.",
+   "method_notes": [
+    "تایم را تا یک دقیقه پایین آورد؛ فریم فقط نمای یک روزه را دارد. عدد خروج اتر و ترس و طمع 51 بی‌فریم، فقط از حرف"
+   ],
+   "claims": [],
+   "speech_vs_screen": {
+    "agree": true,
+    "note": "پریمیوم منفی با Current Premium −0.14% می‌خواند؛ نمای یک دقیقه فریم ندارد"
+   },
+   "screen_source": {
+    "kind": "own",
+    "who": "حمیدرضا برزگر",
+    "evidence": "ابزار داده Coinglass — د۲۸ و ف۲۲"
+   }
+  }
+ ],
+ "methods": [
+  {
+   "area": "کلان",
+   "rule": "الگوی سه کف سال میان‌دوره‌ای را در طلا، کره و هنگ‌سنگ هم بسنج؛ بیت‌کوین عقب مانده است — نقل کوون",
+   "where": "11:51 تا 14:17",
+   "library": "تازه — ر۶۷"
+  },
+  {
+   "area": "کلان",
+   "rule": "نفت پیشروی تورم PCE است؛ برگشت نفت فدرال را از کاهش نرخ بازمی‌دارد — نقل کوون",
+   "where": "06:35 تا 07:05",
+   "library": "تازه — ر۶۸"
+  },
+  {
+   "area": "کلان",
+   "rule": "عرضه اولیه بزرگ نقدینگی را از بیت‌کوین بیرون می‌کشد — نقل کوون",
+   "where": "15:33 تا 16:40",
+   "library": "تازه — ر۶۹"
+  },
+  {
+   "area": "کلان",
+   "rule": "بازار تا انتخابات بالا می‌رود و پس از نتیجه واکنش می‌دهد — نقل کوون، یک نمونه",
+   "where": "17:15 تا 18:30",
+   "library": "تازه — ر۷۰"
+  },
+  {
+   "area": "کلان",
+   "rule": "سال میان‌دوره‌ای سه کف دارد؛ کف فصل چهارم بیت‌کوین هنوز نیامده",
+   "where": "12:04 تا 14:02",
+   "library": "ر۵۹ — شاهد تازه"
+  },
+  {
+   "area": "کلان",
+   "rule": "پس از افزایش نرخ سپتامبر میان‌دوره‌ای، بیت‌کوین حدود روز ۵۰ شکست",
+   "where": "22:15 تا 22:40",
+   "library": "ر۶۲ — شاهد تازه"
+  },
+  {
+   "area": "ساختار",
+   "rule": "دو بسته هفتگی زیر سقف محدوده یعنی شکست بالا فیک بود",
+   "where": "10:47",
+   "library": "ر۶۱ — شاهد تازه"
+  },
+  {
+   "area": "جریان",
+   "rule": "خوشه پرنور نقشه حرارتی زیر قیمت مقصد محتمل است",
+   "where": "25:01 تا 25:07",
+   "library": "ر۵۰ — شاهد تازه"
+  },
+  {
+   "area": "جریان",
+   "rule": "جریان روزانه صندوق را بخوان؛ ورود ضعیف نشانه قدرت نیست",
+   "where": "25:23",
+   "library": "ر۵۲ — شاهد تازه"
+  }
+ ],
+ "lessons": [
+  {
+   "at": "12:04",
+   "text": "حرف «کف پایین‌تر» را با برش بزرگ‌شده بسنج؛ کف فصل چهارم طلا، کوسپی و هنگ‌سنگ کمی بالای کف تابستان است"
+  },
+  {
+   "at": "15:00",
+   "text": "نام «حمایت سوم» را با نمودار روزانه بسنج؛ خط هفتگی حدود 65,930 و یادداشت روزانه 66,938.36 است"
+  },
+  {
+   "at": "22:15",
+   "text": "هشدار خود سایت را بخوان: دو نمونه، زمینه نه پیش‌بینی؛ گوینده آن را نگفت"
+  }
+ ],
+ "learned": [
+  {
+   "kind": "method",
+   "name": "ر۶۷",
+   "new": true,
+   "note": "الگوی سه کف را در طلا، کره و هنگ‌سنگ هم بسنج؛ نقل کوون. حرف «کف پایین‌تر» با صفحه نمی‌خواند"
+  },
+  {
+   "kind": "method",
+   "name": "ر۶۸",
+   "new": true,
+   "note": "نفت پیشروی تورم PCE؛ نقل کوون؛ برنت را رادار دارد، سری PCE را نه"
+  },
+  {
+   "kind": "method",
+   "name": "ر۶۹",
+   "new": true,
+   "note": "عرضه اولیه بزرگ نقدینگی را از بیت‌کوین می‌کشد؛ نقل کوون؛ یک نمونه، بی‌فریم"
+  },
+  {
+   "kind": "method",
+   "name": "ر۷۰",
+   "new": true,
+   "note": "جهش تا انتخابات و افت پس از نتیجه؛ نقل کوون؛ یک نمونه برگزیده پس از رخداد — برزیل"
+  },
+  {
+   "kind": "method",
+   "name": "ر۵۰",
+   "new": false,
+   "note": "شاهد پنجم: نوار پرنور 78,750 تا 79,200 زیر قیمت؛ بی‌مهلت"
+  },
+  {
+   "kind": "method",
+   "name": "ر۵۲",
+   "new": false,
+   "note": "شاهد پنجم: صندوق‌های بیت‌کوین ۲۸ اکتبر جمع 137.3"
+  },
+  {
+   "kind": "method",
+   "name": "ر۵۹",
+   "new": false,
+   "note": "شاهد تازه: کوون همان سه کف را روی طلا، کره و هنگ‌سنگ نشان داد؛ نقل"
+  },
+  {
+   "kind": "method",
+   "name": "ر۶۱",
+   "new": false,
+   "note": "شاهد تازه: دومین بسته هفتگی زیر 83 هزار؛ نقل کوون"
+  },
+  {
+   "kind": "method",
+   "name": "ر۶۲",
+   "new": false,
+   "note": "شاهد تازه: روز ۴۳ در ۲۹ اکتبر و روز ۵۰ حدود 5 نوامبر؛ دو نمونه؛ مهلت سنجیدنی دارد"
+  },
+  {
+   "kind": "tool",
+   "name": "شاخص پریمیوم کوین‌بیس",
+   "new": true,
+   "note": "Coinglass؛ Current −0.14%، منفی 36 روز از 2026-09-23؛ رادار ندارد"
+  },
+  {
+   "kind": "tool",
+   "name": "بازده پس از افزایش نرخ سپتامبر میان‌دوره‌ای",
+   "new": true,
+   "note": "سایت کوون؛ سه افزایش، دو نمونه گذشته؛ رادار ندارد، ساختنی از کندل"
+  },
+  {
+   "kind": "tool",
+   "name": "تورم سالانه و PCE ماهانه",
+   "new": true,
+   "note": "USIRYY 3.7 و PCE ماهانه 0.5٪؛ رادار شاخص قیمت دارد، سری PCE نه"
+  },
+  {
+   "kind": "tool",
+   "name": "نقشه حرارتی لیکوئیدیشن",
+   "new": false,
+   "note": "آستانه 0.88، بیشینه 405.09M؛ راهنمای 78889.3 و 351.88M"
+  },
+  {
+   "kind": "tool",
+   "name": "آمار لیکوئیدیشن ۲۴ ساعته",
+   "new": false,
+   "note": "24h Rekt $382.59M — لانگ $208.16M و شورت $174.43M"
+  },
+  {
+   "kind": "tool",
+   "name": "جریان روزانه صندوق‌های قابل معامله — Farside",
+   "new": false,
+   "note": "۲۸ اکتبر 137.3؛ ردیف ۲۹ اکتبر هنوز خالی"
+  },
+  {
+   "kind": "tool",
+   "name": "بازده ۱۰ ساله کنار بیت‌کوین",
+   "new": false,
+   "note": "US10Y 4.991٪؛ پیکان کوون تا 5.345٪"
+  },
+  {
+   "kind": "reading",
+   "name": "د۴۱",
+   "new": true,
+   "note": "«کف پایین‌تر» حرف را با جای کف‌ها در برش بزرگ‌شده بسنج"
+  },
+  {
+   "kind": "reading",
+   "name": "د۴۲",
+   "new": true,
+   "note": "متن زیر نمودار سایت را بخوان؛ تاریخ مهلت و هشدار نمونه آنجاست"
+  },
+  {
+   "kind": "reading",
+   "name": "د۲۰",
+   "new": false,
+   "note": "«اینفلیشن.۵» یعنی 0.5٪ و «روز پن سومیم» یعنی حدود ۵.۳؛ «۴ل و سوم» یعنی روز ۴۳"
+  },
+  {
+   "kind": "reading",
+   "name": "د۲۹",
+   "new": false,
+   "note": "باز وارونگی نام چیدمان: «Daily Log» خطی و «4H No Log» لگاریتمی"
+  },
+  {
+   "kind": "reading",
+   "name": "د۳۵",
+   "new": false,
+   "note": "آستانه 0.88 و بیشینه 405.09M؛ با فریم‌های پیشین هم‌سنجه نیست"
+  },
+  {
+   "kind": "reading",
+   "name": "د۳۹",
+   "new": false,
+   "note": "دو ساعت UTC+1 با ۱۲ ساعت فاصله: ضبط کوون و ضبط گوینده؛ نشانی screencaptureui یعنی اسکرین‌شات"
+  }
+ ],
+ "amir_lesson": [
+  "تکرارگر بیشتر ویدیوی «Bitcoin: Post-FOMC» کوون را ترجمه کرد: تورم و نفت بالا، فدرال نرخ را پایین نمی‌آورد، و بیت‌کوین پس از جهش تا انتخابات در فصل چهارم کف می‌زند.",
+  "رادار چهار فرض تازه ثبت کرد، همه آزمون‌نشده. مهم‌ترینش برای سنجش زود: کوون حدود روز ۵۰ پس از افزایش 16 سپتامبر را می‌گوید، یعنی حدود ۵ نوامبر — ر۶۲.",
+  "کجا به کار می‌آید: مهلت‌ها تاریخ دارند؛ پس تا ۵ نوامبر و ۳۱ دسامبر می‌شود دید ادعا درست درآمد یا نه، بی‌تصمیم معامله.",
+  "احتیاط: گوینده گفت طلا و بورس‌های آسیا کف پایین‌تر زدند، ولی روی نمودار کف فصل چهارم کمی بالای کف تابستان است. و خود سایت می‌گوید دو نمونه زمینه است، نه پیش‌بینی.",
+  "نکته خواندن: «حمایت سوم» در حرف ۶۵ تا ۶۶ هزار است و روی نمودار روزانه 66,938.36؛ سطح را از نمودار بخوان، نه از حرف."
+ ]
+}
