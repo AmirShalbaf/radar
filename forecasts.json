@@ -11,11 +11,31 @@
       "close_at": "2026-10-31T00:00:00+00:00",
       "price_source": "بسته روزانه وقت جهانی — اوکی‌اکس 1Dutc، سپس گیت 1d؛ همان منبع بسته هفتگی، radar_positions.daily_close_at",
       "scenarios": [
-        {"name": "مثبت", "p": 0.20, "interval": "(82000,)"},
-        {"name": "پایه", "p": 0.50, "interval": "[78000,82000]"},
-        {"name": "منفی", "p": 0.30, "interval": "(,78000)"}
+        {
+          "name": "مثبت",
+          "p": 0.2,
+          "interval": "(82000,)"
+        },
+        {
+          "name": "پایه",
+          "p": 0.5,
+          "interval": "[78000,82000]"
+        },
+        {
+          "name": "منفی",
+          "p": 0.3,
+          "interval": "(,78000)"
+        }
       ],
-      "result": null
+      "result": {
+        "close": 77306.1,
+        "venue": "okx",
+        "closed_at": "2026-10-31T00:00:00+00:00",
+        "outcome": "منفی",
+        "p_outcome": 0.3,
+        "brier": 0.78,
+        "scored_at": "2026-11-01T14:17:03+00:00"
+      }
     }
   ]
 }
