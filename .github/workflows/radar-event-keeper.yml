@@ -1,0 +1,65 @@
+name: رادار — نگهبان پنجره رویداد
+
+# ─────────────────────────────────────────────────────────────
+# مسیر فایل: .github/workflows/radar-event-keeper.yml
+#
+# چرا — ک۱۰۹، متن ۳۶: زمان‌بند گیت‌هاب نوبت ساعتی نبض را در روز رویداد هم می‌اندازد؛
+# ۲۸ و ۲۹ اکتبر دو نبض از ۱۲ نوبت پنجره، و در ۳۰ روز اخیر سه تا پنج نبض در روز. اجرای
+# workflow_dispatch که با GITHUB_TOKEN ساخته شود همیشه اجرا می‌سازد — مستند گیت‌هاب.
+#
+# چه می‌کند: از ۲۴ ساعت پیش از آغاز پنجره نبض رویداد بیدار می‌ماند — ۶ ساعت پیش تا ۶ ساعت
+# پس از رویداد با اهمیت بالا و ساعت‌دار events_calendar.json — و در پنجره، هر وقت آخرین
+# نبض موفق pulse_log.json به ۵۰ دقیقه رسید، radar-pulse.yml را دستی راه می‌اندازد. هر اجرا
+# حداکثر ۵ ساعت و نیم؛ پیش از آن جانشینش را راه می‌اندازد، تا سقف ۸ نسل. بیرون از این بازه
+# در چند ثانیه تمام می‌شود. کامیت و push ندارد؛ کامیت با خود نبض است.
+#
+# نوبت ساعتی فقط راه‌انداز است: اگر نگهبانی در کار است، پشت آن در صف می‌ماند —
+# concurrency — و اگر نه، خودش نگهبان می‌شود.
+# ─────────────────────────────────────────────────────────────
+
+on:
+  schedule:
+    # دقیقه ۲۳، دور از سرِ ساعت و از دقیقه ۴۱ نبض
+    - cron: "23 * * * *"
+  workflow_dispatch:
+    inputs:
+      gen:
+        description: "نسل جانشین؛ اجرای دستی 0"
+        required: false
+        default: "0"
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: radar-event-keeper
+  cancel-in-progress: false
+
+jobs:
+  keeper:
+    # ثابت روی 24.04 — رویداد ۹۰
+    runs-on: ubuntu-24.04
+    # عمر هر اجرا ۵ ساعت و نیم در radar_schedule.KEEPER_SPAN؛ سقف کار گیت‌هاب ۶ ساعت
+    timeout-minutes: 350
+
+    steps:
+      - name: برداشت مخزن
+        uses: actions/checkout@v4
+
+      - name: نصب پایتون
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # فقط کتابخانه استاندارد و gh خود اجراکننده؛ وابستگی نصب نمی‌شود
+      - name: نگهبان پنجره
+        env:
+          PYTHONUTF8: "1"
+          PYTHONUNBUFFERED: "1"
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          # ورودی دستی از راه متغیر محیطی، نه جاگذاری در خود فرمان پوسته — راهنمای امنیتی گیت‌هاب
+          KEEPER_GEN: ${{ inputs.gen || '0' }}
+        run: |
+          python radar_schedule.py keeper --gen "$KEEPER_GEN"

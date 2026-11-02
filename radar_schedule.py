@@ -45,6 +45,11 @@ rebase ممنوع؛ تداخل واقعی ادغام را برمی‌گردان�
     python radar_schedule.py health
     python radar_schedule.py plan --from 2026-10-27 --days 3
     python radar_schedule.py push
+    python radar_schedule.py keeper --gen 0
+    python radar_schedule.py keeper-plan --from 2026-11-05T07:30:00+00:00
+
+نگهبان پنجره رویداد — ک۱۰۹، متن ۳۶: کار بلند radar-event-keeper.yml در پنجره رویداد نبض را
+با workflow_dispatch راه می‌اندازد، چون زمان‌بند گیت‌هاب نوبت ساعتی را آنجا هم می‌انداخت.
 """
 from __future__ import annotations
 
@@ -284,6 +289,167 @@ def push_with_retry(cwd: str = ".", run=subprocess.run, retries: int = PUSH_RETR
     return 1, log
 
 
+# ═══════════════════════ نگهبان پنجره رویداد — ک۱۰۹، متن ۳۶ ═══════════════════════
+#
+# یافته ک۱۰۹: زمان‌بند گیت‌هاب نوبت ساعتی نبض را در روز رویداد هم می‌اندازد — ۲۸ اکتبر و
+# ۲۹ اکتبر دو نبض از ۱۲ نوبت پنجره؛ ۳۰ روز اخیر سه تا پنج نبض در روز از ۲۴ نوبت. نوبت
+# workflow_dispatch که با GITHUB_TOKEN ساخته شود همیشه اجرا می‌سازد — مستند گیت‌هاب، «About
+# the GITHUB_TOKEN». پس کار بلند radar-event-keeper.yml از ۲۴ ساعت پیش از آغاز پنجره بیدار
+# می‌ماند و در پنجره، هر وقت آخرین نبض موفق دفتر به ۵۰ دقیقه رسید، نبض را دستی راه
+# می‌اندازد. نبض راه‌افتاده همان radar-pulse.yml است، بی تغییر؛ اجرای دستی از نگهبان تکرار
+# می‌گذرد. هر اجرای نگهبان حداکثر ۵ ساعت و نیم — سقف کار گیت‌هاب ۶ ساعت — و پیش از آن
+# جانشینش را راه می‌اندازد. نسل بیش از سقف یعنی خطای بلند، نه زنجیره بی‌پایان.
+
+KEEPER_LEAD = timedelta(hours=24)                 # بیداری پیش از آغاز پنجره
+KEEPER_SPAN = timedelta(hours=5, minutes=30)      # عمر هر اجرا؛ سقف کار گیت‌هاب ۶ ساعت
+KEEPER_SETTLE = timedelta(minutes=15)             # پس از راه‌اندازی، فرصت نبض برای ثبت دفتر
+KEEPER_MAX_GEN = 8                                # سقف نسل جانشین‌ها — حدود ۴۴ ساعت
+PULSE_WORKFLOW = "radar-pulse.yml"
+KEEPER_WORKFLOW = "radar-event-keeper.yml"
+
+
+def next_window(cal: dict, now: datetime) -> tuple[dict, datetime, datetime] | None:
+    """نخستین پنجره نبض رویداد که تمام نشده — همان تعریف RC.pulse_window: آغاز و پایان."""
+    for e in sorted(RC.timed_high(cal), key=RC.at_of):
+        start, end = RC.at_of(e) - RC.PULSE_SPAN, RC.end_of(e) + RC.PULSE_SPAN
+        if now <= end:
+            return e, start, end
+    return None
+
+
+def keeper_step(cal: dict, now: datetime, started: datetime, last: datetime | None,
+                kicked: datetime | None) -> tuple[str, str, datetime | None]:
+    """
+    یک گام نگهبان، تابع خالص: (کار، دلیل، بیداری بعد). کار exit، handoff، pulse یا sleep.
+    last آخرین نبض موفق دفتر؛ kicked آخرین راه‌اندازی همین اجرا.
+    """
+    w = next_window(cal, now)
+    if w is None:
+        return "exit", "پنجره رویدادی در تقویم نمانده", None
+    e, start, end = w
+    if start - now > KEEPER_LEAD:
+        return "exit", (f"پنجره بعدی، {e['name']}، از {start:%Y-%m-%d %H:%M} UTC — بیش از "
+                        f"{fa(24)} ساعت دیگر"), None
+    if now - started >= KEEPER_SPAN:
+        return "handoff", "عمر این اجرا سر آمد؛ جانشین پیش از سقف ۶ ساعت گیت‌هاب", None
+    limit = started + KEEPER_SPAN
+    if now < start:
+        return "sleep", f"تا آغاز پنجره {e['name']}، {start:%Y-%m-%d %H:%M} UTC", min(start, limit)
+    gap = timedelta(minutes=PULSE_EVENT_GAP_MIN)
+    wake = []
+    if last is not None and now - last < gap:
+        wake.append(last + gap)
+    if kicked is not None and now - kicked < KEEPER_SETTLE:
+        wake.append(kicked + KEEPER_SETTLE)
+    if wake:
+        why = (f"آخرین نبض موفق {last:%H:%M} UTC" if last else "نبض موفقی در دفتر نیست")
+        return "sleep", f"{why}؛ پنجره {e['name']} تا {end:%H:%M} UTC", min(max(wake), end, limit)
+    why = (f"آخرین نبض موفق {last:%H:%M} UTC، {(now - last).total_seconds() / 60:.0f} دقیقه پیش"
+           if last else "نبض موفقی در دفتر نیست")
+    return "pulse", f"{why} — پنجره {e['name']}", None
+
+
+def remote_last_ok(cwd: str = ".", run=subprocess.run) -> datetime | None:
+    """
+    آخرین نبض موفق از pulse_log.json تازه origin/main — هر نبض کامیت می‌کند، پس برداشت
+    آغاز کار کهنه می‌شود. شبکه یا دفتر خراب یعنی None: نگهبان با ساعت خودش کار می‌کند.
+    fetch ساده، بی --depth: «--depth=1» در رونوشت کامل لپ‌تاپ آن را کم‌عمق می‌کرد و
+    تاریخچه را به یک کامیت می‌رساند — آزموده‌شده، بازبینی متن ۳۶. رونوشت کم‌عمق
+    اجراکننده کم‌عمق می‌ماند و فقط کامیت‌های تازه را می‌گیرد.
+    """
+    if _git(run, cwd, "fetch", "--quiet", "--no-tags", "origin", "main").returncode:
+        return None
+    r = _git(run, cwd, "show", f"FETCH_HEAD:{PULSE_LOG}")
+    if r.returncode:
+        return None
+    try:
+        log = json.loads(r.stdout)
+        return last_ok(log) if isinstance(log, dict) and isinstance(log.get("runs"), list) else None
+    except (ValueError, ScheduleError, KeyError, TypeError):
+        return None
+
+
+def gh_dispatch(workflow: str, inputs: dict, run=subprocess.run) -> tuple[bool, str]:
+    """workflow_dispatch با gh و GITHUB_TOKEN کار؛ اجرای تازه همیشه ساخته می‌شود."""
+    args = ["gh", "workflow", "run", workflow, "--ref", "main"]
+    for k, v in inputs.items():
+        args += ["-f", f"{k}={v}"]
+    r = run(args, capture_output=True, text=True, encoding="utf-8")
+    return r.returncode == 0, ("" if r.returncode == 0 else _tail(r))
+
+
+def keeper(cal: dict, gen: int, clock, sleep, last_reader, dispatch, out=print) -> int:
+    """
+    حلقه نگهبان. ۰ یعنی تمام، بی خطا؛ ۱ یعنی راه‌اندازی ناموفق یا سقف نسل — کار گیت‌هاب
+    قرمز می‌شود و صاحب مخزن ایمیل شکست می‌گیرد.
+    """
+    started, kicked, fails = clock(), None, 0
+    while True:
+        now = clock()
+        # دفتر ناخوانا یا بی نبض موفق: راه‌اندازی خود این اجرا نبض فرض می‌شود، تا نگهبان
+        # کور هر ۵۰ دقیقه راه بیندازد، نه هر ۱۵ دقیقه
+        last = last_reader()
+        if last is None:
+            last = kicked
+        act, why, wake = keeper_step(cal, now, started, last, kicked)
+        out(f"{now:%Y-%m-%d %H:%M} UTC — {act}: {why}")
+        if act == "exit":
+            return 1 if fails else 0
+        if act == "handoff":
+            if gen + 1 > KEEPER_MAX_GEN:
+                out(f"::error::نسل نگهبان به سقف {KEEPER_MAX_GEN} رسید — زنجیره بسته شد")
+                return 1
+            ok, err = dispatch(KEEPER_WORKFLOW, {"gen": str(gen + 1)})
+            if not ok:
+                out(f"::error::راه‌اندازی جانشین نگهبان ناموفق: {err}")
+                return 1
+            out(f"جانشین نسل {gen + 1} راه افتاد")
+            return 1 if fails else 0
+        if act == "pulse":
+            ok, err = dispatch(PULSE_WORKFLOW, {})
+            kicked = now
+            if not ok:
+                fails += 1
+                out(f"::warning::راه‌اندازی نبض ناموفق: {err}")
+            continue
+        sleep(max(1.0, (wake - now).total_seconds()))
+
+
+def keeper_simulate(cal: dict, start: datetime, landing: timedelta = timedelta(minutes=4),
+                    pulses: list[datetime] | None = None) -> list[tuple[datetime, str]]:
+    """
+    شبیه‌سازی بی‌شبکه: هر راه‌اندازی نبض landing بعد در دفتر می‌نشیند و هر جانشین بی‌درنگ
+    ادامه می‌دهد. pulses نبض‌های زمان‌بند خود گیت‌هاب است. خروجی: زمان هر راه‌اندازی.
+    """
+    t = [start]
+    log = sorted(pulses or [])
+    events: list[tuple[datetime, str]] = []
+
+    def clock():
+        return t[0]
+
+    def sleep(sec):
+        t[0] += timedelta(seconds=sec)
+
+    def last():
+        done = [p for p in log if p <= t[0]]
+        return max(done) if done else None
+
+    def dispatch(wf, inputs):
+        events.append((t[0], wf if not inputs else f"{wf} نسل {inputs['gen']}"))
+        if wf == PULSE_WORKFLOW:
+            log.append(t[0] + landing)
+        return True, ""
+
+    gen = 0
+    while True:
+        n = len(events)
+        keeper(cal, gen, clock, sleep, last, dispatch, out=lambda s: None)
+        if len(events) == n or not events[-1][1].startswith(KEEPER_WORKFLOW):
+            return events
+        gen += 1
+
+
 # ═══════════════════════ خط سلامت گزارش روزانه ═══════════════════════
 
 def health_line(log: dict, now: datetime) -> str:
@@ -343,8 +509,37 @@ def main(argv: list[str] | None = None, now: datetime | None = None) -> int:
     p.add_argument("--log", default=PULSE_LOG)
     p = sp.add_parser("push", help="push ربات با تلاش دوباره fetch و merge — بند ۵ متن ۲۰")
     p.add_argument("--retries", type=int, default=PUSH_RETRIES)
+    p = sp.add_parser("keeper", help="نگهبان پنجره رویداد — ک۱۰۹، متن ۳۶")
+    p.add_argument("--gen", type=int, default=0, help="نسل جانشین؛ اجرای تازه 0")
+    p.add_argument("--events", default=RC.CALENDAR_FILE)
+    p = sp.add_parser("keeper-plan", help="شبیه‌سازی بی‌شبکه نگهبان پنجره — ک۱۰۹، متن ۳۶")
+    p.add_argument("--from", dest="start", required=True, help="مهر کامل آغاز با منطقه زمانی")
+    p.add_argument("--events", default=RC.CALENDAR_FILE)
     a = ap.parse_args(argv)
     now = now or datetime.now(UTC)
+
+    if a.cmd in ("keeper", "keeper-plan"):
+        try:
+            cal = RC.load(a.events)
+        except RC.CalendarError as exc:
+            print(f"::error::تقویم رویداد خوانا نیست — نگهبان پنجره کار نکرد: {exc}")
+            return 1
+        if a.cmd == "keeper":
+            import time
+            return keeper(cal, a.gen, lambda: datetime.now(UTC), time.sleep, remote_last_ok,
+                          gh_dispatch)
+        start = datetime.fromisoformat(a.start)
+        if start.tzinfo is None:
+            print("⛔ --from مهر کامل با منطقه زمانی لازم دارد")
+            return 2
+        evs = keeper_simulate(cal, start.astimezone(UTC))
+        print(f"شبیه‌سازی نگهبان پنجره از {start.astimezone(UTC):%Y-%m-%d %H:%M} UTC — هر نبض "
+              "۴ دقیقه پس از راه‌اندازی در دفتر، بی نبض زمان‌بند گیت‌هاب")
+        if not evs:
+            print("- هیچ راه‌اندازی — پنجره‌ای تا ۲۴ ساعت بعد نیست")
+        for t, w in evs:
+            print(f"- {t:%Y-%m-%d %H:%M} UTC، {t.astimezone(RC.TEHRAN):%H:%M} تهران — {w}")
+        return 0
 
     if a.cmd == "due":
         run, why = due(a.kind, now, a.event, a.log, events_path=a.events)
