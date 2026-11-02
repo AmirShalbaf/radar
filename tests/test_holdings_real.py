@@ -59,10 +59,10 @@ def _ledger_by_account(h, field) -> dict:
 
 
 def test_updated_not_before_screenshot(h) -> None:
-    """منبع تازه — اسکرین‌شات ۲۶ اکتبر ۲۰۲۶، متن ۱۹؛ frozen همان اسکرین‌شات ۲۵ سپتامبر می‌ماند."""
-    assert "LBank" in h["source"] and "۲۶ اکتبر ۲۰۲۶" in h["source"]
-    assert "07:35 UTC" in h["source"] and "1588.35" in h["source"]
-    assert h["updated"] == "2026-10-26T07:35:00+00:00"
+    """منبع تازه — رسید و اسکرین‌شات ۲ نوامبر ۲۰۲۶، متن ۳۴؛ frozen همان اسکرین‌شات ۲۵ سپتامبر می‌ماند."""
+    assert "LBank" in h["source"] and "۲ نوامبر ۲۰۲۶" in h["source"]
+    assert "14:57:20 UTC" in h["source"] and "1164.51684349" in h["source"]
+    assert h["updated"] == "2026-11-02T14:57:20+00:00"
 
 
 def test_quantities_match_screenshots(h) -> None:
@@ -300,7 +300,7 @@ def test_1024_matches_screenshot(h) -> None:
     cash = sum(r.get("net") or 0.0 for r in later if r["action"] in ("trim", "exit"))
     cash += sum(r["cash"]["qty"] for r in later if r["action"] == "income")
     cash -= sum(r["cash"]["qty"] for r in later if r["action"] == "withdraw")
-    cash -= sum(r.get("cost") or 0.0 for r in later if r["action"] == "reenter")
+    cash -= sum(r.get("cost") or 0.0 for r in later if r["action"] in ("reenter", "add"))
     assert [c["account"] for c in h["cash"]] == ["LBank"]
     assert h["cash"][0]["qty"] - cash == pytest.approx(USDT_1024, abs=1e-9)
 
@@ -366,16 +366,26 @@ SEEN_1026 = {"SOL": 5.48105369, "AAVE": 1.04895, "LINK": 11.09889, "SUI": 81.618
              "ONDO": 115.43866, "BNB": 0.0007579, "TRX": 0.6704, "ETH": 0.000057,
              "TAO": 0.000092}
 USDT_1026 = 648.14463149
+AT_1026 = "2026-10-26T07:35:00+00:00"
 
 
 def test_1026_matches_screenshot(h) -> None:
-    """دفتر دقیق می‌خواند — فقط باقی‌مانده ممیز شناور، ک۴۰."""
+    """
+    اسکرین‌شات ۲۶ اکتبر = وضعیت فعلی منهای ردیف‌های دفتر کل پس از آن — متن ۳۴، مثل ۲۴ اکتبر.
+    فقط باقی‌مانده ممیز شناور، ک۴۰.
+    """
     pos = {p["symbol"]: p for p in h["positions"]}
     assert {s for s, p in pos.items() if p["status"] == "open"} == set(SEEN_1026)
+    later = _after(h, AT_1026)
     for sym, q in SEEN_1026.items():
-        assert P.position_qty(pos[sym]) == pytest.approx(q, abs=1e-12), sym
-    assert [(c["account"], c["qty"]) for c in h["cash"]] == [("LBank", pytest.approx(USDT_1026,
-                                                                                    abs=1e-9))]
+        moved = sum(r["delta"] for r in later if r["symbol"] == sym)
+        assert P.position_qty(pos[sym]) - moved == pytest.approx(q, abs=1e-12), sym
+    cash = sum(r.get("net") or 0.0 for r in later if r["action"] in ("trim", "exit"))
+    cash += sum(r["cash"]["qty"] for r in later if r["action"] == "income")
+    cash -= sum(r["cash"]["qty"] for r in later if r["action"] == "withdraw")
+    cash -= sum(r.get("cost") or 0.0 for r in later if r["action"] in ("reenter", "add"))
+    assert [c["account"] for c in h["cash"]] == ["LBank"]
+    assert h["cash"][0]["qty"] - cash == pytest.approx(USDT_1026, abs=1e-9)
 
 
 def test_1026_eth_invalidation_sale(h) -> None:
@@ -388,3 +398,63 @@ def test_1026_eth_invalidation_sale(h) -> None:
     eth = next(p for p in h["positions"] if p["symbol"] == "ETH")
     assert eth["invalidation"] is None and "invalidation_since" not in eth
     assert 0.000057 * 2316.83 < P.DUST_USD
+
+
+# ═══════════════ متن ۳۴ — ۲ نوامبر ۲۰۲۶ ═══════════════
+# رسید فروش SOL و اسکرین‌شات موجودی LBank پس از 2026-11-02 14:57:20 UTC. از روز ثبت به
+# الگوی «وضعیت فعلی منهای ردیف‌های پس از آن» — تا ثبت بعدی آزمون را نشکند.
+
+SEEN_1102 = {"SOL": 0.00005369, "AAVE": 1.04895, "LINK": 11.09889, "SUI": 81.6183,
+             "ONDO": 115.43866, "BNB": 0.0007579, "TRX": 0.6704, "ETH": 0.000057,
+             "TAO": 0.000092}
+USDT_1102 = 1164.51684349
+AT_1102 = "2026-11-02T14:57:20+00:00"
+
+
+def test_1102_matches_screenshot(h) -> None:
+    """فروش و سود همان لحظه‌اند و داخل اسکرین‌شات؛ ردیف‌های پس از آن کسر می‌شوند."""
+    pos = {p["symbol"]: p for p in h["positions"]}
+    later = _after(h, AT_1102)
+    extra = {s for s, p in pos.items() if p["status"] == "open"} - set(SEEN_1102)
+    assert all(any(r["symbol"] == s for r in later) for s in extra), extra
+    for sym, q in SEEN_1102.items():
+        moved = sum(r["delta"] for r in later if r["symbol"] == sym)
+        assert P.position_qty(pos[sym]) - moved == pytest.approx(q, abs=1e-12), sym
+    cash = sum(r.get("net") or 0.0 for r in later if r["action"] in ("trim", "exit"))
+    cash += sum(r["cash"]["qty"] for r in later if r["action"] == "income")
+    cash -= sum(r["cash"]["qty"] for r in later if r["action"] == "withdraw")
+    cash -= sum(r.get("cost") or 0.0 for r in later if r["action"] in ("reenter", "add"))
+    assert [c["account"] for c in h["cash"]] == ["LBank"]
+    assert h["cash"][0]["qty"] - cash == pytest.approx(USDT_1102, abs=1e-9)
+
+
+def test_1102_sol_invalidation_sale(h) -> None:
+    rows = [r for r in h["ledger"] if r.get("order_id") == "d625f059-276b-47a2-8e00-04bb432b7ba8"]
+    assert len(rows) == 1
+    r = rows[0]
+    assert (r["action"], r["symbol"], r["delta"], r["price"], r["reason"], r["level"],
+            r["at"]) == ("trim", "SOL", -5.481, 94.16, "invalidation", 96.7108, AT_1102)
+    assert (r["gross"], r["fee"]) == (516.09096, 0.516091)
+    assert r["gross"] == pytest.approx(5.481 * 94.16, abs=1e-9)
+    assert 0.00005369 * 94.16 < P.DUST_USD
+    st = P.reentry_state(h, "SOL")
+    assert st["level"] == 96.7108 and st["max_qty"] >= 5.481 - 1e-9
+    # تا نخستین خرید دوباره SOL: بی‌سطح، بیرون از positions و در پایش خفته با همان سطح.
+    # پس از آن reenter سطح را از dormant برمی‌گرداند و این سه دیگر صدق نمی‌کنند
+    if not any(x["symbol"] == "SOL" and x["delta"] > 0 for x in _after(h, AT_1102)):
+        sol = next(p for p in h["positions"] if p["symbol"] == "SOL")
+        assert sol["invalidation"] is None and "invalidation_since" not in sol
+        w = json.loads((ROOT / "watch.json").read_text(encoding="utf-8"))
+        dm = [d for d in w["dormant"] if d["symbol"] == "SOL"]
+        assert len(dm) == 1 and dm[0]["invalidation"] == 96.7108
+        assert not any(it["symbol"] == "SOL" for it in w["positions"])
+
+
+def test_1102_usdt_income(h) -> None:
+    rows = [r for r in h["ledger"] if r["action"] == "income" and r["at"] == AT_1102]
+    assert len(rows) == 1
+    r = rows[0]
+    assert (r["symbol"], r["delta"], r["account"]) == ("USDT", 0.797343, "LBank")
+    assert r["cash"] == {"asset": "USDT", "qty": 0.797343, "account": "LBank"}
+    assert 648.14463149 + 516.09096 - 0.516091 == pytest.approx(1163.71950049, abs=1e-9)
+    assert 1163.71950049 + 0.797343 == pytest.approx(USDT_1102, abs=1e-9)

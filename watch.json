@@ -11,9 +11,6 @@
   "_سفارش": "orders: سفارش‌های زنده پرنشده صرافی — بند ۱ متن ۲۰. فقط نمایش در پیام روزانه و هشدار تکان؛ هیچ قاعده‌ای از آن نمی‌خواند. side خرید یا فروش، type محدود یا ماشه‌دار، trigger فقط برای ماشه‌دار، book دفتر موقعیت یا معامله، purpose هدف، recorded_at زمان ثبت در رادار. پرشدن هر سفارش با radar_positions.py ثبت می‌شود و ردیفش از اینجا برداشته می‌شود.",
   "exit_fraction": 1.0,
   "positions": [
-    {"symbol": "SOL", "invalidation": 96.7108, "invalidation_since": "2026-09-25T21:34:47+00:00", "touches": 4, "warnings": [119.53],
-     "anchor": 111.16, "anchor_atr_w": 12.890769, "anchor_price": 120.68, "anchor_week_close": 111.16,
-     "anchor_week_closed_at": "2026-09-21T00:00:00+00:00", "anchor_at": "2026-09-26T05:01:55+00:00"},
     {"symbol": "AAVE", "invalidation": 106.8920, "invalidation_since": "2026-09-26T05:04:16+00:00", "touches": 4, "warnings": [147.74],
      "anchor": 137.67, "anchor_atr_w": 21.552487, "anchor_price": 154.32, "anchor_week_close": 137.67,
      "anchor_week_closed_at": "2026-09-21T00:00:00+00:00", "anchor_at": "2026-09-26T05:01:55+00:00"},
@@ -141,7 +138,11 @@
      "touches": 4, "warnings": [295.35], "anchor": 261.67, "anchor_atr_w": 46.990697,
      "anchor_price": 312.47, "anchor_week_close": 261.67,
      "anchor_week_closed_at": "2026-09-21T00:00:00+00:00", "anchor_at": "2026-09-26T05:01:55+00:00",
-     "reason": "پایش خفته — مانده TAO پس از فروش ذخیره ۲۴ اکتبر ناچیز شد و از positions بیرون رفت، رویداد ۱۰۴. همان ردیف پیشین، از ثبت پیش از 5654d1e. اگر بازخرید TAO با radar_positions.py reenter --reserve-plan ثبت شد، با همین سطح 202.5065 به positions و holdings.json برمی‌گردد — متن ۱۸"}
+     "reason": "پایش خفته — مانده TAO پس از فروش ذخیره ۲۴ اکتبر ناچیز شد و از positions بیرون رفت، رویداد ۱۰۴. همان ردیف پیشین، از ثبت پیش از 5654d1e. اگر بازخرید TAO با radar_positions.py reenter --reserve-plan ثبت شد، با همین سطح 202.5065 به positions و holdings.json برمی‌گردد — متن ۱۸"},
+    {"symbol": "SOL", "invalidation": 96.7108, "invalidation_since": "2026-09-25T21:34:47+00:00", "touches": 4, "warnings": [119.53],
+     "anchor": 111.16, "anchor_atr_w": 12.890769, "anchor_price": 120.68, "anchor_week_close": 111.16,
+     "anchor_week_closed_at": "2026-09-21T00:00:00+00:00", "anchor_at": "2026-09-26T05:01:55+00:00",
+     "reason": "پایش خفته — خروج کامل SOL با ابطال هفتگی ۲ نوامبر ۲۰۲۶، بسته زیر 96.7108؛ مانده 0.00005369 ناچیز، متن ۳۴. ورود دوباره با radar_positions.py reenter همین سطح و لنگر را به positions و holdings.json برمی‌گرداند"}
   ],
   "orders": [],
   "items": []

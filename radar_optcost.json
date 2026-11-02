@@ -205,6 +205,25 @@
       "p30": null,
       "chg30": null,
       "saved30": null
+    },
+    {
+      "id": 10,
+      "date": "2026-11-02",
+      "at": "2026-11-02T14:57:20+00:00",
+      "book": "position",
+      "symbol": "SOL",
+      "action": "trim",
+      "reason": "invalidation",
+      "qty": 5.481,
+      "price": 94.16,
+      "level": 96.7108,
+      "order_id": "d625f059-276b-47a2-8e00-04bb432b7ba8",
+      "p14": null,
+      "chg14": null,
+      "saved14": null,
+      "p30": null,
+      "chg30": null,
+      "saved30": null
     }
   ]
 }

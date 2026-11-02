@@ -124,7 +124,7 @@ def test_suggest_level_none_found(env, monkeypatch, capsys) -> None:
 
 
 def test_level_refused_when_position_has_one(env, capsys) -> None:
-    args = [a if a != "ETH" else "SOL" for a in T2]
+    args = [a if a != "ETH" else "AAVE" for a in T2]
     assert P.main(args + ["--level", "90"]) == 2
     assert "بازبینی هفتگی" in capsys.readouterr().err
 

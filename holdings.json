@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "updated": "2026-10-26T07:35:00+00:00",
-  "source": "اسکرین‌شات‌های LBank، ۲۶ اکتبر ۲۰۲۶، 07:35 UTC — جمع 1588.35 دلار، شامل مقدار و تتر قفل‌شده در سفارش‌های باز",
+  "updated": "2026-11-02T14:57:20+00:00",
+  "source": "رسید فروش SOL و اسکرین‌شات موجودی LBank، ۲ نوامبر ۲۰۲۶، پس از 14:57:20 UTC — ده دارایی و تتر 1164.51684349",
   "frozen": {
     "date": "2026-09-25",
     "members": {
@@ -31,7 +31,7 @@
   "cash": [
     {
       "asset": "USDT",
-      "qty": 648.14463149,
+      "qty": 1164.51684349,
       "account": "LBank"
     }
   ],
@@ -40,11 +40,10 @@
       "symbol": "SOL",
       "book": "position",
       "status": "open",
-      "invalidation": 96.7108,
-      "invalidation_since": "2026-09-25T21:34:47+00:00",
+      "invalidation": null,
       "lots": [
         {
-          "qty": 5.48105369,
+          "qty": 5.369000000055024e-05,
           "account": "LBank",
           "entry": null
         }
@@ -354,6 +353,33 @@
       "cash": {
         "asset": "USDT",
         "qty": 0.166365,
+        "account": "LBank"
+      }
+    },
+    {
+      "at": "2026-11-02T14:57:20+00:00",
+      "action": "trim",
+      "symbol": "SOL",
+      "order_id": "d625f059-276b-47a2-8e00-04bb432b7ba8",
+      "delta": -5.481,
+      "price": 94.16,
+      "reason": "invalidation",
+      "account": "LBank",
+      "level": 96.7108,
+      "gross": 516.09096,
+      "fee": 0.516091,
+      "net": 515.574869
+    },
+    {
+      "at": "2026-11-02T14:57:20+00:00",
+      "action": "income",
+      "symbol": "USDT",
+      "delta": 0.797343,
+      "reason": "سود خودکار تتر LBank، ۲۶ اکتبر تا ۲ نوامبر",
+      "account": "LBank",
+      "cash": {
+        "asset": "USDT",
+        "qty": 0.797343,
         "account": "LBank"
       }
     }
