@@ -6,6 +6,7 @@ forecasts.json و فرمان کوچک افزودن و نمره‌دادن. هر 
 روزانه همان منبعی که بسته هفتگی را می‌خواند — اوکی‌اکس 1Dutc، سپس گیت 1d. خلاصه در گزارش
 هفتگی.
 """
+import copy
 import json
 import sys
 from datetime import datetime, timedelta, timezone
@@ -40,6 +41,15 @@ def _real():
     return F.load(str(ROOT / "forecasts.json"))
 
 
+def _unscored():
+    """رونوشت عمیق داده واقعی بی result و attempts — ربات ۱ نوامبر نمره داد؛ متن ۳۳."""
+    doc = copy.deepcopy(_real())
+    for f in doc["forecasts"]:
+        f.pop("result", None)
+        f.pop("attempts", None)
+    return doc
+
+
 # ── داده واقعی: پیش‌بینی ۲۶ اکتبر برای BTC ──
 
 def test_first_entry_btc_oct26() -> None:
@@ -51,7 +61,11 @@ def test_first_entry_btc_oct26() -> None:
     assert sc == {"مثبت": (0.20, "(82000,)"), "پایه": (0.50, "[78000,82000]"),
                   "منفی": (0.30, "(,78000)")}
     assert "اوکی‌اکس 1Dutc" in f["price_source"] and "گیت 1d" in f["price_source"]
-    assert f["criterion"] and f["source"] and f.get("result") is None
+    assert f["criterion"] and f["source"]
+    r = f["result"]                                                # نمره ربات، ۱ نوامبر
+    assert r["outcome"] == "منفی" and r["close"] == 77306.1 and r["venue"] == "okx"
+    assert r["p_outcome"] == 0.3
+    assert abs(r["brier"] - 0.78) < 1e-12                          # 0.2² + 0.5² + 0.7²
 
 
 # ── بازه و افراز ──
@@ -138,7 +152,7 @@ def test_daily_close_anchor_must_be_midnight_utc() -> None:
 # ── نمره‌دهی ──
 
 def test_score_only_after_deadline_and_once() -> None:
-    doc = _real()
+    doc = _unscored()
     got = []
 
     def fetch(sym, close_at, now=None):
@@ -156,7 +170,7 @@ def test_score_only_after_deadline_and_once() -> None:
 
 
 def test_score_failure_is_recorded_not_guessed() -> None:
-    doc = _real()
+    doc = _unscored()
     n, fails = F.score(doc, CLOSE + timedelta(hours=7),
                        lambda s, c, now=None: (None, ["okx: پاسخ نداد", "gate: پاسخ نداد"]))
     assert n == 0 and fails and doc["forecasts"][0].get("result") is None
@@ -164,7 +178,7 @@ def test_score_failure_is_recorded_not_guessed() -> None:
 
 
 def test_report_summary() -> None:
-    doc = _real()
+    doc = _unscored()
     F.score(doc, CLOSE + timedelta(hours=7),
             lambda s, c, now=None: ({"close": 83000.0, "open_at": OPEN.isoformat(),
                                      "closed_at": CLOSE.isoformat(), "venue": "okx"}, []))
