@@ -544,7 +544,7 @@ def test_cli_exit_then_reenter(files, monkeypatch) -> None:
     monkeypatch.setattr(P, "weekly_close", lambda sym, get=None, now=None: (
         {"close": 104.0, "closed_at": "2026-09-28T00:00:00+00:00", "venue": "okx"}, []))
     assert _run(files, "reenter", "--symbol", "SOL", "--qty", "4", "--price", "105",
-                "--account", "A", *lv) == 0
+                "--account", "A", *lv, "--no-receipt") == 0
     h = _read(files[0])
     assert next(p for p in h["positions"] if p["symbol"] == "SOL")["status"] == "open"
     assert next(p for p in h["positions"] if p["symbol"] == "SOL")["invalidation"] == 90.0
@@ -575,11 +575,13 @@ def test_cli_add_needs_position_journal(files, monkeypatch) -> None:
     monkeypatch.setattr(P, "CONCENTRATION_CAP_PCT", 100)
     hp, jp = files
     assert _run(files, "add", "--symbol", "LINK", "--qty", "10", "--price", "14",
-                "--account", "A", "--decision-id", "D-9", "--setup-name", "الف۱") != 0
+                "--account", "A", "--decision-id", "D-9", "--setup-name", "الف۱",
+                "--no-receipt") != 0
     jp.write_text(json.dumps(_j(_jt("D-9", book="position", sym="LINK")),
                              ensure_ascii=False), encoding="utf-8")
     assert _run(files, "add", "--symbol", "LINK", "--qty", "10", "--price", "14",
-                "--account", "A", "--decision-id", "D-9", "--setup-name", "الف۱") == 0
+                "--account", "A", "--decision-id", "D-9", "--setup-name", "الف۱",
+                "--no-receipt") == 0
     h = _read(hp)
     link = next(p for p in h["positions"] if p["symbol"] == "LINK")
     assert link["book"] == "position" and link["lots"][0]["entry"] == 14.0

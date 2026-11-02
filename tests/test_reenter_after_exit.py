@@ -99,7 +99,8 @@ def _cli(files, monkeypatch, closed_at) -> int:
     hp, jp = files
     return P.main(["--holdings", str(hp), "--journal", str(jp),
                    "--optcost", str(hp.parent / "optcost.json"),
-                   "reenter", "--symbol", "SOL", "--qty", "4", "--price", "99", "--account", "A"])
+                   "reenter", "--symbol", "SOL", "--qty", "4", "--price", "99", "--account", "A",
+                   "--no-receipt"])
 
 
 def test_cli_refuses_close_before_exit(files, monkeypatch, capsys) -> None:

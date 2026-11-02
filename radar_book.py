@@ -1421,8 +1421,9 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
             # بی سطح ابطال — بند ۹ متن ۲۰: ثبت بی سطح تازه پذیرفته نیست
             lv = (" --level <سطح تازه>`؛ پیشنهاد با `--suggest-level`" if e.get("no_level")
                   else "`")
+            # رسید خرید — ک۱۲۷، متن ۳۵
             actions.append(f"**{e['symbol']}** — ورود دوباره مجاز است؛ ثبت با "
-                           f"`radar_positions.py reenter{lv}")
+                           f"`radar_positions.py reenter {P.RECEIPT_ARGS}{lv}")
     if plan_live:
         actions += _plan_actions(reserve)
         g = gap_after_plan(reserve, reg)
@@ -1569,6 +1570,21 @@ def rebuy_view(watch: dict, h: dict, val: dict, frames: dict, btc, regime_path: 
     return out
 
 
+def _dormant(watch_path: str) -> set[str]:
+    """
+    نمادهای پایش خفته watch.json — بازگشت با سطح پیشین، بی --level؛ ک۱۲۷، متن ۳۵.
+    فایل نبود یا خوانا نبود یعنی هیچ — پیشنهاد محافظه‌کارانه --level می‌ماند؛ خود
+    خطای فایل را level_check در همین گزارش بلند می‌گوید.
+    """
+    try:
+        with open(watch_path, encoding="utf-8") as f:
+            w = json.load(f)
+        return {str(d.get("symbol", "")).upper() for d in (w.get("dormant") or [])
+                if isinstance(d, dict)}
+    except (OSError, ValueError, AttributeError):
+        return set()
+
+
 def _reserve_plan(watch_path: str) -> dict | None:
     """
     بخش reserve_plan فایل پایش. فایل غایب یا ناخوانا اینجا None است — level_check
@@ -1682,6 +1698,7 @@ def main() -> int:
         })
 
     reentry = []
+    dormant = _dormant(a.watch)
     for p in h["positions"]:
         # خارج‌شده، یا باز پس از خروج جزئی با ابطال — هر دو سهمیه دارند
         if p["book"] == "position":
@@ -1690,7 +1707,9 @@ def main() -> int:
                 continue
             wk, why = P.weekly_close(p["symbol"])
             reentry.append({"symbol": p["symbol"], "state": st, "weekly": wk, "why": why,
-                            "no_level": p.get("invalidation") is None})
+                            # پایش خفته سطح پیشین را دارد؛ reenter بی --level برش می‌گرداند — ک۱۲۷
+                            "no_level": (p.get("invalidation") is None
+                                         and p["symbol"] not in dormant)})
 
     cands = []
     for s in [x.strip().upper() for x in a.candidates.split(",") if x.strip()]:

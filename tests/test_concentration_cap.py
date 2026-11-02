@@ -101,7 +101,8 @@ def test_add_refused_above_cap_unless_labeled_deviation(files, capsys) -> None:
     (files / "radar_journal.json").write_text(json.dumps(j), encoding="utf-8")
     base = ["--holdings", "holdings.json", "--journal", "radar_journal.json", "--optcost",
             "oc.json", "add", "--symbol", "SOL", "--qty", "1", "--price", "100",
-            "--account", "LBank", "--decision-id", "D-1", "--setup-name", "ب۱"]
+            "--account", "LBank", "--decision-id", "D-1", "--setup-name", "ب۱",
+            "--no-receipt"]
     assert P.main(base) == 2
     assert "سقف تمرکز" in capsys.readouterr().err
     assert P.main(base + ["--deviation", "RD-20261028-02"]) == 2      # پیروی، نه سرپیچی

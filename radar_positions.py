@@ -54,20 +54,22 @@ holdings.json نسخه ۲ بر پایه **مقدار** است، نه دلار. �
 radar_book.py بتواند بی‌آنکه استقلالش بشکند ایمپورتش کند.
 
 رسید اجباری — بازبینی ۲۳ اکتبر ۲۰۲۶: trim و exit بی --gross و --fee خطا می‌دهند،
-مگر با --no-receipt صریح. ناوردای نقد کنار ناوردای کوین:
+مگر با --no-receipt صریح؛ از ک۱۲۷، متن ۳۵، خرید add و reenter هم. ناوردای نقد کنار
+ناوردای کوین:
 
-    نقد منجمد frozen.cash + خالص فروش‌ها − برداشت‌ها = نقد فعلی
+    نقد منجمد frozen.cash + خالص فروش‌ها + درآمد − برداشت‌ها − هزینه خریدها = نقد فعلی
 
     python radar_positions.py validate
     python radar_positions.py trim --symbol SOL --qty 1.5 --price 120 --reason reserve \\
         --gross 180 --fee 0.18 --order-id ... --at 2026-10-17T15:33:55+00:00
     python radar_positions.py exit --symbol SOL --price 95 --level 100 --gross ... --fee ...
-    python radar_positions.py reenter --symbol SOL --qty 4 --price 105 --account LBank
+    python radar_positions.py reenter --symbol SOL --qty 4 --price 105 --account LBank \\
+        --gross 420 --fee 0.42 --order-id ... --at 2026-11-09T08:00:00+00:00
     python radar_positions.py reenter --reserve-plan 2026-10-24T03:46:49+00:00 --symbol TAO \
         --qty 0.153 --price 233 --account LBank --gross 35.649 --fee 0.0713 --order-id ... \
         --at 2026-10-27T08:00:00+00:00
     python radar_positions.py add --symbol LINK --qty 10 --price 14 --account LBank \\
-        --decision-id D-... --setup-name ...
+        --decision-id D-... --setup-name ... --gross 140 --fee 0.14 --order-id ... --at ...
     python radar_positions.py adjust --symbol SOL --qty 0.02 --reason "پاداش سهام‌گذاری"
     python radar_positions.py withdraw --symbol USDT --qty 12 --account LBank \\
         --reason "پول خرج شخصی" --at 2026-10-03T04:10:00+00:00
@@ -352,6 +354,17 @@ def _check_trades(h: dict, jidx: dict) -> None:
             raise PositionsError(f"{sym}: قیمت خرید هر لات دفتر معامله لازم است")
 
 
+def _buy_row_ok(r: dict, sym: str, where: str) -> None:
+    """ردیف خرید رسیددار add و ورود دوباره — ک۱۲۷: هزینه با مجموع و کارمزد بخواند."""
+    if "cost" not in r:
+        return
+    fee_coin = r.get("fee_asset") == sym
+    if (not _num(r.get("gross")) or not _num(r.get("fee")) or r["fee"] < 0
+            or not _num(r.get("cost")) or not r.get("account")
+            or not _close(r["cost"], r["gross"] + (0.0 if fee_coin else r["fee"]))):
+        raise PositionsError(f"{where}: رسید خرید ناسازگار — مجموع، کارمزد، هزینه و حساب")
+
+
 def _allow(reentry: dict, sym: str, level: float, qty: float, at: str) -> None:
     """
     سهمیه ورود دوباره. خروج جزئی و کامل با همان سطح جمع می‌شوند؛ سطح
@@ -437,12 +450,14 @@ def _replay(h: dict, jidx: dict, check_journal: bool = True) -> dict:
             if not d > 0 or st["used"] + d > st["max_qty"] + TOL:
                 raise PositionsError(f"{where}: بیش از سهمیه ورود دوباره "
                                      f"({st['max_qty'] - st['used']} مانده)")
+            _buy_row_ok(r, sym, where)
             st["used"] += d
         elif act == "add":
             did, setup = r.get("decision_id"), r.get("setup_name")
             rec = jidx.get(did)
             if not d > 0:
                 raise PositionsError(f"{where}: افزایش باید مثبت باشد")
+            _buy_row_ok(r, sym, where)
             if check_journal:
                 if rec is None or not setup or rec.get("setup_name") != setup:
                     raise PositionsError(f"{where}: شناسه تصمیم و نام ستاپ باید در "
@@ -502,8 +517,8 @@ def cash_expected(h: dict) -> dict:
         if r.get("action") in ("trim", "exit") and _num(r.get("net")):
             k = ("USDT", r.get("account"))
             out[k] = out.get(k, 0.0) + float(r["net"])
-        elif r.get("action") == "reenter" and _num(r.get("cost")):
-            # بازخرید نقشه ذخیره با رسید — ک۸۸؛ هزینه از تتر همان حساب
+        elif r.get("action") in ("reenter", "add") and _num(r.get("cost")):
+            # خرید رسیددار — بازخرید نقشه ذخیره ک۸۸، ورود دوباره و add ک۱۲۷؛ هزینه از تتر همان حساب
             k = ("USDT", r.get("account"))
             out[k] = out.get(k, 0.0) - float(r["cost"])
         elif r.get("action") in ("withdraw", "income") and isinstance(r.get("cash"), dict):
@@ -1150,7 +1165,7 @@ def _reserve_reenter(h: dict, a, journal: dict, ctx: dict, row: dict, p: dict | 
 
 
 def _cap_row(h: dict, a, journal: dict, row: dict, sym: str) -> None:
-    """سقف تمرکز add و ورود دوباره پس از ابطال — هر دو نقد را کم نمی‌کنند."""
+    """سقف تمرکز خرید بی‌رسید add و ورود دوباره — --no-receipt؛ نقد دست نمی‌خورد."""
     share, cap = cap_check(h, sym, a.qty * a.price, 0.0, a.price)
     rd = _deviation(a, journal, [cap] if cap else [])
     if rd:
@@ -1159,12 +1174,57 @@ def _cap_row(h: dict, a, journal: dict, row: dict, sym: str) -> None:
         row["share_after_pct"] = round(share, 2)
 
 
+def _buy_receipt(h: dict, a, journal: dict, row: dict, sym: str) -> float:
+    """
+    رسید خرید add و ورود دوباره پس از ابطال — ک۱۲۷، متن ۳۵. همان قاعده بازخرید نقشه
+    ذخیره: --gross و --fee هر دو، یا --no-receipt صریح. پیش از آن این دو مسیر رسید را
+    بی‌صدا نادیده می‌گرفتند و نقد دفتر بیش از واقع می‌ماند. هزینه از تتر همان حساب
+    کم می‌شود؛ کارمزد کوینی از مقدار دریافتی. خروجی: مقدار دریافتی.
+    """
+    if a.no_receipt:
+        if a.gross is not None or a.fee is not None:
+            raise PositionsError("--no-receipt با --gross یا --fee هم‌زمان نمی‌آید")
+        _cap_row(h, a, journal, row, sym)
+        row["no_receipt"] = True
+        return a.qty
+    if a.gross is None or a.fee is None:
+        raise PositionsError("رسید لازم است: --gross و --fee هر دو، یا --no-receipt صریح. "
+                             "بی رسید هزینه خرید از نقد کم نمی‌شود و نقد دفتر بیش از واقع می‌ماند")
+    if not math.isclose(a.gross, a.qty * a.price, rel_tol=1e-6):
+        raise PositionsError(f"مجموع رسید {a.gross} با مقدار × قیمت {a.qty * a.price} نمی‌خواند")
+    fa = a.fee_asset.upper()
+    if fa not in ("USDT", sym):
+        raise PositionsError(f"--fee-asset باید USDT یا {sym} باشد")
+    fee_coin = fa == sym
+    if not (_num(a.fee) and 0 <= a.fee < (a.qty if fee_coin else a.gross)):
+        raise PositionsError(f"کارمزد نامعتبر: {a.fee}")
+    cost = round(a.gross + (0.0 if fee_coin else a.fee), 10)
+    got = round(a.qty - a.fee, 12) if fee_coin else a.qty
+    share, cap = cap_check(h, sym, got * a.price, cost, a.price)
+    rd = _deviation(a, journal, [cap] if cap else [])
+    if rd:
+        row["deviation"] = rd
+    if share is not None:
+        row["share_after_pct"] = round(share, 2)
+    c = next((c for c in h["cash"] if c.get("asset") == "USDT" and c.get("account") == a.account),
+             None)
+    if c is None or c["qty"] + TOL < cost:
+        raise PositionsError(f"نقد تتر حساب {a.account} برای هزینه {cost} کافی نیست")
+    c["qty"] = round(c["qty"] - cost, 10)
+    row.update(account=a.account, gross=a.gross, fee=a.fee, fee_asset=fa, cost=cost)
+    if a.order_id:
+        row["order_id"] = a.order_id
+    return got
+
+
 def _apply(h: dict, a, journal: dict, ctx: dict | None = None) -> dict:
     sym = a.symbol.upper()
     row = {"at": _now(), "action": a.cmd, "symbol": sym}
-    if a.cmd in ("trim", "exit", "withdraw", "income", "reenter") and a.at is not None:
+    if a.cmd in ("trim", "exit", "withdraw", "income", "reenter", "add") and a.at is not None:
         row["at"] = _receipt_at(a.at, h)
     if a.cmd == "reenter" and getattr(a, "reserve_plan", None):
+        if a.no_receipt:
+            raise PositionsError("بازخرید نقشه ذخیره بی رسید پذیرفته نیست — --gross و --fee")
         if a.at is not None:
             row["at"] = _receipt_at(a.at, h)
         return _reserve_reenter(h, a, journal, ctx, row, _find(h, sym))
@@ -1229,21 +1289,21 @@ def _apply(h: dict, a, journal: dict, ctx: dict | None = None) -> dict:
             raise PositionsError(f"{sym}: آخرین بسته هفتگی {w['closed_at']} پس از خروج "
                                  f"{st['exit_at']} نیست — ورود دوباره فقط با بسته‌ای پس از "
                                  "خروج؛ منتظر بسته بعد")
-        _cap_row(h, a, journal, row, sym)
-        p["lots"].append({"qty": a.qty, "account": a.account, "entry": a.price})
+        got = _buy_receipt(h, a, journal, row, sym)
+        p["lots"].append({"qty": got, "account": a.account, "entry": a.price})
         p["status"] = "open"
-        row.update(delta=a.qty, price=a.price, weekly_close=w["close"],
+        row.update(delta=got, price=a.price, weekly_close=w["close"],
                    week_close_at=w["closed_at"], venue=w["venue"])
         _return_level(a, ctx, p, sym, row)
     elif a.cmd == "add":
-        _cap_row(h, a, journal, row, sym)
+        got = _buy_receipt(h, a, journal, row, sym)
         if p is None:
             p = {"symbol": sym, "book": "position", "status": "open", "lots": [],
                  "invalidation": None}
             h["positions"].append(p)
-        p["lots"].append({"qty": a.qty, "account": a.account, "entry": a.price})
+        p["lots"].append({"qty": got, "account": a.account, "entry": a.price})
         p["status"] = "open"
-        row.update(delta=a.qty, price=a.price, decision_id=a.decision_id,
+        row.update(delta=got, price=a.price, decision_id=a.decision_id,
                    setup_name=a.setup_name)
     elif a.cmd == "adjust":
         if p is None or p["status"] != "open":
@@ -1348,19 +1408,14 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--qty", type=float, required=True)
         if name not in ("adjust", "withdraw"):
             p.add_argument("--price", type=float, required=True)
-        if name in ("trim", "exit", "withdraw", "reenter"):
-            # رسید صرافی — نشست ۳: زمان فروش، نه زمان ثبت؛ برداشت هم از ۳ اکتبر
+        if name in ("trim", "exit", "withdraw", "reenter", "add"):
+            # رسید صرافی — نشست ۳: زمان فروش، نه زمان ثبت؛ برداشت هم از ۳ اکتبر؛ خرید از ک۱۲۷
             p.add_argument("--at", default=None,
                            help="زمان رسید یا برداشت، مهر کامل با منطقه زمانی؛ پیش‌فرض اکنون")
         if name == "reenter":
             # بازخرید سهمیه reserve — ک۸۸، متن ۱۸
             p.add_argument("--reserve-plan", dest="reserve_plan", default=None,
                            help="created نقشه ذخیره، فعال یا بایگانی؛ بی آن ورود دوباره پس از ابطال")
-            p.add_argument("--gross", type=float, default=None, help="مجموع رسید خرید به تتر")
-            p.add_argument("--fee", type=float, default=None, help="کارمزد خرید")
-            p.add_argument("--fee-asset", dest="fee_asset", default="USDT",
-                           help="دارایی کارمزد: USDT یا خود نماد")
-            p.add_argument("--order-id", dest="order_id", default=None)
             p.add_argument("--deviation", default=None,
                            help="شناسه RD با برچسب سرپیچی در دفترچه، برای حکم منفی بازخرید")
             p.add_argument("--watch", default="watch.json")
@@ -1372,6 +1427,15 @@ def main(argv: list[str] | None = None) -> int:
                            help="سطح ابطال تازه برای ارز بی‌سطح؛ با قاعده لنگر")
             p.add_argument("--suggest-level", dest="suggest_level", action="store_true",
                            help="پیشنهاد سطح با pick_invalidation؛ هیچ ثبتی نمی‌کند")
+        if name in ("reenter", "add"):
+            # رسید خرید — ک۱۲۷، متن ۳۵: هزینه از تتر همان حساب، مثل بازخرید نقشه ذخیره
+            p.add_argument("--gross", type=float, default=None, help="مجموع رسید خرید به تتر")
+            p.add_argument("--fee", type=float, default=None, help="کارمزد خرید")
+            p.add_argument("--fee-asset", dest="fee_asset", default="USDT",
+                           help="دارایی کارمزد: USDT یا خود نماد")
+            p.add_argument("--order-id", dest="order_id", default=None)
+            p.add_argument("--no-receipt", dest="no_receipt", action="store_true",
+                           help="ثبت بی‌رسید — نقد دست نمی‌خورد؛ فقط وقتی رسید در دست نیست")
         if name in ("trim", "exit"):
             # نقد خالص به تتر همان حساب
             p.add_argument("--gross", type=float, default=None,

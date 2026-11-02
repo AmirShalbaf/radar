@@ -1149,7 +1149,8 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
             msgs.append(f"🔁 ورود دوباره مجاز {sym} — بسته هفتگی {_n(w['close'])} بالای "
                         f"سطح {_n(st['level'])}.\nسهمیه باقی: "
                         f"{_n(st['max_qty'] - st['used'])} {sym}. ثبت: radar_positions.py "
-                        f"reenter --symbol {sym} --qty <مقدار> --price <قیمت> --account <حساب>")
+                        f"reenter --symbol {sym} --qty <مقدار> --price <قیمت> --account <حساب> "
+                        f"{P.RECEIPT_ARGS}")
 
     # ── ۳ هشدار بازار: فقط اطلاع. میانگین از regime.json، فقط بسته همان هفته
     for m in watch.get("market") or []:

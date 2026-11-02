@@ -247,3 +247,27 @@ def test_week_closed_before_level_set_is_not_judged(run) -> None:
     row = _row(rep, "SOL")
     assert "زیر ابطال" not in row and "سطح تازه" in row
     assert "خروج کامل" not in rep.split("## ۶")[1]
+
+
+def test_reentry_dormant_needs_no_new_level(run, tmp_path) -> None:
+    """
+    ک۱۲۷، متن ۳۵: پیشنهاد ثبت ورود دوباره رسید دارد؛ و ارز بی‌سطحی که در watch.json ردیف
+    پایش خفته دارد، سطح پیشینش را با reenter پس می‌گیرد — پس --level سطح تازه نمی‌خواهد.
+    """
+    ledger = [{"at": "2026-09-20T08:00:00+00:00", "action": "exit", "symbol": "SOL",
+               "delta": -6.0, "price": 90.0, "level": 95.0, "reason": "invalidation"}]
+    h = _holdings([{"symbol": "SOL", "book": "position", "status": "exited", "lots": [],
+                    "invalidation": None}, _pos("ETH", 0.5)],
+                  members={"SOL": 6.0, "ETH": 0.5}, ledger=ledger)
+
+    def line():
+        rc, rep = run(h, weekly={"SOL": 97.0})
+        return next(l for l in rep.splitlines() if "**SOL**" in l
+                    and "ورود دوباره مجاز است" in l)
+    first = line()
+    assert "--gross" in first and "--level <سطح تازه>" in first
+    (tmp_path / "watch.json").write_text(json.dumps({"dormant": [
+        {"symbol": "SOL", "invalidation": 95.0, "reason": "آزمون"}]}, ensure_ascii=False),
+        encoding="utf-8")
+    second = line()
+    assert "--gross" in second and "--level" not in second

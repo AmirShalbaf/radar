@@ -52,7 +52,7 @@ def _files():
 
 
 T2 = ["--holdings", "holdings.json", "--optcost", "oc.json", "reenter", "--symbol", "ETH",
-      "--qty", "0.0372", "--price", "2450", "--account", "LBank", "--at", AT]
+      "--qty", "0.0372", "--price", "2450", "--account", "LBank", "--at", AT, "--no-receipt"]
 
 
 def test_real_eth_has_no_level() -> None:
