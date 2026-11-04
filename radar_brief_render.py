@@ -153,10 +153,11 @@ def caption(doc: dict) -> str:
     for w in v.get("windows") or []:
         lines.append(f"⏰ {window_text(w)}")
     lines.append("<i>تصویر ۱ امروز · ۲ سبد و ماشه‌ها · ۳ نمودار و درس</i>")
-    out = "\n".join(lines)
+    # نشانه راست‌به‌چپ سر هر سطر — متن ۳۸؛ طول با نشانه سنجیده می‌شود
+    out = TG.rtl("\n".join(lines))
     while len(out) > TG.CAPTION_MAX and len(lines) > 3:
         lines.pop(-2)
-        out = "\n".join(lines)
+        out = TG.rtl("\n".join(lines))
     return out
 
 
@@ -183,8 +184,13 @@ def _infer_lines(doc: dict) -> list[str]:
             out.append("• <b>اسکنر سطح:</b> هیچ ارزی نزدیک حمایت با نسبت سود به ضرر کافی نیست؛ "
                        "امروز ورود لازم نیست")
         if t.get("pump_cards") is not None:
-            out.append(f"• <b>اسکنر پامپ:</b> کارت آماده {fa(t['pump_cards'])}؛ "
-                       f"نامزد شورت آزمون‌نشده {fa(t['pump_short'])}؛ پس از پامپ {fa(t['pump_after'])}")
+            # کارت آزمون‌نشده با نماد و جهت، نه «آماده» — متن ۳۸
+            cl = t.get("pump_card_list") or []
+            names = "، ".join(f"{E(c['symbol'])} {E(c.get('side_label') or '')}".strip()
+                              for c in cl[:4])
+            out.append(f"• <b>اسکنر پامپ:</b> کارت آزمون‌نشده {fa(t['pump_cards'])}"
+                       + (f" — {names}" if names else "") + " — مجوز ورود نیست، اول تحلیلگر صبح؛ "
+                       f"نامزد شورت {fa(t['pump_short'])}؛ پس از پامپ {fa(t['pump_after'])}")
     c = S(doc, "context")
     if c["ok"]:
         parts = []
@@ -239,9 +245,10 @@ def message(doc: dict, with_head: bool = False) -> str:
                   "<blockquote expandable>" + body + "</blockquote>"]
     parts.append(health_line(doc))
     out = "\n".join(parts)
-    if len(out) > TG.HTML_MAX:                     # بلندترین بخش جمع‌شدنی کوتاه می‌شود
+    if len(TG.rtl(out)) > TG.HTML_MAX:             # بلندترین بخش جمع‌شدنی کوتاه می‌شود
         out = out.replace("<blockquote expandable>" + "\n".join(inf) + "</blockquote>",
                           "<blockquote expandable>" + "\n".join(inf[:2]) + "</blockquote>")
+    out = TG.rtl(out)                              # نشانه راست‌به‌چپ سر هر سطر — متن ۳۸
     return out[:TG.HTML_MAX] if len(out) <= TG.HTML_MAX else _plain_cut(out)
 
 
@@ -385,8 +392,17 @@ def card_today(doc: dict) -> str:
     for t in (v.get("overdue") or [])[:2]:
         items.append(f'<div class="li"><i>🟠</i><span>{E(t)}</span></div>')
     if v.get("setups") is not None:
-        st = "، ".join(E(s) for s in v["setups"]) if v["setups"] else "<b>هیچ</b> <em>— «امروز هیچ» هم تصمیم درست است</em>"
-        items.append(f'<div class="li"><i>{"🎯" if v["setups"] else "🚫"}</i><span>ستاپ واجد شرایط: {st}</span></div>')
+        # نامزد آزمون‌نشده، نه مجوز — متن ۳۸؛ اول تحلیلگر صبح
+        if v["setups"]:
+            cs = v.get("candidates")
+            st = ("، ".join(f'<bdi class="n"><b>{E(c["symbol"])}</b></bdi> {E(c.get("side_label") or "")}'
+                           f' <em>{E(c.get("source_label") or "")}</em>' for c in cs)
+                  if cs else "، ".join(E(s) for s in v["setups"]))
+            items.append(f'<div class="li"><i>🧪</i><span>نامزد آزمون‌نشده: {st} '
+                         f'<em>— مجوز ورود نیست؛ اول تحلیلگر صبح</em></span></div>')
+        else:
+            items.append('<div class="li"><i>🚫</i><span>نامزد تازه: <b>هیچ</b> '
+                         '<em>— «امروز هیچ» هم تصمیم درست است</em></span></div>')
     for w in v.get("windows") or []:
         items.append(f'<div class="li"><i>⏰</i><span>{window_text(w)}</span></div>')
     m, r, w = S(doc, "market"), S(doc, "regime"), S(doc, "winds")
@@ -394,7 +410,9 @@ def card_today(doc: dict) -> str:
         b = m["btc"]
         sub = []
         if _num(b.get("chg24")):
-            sub.append(f'<span class="{"dn" if b["chg24"] < 0 else "up"}">{hnum(b["chg24"], 1, True, True)}</span> در ۲۴ ساعت')
+            # پایه تغییر — متن ۳۸: نبض کهنه یعنی از بسته روزانه ۳:۳۰ تهران، نه ۲۴ ساعت
+            span = "از بسته روزانه ۳:۳۰" if b.get("chg24_basis") == "daily_close" else "در ۲۴ ساعت"
+            sub.append(f'<span class="{"dn" if b["chg24"] < 0 else "up"}">{hnum(b["chg24"], 1, True, True)}</span> {span}')
         if _num(b.get("rsi")):
             sub.append(f"قدرت نسبی RSI {hnum(b['rsi'])}")
         line2 = ""
@@ -552,7 +570,7 @@ def card_book(doc: dict) -> str:
         tradetile = (f'<div class="tile"><div class="k">💵 دفتر معامله امروز</div>'
                      f'<div class="v" style="font-size:36px">مصرف {hnum(used)} از {hnum(t.get("risk_cap_usd"))}$</div>'
                      f'<div class="s">اندازه {hnum(t.get("mult"), 2)} برابر · حداکثر {hnum(t.get("maxpos"))} معامله هم‌جهت<br>'
-                     f'ستاپ آماده: {hnum(t.get("setups_ready"))}</div></div>')
+                     f'نامزد آزمون‌نشده: {hnum(t.get("setups_ready"))} — اول تحلیلگر</div></div>')
     else:
         tradetile = f'<div class="tile"><div class="k">💵 دفتر معامله</div>{_na(t)}</div>'
     if sc["ok"]:

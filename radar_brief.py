@@ -292,9 +292,10 @@ def sec_market(src: Sources) -> dict:
     snap = src.get("snapshot", required=False) or {}
     sgen = _ts(snap.get("generated_utc"))
     srow = (snap.get("symbols") or {}).get("BTC") or {}
-    chg24 = None
+    chg24, basis = None, None
     if sgen and (src.now - sgen).total_seconds() / 3600 <= MAX_SIDECAR_AGE_H:
         chg24 = srow.get("chg24_pct") if _num(srow.get("chg24_pct")) else None
+        basis = "pulse_24h" if chg24 is not None else None
     sma = ((src.get("regime", required=False) or {}).get("btc_sma50w") or {}).get("value")
     fg, fg_age = mval("fear_greed")
     dom, _ = mval("btc_dominance")
@@ -306,7 +307,7 @@ def sec_market(src: Sources) -> dict:
             crowd.append({"symbol": row["symbol"], "crowd": c, "whale": w, "ratio": c / w})
     crowd.sort(key=lambda x: -x["ratio"])
     fund = [row.get("funding_8h") for row in scan.get("rows") or [] if _num(row.get("funding_8h"))]
-    return {"btc": {"price": px if _num(px) else None, "chg24": chg24,
+    return {"btc": {"price": px if _num(px) else None, "chg24": chg24, "chg24_basis": basis,
                     "rsi": btc.get("rsi") if _num(btc.get("rsi")) else None,
                     "sma50w": sma if _num(sma) else None,
                     "above_sma_pct": move_pct(sma, px) if _num(px) and _num(sma) and sma else None},
@@ -428,11 +429,19 @@ def sec_trade(src: Sources) -> dict:
     pump = src.get("pump", required=False) or {}
     secs = pump.get("sections") or {}
     cands = [c.get("symbol") for c in (lv or {}).get("candidates") or []]
+    # کارت اسکنر با نماد و جهت — متن ۳۸: «N کارت اسکنر» تنها مثل مجوز خوانده می‌شد. همان
+    # شمارش cards_n اسکنر: کارت سالم در بخش لانگ و شورت
+    cards = [{"symbol": e.get("symbol"), "side": e.get("side"),
+              "side_label": SIDE_FA.get(e.get("side"), ""),
+              "grade": (e.get("card") or {}).get("grade"),
+              "setup": (e.get("setup") or {}).get("name")}
+             for e in (secs.get("long") or []) + (secs.get("short") or [])
+             if (e.get("card") or {}).get("ok")]
     return {"risk_cap_usd": t.get("risk_cap"), "risk_used_usd": t.get("risk_used"),
             "risk_left_usd": t.get("risk_left"), "mult": reg.get("mult"),
             "maxpos": reg.get("maxpos"), "band": reg.get("trade_band"),
             "levels_known": lv is not None, "levels_candidates": cands,
-            "pump_cards": pump.get("cards_n"),
+            "pump_cards": pump.get("cards_n"), "pump_card_list": cards,
             "pump_long": len(secs.get("long") or []), "pump_short": len(secs.get("short") or []),
             "pump_after": len(secs.get("afterpump") or []),
             "setups_ready": len(cands) + int(pump.get("cards_n") or 0)}
@@ -594,6 +603,45 @@ def sec_chart(data: dict, fetch) -> dict:
     return {"series": series, "days": CHART_DAYS}
 
 
+def prev_daily_close(points: list, at: datetime) -> float | None:
+    """بسته روزانه دیروز وقت جهانی نسبت به at: کندلی که ۰۰:۰۰ روز پیش از at باز شد."""
+    day0 = at.astimezone(UTC).replace(hour=0, minute=0, second=0, microsecond=0)
+    want = day0 - timedelta(days=1)
+    for t, v in points or []:
+        ts = _ts(t)
+        if ts is not None and ts == want and _num(v) and v > 0:
+            return float(v)
+    return None
+
+
+def btc_daily_fallback(data: dict, fetch) -> None:
+    """
+    تغییر بیت‌کوین وقتی نبض کهنه است — متن ۳۸، یافته نخستین پیام صبح: chg24 تهی می‌ماند.
+    از بسته روزانه دیروز تا قیمت اسکن — «از بسته روزانه»، نه ۲۴ ساعت؛ برچسبش جداست.
+    نمودار همین اجرا اگر هست، وگرنه یک واکشی. شکست فقط دلیل می‌گذارد، بخش نمی‌افتد.
+    """
+    m = data.get("market") or {}
+    btc = m.get("btc") or {}
+    if not m.get("ok") or btc.get("chg24") is not None or not _num(btc.get("price")):
+        return
+    at = _ts(m.get("prices_at"))
+    try:
+        if at is None:
+            raise Missing("زمان قیمت اسکن نیست")
+        ch = data.get("chart") or {}
+        pts = next((s["points"] for s in ch.get("series") or [] if s.get("symbol") == "BTC"),
+                   None) if ch.get("ok") else None
+        prev = prev_daily_close(pts, at) if pts else None
+        if prev is None:
+            prev = prev_daily_close(fetch("BTC"), at)
+        if prev is None:
+            raise Missing("بسته روزانه دیروز در کندل‌ها نیست")
+        btc["chg24"], btc["chg24_basis"] = move_pct(prev, btc["price"]), "daily_close"
+        btc["prev_daily_close"] = prev
+    except Exception as exc:                     # بلند در سند، نه بلعیده
+        btc["chg24_why"] = f"{type(exc).__name__}: {str(exc)[:120]}"
+
+
 # ═══════════════════════ حکم و سرهم‌کردن ═══════════════════════
 
 SECTIONS = (
@@ -623,10 +671,17 @@ def verdict(data: dict, now: datetime) -> dict:
     must = [i["text"] for i in todo.get("items") or [] if i["level"] == "red"]
     overdue = [i["text"] for i in todo.get("items") or [] if i["level"] == "amber"]
     tr = data.get("trade") or {}
-    setups = None
+    setups = cands = None
     if tr.get("ok"):
-        setups = (tr.get("levels_candidates") or []) + (
-            [f"{fa(tr['pump_cards'])} کارت اسکنر"] if tr.get("pump_cards") else [])
+        # نامزد آزمون‌نشده، نه مجوز — متن ۳۸: اول تحلیلگر صبح، با نماد و جهت
+        cands = ([{"symbol": s, "side": "long", "source": "levels", "grade": None}
+                  for s in tr.get("levels_candidates") or []]
+                 + [{"symbol": c["symbol"], "side": c.get("side"), "source": "pump",
+                     "grade": c.get("grade")} for c in tr.get("pump_card_list") or []])
+        for c in cands:
+            c["side_label"] = SIDE_FA.get(c["side"], "")
+            c["source_label"] = SOURCE_FA[c["source"]]
+        setups = [candidate_text(c) for c in cands]
     windows = []
     cal = data.get("calendar") or {}
     for e in cal.get("items") or []:
@@ -642,7 +697,17 @@ def verdict(data: dict, now: datetime) -> dict:
     else:
         head, level = "✅ امروز اقدام اجباری نداری", "green"
     return {"level": level, "headline": head, "must": must, "overdue": overdue,
-            "setups": setups, "windows": windows[:2]}
+            "setups": setups, "candidates": cands, "windows": windows[:2]}
+
+
+SIDE_FA = {"long": "لانگ", "short": "شورت"}
+SOURCE_FA = {"levels": "اسکنر سطح", "pump": "کارت اسکنر پامپ"}
+
+
+def candidate_text(c: dict) -> str:
+    """«NIGHT لانگ — کارت اسکنر پامپ» — متن ساده هر نامزد در verdict.setups."""
+    side = f" {c['side_label']}" if c.get("side_label") else ""
+    return f"{c['symbol']}{side} — {c['source_label']}"
 
 
 def collect(src: Sources, fetch=None, lessons: bool = True) -> dict:
@@ -669,6 +734,7 @@ def collect(src: Sources, fetch=None, lessons: bool = True) -> dict:
         history.append({"at": now.isoformat(timespec="seconds"), "id": lesson.get("id")})
     if fetch is not None:
         data["chart"] = _safe(sec_chart, data, fetch)
+        btc_daily_fallback(data, fetch)
     else:
         data["chart"] = {"ok": False, "why": "نمودار خاموش — بی شبکه"}
     failed = [n for n, s in data.items() if not s.get("ok") and n != "chart"]

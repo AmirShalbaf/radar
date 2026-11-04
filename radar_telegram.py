@@ -97,6 +97,27 @@ def html_escape(s) -> str:
     return (str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
 
 
+# نشانه راست‌به‌چپ سر هر سطر — متن ۳۸، یافته نخستین پیام صبح: تلگرام جهت هر سطر را از
+# نخستین نویسه جهت‌دار می‌گیرد؛ سطری که با نماد لاتین آغاز شود، مثل «⛔ SOL ابطال»، چپ‌به‌راست
+# چیده می‌شد و سطرهای ماشه به هم می‌ریخت. RLM پیش از سطر، و پس از تگ گشایش نقل‌قول — نشانه
+# پیش از نقل‌قول سطر تهی می‌سازد. سطری که از پیش نشانه دارد دوباره نمی‌گیرد.
+RLM = "\u200f"
+_QUOTE_OPEN = "<blockquote"
+
+
+def rtl(text: str) -> str:
+    out = []
+    for line in str(text).split("\n"):
+        lead = ""
+        if line.startswith(_QUOTE_OPEN) and ">" in line:
+            cut = line.index(">") + 1
+            lead, line = line[:cut], line[cut:]
+        if not line.startswith(RLM):
+            line = RLM + line
+        out.append(lead + line)
+    return "\n".join(out)
+
+
 def _call(method: str, data: dict, files: dict | None = None,
           timeout: int = TIMEOUT) -> Sent:
     """یک فراخوان API با رسید — موفق فقط کد 200 و ok درست؛ توکن هرگز در متن خطا نیست."""
