@@ -619,6 +619,28 @@ def build_scan_report(rows: list[dict], macro: dict, fred: dict,
     return "\n".join(L)
 
 
+SCAN_JSON_VERSION = 1
+
+
+def scan_doc(rows: list[dict], macro: dict, fred: dict, order: list[str],
+             now: datetime | None = None) -> dict:
+    """
+    سند ماشین‌خوان اسکن برای لایه پیام — متن ۳۷، قرارداد references/brief-contract.md.
+    ردیف همان دیکشنری score_symbol با کلیدهای ساده است؛ کلید تازه خودبه‌خود می‌آید.
+    """
+    import radar_sidecar as SC
+    mac = {}
+    for k in ("btc_dominance", "btc_dom_ex_stable", "fear_greed", "stable_change_30d"):
+        f = macro.get(k)
+        mac[k] = {"value": SC.plain(getattr(f, "value", None)),
+                  "ts": SC.plain(getattr(f, "ts", None)),
+                  "source": str(getattr(f, "source", "") or "")}
+    fr = {k: {"label": d.get("label"), "value": SC.plain(d.get("value")), "read": d.get("read")}
+          for k, d in (fred.get("derived") or {}).items() if isinstance(d, dict)}
+    return {"version": SCAN_JSON_VERSION, "generated": SC.stamp(now), "venues": list(order),
+            "macro": mac, "fred": fr, "rows": [SC.plain_dict(r) for r in rows]}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="اسکنر چندکوینی رادار ۵.۳")
     g = ap.add_mutually_exclusive_group(required=True)
@@ -628,6 +650,7 @@ def main() -> int:
     ap.add_argument("--top", type=int, default=3, help="چند نامزد برتر معرفی شود")
     ap.add_argument("--out", default="out")
     ap.add_argument("--stdout", action="store_true")
+    ap.add_argument("--json", default=None, help="سند ماشین‌خوان برای لایه پیام — متن ۳۷")
     a = ap.parse_args()
 
     syms = ([s.strip().upper() for s in a.watchlist.split(",") if s.strip()]
@@ -676,6 +699,13 @@ def main() -> int:
         time.sleep(0.4)   # احترام به سقف نرخ صرافی‌ها
 
     rep = build_scan_report(rows, macro, fred, order, a.top, dead_note)
+    if a.json:
+        # سند کناری هرگز گزارش را نمی‌اندازد؛ نبودنش در پیام صبح «داده ندارم» است
+        try:
+            import radar_sidecar as SC
+            SC.write_json(a.json, scan_doc(rows, macro, fred, order))
+        except Exception as exc:
+            print(f"⚠️ سند کناری اسکن نوشته نشد — {type(exc).__name__}: {exc}", file=sys.stderr)
 
     if a.stdout:
         print(rep)

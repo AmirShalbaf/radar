@@ -452,11 +452,11 @@ def keeper_simulate(cal: dict, start: datetime, landing: timedelta = timedelta(m
 
 # ═══════════════════════ خط سلامت گزارش روزانه ═══════════════════════
 
-def health_line(log: dict, now: datetime) -> str:
+def health_stats(log: dict, now: datetime) -> dict:
     """
-    شمار نبض‌های با کار در ۲۴ ساعت گذشته و بیشترین فاصله میان دو نبض پیاپی. فاصله
-    نبض پیش از پنجره تا نخستین نبض پنجره هم شمرده می‌شود. بالای سقف عمر نبض —
-    STALE_HOURS در radar_snapshot — هشدار می‌گیرد.
+    عددهای سلامت نبض — یک منبع برای خط سلامت گزارش روزانه و پیام صبح، متن ۳۷.
+    count نبض‌های ۲۴ ساعت گذشته؛ max_gap_h بیشترین فاصله دو نبض پیاپی، با فاصله نبض
+    پیش از پنجره تا نخستین نبض پنجره؛ last_age_h عمر آخرین نبض؛ bad نبض با خطا.
     """
     try:
         from radar_snapshot import STALE_HOURS      # تنها منبع سقف عمر نبض
@@ -465,24 +465,40 @@ def health_line(log: dict, now: datetime) -> str:
     runs = sorted(_at(r["at"]) for r in log["runs"] if isinstance(r, dict) and r.get("at"))
     since = now - timedelta(hours=24)
     win = [t for t in runs if since <= t <= now]
-    head = f"🫀 سلامت نبض — ۲۴ ساعت گذشته: {fa(len(win))} نبض"
-    if not runs:
-        return head + "؛ دفتر نبض هنوز ردیفی ندارد"
-    if runs[0] > since:
-        head += f"؛ دفتر از {runs[0]:%Y-%m-%d %H:%M} UTC"
     before = [t for t in runs if t < since]
     seq = ([before[-1]] if before else []) + win
     gaps = [(b - a).total_seconds() / 3600 for a, b in zip(seq, seq[1:])]
-    if not gaps:
-        return head + "؛ فاصله‌ای برای سنجش نیست"
-    worst = max(gaps)
-    line = f"{head}؛ بیشترین فاصله میان دو نبض {worst:.1f} ساعت"
-    if STALE_HOURS is not None and worst > STALE_HOURS:
-        line += f" — ⚠️ بیش از سقف عمر نبض، {fa(f'{STALE_HOURS:.0f}')} ساعت"
+    past = [t for t in runs if t <= now]
     bad = sum(1 for r in log["runs"] if isinstance(r, dict) and r.get("at")
               and since <= _at(r["at"]) <= now and not _ok(r))
-    if bad:
-        line += f"؛ {fa(bad)} نبض با خطا"
+    return {"count": len(win), "max_gap_h": max(gaps) if gaps else None,
+            "stale_hours": STALE_HOURS, "bad": bad,
+            "first": runs[0].isoformat() if runs else None,
+            "first_in_window": bool(runs) and runs[0] > since,
+            "last": past[-1].isoformat() if past else None,
+            "last_age_h": (now - past[-1]).total_seconds() / 3600 if past else None}
+
+
+def health_line(log: dict, now: datetime) -> str:
+    """
+    شمار نبض‌های با کار در ۲۴ ساعت گذشته و بیشترین فاصله میان دو نبض پیاپی. فاصله
+    نبض پیش از پنجره تا نخستین نبض پنجره هم شمرده می‌شود. بالای سقف عمر نبض —
+    STALE_HOURS در radar_snapshot — هشدار می‌گیرد. عددها از health_stats.
+    """
+    st = health_stats(log, now)
+    head = f"🫀 سلامت نبض — ۲۴ ساعت گذشته: {fa(st['count'])} نبض"
+    if st["first"] is None:
+        return head + "؛ دفتر نبض هنوز ردیفی ندارد"
+    if st["first_in_window"]:
+        head += f"؛ دفتر از {_at(st['first']):%Y-%m-%d %H:%M} UTC"
+    if st["max_gap_h"] is None:
+        return head + "؛ فاصله‌ای برای سنجش نیست"
+    worst, cap = st["max_gap_h"], st["stale_hours"]
+    line = f"{head}؛ بیشترین فاصله میان دو نبض {worst:.1f} ساعت"
+    if cap is not None and worst > cap:
+        line += f" — ⚠️ بیش از سقف عمر نبض، {fa(f'{cap:.0f}')} ساعت"
+    if st["bad"]:
+        line += f"؛ {fa(st['bad'])} نبض با خطا"
     return line
 
 

@@ -105,6 +105,7 @@ jobs:
                --preset "$PRESET" \
                --venues okx,gate \
                --top 5 \
+               --json reports/scan.json \
                --stdout > /tmp/scan.md 2> /tmp/scan.log; then
             mv /tmp/scan.md "reports/scan-$D.md"
             echo "اسکن موفق: reports/scan-$D.md"
@@ -164,6 +165,7 @@ jobs:
             if ! python radar_book.py \
                    --holdings holdings.json \
                    --line /tmp/book_line.txt \
+                   --json reports/book.json \
                    --out "reports/book-$D.md" > /tmp/book.log 2>&1; then
               echo "::error::بازبینی سبد خطا داد — reports/book-error-$D.md"
               echo "⚠️ سبد: بازبینی خطا داد — reports/book-error-$D.md" >> /tmp/book_line.txt
@@ -195,7 +197,7 @@ jobs:
               echo "::error::فهرست نمادهای سبد خطا داد — reports/levels-error-$D.md"
               { echo "# خطای سطوح ساختاری — $D"; echo; echo '```'
                 tail -c 4000 /tmp/levels.log; echo '```'; } > "reports/levels-error-$D.md"
-            elif ! python radar_levels.py --watchlist "$SYMS" \
+            elif ! python radar_levels.py --watchlist "$SYMS" --json reports/levels.json \
                    --out "reports/levels-$D.md" > /tmp/levels.log 2>&1; then
               echo "::error::سطوح ساختاری خطا داد — reports/levels-error-$D.md"
               { echo "# خطای سطوح ساختاری — $D"; echo; echo '```'
@@ -249,7 +251,7 @@ jobs:
           PYTHONUTF8: "1"
         run: |
           rc=0
-          python radar_context.py --section /tmp/context_section.md \
+          python radar_context.py --section /tmp/context_section.md --json reports/context.json \
             --line /tmp/context_line.txt > /tmp/context.log 2>&1 || rc=$?
           if [ "$rc" -eq 2 ]; then
             echo "::warning::لایه زمینه: سری‌ای از FRED نیامد — بخش «داده ندارم» دارد"
@@ -369,6 +371,20 @@ jobs:
             python radar_state.py --opening
           } > reports/LATEST.md
 
+      # پیام صبح — متن ۳۷. گردآوری پیش از کامیت تا reports/brief.json هم کامیت شود.
+      # شکست نرم: سند امروز نیامد یعنی گام نمایش سند کهنه را رد می‌کند و گام پشتیبان
+      # خلاصه قدیمی را می‌فرستد — هیچ روزی بی پیام نیست.
+      - name: گردآوری پیام صبح
+        continue-on-error: true
+        timeout-minutes: 5
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          if ! python radar_brief.py collect --out reports/brief.json; then
+            echo "::error::گردآوری پیام صبح خطا داد — پیام پشتیبان می‌رود"
+            exit 1
+          fi
+
       - name: کامیت گزارش‌ها
         run: |
           git config user.name  "radar-bot"
@@ -393,11 +409,29 @@ jobs:
             python radar_schedule.py push
           fi
 
-      # ارسال فقط از radar_telegram.py، با رسید — بازبینی ۲۳ اکتبر، یافته م۴. پیش از این
-      # curl بی‌رسید با Markdown می‌فرستاد و «ارسال شد» را بی‌شرط چاپ می‌کرد. متن ساده؛
-      # بریدن به نویسه در خود radar_telegram.py. کلید غایب ارسال ناموفق نیست.
-      - name: اعلان تلگرام
+      # پیام صبح — متن ۳۷: آلبوم سه تصویر و یک پیام HTML بی‌صدا با دکمه پیوندی. فقط
+      # reports/brief.json خوانده می‌شود. بی تصویر هم پیام می‌رود؛ هیچ‌چیز نرسید یعنی کد ۴
+      # و گام پشتیبان. کروم نصب‌شده رانر اول، سپس کرومیوم خود playwright.
+      - name: پیام صبح رادار
+        id: brief
         if: success()
+        continue-on-error: true
+        timeout-minutes: 8
+        env:
+          PYTHONUTF8: "1"
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RADAR_DESK_URL: ${{ secrets.RADAR_DESK_URL }}
+        run: |
+          pip install --quiet "playwright==1.63.0" || echo "::warning::playwright نصب نشد — پیام بی تصویر می‌رود"
+          python radar_brief_render.py render --brief reports/brief.json --out /tmp/brief --png
+          python radar_brief_render.py send --dir /tmp/brief
+
+      # پشتیبان پیام صبح — فقط اگر پیام صبح نرسید. ارسال فقط از radar_telegram.py، با رسید —
+      # بازبینی ۲۳ اکتبر، یافته م۴. متن ساده؛ بریدن به نویسه در خود radar_telegram.py.
+      # کلید غایب ارسال ناموفق نیست.
+      - name: اعلان تلگرام
+        if: success() && steps.brief.outcome != 'success'
         env:
           PYTHONUTF8: "1"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}

@@ -28,6 +28,7 @@ radar_telegram.py — تنها تابع ارسال تلگرام رادار، ن�
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 from typing import NamedTuple
@@ -80,6 +81,99 @@ def send(text: str) -> Sent:
         return Sent(True, "کد 200")
     desc = str(js.get("description") or "بی‌توضیح").replace(tok, "***")[:DESC_MAX]
     return Sent(False, f"کد {r.status_code}: {desc}")
+
+
+# ═══════════════ پیام قالب‌دار و تصویر — متن ۳۷ ═══════════════
+# همان قرارداد رسید و پنهان‌ماندن توکن. فقط تگ‌های HTML مجاز تلگرام؛ متن پویا پیش از
+# قالب با html_escape. دکمه فقط پیوندی است — دکمه پاسخ‌دار شنونده همیشه‌روشن می‌خواهد.
+METHOD_API = "https://api.telegram.org/bot{tok}/{method}"
+HTML_MAX = 4096
+CAPTION_MAX = 1024
+ALBUM_MAX = 10
+PHOTO_TIMEOUT = 60
+
+
+def html_escape(s) -> str:
+    return (str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
+
+
+def _call(method: str, data: dict, files: dict | None = None,
+          timeout: int = TIMEOUT) -> Sent:
+    """یک فراخوان API با رسید — موفق فقط کد 200 و ok درست؛ توکن هرگز در متن خطا نیست."""
+    tok, chat = os.getenv(TOKEN_ENV), os.getenv(CHAT_ENV)
+    if not (tok and chat):
+        return Sent(None, f"کلید تلگرام تنظیم نشده: {', '.join(missing())}")
+    if requests is None:
+        return Sent(False, "requests نصب نیست")
+    body = dict(data, chat_id=chat)
+    try:
+        if files:
+            r = requests.post(METHOD_API.format(tok=tok, method=method), data=body,
+                              files=files, timeout=timeout)
+        else:
+            r = requests.post(METHOD_API.format(tok=tok, method=method), data=body,
+                              timeout=timeout)
+    except Exception as exc:          # فقط نوع — متن استثنا ممکن است نشانی با توکن باشد
+        return Sent(False, f"خطای شبکه: {type(exc).__name__}")
+    try:
+        js = r.json()
+    except ValueError:
+        js = {}
+    if not isinstance(js, dict):
+        js = {}
+    if r.status_code == 200 and js.get("ok") is True:
+        return Sent(True, "کد 200")
+    desc = str(js.get("description") or "بی‌توضیح").replace(tok, "***")[:DESC_MAX]
+    return Sent(False, f"کد {r.status_code}: {desc}")
+
+
+def keyboard(rows: list[list[tuple[str, str]]]) -> str:
+    """صفحه‌کلید پیوندی — [[(برچسب، نشانی)]]؛ فقط نشانی https."""
+    kb = [[{"text": t, "url": u} for t, u in row if str(u).startswith("https://")]
+          for row in rows]
+    return json.dumps({"inline_keyboard": [r for r in kb if r]}, ensure_ascii=False)
+
+
+def send_html(text: str, buttons: list | None = None, silent: bool = False) -> Sent:
+    """پیام HTML. بلندتر از سقف تلگرام ناموفق است، نه بریده — بریدن تگ را می‌شکند."""
+    if len(text) > HTML_MAX:
+        return Sent(False, f"متن {len(text)} نویسه، بیش از سقف {HTML_MAX}")
+    data = {"text": text, "parse_mode": "HTML", "disable_web_page_preview": "true",
+            "disable_notification": "true" if silent else "false"}
+    if buttons:
+        data["reply_markup"] = keyboard(buttons)
+    return _call("sendMessage", data)
+
+
+def send_photos(paths: list[str], caption: str, silent: bool = False) -> Sent:
+    """یک تصویر با sendPhoto، دو تا ده تصویر با sendMediaGroup؛ زیرنویس HTML روی نخستین."""
+    if not paths:
+        return Sent(False, "تصویری نیست")
+    if len(caption) > CAPTION_MAX:
+        return Sent(False, f"زیرنویس {len(caption)} نویسه، بیش از سقف {CAPTION_MAX}")
+    paths = paths[:ALBUM_MAX]
+    handles = []
+    try:
+        for p in paths:
+            handles.append(open(p, "rb"))
+        flag = "true" if silent else "false"
+        if len(paths) == 1:
+            return _call("sendPhoto", {"caption": caption, "parse_mode": "HTML",
+                                       "disable_notification": flag},
+                         files={"photo": (os.path.basename(paths[0]), handles[0], "image/png")},
+                         timeout=PHOTO_TIMEOUT)
+        media = [{"type": "photo", "media": f"attach://p{i}"} for i in range(len(paths))]
+        media[0].update(caption=caption, parse_mode="HTML")
+        files = {f"p{i}": (os.path.basename(p), h, "image/png")
+                 for i, (p, h) in enumerate(zip(paths, handles))}
+        return _call("sendMediaGroup", {"media": json.dumps(media, ensure_ascii=False),
+                                        "disable_notification": flag},
+                     files=files, timeout=PHOTO_TIMEOUT)
+    except OSError as exc:
+        return Sent(False, f"تصویر خوانا نیست: {type(exc).__name__}")
+    finally:
+        for h in handles:
+            h.close()
 
 
 def clip(text: str, limit: int = MAX_CHARS) -> str:

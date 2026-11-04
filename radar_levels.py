@@ -473,6 +473,41 @@ def fmt(x, d=4):
     return f"{x:,.{d}f}".rstrip("0").rstrip(".") if d else f"{x:,.0f}"
 
 
+def _best_rr(a: Assessment) -> float:
+    return max([x for x in (a.rr, a.rr_tactical) if math.isfinite(x)], default=0.0)
+
+
+def candidates(rows: list[Assessment], min_rr: float) -> list[Assessment]:
+    """
+    نامزد سطح: بهترین نسبت دو استاپ دست‌کم min_rr، روی یا نزدیک سطح، روند صعودی
+    خالص — «بی‌ساختار» و «صعودی*» با ستاره رد می‌شوند. یک تعریف برای گزارش و سند
+    کناری پیام صبح، متن ۳۷.
+    """
+    ok = sorted((a for a in rows if math.isfinite(a.rr)), key=lambda a: -a.rr)
+    return [a for a in ok if _best_rr(a) >= min_rr
+            and a.verdict in ("روی سطح", "نزدیک سطح") and a.trend == "صعودی"]
+
+
+LEVELS_JSON_VERSION = 1
+
+
+def levels_doc(rows: list[Assessment], min_rr: float, now: datetime | None = None) -> dict:
+    """سند ماشین‌خوان سطوح برای لایه پیام — متن ۳۷، references/brief-contract.md."""
+    import radar_sidecar as SC
+
+    def lv(x):
+        return SC.plain(x.price) if x is not None else None
+
+    def row(a):
+        return {"symbol": a.symbol, "price": SC.plain(a.price), "trend": a.trend,
+                "verdict": a.verdict, "rr": SC.plain(a.rr), "rr_tactical": SC.plain(a.rr_tactical),
+                "support": lv(a.support), "resistance": lv(a.resistance),
+                "dist_sup_atr": SC.plain(a.dist_sup_atr)}
+    return {"version": LEVELS_JSON_VERSION, "generated": SC.stamp(now), "min_rr": min_rr,
+            "candidates": [row(a) for a in candidates(rows, min_rr)],
+            "rows": [row(a) for a in rows]}
+
+
 def report(rows: list[Assessment], min_rr: float,
            now: datetime | None = None, notes: list[str] | None = None) -> str:
     """
@@ -536,13 +571,8 @@ def report(rows: list[Assessment], min_rr: float,
             L.append(f"| {a.symbol} | {fmt(a.price)} | {a.trend} | "
                      f"{a.verdict} | {a.n_bars} | {note} |")
 
-    # فقط «صعودی» خالص — «بی‌ساختار» و «صعودی*» با ستاره هم رد می‌شوند
-    def _best(a):
-        return max([x for x in (a.rr, a.rr_tactical) if math.isfinite(x)], default=0.0)
-    cand = [a for a in ok
-            if _best(a) >= min_rr
-            and a.verdict in ("روی سطح", "نزدیک سطح")
-            and a.trend == "صعودی"]
+    # فقط «صعودی» خالص — یک تعریف با سند کناری، متن ۳۷
+    cand = candidates(rows, min_rr)
     L += ["", "---", "", f"## نامزدها — نسبت ≥ {min_rr}، نزدیک سطح، روند صعودی", ""]
     if cand:
         for a in cand:
@@ -602,6 +632,7 @@ def main() -> int:
     ap.add_argument("--tol", type=float, default=1.0, dest="tol_atr",
                     help="رواداری خوشه‌بندی سطح، بر حسب دامنه روزانه")
     ap.add_argument("--out")
+    ap.add_argument("--json", default=None, help="سند ماشین‌خوان برای لایه پیام — متن ۳۷")
     args = ap.parse_args()
 
     syms = ([s.strip().upper() for s in args.watchlist.split(",")]
@@ -630,6 +661,13 @@ def main() -> int:
         print(f" {a.verdict}  نسبت={fmt(a.rr,2)}", file=sys.stderr)
 
     txt = report(rows, args.min_rr, notes=notes)
+    if args.json:
+        try:
+            import radar_sidecar as SC
+            SC.write_json(args.json, levels_doc(rows, args.min_rr))
+        except Exception as exc:
+            print(f"⚠️ سند کناری سطوح نوشته نشد — {type(exc).__name__}: {exc}", file=sys.stderr)
+
     if args.out:
         with open(args.out, "w", encoding="utf-8") as f:
             f.write(txt)

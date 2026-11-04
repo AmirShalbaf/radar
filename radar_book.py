@@ -1468,7 +1468,59 @@ def build_report(h: dict, rows: list[dict], reg: dict | None,
 
     if summary is not None:
         summary["line"] = daily_line(reg, tband, regime_score, val, actions)
+        # سند کناری پیام صبح — متن ۳۷: همان ردیف‌های اقدام و همان ریسک گزارش
+        summary["actions"] = [_plain_action(a) for a in actions]
+        summary["pos_risk"] = pos_risk
     return "\n".join(o)
+
+
+BOOK_JSON_VERSION = 1
+
+
+def book_doc(rows: list[dict], reentry: list[dict], val: dict, reg: dict | None,
+             tband: dict | None, info: RegimeInfo, heat: dict | None, summary: dict,
+             orders: list | None, now: datetime | None = None) -> dict:
+    """
+    سند ماشین‌خوان سبد برای لایه پیام — متن ۳۷، references/brief-contract.md.
+    همان عددهای گزارش، از همان تابع‌ها؛ هیچ حسابی اینجا دوباره ساخته نمی‌شود.
+    """
+    import radar_sidecar as SC
+    cap = trade_capacity(val, reg, tband, heat, orders)
+    total = val["total"]
+    pos = []
+    for r in rows:
+        p, wk = r["pos"], r.get("weekly") or {}
+        pos.append({"symbol": p["symbol"], "qty": SC.plain(r.get("qty")),
+                    "price": SC.plain(r.get("price")), "value": SC.plain(r.get("value")),
+                    "dust": bool(r.get("dust")), "invalidation": SC.plain(p.get("invalidation")),
+                    "weekly_close": SC.plain(wk.get("close")),
+                    "weekly_closed_at": wk.get("closed_at"),
+                    "rsi": SC.plain(r.get("rsi")), "rs30": SC.plain(r.get("rs30"))})
+    back = []
+    for e in reentry or []:
+        st, wk = e["state"], e.get("weekly") or {}
+        back.append({"symbol": e["symbol"], "level": SC.plain(st.get("level")),
+                     "max_qty": SC.plain(st.get("max_qty")), "used": SC.plain(st.get("used")),
+                     "exit_at": st.get("exit_at"), "weekly_close": SC.plain(wk.get("close")),
+                     "weekly_closed_at": wk.get("closed_at")})
+    return {
+        "version": BOOK_JSON_VERSION, "generated": SC.stamp(now),
+        "capital": {"total": SC.plain(total), "stable_usd": SC.plain(val["stable_usd"]),
+                    "incomplete": bool(val.get("incomplete")),
+                    "missing": list(val.get("missing") or [])},
+        "regime": {"score": SC.plain(info.score), "source": info.source,
+                   "band": reg["name"] if reg else None,
+                   "stable_target": reg["stable"] if reg else None,
+                   "trade_band": tband["name"] if tband else None,
+                   "cap_pct": tband["cap"] if tband else None,
+                   "mult": tband["mult"] if tband else None,
+                   "maxpos": tband["maxpos"] if tband else None},
+        "trade": {k: SC.plain(v) for k, v in cap.items()},
+        "pos_risk_usd": SC.plain(summary.get("pos_risk")),
+        "positions": pos, "reentry": back,
+        "actions": list(summary.get("actions") or []),
+        "orders": [SC.plain_dict(o) for o in orders or []],
+    }
 
 
 # ─────────────────────── اجرا ───────────────────────
@@ -1613,6 +1665,7 @@ def main() -> int:
     ap.add_argument("--candidates", default="", help="نمادهای نامزد جانشینی، جدا با کاما")
     ap.add_argument("--init", action="store_true", help="ساخت فایل نمونه holdings.json")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--json", default=None, help="سند ماشین‌خوان برای لایه پیام — متن ۳۷")
     ap.add_argument("--line", default=None,
                     help="یک خط بالای پیام روزانه — رژیم، هدف، ذخیره، کسری، اقدام سبد")
     ap.add_argument("--regime-history", dest="regime_history", default="regime_history.json",
@@ -1759,6 +1812,14 @@ def main() -> int:
     if a.line:
         with open(a.line, "w", encoding="utf-8") as f:
             f.write(summary["line"] + "\n")
+    if a.json:
+        # سند کناری هرگز گزارش را نمی‌اندازد؛ نبودنش در پیام صبح «داده ندارم» است
+        try:
+            import radar_sidecar as SC
+            SC.write_json(a.json, book_doc(rows, reentry, val, reg, tband, info, heat,
+                                           summary, (wdoc or {}).get("orders")))
+        except Exception as exc:
+            print(f"⚠️ سند کناری سبد نوشته نشد — {type(exc).__name__}: {exc}", file=sys.stderr)
     if a.out:
         with open(a.out, "w", encoding="utf-8") as f:
             f.write(txt)

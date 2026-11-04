@@ -129,9 +129,14 @@ def main(argv: list[str] | None = None, now: datetime | None = None) -> int:
     ap = argparse.ArgumentParser(description="لایه زمینه — فقط نمایش، بند ۲ متن ۲۰")
     ap.add_argument("--section", default=None, help="بخش گزارش روزانه")
     ap.add_argument("--line", default=None, help="یک خط ساده")
+    ap.add_argument("--json", default=None, help="سند ماشین‌خوان برای لایه پیام — متن ۳۷")
     a = ap.parse_args(argv)
     now = now or datetime.now(UTC)
     rows = gather(now, _http())
+    if a.json:
+        import radar_sidecar as SC
+        SC.write_json(a.json, {"version": 1, "generated": SC.stamp(now),
+                               "rows": [SC.plain_dict(r) for r in rows]})
     sec, line = render_section(rows, now), render_line(rows)
     for path, text in ((a.section, sec), (a.line, line)):
         if path:
