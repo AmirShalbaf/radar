@@ -60,15 +60,34 @@ def missing() -> list[str]:
 
 
 def send(text: str) -> Sent:
-    """یک پیام متن ساده. رسید: موفق، ناموفق با کد، یا بی‌کلید."""
+    """
+    یک پیام. رسید: موفق، ناموفق با کد، یا بی‌کلید. هشدار رادار — radar_alert.Alert، متن ۳۸ —
+    میدان html دارد: با parse_mode HTML، صدا و دکمه خودش می‌رود؛ اگر تلگرام HTML را رد کرد،
+    همان متن ساده با نشانه راست‌به‌چپ.
+    """
+    html = getattr(text, "html", None)
+    if html:
+        silent = bool(getattr(text, "silent", False))
+        res = send_html(html, buttons=getattr(text, "buttons", None), silent=silent)
+        if res.ok is not False:
+            return res
+        fb = _send_plain(rtl(clip(str(text))), silent)
+        return fb if fb.ok else Sent(False, f"{res.detail}؛ متن ساده هم: {fb.detail}")
+    return _send_plain(text)
+
+
+def _send_plain(text: str, silent: bool = False) -> Sent:
+    """متن ساده با رسید."""
     tok, chat = os.getenv(TOKEN_ENV), os.getenv(CHAT_ENV)
     if not (tok and chat):
         return Sent(None, f"کلید تلگرام تنظیم نشده: {', '.join(missing())}")
     if requests is None:
         return Sent(False, "requests نصب نیست")
+    data = {"chat_id": chat, "text": text}
+    if silent:
+        data["disable_notification"] = "true"
     try:
-        r = requests.post(API.format(tok=tok), data={"chat_id": chat, "text": text},
-                          timeout=TIMEOUT)
+        r = requests.post(API.format(tok=tok), data=data, timeout=TIMEOUT)
     except Exception as exc:          # فقط نوع — متن استثنا ممکن است نشانی با توکن باشد
         return Sent(False, f"خطای شبکه: {type(exc).__name__}")
     try:

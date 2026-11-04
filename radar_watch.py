@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-radar_watch.py — پایشگر زنده سطوح و هشدار، رادار ۶.۱
-======================================================
+radar_watch.py — پایشگر زنده سطوح و هشدار، رادار ۷
+====================================================
 
 مسئله‌ای که حل می‌کند
 ---------------------
@@ -48,6 +48,15 @@ radar_watch.py — پایشگر زنده سطوح و هشدار، رادار ۶.
 سطح ابطال فقط در بازبینی هفتگی عوض می‌شود؛ این پایشگر watch.json را
 بازنویسی نمی‌کند. حد ضرر دفتر معامله باید سفارش روی خود صرافی باشد —
 پیام تلگرام حد ضرر نیست.
+
+لایه هشدار — متن ۳۸
+-------------------
+هر پیام یک radar_alert.Alert است با سطح 🔴 اقدام، 🟠 نمودار را ببین یا 🔵 بدان، و
+قالب «چه کنم، چرا، بعدش» با دکمه پیوندی. مقدار متن ساده هر پیام همان پیشین است؛
+شکل تازه در میدان‌ها. ساعت سکوت شب، سقف روزانه نارنجی و تکرار صبح قرمز در radar_alert.
+هشدارهای تازه در radar_signals: اهرم داغ و نتیجه رویداد. بسته هفتگی بیت‌کوین در برابر
+میانگین ۵۰ هفته هر دو سو را می‌گوید، عبور نارنجی و ماندن آبی. فاصله تا سطح یک تعریف
+دارد: افت لازم از قیمت — radar_brief.drop_pct.
 """
 
 from __future__ import annotations
@@ -70,6 +79,10 @@ import radar_anchor as A
 import radar_budget as BG
 # تنها تابع ارسال تلگرام، با رسید — نشست ۱۱
 import radar_telegram as TG
+# لایه هشدار سه‌سطحی و قالب «چه کنم، چرا، بعدش» — متن ۳۸، کتابخانه استاندارد
+import radar_alert as AL
+# یک تعریف فاصله: افت لازم از قیمت تا سطح — قرارداد لایه پیام، متن ۳۸
+from radar_brief import drop_pct, move_pct
 
 try:
     import requests
@@ -77,7 +90,7 @@ except ImportError:
     print("نیاز به requests: pip install requests")
     sys.exit(1)
 
-VERSION = "6.1"
+VERSION = "7"            # همان R.FRAMEWORK — قفل آزمون tests/test_small_fixes_text38.py
 UTC = timezone.utc
 OKX = "https://www.okx.com"
 WATCH_FILE = "watch.json"
@@ -327,17 +340,28 @@ SEND_FAILURES: list[str] = []
 RC_SEND_FAILED = 4
 
 
+# حالت و ساعت اجرای جاری برای لایه هشدار — متن ۳۸. run_once پر و پس از کار خالی‌اش می‌کند؛
+# پیام‌های بیرون از run_once — خطای پیش از پایش — با حالت تهی می‌روند: بی صف و بی سقف.
+_CTX: dict = {}
+
+
 def notify(msg: str, quiet: bool = False) -> TG.Sent:
     """
     چاپ + ارسال تلگرام در صورت وجود کلید. رسید برمی‌گردد؛ ناموفق یک سطر خطا
     می‌گیرد و در SEND_FAILURES می‌نشیند. توکن هرگز چاپ نمی‌شود — radar_telegram.
+    هر پیام هشدار سه‌سطحی می‌شود — radar_alert، متن ۳۸: صدا، ساعت سکوت شب، سقف نارنجی،
+    قالب «چه کنم، چرا، بعدش» و دکمه. اثرش بر حالت فقط پس از رسید موفق.
     """
     if not quiet:
         print(msg)
+    state, now = _CTX.get("state"), _CTX.get("now") or datetime.now(UTC)
+    msg = AL.prepare(msg, state, now)
     res = TG.send(msg)
     if res.ok is False:
         SEND_FAILURES.append(res.detail)
         print(f"  ⛔ ارسال تلگرام ناموفق — {res.detail}")
+    elif res.ok:
+        AL.delivered(msg, state, now)
     return res
 
 
@@ -369,7 +393,10 @@ def check_item(it: dict, state: dict) -> list[str]:
 
     px = ticker(sym)
     if px is None:
-        return [f"⚠️ {sym} — قیمت در دسترس نیست"]
+        return [AL.Alert(f"⚠️ {sym} — قیمت در دسترس نیست", "blue",
+                         title=f"داده ندارم — قیمت {sym}", why="قیمت لحظه‌ای اوکی‌اکس نیامد",
+                         nxt="علت در گزارش پایش؛ اجرای بعد دوباره می‌سنجد", symbol=sym)]
+    item_check = {"kind": "item", "symbol": sym}
 
     # ── ۱ ابطال ساختاری: فقط با بسته روزانه
     inv = it.get("invalidation")
@@ -379,28 +406,43 @@ def check_item(it: dict, state: dict) -> list[str]:
         if cl is None and not st.get(nk):
             # پیش از نشست ۳ب ابطال این مورد بی‌صدا سنجیده نمی‌شد. روزی یک پیام
             st[nk] = True
-            fired.append(f"⚠️ {sym} — بسته روزانه در دسترس نیست؛ ابطال {inv:,.4f} "
-                         "سنجیده نشد — علت در گزارش پایش")
+            fired.append(AL.Alert(
+                f"⚠️ {sym} — بسته روزانه در دسترس نیست؛ ابطال {inv:,.4f} "
+                "سنجیده نشد — علت در گزارش پایش", "blue",
+                title=f"داده ندارم — بسته روزانه {sym}",
+                why=f"ابطال {_n(inv)} این اجرا سنجیده نشد",
+                nxt="علت در گزارش پایش؛ اجرای بعد دوباره می‌سنجد", symbol=sym))
         if cl:
             close, day = cl
             broken = (close < inv) if side == "long" else (close > inv)
             key = f"inv_{day}"
             if broken and not st.get(key):
                 st[key] = True
-                fired.append(
+                fired.append(AL.Alert(
                     f"⛔ {sym} — نقض ابطال ساختاری\n"
                     f"بسته روزانه {day}: {close:,.4f}\n"
                     f"سطح ابطال: {inv:,.4f}\n"
                     f"حکم رادار: خروج ۱۰۰٪ فوری، بدون بحث.\n"
-                    f"این تنها ماشه‌ای است که هیچ استثنایی ندارد."
-                )
+                    f"این تنها ماشه‌ای است که هیچ استثنایی ندارد.", "red",
+                    title=f"ابطال روزانه {sym}", do="خروج ۱۰۰٪ همین حالا — بی بحث",
+                    why=(f"بسته روزانه {day}: {_n(close)}، "
+                         f"{'زیر' if side == 'long' else 'بالای'} سطح ابطال {_n(inv)}"),
+                    nxt="رسید را در ژورنال ثبت کن. این تنها ماشه بی‌استثنای رادار است",
+                    symbol=sym, check=item_check))
             elif not broken:
                 fired_note = st.get("inv_near")
-                dist = abs(close - inv) / close * 100
+                # یک تعریف فاصله: افت لازم از قیمت — radar_brief.drop_pct، متن ۳۸
+                dist = abs(drop_pct(close, inv))
+                word = "افت" if side == "long" else "رشد"
                 if dist < 3 and not fired_note:
                     st["inv_near"] = True
-                    fired.append(f"⚠️ {sym} — فاصله تا ابطال {dist:.1f}٪ "
-                                 f"(بسته {close:,.4f} / ابطال {inv:,.4f})")
+                    fired.append(AL.Alert(
+                        f"⚠️ {sym} — {word} لازم تا ابطال {dist:.1f}٪ "
+                        f"(بسته {close:,.4f} / ابطال {inv:,.4f})", "orange",
+                        title=f"نزدیک ابطال {sym}",
+                        do="نمودار را ببین — فقط بسته روزانه داوری می‌کند",
+                        why=f"{word} لازم تا ابطال {dist:.1f}٪ — بسته {_n(close)}، ابطال {_n(inv)}",
+                        nxt="اگر بسته روزانه آن سوی سطح شد، پیام قرمز خروج می‌آید", symbol=sym))
                 elif dist >= 5:
                     st.pop("inv_near", None)
 
@@ -415,14 +457,20 @@ def check_item(it: dict, state: dict) -> list[str]:
             if inv:
                 bad = (px < inv) if side == "long" else (px > inv)
                 if bad:
-                    fired.append(f"🚫 {sym} — پله {i} در {lv:,.4f} لمس شد ولی "
-                                 f"قیمت زیر سطح ابطال است. سفارش لغو شود.")
+                    fired.append(AL.Alert(
+                        f"🚫 {sym} — پله {i} در {lv:,.4f} لمس شد ولی "
+                        f"قیمت زیر سطح ابطال است. سفارش لغو شود.", "red",
+                        title=f"سفارش پله {i} {sym} را لغو کن", do="سفارش این پله را در صرافی لغو کن",
+                        why=f"پله {_n(lv)} لمس شد ولی قیمت {_n(px)} آن سوی سطح ابطال {_n(inv)} است",
+                        nxt="ورود فقط این سوی سطح ابطال", symbol=sym, check=item_check))
                     continue
-            fired.append(
+            fired.append(AL.Alert(
                 f"🎯 {sym} — پله {i} نردبان ورود پر شد\n"
                 f"سطح {lv:,.4f} | قیمت {px:,.4f}\n"
-                f"پله‌های بعد را نگه دار. ثبت در ژورنال یادت نرود."
-            )
+                f"پله‌های بعد را نگه دار. ثبت در ژورنال یادت نرود.", "red",
+                title=f"پله {i} ورود {sym} پر شد", do="پر شدن سفارش را در صرافی ببین و ثبتش کن",
+                why=f"قیمت {_n(px)} به پله {_n(lv)} رسید",
+                nxt="پله‌های بعد را نگه دار؛ ثبت در ژورنال یادت نرود", symbol=sym, check=item_check))
 
     # ── ۳ اهداف
     for i, tg in enumerate(it.get("targets") or [], 1):
@@ -434,8 +482,11 @@ def check_item(it: dict, state: dict) -> list[str]:
             st[key] = True
             action = ("خروج ۴۰٪ و انتقال استاپ به سربه‌سر"
                       if i == 1 else "خروج ۳۵٪")
-            fired.append(f"✅ {sym} — هدف {i} خورد در {tg:,.4f}\n"
-                         f"نردبان خروج: {action}")
+            fired.append(AL.Alert(f"✅ {sym} — هدف {i} خورد در {tg:,.4f}\n"
+                                  f"نردبان خروج: {action}", "red",
+                                  title=f"هدف {i} {sym} خورد", do=action,
+                                  why=f"قیمت {_n(px)} به هدف {_n(tg)} رسید",
+                                  nxt="خروج را در ژورنال ثبت کن", symbol=sym, check=item_check))
 
     # ── ۴ هشدارهای قیمتی ساده
     for lv in it.get("alerts") or []:
@@ -445,7 +496,10 @@ def check_item(it: dict, state: dict) -> list[str]:
         prev = st.get("last_px")
         if prev is not None and ((prev < lv <= px) or (prev > lv >= px)):
             st[key] = True
-            fired.append(f"🔔 {sym} — عبور از {lv:,.4f} | قیمت {px:,.4f}")
+            fired.append(AL.Alert(f"🔔 {sym} — عبور از {lv:,.4f} | قیمت {px:,.4f}", "orange",
+                                  title=f"عبور {sym} از {_n(lv)}", do="نمودار را ببین",
+                                  why=f"قیمت {_n(px)} از سطح هشدار {_n(lv)} گذشت",
+                                  nxt="فقط هشدار قیمتی؛ حکمی نمی‌سازد", symbol=sym))
 
     st["last_px"] = px
     return fired
@@ -888,16 +942,18 @@ def rebuy_verdict(row: dict, released: bool) -> tuple[bool, str]:
     return False, REBUY_WHY.get(w, w)
 
 
-class Msg(str):
+class Msg(AL.Alert):
     """
     پیامی که اثرش بر state فقط پس از رسید موفق ثبت می‌شود — مثل پیام هفتگی.
     بازبینی ۲۳ اکتبر ۲۰۲۶: پیش از این کلید نقض ابطال پیش از ارسال گذاشته می‌شد و
     پیام خروجی که نمی‌رسید، دیگر هرگز فرستاده نمی‌شد. سهم خروج جزئی — breach_ —
     هم با همین پیام ثبت می‌شود، تا ارسال ناموفق «نخستین بسته» را «دومین» نکند.
+    متن ۳۸: خودش هشدار سه‌سطحی است — میدان‌های سطح و قالب از radar_alert.Alert.
     """
 
-    def __new__(cls, text: str, what: str, sets: dict, pops: tuple = ()):
-        m = super().__new__(cls, text)
+    def __new__(cls, text: str, what: str, sets: dict, pops: tuple = (), **alert):
+        alert.setdefault("level", "orange")
+        m = super().__new__(cls, text, **alert)
         m.what, m.sets, m.pops = what, dict(sets), tuple(pops)
         return m
 
@@ -1039,17 +1095,21 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
     if watch.get("positions"):
         bad = P.level_mismatches(h, watch)
         if bad:
-            _once(state, f"mismatch_{day}_{'|'.join(bad)}", msgs,
-                  "⛔ ناهمخوانی سطح ابطال میان watch.json و holdings.json:\n"
-                  + "\n".join(f"- {b}" for b in bad)
-                  + "\nتا یکی شوند، پایشگر با محافظه‌کارانه‌تر می‌سنجد: سطح بالاتر و مهر زودتر.")
+            _once(state, f"mismatch_{day}_{'|'.join(bad)}", msgs, AL.Alert(
+                "⛔ ناهمخوانی سطح ابطال میان watch.json و holdings.json:\n"
+                + "\n".join(f"- {b}" for b in bad)
+                + "\nتا یکی شوند، پایشگر با محافظه‌کارانه‌تر می‌سنجد: سطح بالاتر و مهر زودتر.",
+                "orange", title="ناهمخوانی سطح ابطال میان دو فایل",
+                do="watch.json و holdings.json را با Claude Code یکی کن",
+                why="؛ ".join(bad),
+                nxt="تا یکی شوند، پایشگر با محافظه‌کارانه‌تر می‌سنجد: سطح بالاتر و مهر زودتر"))
         av = P.anchor_violations(watch)
         if av:
             # هشدار صریح، نه خطا: پایش با سطح فعلی ادامه دارد تا بازبینی
-            _once(state, f"anchor_{day}_{'|'.join(av)}", msgs,
-                  "⚠️ قاعده لنگر سطح ابطال — سطح باید دست‌کم ۱ دامنه واقعی هفتگی زیر "
-                  "min(قیمت، آخرین بسته هفتگی) باشد:\n" + "\n".join(f"- {a}" for a in av)
-                  + "\nپایش با سطح فعلی ادامه دارد تا بازبینی.")
+            _once(state, f"anchor_{day}_{'|'.join(av)}", msgs, AL.Alert(
+                "⚠️ قاعده لنگر سطح ابطال — سطح باید دست‌کم ۱ دامنه واقعی هفتگی زیر "
+                "min(قیمت، آخرین بسته هفتگی) باشد:\n" + "\n".join(f"- {a}" for a in av)
+                + "\nپایش با سطح فعلی ادامه دارد تا بازبینی.", "blue"))
     wk_cache = {} if wk_cache is None else wk_cache
     px_cache: dict = {}
 
@@ -1062,9 +1122,9 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
         if sym not in px_cache:
             px_cache[sym] = price(sym)
             if px_cache[sym] is None:
-                _once(state, f"noprice_{sym}_{day}", msgs,
+                _once(state, f"noprice_{sym}_{day}", msgs, AL.Alert(
                       f"⚠️ قیمت {sym} در دسترس نیست — سطح هشدار و پله ذخیره {sym} "
-                      "این اجرا سنجیده نشد.")
+                      "این اجرا سنجیده نشد.", "blue", symbol=sym))
         return px_cache[sym]
 
     # ── ۱ ابطال هفتگی و سطح هشدار
@@ -1080,10 +1140,10 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
 
         w, why = wk(sym)
         if w is None:
-            _once(state, f"nodata_{sym}_{week}", msgs,
+            _once(state, f"nodata_{sym}_{week}", msgs, AL.Alert(
                   f"⚠️ داده ندارم — بسته هفتگی {sym} به لنگر وقت جهانی در دسترس نیست "
                   f"({'؛ '.join(why) or 'بی‌دلیل'}). ابطال{tag} سنجیده نشد؛ اجرای بعد "
-                  "دوباره تلاش می‌کند.")
+                  "دوباره تلاش می‌کند.", "blue", symbol=sym))
         elif (not state.get(f"wk_{sym}_{w['closed_at']}")
               and P.judged(w["closed_at"], since)):
             # کلید هفته و سهم خروج فقط با رسید موفق — Msg، بازبینی ۲۳ اکتبر
@@ -1093,27 +1153,48 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
             prev = state.get(bkey)
             head = (f"⛔ ابطال هفتگی {sym}{tag} — بسته هفته تا {w['closed_at'][:10]}: "
                     f"{_n(close)}، زیر سطح {_n(lvl)}.")
+            why = (f"بسته هفته تا {w['closed_at'][:10]}: {_n(close)}، زیر سطح ابطال {_n(lvl)}"
+                   + (" — دومین بسته پیاپی" if prev else "") + ". قاعده دفتر موقعیت: بسته هفتگی")
             if close < lvl and (f >= 1.0 or prev):
                 second = "دومین بسته پیاپی زیر سطح. " if prev else ""
                 verdicts[f"{sym}|{w['closed_at']}"] = "full"
+                cmd = (f"radar_positions.py exit --symbol {sym} "
+                       f"--price <قیمت اجرا> --level {_n(lvl)} {P.RECEIPT_ARGS}")
                 msgs.append(Msg(f"{head}\n{second}خروج کامل باقی‌مانده: {_n(qty)} {sym}.\n"
-                                f"ثبت: radar_positions.py exit --symbol {sym} "
-                                f"--price <قیمت اجرا> --level {_n(lvl)} {P.RECEIPT_ARGS}",
-                                f"ابطال {sym}", {wkey: True}, pops=(bkey,)))
+                                f"ثبت: {cmd}",
+                                f"ابطال {sym}", {wkey: True}, pops=(bkey,), level="red",
+                                title=f"ابطال هفتگی {sym}{tag}",
+                                do=f"کل باقی‌مانده، {_n(qty)} {sym}، را در بازار بفروش",
+                                why=why, nxt="رسید را با Claude Code ثبت کن؛ ورود دوباره فقط با "
+                                             "بسته هفتگی بالای همین سطح", cmd=cmd, symbol=sym,
+                                check={"kind": "position_qty", "symbol": sym, "qty": qty, "qty_after": 0.0}))
             elif close < lvl:
                 sell = qty * f
                 verdicts[f"{sym}|{w['closed_at']}"] = "partial"
+                cmd = (f"radar_positions.py trim --reason invalidation "
+                       f"--level {_n(lvl)} --symbol {sym} --qty {_n(sell)} "
+                       f"--price <قیمت اجرا> {P.RECEIPT_ARGS}")
                 msgs.append(Msg(f"{head}\nفروش سهم {_n(f)}: {_n(sell)} {sym}. باقی فقط اگر "
                                 "بسته هفتگی بعد هم زیر سطح بود.\n"
-                                f"ثبت: radar_positions.py trim --reason invalidation "
-                                f"--level {_n(lvl)} --symbol {sym} --qty {_n(sell)} "
-                                f"--price <قیمت اجرا> {P.RECEIPT_ARGS}",
-                                f"ابطال {sym}", {wkey: True, bkey: w["closed_at"]}))
+                                f"ثبت: {cmd}",
+                                f"ابطال {sym}", {wkey: True, bkey: w["closed_at"]}, level="red",
+                                title=f"ابطال هفتگی {sym}{tag} — سهم {_n(f)}",
+                                do=f"{_n(sell)} {sym} را در بازار بفروش",
+                                why=why, nxt="باقی فقط اگر بسته هفتگی بعد هم زیر سطح بود؛ رسید را "
+                                             "با Claude Code ثبت کن", cmd=cmd, symbol=sym,
+                                check={"kind": "position_qty", "symbol": sym, "qty": qty,
+                                       "qty_after": max(qty - sell, 0.0)}))
             elif prev:
                 msgs.append(Msg(f"✅ {sym}{tag} — بسته هفتگی {_n(close)} بالای سطح {_n(lvl)}. "
                                 f"باقی‌مانده {_n(qty)} نگه داشته می‌شود. سهم فروخته‌شده: "
                                 "ورود دوباره مجاز — radar_positions.py reenter",
-                                f"بازگشت بالای سطح {sym}", {wkey: True}, pops=(bkey,)))
+                                f"بازگشت بالای سطح {sym}", {wkey: True}, pops=(bkey,),
+                                level="orange", title=f"بازگشت {sym}{tag} بالای سطح ابطال",
+                                do=f"باقی‌مانده {_n(qty)} {sym} را نگه دار؛ ورود دوباره سهم "
+                                   "فروخته‌شده مجاز است — تصمیم با تو",
+                                why=f"بسته هفتگی {_n(close)} بالای سطح {_n(lvl)}",
+                                nxt="اگر خریدی، رسید را با radar_positions.py reenter ثبت کن",
+                                symbol=sym))
             else:
                 state[wkey] = True              # بی پیام — چیزی برای رسیدن نیست
 
@@ -1124,9 +1205,14 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
             key = f"warn_{sym}_{_n(wl)}"
             if v < wl and not state.get(key):
                 state[key] = True
-                msgs.append(f"⚠️ سطح هشدار {sym} شکسته شد — قیمت {_n(v)} زیر {_n(wl)}.\n"
-                            "فقط پیام؛ خروجی نمی‌سازد. ابطال همچنان بسته هفتگی زیر "
-                            f"{_n(lvl)} است.")
+                msgs.append(AL.Alert(
+                    f"⚠️ سطح هشدار {sym} شکسته شد — قیمت {_n(v)} زیر {_n(wl)}.\n"
+                    "فقط پیام؛ خروجی نمی‌سازد. ابطال همچنان بسته هفتگی زیر "
+                    f"{_n(lvl)} است.", "orange", title=f"سطح هشدار {sym} شکست",
+                    do="نمودار را ببین — فقط پیام، خروجی نمی‌سازد",
+                    why=f"قیمت {_n(v)} زیر سطح هشدار {_n(wl)}؛ افت لازم تا ابطال "
+                        f"{drop_pct(v, lvl):.1f}٪",
+                    nxt=f"ابطال همچنان بسته هفتگی زیر {_n(lvl)} است", symbol=sym))
             elif v > wl * WARN_REARM:
                 state.pop(key, None)
 
@@ -1137,8 +1223,9 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
             continue
         w, why = wk(sym)
         if w is None:
-            _once(state, f"nodata_re_{sym}_{week}", msgs,
-                  f"⚠️ داده ندارم — بسته هفتگی {sym}؛ مجوز ورود دوباره سنجیده نشد.")
+            _once(state, f"nodata_re_{sym}_{week}", msgs, AL.Alert(
+                  f"⚠️ داده ندارم — بسته هفتگی {sym}؛ مجوز ورود دوباره سنجیده نشد.", "blue",
+                  symbol=sym))
             continue
         key = f"re_{sym}_{w['closed_at']}"
         if state.get(key):
@@ -1146,24 +1233,29 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
         state[key] = True
         # فقط بسته‌ای که پس از آخرین خروج همان سطح بسته شده — ت۲، بازبینی ۲۳ اکتبر
         if w["close"] > st["level"] and P.after_exit(w["closed_at"], st):
-            msgs.append(f"🔁 ورود دوباره مجاز {sym} — بسته هفتگی {_n(w['close'])} بالای "
-                        f"سطح {_n(st['level'])}.\nسهمیه باقی: "
-                        f"{_n(st['max_qty'] - st['used'])} {sym}. ثبت: radar_positions.py "
-                        f"reenter --symbol {sym} --qty <مقدار> --price <قیمت> --account <حساب> "
-                        f"{P.RECEIPT_ARGS}")
+            quota = _n(st["max_qty"] - st["used"])
+            cmd = (f"radar_positions.py reenter --symbol {sym} --qty <مقدار> --price <قیمت> "
+                   f"--account <حساب> {P.RECEIPT_ARGS}")
+            msgs.append(AL.Alert(
+                f"🔁 ورود دوباره مجاز {sym} — بسته هفتگی {_n(w['close'])} بالای "
+                f"سطح {_n(st['level'])}.\nسهمیه باقی: {quota} {sym}. ثبت: {cmd}", "orange",
+                title=f"ورود دوباره مجاز {sym}",
+                do=f"نمودار را ببین؛ اگر طرح ورودت می‌گوید، تا {quota} {sym} — تصمیم با تو",
+                why=f"بسته هفتگی {_n(w['close'])} بالای سطح {_n(st['level'])}، پس از خروج",
+                nxt="اگر خریدی، رسید را با Claude Code ثبت کن", cmd=cmd, symbol=sym))
 
     # ── ۳ هشدار بازار: فقط اطلاع. میانگین از regime.json، فقط بسته همان هفته
     for m in watch.get("market") or []:
         sym = m["symbol"].upper()
         sma, warn = regime_sma(regime, now)
         if warn:
-            _once(state, f"mkt_warn_{sym}_{day}", msgs,
-                  f"⚠️ {warn} — هشدار بازار {sym} سنجیده نشد.")
+            _once(state, f"mkt_warn_{sym}_{day}", msgs, AL.Alert(
+                  f"⚠️ {warn} — هشدار بازار {sym} سنجیده نشد.", "blue"))
             continue
         w, why = wk(sym)
         if w is None:
-            _once(state, f"nodata_mkt_{sym}_{week}", msgs,
-                  f"⚠️ داده ندارم — بسته هفتگی {sym}؛ هشدار بازار سنجیده نشد.")
+            _once(state, f"nodata_mkt_{sym}_{week}", msgs, AL.Alert(
+                  f"⚠️ داده ندارم — بسته هفتگی {sym}؛ هشدار بازار سنجیده نشد.", "blue"))
             continue
         closed = _aware(w["closed_at"], "زمان بسته هفتگی")
         sma_week = _aware(sma["week_closed_at"], "btc_sma50w.week_closed_at")
@@ -1177,11 +1269,38 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
         if state.get(key):
             continue
         state[key] = True
-        if w["close"] < sma["value"]:
-            msgs.append(f"📉 هشدار بازار — بسته هفتگی {sym} {_n(w['close'])} زیر "
-                        f"{m.get('label') or 'میانگین'} {_n(round(sma['value'], 2))} — "
-                        f"هفته بسته در {w['closed_at'][:10]}، منبع regime.json.\n"
-                        "فقط اطلاع؛ خروج نمی‌سازد.")
+        # هر دو سو، هر هفته — متن ۳۸: عبور از خط نارنجی، ماندن در همان سو آبی و بی‌صدا. سوی
+        # هفته پیش در mkt_side_<نماد>؛ نخستین داوری بی‌سابقه، زیر خط نارنجی و بالای خط آبی
+        side = "below" if w["close"] < sma["value"] else "above"
+        prev_side = (state.get(f"mkt_side_{sym}") or {}).get("side")
+        state[f"mkt_side_{sym}"] = {"side": side, "closed_at": w["closed_at"]}
+        crossed = prev_side is not None and prev_side != side
+        level = "orange" if crossed or (prev_side is None and side == "below") else "blue"
+        label = m.get("label") or "میانگین"
+        smav = _n(round(sma["value"], 2))
+        gap = abs(move_pct(sma["value"], w["close"]))
+        when = f"هفته بسته در {w['closed_at'][:10]}"
+        if side == "below":
+            msgs.append(AL.Alert(
+                f"📉 هشدار بازار — بسته هفتگی {sym} {_n(w['close'])} زیر "
+                f"{label} {smav} — {when}، منبع regime.json.\n"
+                "فقط اطلاع؛ خروج نمی‌سازد.", level,
+                title=(f"بسته هفتگی {sym} زیر {label} رفت" if crossed
+                       else f"بسته هفتگی {sym} زیر {label}"),
+                do="نمودار هفتگی را ببین — فقط اطلاع؛ خروج نمی‌سازد",
+                why=f"بسته {_n(w['close'])}، {gap:.1f}٪ زیر {label} {smav} — {when}",
+                nxt="خط چرخه: زیر آن، بازار در فاز ضعیف چرخه است؛ هفته بعد دوباره سنجیده می‌شود",
+                symbol=sym))
+        else:
+            msgs.append(AL.Alert(
+                f"📈 بسته هفتگی {sym} {_n(w['close'])} بالای {label} {smav} — {when}، "
+                "منبع regime.json.\nفقط اطلاع.", level,
+                title=(f"بسته هفتگی {sym} به بالای {label} برگشت" if crossed
+                       else f"بسته هفتگی {sym} بالای {label}"),
+                do="نمودار هفتگی را ببین — فقط اطلاع",
+                why=f"بسته {_n(w['close'])}، {gap:.1f}٪ بالای {label} {smav} — {when}",
+                nxt="خط چرخه: بالای آن، فاز قوی‌تر چرخه است؛ هفته بعد دوباره سنجیده می‌شود",
+                symbol=sym))
 
     # ── ۴ نقشه ذخیره
     rp = watch.get("reserve_plan")
@@ -1199,11 +1318,11 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
         if stray:
             rows = "\n".join(f"- {s['symbol']} {_n(s['qty'])} — {label(s)}، سفارش "
                              f"{s['executed']['order_id']}" for s in stray)
-            _once(state, f"reserve_stray_{day}", msgs,
+            _once(state, f"reserve_stray_{day}", msgs, AL.Alert(
                   "⚠️ پله‌هایی در watch.json علامت اجراشده دارند ولی دفتر کل پوششان "
                   f"نمی‌دهد — پر حساب نشدند:\n{rows}\n"
                   "ثبت با radar_positions.py trim --reason reserve --symbol <نماد> --qty <مقدار> "
-                  f"--price <قیمت اجرا> {P.RECEIPT_ARGS}")
+                  f"--price <قیمت اجرا> {P.RECEIPT_ARGS}", "orange"))
 
         # شرط مهلت — رویداد ۸۹. باند با هیسترزیس از regime.json؛ حکم از plan_rule_state
         band, band_warn = (regime_trade_band(regime, now) if rp.get("on_deadline")
@@ -1221,37 +1340,57 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                 f"{sym} {_n(q)}" for sym, q in rb) + ". انتخاب ارز با کیفیت؛ پیام بودجه "
                 "آزادشده جدا می‌آید." if rb else
                     "\nهنوز پله‌ای پر نشده؛ بازخریدی نیست.") if rp.get("rebuy") else ""
-            _once(state, f"reserve_cancel_{rp['created']}", msgs,
+            _once(state, f"reserve_cancel_{rp['created']}", msgs, AL.Alert(
                   f"🟢 شرط لغو {title} برقرار شد — باند با هیسترزیس {band} (مهلت {dl}). "
                   f"لغو پله‌های پرنشده در {acct}:\n{rows}\n"
-                  "ثبت لغو هر پله در watch.json، میدان cancelled با زمان و دلیل." + tail)
+                  "ثبت لغو هر پله در watch.json، میدان cancelled با زمان و دلیل." + tail, "red",
+                  title=f"لغو پله‌های {title}", do=f"پله‌های پرنشده را در {acct} لغو کن: "
+                  + "، ".join(f"{s['symbol']} {label(s)}" for s in left),
+                  why=f"شرط لغو برقرار شد — باند با هیسترزیس {band}",
+                  nxt="لغو هر پله را با Claude Code در watch.json ثبت کن"
+                      + (f"؛ {tail.strip()}" if tail else ""),
+                  check={"kind": "reserve_left"}))
         elif now >= deadline:
+            ask = dict(title=f"مهلت {title} گذشت — تصمیم لازم",
+                       do="فروش باقی‌مانده در بازار، یا لغو — تصمیم با تو",
+                       nxt="هر کدام را با Claude Code ثبت کن", check={"kind": "reserve_left"})
             if left and rule == "unknown":
-                _once(state, f"reserve_deadline_{rp['deadline']}", msgs,
+                _once(state, f"reserve_deadline_{rp['deadline']}", msgs, AL.Alert(
                       f"⏰ مهلت {title} گذشت ({dl}). باند با هیسترزیس نامعلوم — {band_warn}. "
                       f"شرط لغو سنجیده نشد؛ تصمیم لازم: فروش باقی‌مانده در بازار یا لغو. "
-                      f"پله‌های پرنشده در {acct}:\n{rows}")
+                      f"پله‌های پرنشده در {acct}:\n{rows}", "red",
+                      why=f"مهلت {dl} گذشت و باند با هیسترزیس نامعلوم است — {band_warn}", **ask))
             elif left and rule == "no_rule":
                 # بی شرط مهلت: تصمیم لازم، مثل سبد و تعریف plan_rule_state — ت۳، بازبینی ۲۳ اکتبر
-                _once(state, f"reserve_deadline_{rp['deadline']}", msgs,
+                _once(state, f"reserve_deadline_{rp['deadline']}", msgs, AL.Alert(
                       f"⏰ مهلت {title} گذشت ({dl}). نقشه شرط مهلت ندارد — تصمیم لازم: فروش "
-                      f"باقی‌مانده در بازار، یا لغو. پله‌های پرنشده در {acct}:\n{rows}")
+                      f"باقی‌مانده در بازار، یا لغو. پله‌های پرنشده در {acct}:\n{rows}", "red",
+                      why=f"مهلت {dl} گذشت و نقشه شرط مهلت ندارد", **ask))
             elif left:
                 why = (f" باند با هیسترزیس {band}، زیر "
                        f"{rp['on_deadline']['cancel_if_band_at_least']}.")
-                _once(state, f"reserve_deadline_{rp['deadline']}", msgs,
+                cmd = ("radar_positions.py trim --reason reserve --symbol <نماد> "
+                       f"--qty <مقدار> --price <قیمت اجرا> {P.RECEIPT_ARGS}")
+                _once(state, f"reserve_deadline_{rp['deadline']}", msgs, AL.Alert(
                       f"⏰ مهلت {title} گذشت ({dl}).{why} پله‌های پرنشده — فروش در قیمت "
                       f"بازار از {acct}:\n{rows}\n"
-                      "ثبت هر کدام: radar_positions.py trim --reason reserve --symbol <نماد> "
-                      f"--qty <مقدار> --price <قیمت اجرا> {P.RECEIPT_ARGS}")
+                      f"ثبت هر کدام: {cmd}", "red",
+                      title=f"مهلت {title} گذشت — فروش در بازار",
+                      do=f"پله‌های پرنشده را در {acct} در قیمت بازار بفروش: "
+                      + "، ".join(f"{s['symbol']} {_n(s['qty'])}" for s in left),
+                      why=f"مهلت {dl} گذشت؛{why}", nxt="رسید هر کدام را با Claude Code ثبت کن",
+                      cmd=cmd, check={"kind": "reserve_left"}))
         else:
             market = [s for s in left if s["price"] is None]
             if market:
                 rows = "، ".join(f"{s['symbol']} {_n(s['qty'])}" for s in market)
-                _once(state, f"reserve_market_{day}", msgs,
+                _once(state, f"reserve_market_{day}", msgs, AL.Alert(
                       f"🧾 پله بازار نقشه ذخیره هنوز در دفتر کل ثبت نشده: {rows}. اجرا از "
                       f"{acct} و ثبت با radar_positions.py trim --reason reserve --symbol <نماد> "
-                      f"--qty <مقدار> --price <قیمت اجرا> {P.RECEIPT_ARGS}")
+                      f"--qty <مقدار> --price <قیمت اجرا> {P.RECEIPT_ARGS}", "red",
+                      title="پله بازار نقشه ذخیره ثبت نشده", do=f"فروش در بازار از {acct}: {rows}",
+                      why="پله بازار در دفتر کل نیست — یا اجرا نشده یا رسیدش ثبت نشده",
+                      nxt="اگر فروخته‌ای فقط رسید را ثبت کن", check={"kind": "reserve_left"}))
             for s in left:
                 if s["price"] is None:
                     continue
@@ -1259,11 +1398,20 @@ def check_positions(watch: dict, h: dict, state: dict, now: datetime,
                 key = f"reserve_{s['symbol']}_{_n(s['price'])}"
                 if v is not None and v >= s["price"] and not state.get(key):
                     state[key] = True
-                    msgs.append(f"🎯 پله ذخیره {s['symbol']} {_n(s['price'])} رسید — قیمت "
-                                f"{_n(v)}.\nفروش {_n(s['qty'])} {s['symbol']} از {acct}. "
-                                "اگر سفارش پر شد، ثبت: radar_positions.py trim --reason "
-                                f"reserve --symbol {s['symbol']} --qty {_n(s['qty'])} "
-                                f"--price <قیمت اجرا> {P.RECEIPT_ARGS}")
+                    cmd = (f"radar_positions.py trim --reason reserve --symbol {s['symbol']} "
+                           f"--qty {_n(s['qty'])} --price <قیمت اجرا> {P.RECEIPT_ARGS}")
+                    msgs.append(AL.Alert(
+                        f"🎯 پله ذخیره {s['symbol']} {_n(s['price'])} رسید — قیمت "
+                        f"{_n(v)}.\nفروش {_n(s['qty'])} {s['symbol']} از {acct}. "
+                        "اگر سفارش پر شد، ثبت: radar_positions.py trim --reason "
+                        f"reserve --symbol {s['symbol']} --qty {_n(s['qty'])} "
+                        f"--price <قیمت اجرا> {P.RECEIPT_ARGS}", "red",
+                        title=f"پله ذخیره {s['symbol']} {_n(s['price'])} رسید",
+                        do=f"پر شدن سفارش فروش {_n(s['qty'])} {s['symbol']} را در {acct} ببین",
+                        why=f"قیمت {_n(v)} به پله {_n(s['price'])} رسید",
+                        nxt="اگر پر شد، رسیدش را با Claude Code ثبت کن", cmd=cmd,
+                        symbol=s["symbol"],
+                        check={"kind": "reserve_step", "symbol": s["symbol"], "price": s["price"]}))
     return msgs
 
 
@@ -1281,7 +1429,7 @@ SHAKE_MOVES = ((4, 5.0), (24, 8.0))    # (ساعت، درصد) — کف ثابت
 # برای SUI و ONDO هر کدام ۱۱ و برای AAVE ۸ پیام حرکت ساخت — بیش از یکی در هفته
 SHAKE_SIGMA = {4: 4.0, 24: 3.0}
 SHAKE_SIGMA_DAYS = 90
-SHAKE_NEAR_PCT = 2.0                    # فاصله قیمت تا بالای سطح ابطال، درصد
+SHAKE_NEAR_PCT = 2.0                    # افت لازم از قیمت تا سطح ابطال، درصد — drop_pct، متن ۳۸
 SHAKE_MAX_MSGS = 3
 SHAKE_HOURS = 26                        # پنجره شمع ساعتی: ۲۴ ساعت به‌علاوه پایه
 # برچسب هشدار ساخته‌شده شنبه یا یکشنبه UTC — تصمیم کاربر، بند ۶ متن ۲۰. بازار آمریکا بسته
@@ -1398,20 +1546,22 @@ def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
         orders = [s for s in left if s["symbol"] == sym and s["price"] is not None]
         mine = [o for o in live if o["symbol"].upper() == sym]
         wait = f"اقدامی تا بسته هفتگی لازم نیست — {week_at}."
-        act = (f"اقدام: سفارش‌های باز {sym} را ببین — "
-               + "، ".join(f"پله {_n(s['price'])}" for s in orders) + f"؛ جز آن {wait}"
-               if orders else f"اقدام: {wait}")
+        # «چه کنم» هشدار — همان اقدام متن ساده، بی پیشوند «اقدام:» — متن ۳۸
+        do = (f"سفارش‌های باز {sym} را ببین — "
+              + "، ".join(f"پله {_n(s['price'])}" for s in orders) + f"؛ جز آن {wait}"
+              if orders else wait)
         if mine:
             # سفارش زنده همان ارز — بند ۱ متن ۲۰؛ فقط ارجاع، حکم نمی‌سازد
-            act = (f"اقدام: سفارش زنده {sym} را ببین — "
-                   + "؛ ".join(_order_text(o) for o in mine) + f". جز آن {wait}")
+            do = (f"سفارش زنده {sym} را ببین — "
+                  + "؛ ".join(_order_text(o) for o in mine) + f". جز آن {wait}")
         # هفته نقض — بند ۸ متن ۱۹: ۲۶ اکتبر همان اجرا «خروج کامل» و «اقدامی لازم نیست» هر دو
         # را می‌گفت. حکم با بسته هفتگی است و پیام ابطال جدا می‌آید؛ این هشدار فقط ارجاع
         wk_last = weekly(sym)[0] if (weekly is not None and lvl is not None) else None
         if wk_last and P.judged(wk_last["closed_at"], since) and wk_last["close"] < lvl:
-            act = (f"اقدام: بسته هفتگی تا {wk_last['closed_at'][:10]} زیر سطح بود — "
-                   f"{_n(wk_last['close'])}؛ پیام ابطال هفتگی {sym} را ببین. این هشدار حکم "
-                   "تازه‌ای نمی‌سازد.")
+            do = (f"بسته هفتگی تا {wk_last['closed_at'][:10]} زیر سطح بود — "
+                  f"{_n(wk_last['close'])}؛ پیام ابطال هفتگی {sym} را ببین. این هشدار حکم "
+                  "تازه‌ای نمی‌سازد.")
+        act = f"اقدام: {do}"
         crossed = False
         if lvl is not None:
             below = [r for r in rows[-24:] if r["low"] < lvl]
@@ -1423,14 +1573,25 @@ def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
                 events.append(("cross", order, key, (
                     f"⛔ {sym} زیر سطح ابطال درون‌روز — کمینه {_n(c['low'])} در شمع ساعتی تا "
                     f"{_tehran(c_at)}، سطح {_n(lvl)}؛ قیمت اکنون {_n(px)}.\n"
-                    "قاعده: حکم فقط با بسته هفتگی است — عبور درون‌روزی خروج نمی‌سازد.\n" + act)))
-            dist = 100 * (px / lvl - 1)
+                    "قاعده: حکم فقط با بسته هفتگی است — عبور درون‌روزی خروج نمی‌سازد.\n" + act),
+                    dict(title=f"{sym} زیر سطح ابطال درون‌روز", do=do, symbol=sym,
+                         why=(f"کمینه {_n(c['low'])} در شمع ساعتی تا {_tehran(c_at)}، زیر سطح "
+                              f"{_n(lvl)}؛ قیمت اکنون {_n(px)}"),
+                         nxt=(f"حکم فقط با بسته هفتگی است — {week_at}؛ عبور درون‌روزی خروج "
+                              "نمی‌سازد"))))
+            # یک تعریف فاصله: افت لازم از قیمت — radar_brief.drop_pct، متن ۳۸
+            dist = drop_pct(px, lvl)
             if not crossed and 0 < dist <= SHAKE_NEAR_PCT + 1e-9:
                 events.append(("near", order, f"shake_near_{sym}_{day}", (
-                    f"⚠️ {sym} نزدیک سطح ابطال — قیمت {_n(px)}، {dist:.1f}٪ بالای سطح {_n(lvl)}؛ "
-                    f"بسته ساعتی {_tehran(at)}.\n"
-                    f"قاعده: حکم فقط با بسته هفتگی است — این هشدار تا "
-                    f"{fa(f'{SHAKE_NEAR_PCT:g}')}٪ بالای سطح است و خروج نمی‌سازد.\n" + act)))
+                    f"⚠️ {sym} نزدیک سطح ابطال — قیمت {_n(px)}، افت لازم {dist:.1f}٪ تا سطح "
+                    f"{_n(lvl)}؛ بسته ساعتی {_tehran(at)}.\n"
+                    f"قاعده: حکم فقط با بسته هفتگی است — این هشدار برای افت لازم تا "
+                    f"{fa(f'{SHAKE_NEAR_PCT:g}')}٪ است و خروج نمی‌سازد.\n" + act),
+                    dict(title=f"{sym} نزدیک سطح ابطال", do=do, symbol=sym,
+                         why=(f"قیمت {_n(px)}؛ افت لازم {dist:.1f}٪ تا سطح {_n(lvl)} — بسته "
+                              f"ساعتی {_tehran(at)}"),
+                         nxt=(f"حکم فقط با بسته هفتگی است — {week_at}؛ این هشدار خروج "
+                              "نمی‌سازد"))))
         opens = {r["open"]: r for r in rows}
         for hrs, pct in SHAKE_MOVES:
             base = opens.get(last["open"] - timedelta(hours=hrs))
@@ -1461,7 +1622,10 @@ def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
                 f"{'📈' if chg > 0 else '📉'} تکان {sym} — حرکت {fa(hrs)} ساعت {chg:+.1f}٪: از "
                 f"{_n(base['close'])} به {_n(px)}؛ بسته ساعتی {_tehran(at)}.\n"
                 f"قاعده: آستانه {thr:.1f}٪ در {fa(hrs)} ساعت — {how}. فقط اطلاع؛ {rule}.\n"
-                + act)))
+                + act),
+                dict(title=f"تکان {sym} — {fa(hrs)} ساعت {chg:+.1f}٪", do=do, symbol=sym,
+                     why=(f"از {_n(base['close'])} به {_n(px)}؛ آستانه {thr:.1f}٪ — {how}"),
+                     nxt=f"فقط اطلاع؛ {rule}")))
 
     # تغییر باند خام رژیم نسبت به گزارش قبلی — regime.json در برابر روز پیش در تاریخچه
     if isinstance(regime, dict) and isinstance(history, dict):
@@ -1483,16 +1647,26 @@ def shake_alerts(watch: dict, h: dict, state: dict, now: datetime, hourly=None,
                     f"🧭 باند خام رژیم عوض شد — از {prev} به {band}؛ {sc}گزارش {_tehran(gen)}.\n"
                     f"قاعده: هدف ذخیره دفتر موقعیت از باند خام است — {fa(old['stable'])}٪ به "
                     f"{fa(new['stable'])}٪؛ سقف ریسک دفتر معامله با باند با هیسترزیس، امروز {tb}.\n"
-                    "اقدام: کسری یا مازاد ذخیره و ردیف اقدام گزارش سبد امروز را ببین.")))
+                    "اقدام: کسری یا مازاد ذخیره و ردیف اقدام گزارش سبد امروز را ببین."),
+                    dict(title=f"باند رژیم از {prev} به {band}",
+                         do="کسری یا مازاد ذخیره و ردیف اقدام گزارش سبد امروز را ببین",
+                         why=(f"{sc}گزارش {_tehran(gen)}؛ هدف ذخیره دفتر موقعیت "
+                              f"{fa(old['stable'])}٪ به {fa(new['stable'])}٪"),
+                         nxt=f"سقف ریسک دفتر معامله با باند با هیسترزیس است — امروز {tb}")))
 
     fresh = sorted((e for e in events if not state.get(e[2])),
                    key=lambda e: (_SHAKE_RANK[e[0]], e[1]))
     if len(fresh) > SHAKE_MAX_MSGS:
         print(f"  هشدار تکان: {fa(len(fresh) - SHAKE_MAX_MSGS)} رویداد بیرون از سقف "
               f"{fa(SHAKE_MAX_MSGS)} پیام — اجرای بعد")
-    head = f"{SHAKE_WEEKEND_LABEL}\n" if now.astimezone(UTC).weekday() >= 5 else ""
-    return [Msg(head + text + tail, f"تکان {kind}", {key: True})
-            for kind, _, key, text in fresh[:SHAKE_MAX_MSGS]]
+    weekend = now.astimezone(UTC).weekday() >= 5
+    head = f"{SHAKE_WEEKEND_LABEL}\n" if weekend else ""
+    note = [SHAKE_WEEKEND_LABEL] if weekend else []
+    # سفارش‌های زنده ته هر هشدار — بند ۱ متن ۲۰؛ در قالب تازه سطر «بعدش»
+    live_tail = ("؛ سفارش‌های زنده: " + "؛ ".join(_order_text(o) for o in live)) if live else ""
+    return [Msg(head + text + tail, f"تکان {kind}", {key: True}, level="orange", notes=note,
+                **dict(parts, nxt=(parts.get("nxt") or "") + live_tail))
+            for kind, _, key, text, parts in fresh[:SHAKE_MAX_MSGS]]
 
 
 # ─────────────────────── بودجه آزادشده — ک۹۵، بند ۳ متن ۱۸ ───────────────────────
@@ -1526,7 +1700,9 @@ def budget_alert(watch: dict, h: dict, state: dict, now: datetime, regime: dict 
                 RB.gather(cands, watch, h, quotas, now=now))
         ev = RB.evaluate(data, lst, quotas, amount, val=val)
     text = "\n".join(RB.lines(release, amount, ev, val, plain=True))
-    return [Msg(text, "بودجه آزادشده", {key: True})]
+    # نارنجی: پیشنهاد بازخرید، تصمیم با کاربر — متن ۳۸؛ بدنه همان متن radar_rebuy
+    return [Msg(text, "بودجه آزادشده", {key: True}, level="orange",
+                title="بودجه بازخرید آزاد شد — پیشنهاد، تصمیم با تو")]
 
 
 # ─────────────────────── پیام بسته هفتگی — نشست ۱۱ ───────────────────────
@@ -1671,7 +1847,7 @@ def weekly_digest(watch: dict, h: dict, state: dict, now: datetime, weekly=None,
             rows.append(f"ℹ️ داوری نمی‌شود — {sym}: سطح {_n(lvl)} پس از این بسته ثبت شد")
             continue
         close = w["close"]
-        gap = f"{abs(close - lvl) / close * 100:.1f}"
+        gap = f"{abs(drop_pct(close, lvl)):.1f}"           # یک تعریف فاصله — متن ۳۸
         if close < lvl:
             breached.add(sym)
             rows.append(f"⛔ زیر سطح — {sym}: بسته {_n(close)}، ابطال {_n(lvl)}، "
@@ -1748,12 +1924,13 @@ def _send_digest(watch: dict, h: dict, state: dict, now: datetime,
         err = f"{type(exc).__name__}: {str(exc)[:300]}"
         DIGEST_ERRORS.append(err)
         print(f"  ⛔ پیام بسته هفتگی ساخته نشد — {err}", file=sys.stderr)
-        notify(f"⛔ پیام بسته هفتگی ساخته نشد — {err}\nپیام‌های ابطال و مهلت جدا "
-               "فرستاده شده‌اند؛ اجرای بعد دوباره می‌سازد.")
+        notify(AL.Alert(f"⛔ پیام بسته هفتگی ساخته نشد — {err}\nپیام‌های ابطال و مهلت جدا "
+                        "فرستاده شده‌اند؛ اجرای بعد دوباره می‌سازد.", "orange"))
         return 1
     if not text:
         return 0
-    if notify(text, quiet=False).ok:
+    # آبی و بی‌صدا — خلاصه؛ پیام‌های ابطال و مهلت جدا و با سطح خودشان می‌آیند — متن ۳۸
+    if notify(AL.Alert(text, "blue", title="بسته هفتگی سبد"), quiet=False).ok:
         state[key] = {"sent": now.astimezone(UTC).isoformat()}
     return 1
 
@@ -1778,18 +1955,87 @@ def _read_regime(path: str | None) -> dict | None:
     return doc if isinstance(doc, dict) else None
 
 
+def still_needed(r: dict, watch: dict, h: dict | None) -> bool:
+    """
+    آیا قرمز شب هنوز کار دارد — تکرار صبح، متن ۳۸. فقط از داده خود رادار: دفتر کل و
+    watch.json. داده نیست یعنی هنوز لازم — تکرار بهتر از گم‌شدن اقدام.
+        position_qty  مقدار موقعیت هنوز بیش از مقدار پس از فروش است
+        reserve_left  نقشه ذخیره پله پرنشده دارد
+        reserve_step  همان پله هنوز پر نشده
+        item          ستاپ دفتر معامله هنوز در watch.json است
+    """
+    c = r.get("check") or {}
+    kind = c.get("kind")
+    if not kind or h is None:
+        return True
+    sym = str(c.get("symbol") or "").upper()
+    if kind == "position_qty":
+        p = next((p for p in h.get("positions", [])
+                  if p.get("symbol") == sym and p.get("book") == "position"), None)
+        if p is None or p.get("status") != "open":
+            return False
+        qty0 = float(c.get("qty") or 0.0)
+        return P.position_qty(p) > float(c.get("qty_after") or 0.0) + STEP_TOL * qty0 + P.TOL
+    rp = watch.get("reserve_plan")
+    if kind == "reserve_left":
+        return bool(rp and unfilled_steps(rp, h))
+    if kind == "reserve_step":
+        left = unfilled_steps(rp, h) if rp else []
+        return any(s["symbol"] == sym and s["price"] == c.get("price") for s in left)
+    if kind == "item":
+        return any(str(it.get("symbol", "")).upper() == sym for it in watch.get("items") or [])
+    return True
+
+
+def _cached(feed):
+    """یک واکشی برای هر نماد در هر اجرا — شمع ساعتی هشدار تکان و اهرم داغ، متن ۳۸."""
+    memo: dict = {}
+
+    def get(sym):
+        if sym not in memo:
+            memo[sym] = feed(sym)
+        return memo[sym]
+    return get
+
+
+def _send_keyed(msgs, state: dict) -> int:
+    """هشدار کلیددار — کلید فقط با رسید موفق؛ ناموفق یعنی اجرای بعد دوباره."""
+    n = 0
+    for msg in msgs:
+        res = notify(msg, quiet=False)
+        n += 1
+        if res.ok:
+            msg.commit(state)
+        else:
+            print(f"  ⛔ پیام {msg.what} فرستاده نشد — کلیدش ثبت نشد؛ اجرای بعد دوباره")
+    return n
+
+
 def run_once(watch: dict, state: dict, quiet: bool = False,
              path: str = WATCH_FILE, h: dict | None = None,
              now: datetime | None = None, regime_path: str | None = "regime.json",
              shake: bool = False, history_path: str | None = "regime_history.json",
-             budget: bool = False, events_path: str | None = None) -> int:
+             budget: bool = False, events_path: str | None = None, signals: bool = False,
+             ledger_path: str | None = "events_ledger.json",
+             snapshot_path: str | None = "snapshot.json") -> int:
     """
     h خالی یعنی holdings.json بار نشد — main پیش‌تر بلند گزارشش کرده. آن‌وقت
     فقط هشدار بازار سنجیده می‌شود، که به دفتر موقعیت وابسته نیست. shake هشدار تکان
     بند ۲ متن ۱۸ را روشن می‌کند — main روشنش می‌کند؛ پیش‌فرض خاموش تا آزمون‌های
-    دیگر run_once به شبکه نروند.
+    دیگر run_once به شبکه نروند. signals هشدارهای تازه متن ۳۸ — اهرم داغ و نتیجه رویداد —
+    با همان قاعده.
     """
     now = now or datetime.now(UTC)
+    _CTX.update(state=state, now=now)
+    try:
+        return _run_once(watch, state, quiet, path, h, now, regime_path, shake, history_path,
+                         budget, events_path, signals, ledger_path, snapshot_path)
+    finally:
+        _CTX.clear()
+
+
+def _run_once(watch, state, quiet, path, h, now, regime_path, shake, history_path, budget,
+              events_path, signals, ledger_path, snapshot_path) -> int:
     ts = now.strftime("%Y-%m-%d %H:%M UTC")
     if not quiet:
         print(f"پایش — {ts}")
@@ -1807,9 +2053,13 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
                 print(warn)
         else:
             state[key] = True
-            notify(warn, quiet=quiet)
+            notify(AL.Alert(warn, "orange", title="سطوح پایش کهنه است"), quiet=quiet)
 
     n = 0
+    # تکرار صبح قرمزهای شب — متن ۳۸: از ۷:۳۰ تهران با صدا، مگر کار انجام شده باشد
+    for msg in AL.due_repeats(state, now, lambda r: still_needed(r, watch, h)):
+        notify(msg, quiet=False)
+        n += 1
     for it in watch.get("items", []):
         for msg in check_item(it, state):
             notify(msg, quiet=False)
@@ -1833,29 +2083,20 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
             else:
                 print(f"  ⛔ پیام {msg.what} فرستاده نشد — کلید هفته ثبت نشد؛ اجرای بعد "
                       "دوباره می‌فرستد")
+    hourly = _cached(_shake_feed())
     # هشدار تکان — بند ۲ متن ۱۸. کلید هر پیام فقط با رسید موفق
     if shake and h is not None:
         doc = regime if need else _read_regime(regime_path)
         weekly = (lambda s: wk_cache[s] if s in wk_cache else P.weekly_close(s, now=now))
-        for msg in shake_alerts(watch, h, state, now, regime=doc,
-                                history=_read_regime(history_path), weekly=weekly):
-            res = notify(msg, quiet=False)
-            n += 1
-            if res.ok:
-                msg.commit(state)
-            else:
-                print(f"  ⛔ پیام {msg.what} فرستاده نشد — کلیدش ثبت نشد؛ اجرای بعد دوباره")
+        n += _send_keyed(shake_alerts(watch, h, state, now, hourly=hourly, regime=doc,
+                                      history=_read_regime(history_path), weekly=weekly), state)
     # بودجه آزادشده — ک۹۵، بند ۳ متن ۱۸. کلید فقط با رسید موفق
     if budget and h is not None:
         doc = regime if need else _read_regime(regime_path)
-        for msg in budget_alert(watch, h, state, now, doc, _read_regime(history_path)):
-            res = notify(msg, quiet=False)
-            n += 1
-            if res.ok:
-                msg.commit(state)
-            else:
-                print(f"  ⛔ پیام {msg.what} فرستاده نشد — کلیدش ثبت نشد؛ اجرای بعد دوباره")
+        n += _send_keyed(budget_alert(watch, h, state, now, doc, _read_regime(history_path)),
+                         state)
     # یادآوری رویداد تقویم دستی — بند ۳ متن ۲۰. کلید هر یادآوری فقط با رسید موفق
+    cal = None
     if events_path:
         import radar_calendar as RC
         try:
@@ -1863,14 +2104,31 @@ def run_once(watch: dict, state: dict, quiet: bool = False,
         except RC.CalendarError as exc:
             print(f"  ⚠️ events_calendar: {exc} — یادآوری رویداد سنجیده نشد")
             cal = None
-        for key, text in (RC.reminders(cal, state, now) if cal else []):
-            msg = Msg(text, "یادآوری رویداد", {key: True})
-            res = notify(msg, quiet=False)
-            n += 1
-            if res.ok:
-                msg.commit(state)
-            else:
-                print(f"  ⛔ پیام {msg.what} فرستاده نشد — کلیدش ثبت نشد؛ اجرای بعد دوباره")
+        # روز آبی، دو ساعت پیش نارنجی — قالب «چه کنم، چرا، بعدش»، متن ۳۸
+        n += _send_keyed([Msg(text, "یادآوری رویداد", {key: True},
+                              **RC.reminder_parts(cal, key, now))
+                          for key, text in (RC.reminders(cal, state, now) if cal else [])], state)
+    # هشدارهای تازه متن ۳۸ — اهرم داغ و نتیجه رویداد. کلید فقط با رسید موفق
+    if signals:
+        import radar_signals as SG
+        syms = ["BTC", "ETH"] + sorted(
+            p["symbol"].upper() for p in (h or {}).get("positions", [])
+            if p.get("book") == "position" and p.get("status") == "open"
+            and P.position_qty(p) > 0)
+        jobs = (("اهرم داغ", lambda: SG.leverage_heat(
+                    list(dict.fromkeys(syms)), state, now, make=Msg, hourly=hourly,
+                    snapshot=_read_regime(snapshot_path), h=h)),
+                ("نتیجه رویداد", lambda: SG.event_results(
+                    cal, _read_regime(ledger_path), state, now, make=Msg)))
+        for name, job in jobs:
+            # هشدار تازه جدا: خطایش بلند در گزارش پایش، ولی جلوی پیام بسته هفتگی را نمی‌گیرد
+            try:
+                msgs = job()
+            except Exception as exc:
+                print(f"  ⛔ هشدار {name} ساخته نشد — {type(exc).__name__}: {str(exc)[:300]}",
+                      file=sys.stderr)
+                continue
+            n += _send_keyed(msgs, state)
     # پیام بسته هفتگی — نشست ۱۱. پس از سنجش‌های بالا، تا خطایش جلوی پیام نقض و
     # مهلت را نگیرد؛ بی holdings.json پوزیشنی برای گزارش نیست
     if h is not None:
@@ -1900,6 +2158,10 @@ def main(argv: list[str] | None = None) -> int:
                     help="تقویم رویداد دستی برای یادآوری — بند ۳ متن ۲۰")
     ap.add_argument("--regime-file", default="regime.json", dest="regime_file",
                     help="منبع میانگین ساده ۵۰ هفته بیت‌کوین برای هشدار بازار")
+    ap.add_argument("--ledger", default="events_ledger.json",
+                    help="دفتر رویداد خودکار برای هشدار نتیجه رویداد — متن ۳۸")
+    ap.add_argument("--snapshot", default="snapshot.json",
+                    help="نبض همین اجرا، فاندینگ برای هشدار اهرم داغ — متن ۳۸")
     a = ap.parse_args(argv)
     SEND_FAILURES.clear()
     DIGEST_ERRORS.clear()
@@ -1942,7 +2204,9 @@ def main(argv: list[str] | None = None) -> int:
         watch = load_json(a.watch, {"items": []})
         validate_watch(watch)
     except WatchError as exc:
-        notify(f"⛔ {exc} — پایش انجام نشد. هیچ ابطال و هشداری سنجیده نشد.")
+        notify(AL.Alert(f"⛔ {exc} — پایش انجام نشد. هیچ ابطال و هشداری سنجیده نشد.", "red",
+                        title="پایش انجام نشد — watch.json", do="watch.json را با Claude Code درست کن",
+                        why=str(exc), nxt="تا درست شود هیچ ابطال و هشداری سنجیده نمی‌شود"))
         return 2
     rc = 0
     h = None
@@ -1950,8 +2214,10 @@ def main(argv: list[str] | None = None) -> int:
         try:
             h, _ = P.load(a.holdings)
         except P.PositionsError as exc:
-            notify(f"⛔ holdings.json نامعتبر — ابطال دفتر موقعیت و نقشه ذخیره سنجیده "
-                   f"نشد: {exc}")
+            notify(AL.Alert(f"⛔ holdings.json نامعتبر — ابطال دفتر موقعیت و نقشه ذخیره سنجیده "
+                            f"نشد: {exc}", "red", title="holdings.json نامعتبر",
+                            do="holdings.json را با Claude Code درست کن", why=str(exc),
+                            nxt="تا درست شود ابطال دفتر موقعیت و نقشه ذخیره سنجیده نمی‌شود"))
             rc = 2
         else:
             # پیامش را check_positions می‌دهد؛ اینجا فقط کد خروج بلند می‌شود
@@ -1961,7 +2227,8 @@ def main(argv: list[str] | None = None) -> int:
         state = load_json(STATE_FILE, {})
     except WatchError as exc:
         # هشدار تکراری بهتر از هشدار گم‌شده است: با وضعیت خالی ادامه، ولی بلند
-        notify(f"⚠️ {exc} — وضعیت از صفر ساخته شد؛ هشدارهای تکراری ممکن است.")
+        notify(AL.Alert(f"⚠️ {exc} — وضعیت از صفر ساخته شد؛ هشدارهای تکراری ممکن است.",
+                        "orange"))
         state, rc = {}, 3
 
     if a.loop:
@@ -1970,14 +2237,16 @@ def main(argv: list[str] | None = None) -> int:
             while True:
                 run_once(watch, state, a.quiet, path=a.watch, h=h,
                          regime_path=a.regime_file, shake=True, budget=True,
-                         events_path=a.events)
+                         events_path=a.events, signals=True, ledger_path=a.ledger,
+                         snapshot_path=a.snapshot)
                 time.sleep(a.loop)
         except KeyboardInterrupt:
             print("\nمتوقف شد.")
         return rc or _run_rc()
 
     run_once(watch, state, a.quiet, path=a.watch, h=h, regime_path=a.regime_file, shake=True,
-             budget=True, events_path=a.events)
+             budget=True, events_path=a.events, signals=True, ledger_path=a.ledger,
+             snapshot_path=a.snapshot)
     # کد ۲ و ۳ مقدم‌اند؛ سپس خطای پیام هفتگی، ۵، و ارسال ناموفق، ۴ — گام نبض با
     # هر کد جز صفر ::error:: می‌دهد
     return rc or _run_rc()
@@ -1991,8 +2260,11 @@ def run_cli(argv: list[str] | None = None) -> int:
     try:
         return main(argv)
     except Exception as exc:
-        notify(f"⛔ پایشگر رادار افتاد — {type(exc).__name__}: {str(exc)[:300]}\n"
-               "این اجرا هیچ ابطال و هشداری را نسنجید.")
+        notify(AL.Alert(f"⛔ پایشگر رادار افتاد — {type(exc).__name__}: {str(exc)[:300]}\n"
+                        "این اجرا هیچ ابطال و هشداری را نسنجید.", "red",
+                        title="پایشگر رادار افتاد", why=f"{type(exc).__name__}: {str(exc)[:300]}",
+                        do="گزارش پایش را ببین و با Claude Code رفعش کن",
+                        nxt="این اجرا هیچ ابطال و هشداری را نسنجید؛ نبض بعد دوباره امتحان می‌کند"))
         raise
 
 

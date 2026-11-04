@@ -16,6 +16,9 @@ events_calendar.json دستی است: هر رویداد شناسه، نام، ا
     موقعیت تازه نه  پنجره از ۲ ساعت پیش تا ۱ ساعت پس از کنفرانس، یا پس از انتشار
                    اگر کنفرانسی نیست: ردیف اقدام سبد
 
+متن ۳۸: یادآوری روز آبی و بی‌صدا، دو ساعت پیش نارنجی — reminder_parts، قالب «چه کنم، چرا،
+بعدش». میدان‌های اختیاری expected، actual و lesson برای هشدار نتیجه رویداد — radar_signals.
+
 کلید هر یادآوری فقط پس از رسید موفق — پایشگر radar_watch آن را در Msg می‌پیچد. نگهبان
 نبض radar_schedule پنجره ۶ ساعت پیش تا ۶ ساعت پس از همین رویدادها را از اینجا می‌خواند
 — بند ۴. پس فقط کتابخانه استاندارد.
@@ -44,6 +47,8 @@ REMIND_NEAR = timedelta(hours=2)       # یادآوری دوم و آغاز پن�
 NO_NEW_AFTER = timedelta(hours=1)      # پایان پنجره پس از کنفرانس، یا انتشار
 PULSE_SPAN = timedelta(hours=6)        # پنجره نبض نزدیک رویداد، دو سو — بند ۴
 _DATE = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")       # اسکی
+# میدان‌های اختیاری نتیجه رویداد — متن ۳۸، هشدار نتیجه radar_signals.event_results
+RESULT_FIELDS = ("expected", "actual", "lesson")
 
 
 class CalendarError(Exception):
@@ -92,6 +97,10 @@ def validate(cal) -> None:
                 raise CalendarError(f"{where}: رویداد بی ساعت کنفرانس ساعت‌دار ندارد")
         if "note" in e and not isinstance(e["note"], str):
             raise CalendarError(f"{where}: یادداشت متن نیست")
+        # نتیجه رویداد — متن ۳۸: انتظار بازار پیش از رویداد، عدد واقعی پس از آن، درس اختیاری
+        for k in RESULT_FIELDS:
+            if k in e and (not isinstance(e[k], str) or not e[k].strip()):
+                raise CalendarError(f"{where}: {k} باید متن ناتهی باشد")
 
 
 def load(path: str = CALENDAR_FILE) -> dict:
@@ -229,6 +238,35 @@ def reminders(cal: dict, state: dict, now: datetime) -> list[tuple[str, str]]:
                     f"از الان تا ۱ ساعت پس از {_after_word(e)}، موقعیت تازه نه — تا "
                     f"{_th(end)}." + note)))
     return out
+
+
+def reminder_parts(cal: dict, key: str, now: datetime) -> dict:
+    """
+    سطح و قالب «چه کنم، چرا، بعدش» یک یادآوری — متن ۳۸. روز پیش آبی و بی‌صدا؛ دو ساعت
+    پیش نارنجی. کلید همان کلید reminders: event_day_<شناسه> یا event_near_<شناسه>.
+    """
+    near = key.startswith("event_near_")
+    eid = key[len("event_near_" if near else "event_day_"):]
+    e = next((x for x in (cal or {}).get("events") or [] if x.get("id") == eid), None)
+    if e is None or "at" not in e:
+        return {"level": "orange" if near else "blue"}
+    at, (start, end) = at_of(e), no_new_window(e)
+    when = _th(at)
+    exp = f"؛ انتظار بازار {e['expected']}" if e.get("expected") else ""
+    if near:
+        mins = int((at - now).total_seconds() // 60)
+        left = f"{fa(mins)} دقیقه دیگر" if mins > 0 else "آغاز شده"
+        return {"level": "orange", "symbol": "BTC",
+                "title": f"{e['name']} — {left}",
+                "do": f"تا {_th(end)} خرید تازه نه؛ سفارش‌های باز نزدیک قیمت را ببین",
+                "why": f"رویداد با اهمیت بالا، {when}{exp} — دقیقه‌های اول نوسان دوسویه دارد",
+                "nxt": ("حدود نیم ساعت پس از انتشار، نتیجه و واکنش بیت‌کوین آبی و بی‌صدا "
+                        "می‌آید")}
+    return {"level": "blue", "symbol": "BTC",
+            "title": f"کمتر از {fa(24)} ساعت تا {e['name']}",
+            "do": f"برنامه فردا را بچین: از {_th(start)} تا {_th(end, with_date=False)} خرید تازه نه",
+            "why": f"رویداد با اهمیت بالا، {when}{exp}",
+            "nxt": "دو ساعت پیش از رویداد هشدار نارنجی می‌آید"}
 
 
 def no_new_actions(cal: dict, now: datetime) -> list[str]:

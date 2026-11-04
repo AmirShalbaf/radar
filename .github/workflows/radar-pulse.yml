@@ -106,6 +106,8 @@ jobs:
           PYTHONUTF8: "1"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # دکمه «میز تحلیلگر» هشدار — متن ۳۸؛ تهی یعنی بی دکمه، مثل پیام صبح
+          RADAR_DESK_URL: ${{ secrets.RADAR_DESK_URL }}
         run: |
           D=$(date -u '+%Y-%m-%d %H:%M UTC')
           if [ -f watch.json ]; then
