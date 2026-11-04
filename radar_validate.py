@@ -52,7 +52,7 @@ except ImportError:
     print("نیاز: pip install requests pandas numpy")
     sys.exit(1)
 
-VERSION = "6.1"
+VERSION = "7"            # همان R.FRAMEWORK — قفل آزمون tests/test_small_fixes_text38.py
 UTC = timezone.utc
 OKX = "https://www.okx.com"
 

@@ -303,7 +303,9 @@ def push_with_retry(cwd: str = ".", run=subprocess.run, retries: int = PUSH_RETR
 KEEPER_LEAD = timedelta(hours=24)                 # بیداری پیش از آغاز پنجره
 KEEPER_SPAN = timedelta(hours=5, minutes=30)      # عمر هر اجرا؛ سقف کار گیت‌هاب ۶ ساعت
 KEEPER_SETTLE = timedelta(minutes=15)             # پس از راه‌اندازی، فرصت نبض برای ثبت دفتر
-KEEPER_MAX_GEN = 8                                # سقف نسل جانشین‌ها — حدود ۴۴ ساعت
+# سقف نسل جانشین‌ها — حدود ۸۸ ساعت. متن ۳۸: ۸ نسل، حدود ۴۴ ساعت، برای دو روز پیاپی رویداد
+# کم بود — شبیه‌سازی فدرال ۹ دسامبر و تورم ۱۰ دسامبر در نسل ۸ بسته شد و پنجره تورم بی‌نگهبان ماند
+KEEPER_MAX_GEN = 16
 PULSE_WORKFLOW = "radar-pulse.yml"
 KEEPER_WORKFLOW = "radar-event-keeper.yml"
 

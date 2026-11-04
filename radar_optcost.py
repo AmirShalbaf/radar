@@ -52,7 +52,7 @@ try:
 except ImportError:
     requests = None
 
-VERSION = "6.1"
+VERSION = "7"            # همان R.FRAMEWORK — قفل آزمون tests/test_small_fixes_text38.py
 UTC = timezone.utc
 FILE = "radar_optcost.json"
 OKX = "https://www.okx.com"

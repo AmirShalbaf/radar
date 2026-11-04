@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-radar_state.py — به‌روزرسانی خودکار حافظه پروژه، رادار ۶.۱
+radar_state.py — به‌روزرسانی خودکار حافظه پروژه، رادار ۷
 ============================================================
 
 مسئله‌ای که حل می‌کند
@@ -41,7 +41,7 @@ from datetime import datetime, timezone
 from radar_text import FA_DIGITS, fa
 
 UTC = timezone.utc
-VERSION = "6.1"
+VERSION = "7"            # همان R.FRAMEWORK — قفل آزمون tests/test_small_fixes_text38.py
 STATE = "STATE.md"
 
 

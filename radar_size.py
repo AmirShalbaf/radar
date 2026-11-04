@@ -42,7 +42,7 @@ import sys
 # تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
 from radar_text import fa
 
-VERSION = "6.1"
+VERSION = "7"            # همان R.FRAMEWORK — قفل آزمون tests/test_small_fixes_text38.py
 
 # ─────────────────────── جدول‌های مرجع ───────────────────────
 
