@@ -1,0 +1,48 @@
+{
+ "version": 1,
+ "generated": "2026-11-04T11:25:23+00:00",
+ "rows": [
+  {
+   "sid": "DCOILBRENTEU",
+   "name": "نفت برنت",
+   "short": "برنت",
+   "unit": "دلار در بشکه",
+   "chg_unit": "pct",
+   "value": 123.1,
+   "date": "2026-10-27",
+   "prev": 115.22,
+   "prev_date": "2026-10-20",
+   "chg": 6.839090435688244,
+   "lag_days": 8,
+   "why": null
+  },
+  {
+   "sid": "DGS10",
+   "name": "بازده اوراق ۱۰ ساله آمریکا",
+   "short": "بازده ۱۰ ساله",
+   "unit": "٪",
+   "chg_unit": "pp",
+   "value": 4.91,
+   "date": "2026-11-02",
+   "prev": 5.0,
+   "prev_date": "2026-10-26",
+   "chg": -0.08999999999999986,
+   "lag_days": 2,
+   "why": null
+  },
+  {
+   "sid": "DTWEXBGS",
+   "name": "شاخص دلار، سبد وسیع",
+   "short": "شاخص دلار",
+   "unit": "",
+   "chg_unit": "pct",
+   "value": 121.6656,
+   "date": "2026-10-30",
+   "prev": 121.3202,
+   "prev_date": "2026-10-23",
+   "chg": 0.2847011462229654,
+   "lag_days": 5,
+   "why": null
+  }
+ ]
+}

@@ -1,0 +1,162 @@
+{
+ "version": 1,
+ "generated": "2026-11-04T11:23:35+00:00",
+ "capital": {
+  "total": 1549.828257913,
+  "stable_usd": 1164.51684349,
+  "incomplete": false,
+  "missing": []
+ },
+ "regime": {
+  "score": -0.8627586463827833,
+  "source": "regime.json، تولید 2026-11-04 11:23 UTC",
+  "band": "انقباضی",
+  "stable_target": 40,
+  "trade_band": "انقباضی",
+  "cap_pct": 2.5,
+  "mult": 0.3,
+  "maxpos": 2
+ },
+ "trade": {
+  "target_usd": 619.9313031652,
+  "cash": 544.5855403247999,
+  "risk_cap": 38.745706447825,
+  "risk_used": 0.0,
+  "risk_left": 38.745706447825,
+  "cash_after_orders": 544.5855403247999,
+  "orders_usd": 0
+ },
+ "pos_risk_usd": 61.55531113199999,
+ "positions": [
+  {
+   "symbol": "SOL",
+   "qty": 5.369000000055024e-05,
+   "price": 93.8,
+   "value": 0.005036122000051613,
+   "dust": true,
+   "invalidation": null,
+   "weekly_close": null,
+   "weekly_closed_at": null,
+   "rsi": 28.5,
+   "rs30": -0.1401
+  },
+  {
+   "symbol": "ETH",
+   "qty": 5.700000000003619e-05,
+   "price": 2333.11,
+   "value": 0.13298727000008445,
+   "dust": true,
+   "invalidation": null,
+   "weekly_close": null,
+   "weekly_closed_at": null,
+   "rsi": 36.5,
+   "rs30": -0.0558
+  },
+  {
+   "symbol": "BNB",
+   "qty": 0.000757899999999978,
+   "price": 701.73,
+   "value": 0.5318411669999846,
+   "dust": true,
+   "invalidation": null,
+   "weekly_close": null,
+   "weekly_closed_at": null,
+   "rsi": 38.3,
+   "rs30": -0.0242
+  },
+  {
+   "symbol": "AAVE",
+   "qty": 1.04895,
+   "price": 132.16,
+   "value": 138.629232,
+   "dust": false,
+   "invalidation": 106.892,
+   "weekly_close": 134.6,
+   "weekly_closed_at": "2026-11-02T00:00:00+00:00",
+   "rsi": 37.5,
+   "rs30": -0.1982
+  },
+  {
+   "symbol": "LINK",
+   "qty": 11.09889,
+   "price": 11.179,
+   "value": 124.07449131000001,
+   "dust": false,
+   "invalidation": 10.3366,
+   "weekly_close": 11.393,
+   "weekly_closed_at": "2026-11-02T00:00:00+00:00",
+   "rsi": 39.5,
+   "rs30": -0.11
+  },
+  {
+   "symbol": "SUI",
+   "qty": 81.6183,
+   "price": 0.9156,
+   "value": 74.72971548,
+   "dust": false,
+   "invalidation": 0.6843,
+   "weekly_close": 0.9007,
+   "weekly_closed_at": "2026-11-02T00:00:00+00:00",
+   "rsi": 40.5,
+   "rs30": -0.1624
+  },
+  {
+   "symbol": "ONDO",
+   "qty": 115.43866,
+   "price": 0.4069,
+   "value": 46.971990754,
+   "dust": false,
+   "invalidation": 0.3478,
+   "weekly_close": 0.4047,
+   "weekly_closed_at": "2026-11-02T00:00:00+00:00",
+   "rsi": 40.1,
+   "rs30": -0.1021
+  },
+  {
+   "symbol": "TAO",
+   "qty": 9.200000000000874e-05,
+   "price": 231.42,
+   "value": 0.021290640000002022,
+   "dust": true,
+   "invalidation": null,
+   "weekly_close": null,
+   "weekly_closed_at": null,
+   "rsi": 32.9,
+   "rs30": -0.1602
+  },
+  {
+   "symbol": "TRX",
+   "qty": 0.6704,
+   "price": 0.32045,
+   "value": 0.21482968,
+   "dust": true,
+   "invalidation": null,
+   "weekly_close": null,
+   "weekly_closed_at": null,
+   "rsi": 45.7,
+   "rs30": 0.0367
+  }
+ ],
+ "reentry": [
+  {
+   "symbol": "SOL",
+   "level": 96.7108,
+   "max_qty": 5.481,
+   "used": 0.0,
+   "exit_at": "2026-11-02T14:57:20+00:00",
+   "weekly_close": 94.53,
+   "weekly_closed_at": "2026-11-02T00:00:00+00:00"
+  },
+  {
+   "symbol": "ETH",
+   "level": 2380.5606,
+   "max_qty": 0.0372,
+   "used": 0.0,
+   "exit_at": "2026-10-26T07:35:00+00:00",
+   "weekly_close": 2275.21,
+   "weekly_closed_at": "2026-11-02T00:00:00+00:00"
+  }
+ ],
+ "actions": [],
+ "orders": []
+}
