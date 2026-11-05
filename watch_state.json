@@ -115,10 +115,11 @@
   "mkt_BTC_2026-11-02T00:00:00+00:00": true,
   "stale_2026-11-03": true,
   "SOL": {
-    "last_px": 96.11
+    "last_px": 90.74
   },
   "re_SOL_2026-11-02T00:00:00+00:00": true,
   "stale_2026-11-04": true,
   "stale_2026-11-05": true,
-  "_alert": {}
+  "_alert": {},
+  "event_day_nfp-2026-10": true
 }
