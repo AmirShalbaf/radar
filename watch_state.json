@@ -115,7 +115,7 @@
   "mkt_BTC_2026-11-02T00:00:00+00:00": true,
   "stale_2026-11-03": true,
   "SOL": {
-    "last_px": 90.28
+    "last_px": 90.1
   },
   "re_SOL_2026-11-02T00:00:00+00:00": true,
   "stale_2026-11-04": true,
@@ -128,5 +128,18 @@
   },
   "event_day_nfp-2026-10": true,
   "stale_2026-11-06": true,
-  "event_near_nfp-2026-10": true
+  "event_near_nfp-2026-10": true,
+  "event_result_nfp-2026-10": {
+    "at": "2026-11-06T13:30:00+00:00",
+    "kind": "nfp",
+    "seen": "2026-11-06T14:18:07+00:00",
+    "expected": null,
+    "actual": null,
+    "p0": 76040.6,
+    "p30": 75899.9,
+    "chg30_pct": -0.185,
+    "lo": 75600.0,
+    "hi": 76129.8,
+    "venue": "okx"
+  }
 }
