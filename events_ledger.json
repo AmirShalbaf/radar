@@ -1449,7 +1449,11 @@
       "candle_open": "2026-11-01T01:00:00Z",
       "venue": "okx"
      },
-     "d7": null
+     "d7": {
+      "close": 0.8737,
+      "candle_open": "2026-11-07T01:00:00Z",
+      "venue": "okx"
+     }
     },
     "BTC": {
      "before": {
@@ -1462,7 +1466,11 @@
       "candle_open": "2026-11-01T01:00:00Z",
       "venue": "okx"
      },
-     "d7": null
+     "d7": {
+      "close": 76039.0,
+      "candle_open": "2026-11-07T01:00:00Z",
+      "venue": "okx"
+     }
     }
    }
   },
@@ -1519,52 +1527,92 @@
    "first_seen": "2026-10-08T07:10:41Z",
    "prices": {
     "BTC": {
-     "before": null,
+     "before": {
+      "close": 76042.8,
+      "candle_open": "2026-11-06T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "SOL": {
-     "before": null,
+     "before": {
+      "close": 90.22,
+      "candle_open": "2026-11-06T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "ETH": {
-     "before": null,
+     "before": {
+      "close": 2238.73,
+      "candle_open": "2026-11-06T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "BNB": {
-     "before": null,
+     "before": {
+      "close": 695.95,
+      "candle_open": "2026-11-06T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "AAVE": {
-     "before": null,
+     "before": {
+      "close": 130.65,
+      "candle_open": "2026-11-06T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "LINK": {
-     "before": null,
+     "before": {
+      "close": 10.901,
+      "candle_open": "2026-11-06T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "SUI": {
-     "before": null,
+     "before": {
+      "close": 0.8656,
+      "candle_open": "2026-11-06T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "ONDO": {
-     "before": null,
+     "before": {
+      "close": 0.3749,
+      "candle_open": "2026-11-06T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "TAO": {
-     "before": null,
+     "before": {
+      "close": 223.37,
+      "candle_open": "2026-11-06T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "TRX": {
-     "before": null,
+     "before": {
+      "close": 0.31816,
+      "candle_open": "2026-11-06T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     }
