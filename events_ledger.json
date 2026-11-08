@@ -1500,7 +1500,11 @@
       "candle_open": "2026-11-02T04:00:00Z",
       "venue": "okx"
      },
-     "d7": null
+     "d7": {
+      "close": 0.8509,
+      "candle_open": "2026-11-08T04:00:00Z",
+      "venue": "okx"
+     }
     },
     "BTC": {
      "before": {
@@ -1513,7 +1517,11 @@
       "candle_open": "2026-11-02T04:00:00Z",
       "venue": "okx"
      },
-     "d7": null
+     "d7": {
+      "close": 75865.5,
+      "candle_open": "2026-11-08T04:00:00Z",
+      "venue": "okx"
+     }
     }
    }
   },
@@ -1532,7 +1540,11 @@
       "candle_open": "2026-11-06T12:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 75903.8,
+      "candle_open": "2026-11-07T12:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "SOL": {
@@ -1541,7 +1553,11 @@
       "candle_open": "2026-11-06T12:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 89.74,
+      "candle_open": "2026-11-07T12:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "ETH": {
@@ -1550,7 +1566,11 @@
       "candle_open": "2026-11-06T12:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 2241.83,
+      "candle_open": "2026-11-07T12:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "BNB": {
@@ -1559,7 +1579,11 @@
       "candle_open": "2026-11-06T12:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 694.37,
+      "candle_open": "2026-11-07T12:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "AAVE": {
@@ -1568,7 +1592,11 @@
       "candle_open": "2026-11-06T12:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 131.32,
+      "candle_open": "2026-11-07T12:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "LINK": {
@@ -1577,7 +1605,11 @@
       "candle_open": "2026-11-06T12:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 10.798,
+      "candle_open": "2026-11-07T12:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "SUI": {
@@ -1586,7 +1618,11 @@
       "candle_open": "2026-11-06T12:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 0.8604,
+      "candle_open": "2026-11-07T12:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "ONDO": {
@@ -1595,7 +1631,11 @@
       "candle_open": "2026-11-06T12:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 0.3648,
+      "candle_open": "2026-11-07T12:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "TAO": {
@@ -1604,7 +1644,11 @@
       "candle_open": "2026-11-06T12:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 224.38,
+      "candle_open": "2026-11-07T12:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "TRX": {
@@ -1613,7 +1657,11 @@
       "candle_open": "2026-11-06T12:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 0.31988,
+      "candle_open": "2026-11-07T12:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     }
    }
