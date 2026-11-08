@@ -3038,7 +3038,7 @@
   {
    "frame_id": "PCamr3150_M_12m00.5s",
    "t": 720.5,
-   "is_chart": false,
+   "is_chart": true,
    "refs": [
     {
      "doc": "2026-11-07_tekrargar_PCamr315",
@@ -3050,27 +3050,192 @@
      "claim_id": null
     }
    ],
-   "texts": [],
-   "speech": "گوینده به تحلیل یک دارایی دیگر برمی‌گردد.",
+   "recorded_at": {
+    "value": "2026-11-06T14:42:10-05:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "ساعت نمودار گرت — ضبط او؛ روز از انتشار ویدیوی اصل 2026-11-06T20:15:26Z — د۳۹",
+    "seen": "2:42:10 PM UTC-5"
+   },
+   "coin": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "venue": {
+    "value": "Coinbase",
+    "confidence": "medium",
+    "from": "image",
+    "how": "رابط Coinbase Advanced با Native و TradingView؛ نماد زیر نشان کوین‌بیس پنهان، فقط «…D» دیده می‌شود"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image",
+    "how": "دکمه D در نوار بالا روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 100 همه حدود 31 پیکسل؛ LOG روشن نیست، AUTO روشن"
+   },
+   "price_axis": {
+    "top": {
+     "value": 2900,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 1400,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [
+    {
+     "price": {
+      "value": 2365,
+      "confidence": "medium",
+      "from": "image",
+      "how": "خط آبی y≈535 در 12:00 حدود 2,362 و برش بزرگ‌شده 12:18 حدود 2,367؛ گام 100 همه حدود 31 پیکسل"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی گرت — حمایت فنی کلیدی ازدست‌رفته",
+     "drawn_by": "other",
+     "drawn_at": "نامعلوم",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": null,
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 2365,
+      "cutoff": "2026-11-06T19:42:10+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "شاخص تریدینگ‌ویو یا نماد ناخوانا — نماد صرافی نیست",
+      "cutoff_basis": "chart_end"
+     }
+    },
+    {
+     "price": {
+      "value": 1960,
+      "confidence": "medium",
+      "from": "image",
+      "how": "خط آبی y≈660 در 12:00 حدود 1,958 و برش 12:18 حدود 1,961"
+     },
+     "kind": "horizontal",
+     "label": "خط آبی گرت — ناحیه خرید کمی زیر 2000",
+     "drawn_by": "other",
+     "drawn_at": "نامعلوم",
+     "snap": {
+      "from": "candles",
+      "tool": "radar_history 1.1",
+      "symbol": null,
+      "venue": null,
+      "tf": "1D",
+      "class": "structural",
+      "level": 1960,
+      "cutoff": "2026-11-06T19:42:10+00:00",
+      "lookback": 200,
+      "width_atr": 0.25,
+      "verdict": "no_data",
+      "strength": null,
+      "bars": 0,
+      "last_bar": null,
+      "atr": null,
+      "touches": null,
+      "nearest": null,
+      "nearest_touches": null,
+      "distance_atr": null,
+      "distance_pct": null,
+      "chance_pct": null,
+      "strong_min_touches": null,
+      "chance_at_touches_pct": null,
+      "reason": "شاخص تریدینگ‌ویو یا نماد ناخوانا — نماد صرافی نیست",
+      "cutoff_basis": "chart_end"
+     }
+    }
+   ],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "ویدیوی یوتیوب «Bitcoin Hanging by a Thread: $67,000 Next?»، کانال Gareth Soloway",
+     "confidence": "high"
+    },
+    {
+     "text": "Last Price (24H) $2,228.98 −1.36%؛ Volume (24H) $389.01M؛ High (24H) $2,265.96؛ Low (24H) $2,202.27",
+     "confidence": "high"
+    },
+    {
+     "text": "سرخط آخرین شمع: O2,234.64 H2,247.39 L2,205.74 C2,228.98 −5.66 (−0.25%) VOL 117.8K — رقم‌ها تار، د۱۶",
+     "confidence": "medium"
+    },
+    {
+     "text": "نشانگر موس گرت در اسکرین‌شات: 1,961.00 و Mon 30 Nov '26 — د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "زیرنویس انگلیسی: technical support, which opens the door to us going down into this level",
+     "confidence": "high"
+    },
+    {
+     "text": "نشانه سرخ کوچک در سر چپ خط بالا — معنا نامعلوم، د۹",
+     "confidence": "medium"
+    }
+   ],
+   "speech": "گوینده به اتریوم برمی‌گردد: نظر گرت حدود ۲۰۰۰ دلار است؛ اتریوم ناحیه حمایتی حدود ۲۳۵۰ را از دست داده.",
    "method_notes": [
-    "درون بازه 09:29 تا 12:35، تصمیم کاربر ۷ نوامبر: فقط الگوی کلی؛ نماد، عدد و نام ثبت نشد — دفترچه تحلیلگر بخش ۰",
-    "is_chart نادرست فقط به‌خاطر بازه است؛ صفحه نمودار عمومی است"
+    "بیرون از بازه پولی 09:57 تا 12:00 — تصمیم کاربر ۸ نوامبر؛ صفحه ویدیوی عمومی گرت `F2ma_X-jtP0` است",
+    "عدد حمایت ازدست‌رفته از صفحه: خط آبی بالا حدود 2,365؛ تکرارگر «۲۳۵۰» گفت",
+    "نماد از حرف و متن اصل: اتریوم — «this chart on ETH»؛ روی صفحه زیر نشان کوین‌بیس پنهان",
+    "وارسی، محاسبه‌شده: 2,234.64 − 2,228.98 = 5.66؛ 5.66 ÷ 2,234.64 = 0.25٪ — همان نوشته سرخط"
    ],
    "claims": [],
    "speech_vs_screen": {
-    "agree": null,
-    "note": "درون بازه اشتراک پولی؛ وارسی ثبت نشد"
+    "agree": true,
+    "note": "حرف ۲۳۵۰ با خط بالا حدود 2,365 نزدیک است و ۲۰۰۰ با خط پایین حدود 1,960"
    },
    "screen_source": {
     "kind": "other",
-    "who": "محتوای اشتراکی پولی",
-    "evidence": "صفحه این فریم نمای عمومی است؛ درون بازه تصمیم کاربر"
+    "who": "گرت سالووی",
+    "evidence": "اسکرین‌شات ویدیوی یوتیوب Gareth Soloway؛ نشانی screencaptureui_q2lrcK"
+   },
+   "chart_end": {
+    "value": "2026-11-06T19:42:10+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط گرت — د۳۱ و د۳۹"
    }
   },
   {
    "frame_id": "PCamr3150_M_12m07.0s",
    "t": 727.0,
-   "is_chart": false,
+   "is_chart": true,
    "refs": [
     {
      "doc": "2026-11-07_tekrargar_PCamr315",
@@ -3082,27 +3247,108 @@
      "claim_id": null
     }
    ],
-   "texts": [],
-   "speech": "گوینده از حمایت ازدست‌رفته و حمایت بعدی همان دارایی و برنامه خرید روی آن نقل می‌کند.",
-   "method_notes": [
-    "درون بازه 09:29 تا 12:35، تصمیم کاربر ۷ نوامبر: فقط الگوی کلی؛ نماد، عدد و نام ثبت نشد — دفترچه تحلیلگر بخش ۰",
-    "is_chart نادرست فقط به‌خاطر بازه است؛ صفحه نمودار عمومی است"
+   "recorded_at": {
+    "value": "2026-11-06T14:42:10-05:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "همان اسکرین‌شات 12:00؛ ساعت نمودار گرت — د۳۹",
+    "seen": "2:42:10 PM UTC-5"
+   },
+   "coin": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "venue": {
+    "value": "Coinbase",
+    "confidence": "medium",
+    "from": "image",
+    "how": "رابط Coinbase Advanced با Native و TradingView؛ نماد زیر نشان کوین‌بیس پنهان، فقط «…D» دیده می‌شود"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image",
+    "how": "دکمه D در نوار بالا روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "همان نمای 12:00"
+   },
+   "price_axis": {
+    "top": {
+     "value": 2900,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 1400,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "همان اسکرین‌شات 12:00؛ Last Price (24H) $2,228.98 −1.36%",
+     "confidence": "high"
+    },
+    {
+     "text": "نشانگر موس گرت در اسکرین‌شات: 1,961.00 — د۲",
+     "confidence": "high"
+    },
+    {
+     "text": "زیرنویس انگلیسی: technical support, which opens the door to us going down into this level",
+     "confidence": "high"
+    }
    ],
-   "claims": [],
+   "speech": "گوینده از گرت نقل می‌کند: اتریوم حمایت حدود ۲۳۵۰ را از دست داده؛ حمایت بعدی حدود ۲۰۰۰ است و آنجا خرید سنگین می‌کند؛ اگر زیر ۲۰۰۰ برود اندازه را بیشتر می‌کند.",
+   "method_notes": [
+    "بیرون از بازه پولی 09:57 تا 12:00 — تصمیم کاربر ۸ نوامبر؛ صفحه ویدیوی عمومی گرت `F2ma_X-jtP0` است",
+    "عدد حمایت ازدست‌رفته از صفحه: خط آبی بالا حدود 2,365؛ تکرارگر «۲۳۵۰» گفت",
+    "خط‌ها همان فریم 12:00؛ دوباره ثبت نشد",
+    "گرت در اصل: «a pierce of 2000… I'm a buyer. When we get down and pierce 2000 on ETH, I will start accumulating it» — د۴۶",
+    "«اگر زیر ۲۰۰۰ برود اندازه را بیشتر می‌کنم» فقط در نقل تکرارگر است، نه در متن اصل؛ به گرت نسبت داده نشد"
+   ],
+   "claims": [
+    {
+     "text": "اتریوم — خرید شرطی — زیر حمایت کلیدی برگشته و راه تا حدود 2000 باز است؛ با شکست کمی زیر 2000 خرید و انباشت را آغاز می‌کند — بی‌مهلت",
+     "origin": "گرت سالووی",
+     "url": "https://www.youtube.com/watch?v=F2ma_X-jtP0"
+    }
+   ],
    "speech_vs_screen": {
-    "agree": null,
-    "note": "درون بازه اشتراک پولی؛ وارسی ثبت نشد"
+    "agree": true,
+    "note": "۲۳۵۰ حرف با خط حدود 2,365 نزدیک؛ ۲۰۰۰ با خط حدود 1,960، همان «pierce of 2000» اصل"
    },
    "screen_source": {
     "kind": "other",
-    "who": "محتوای اشتراکی پولی",
-    "evidence": "صفحه این فریم نمای عمومی است؛ درون بازه تصمیم کاربر"
+    "who": "گرت سالووی",
+    "evidence": "اسکرین‌شات ویدیوی یوتیوب Gareth Soloway؛ نشانی screencaptureui_q2lrcK"
+   },
+   "chart_end": {
+    "value": "2026-11-06T19:42:10+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط گرت — د۳۱ و د۳۹"
    }
   },
   {
    "frame_id": "PCamr3150_M_12m18.0s",
    "t": 738.0,
-   "is_chart": false,
+   "is_chart": true,
    "refs": [
     {
      "doc": "2026-11-07_tekrargar_PCamr315",
@@ -3114,21 +3360,94 @@
      "claim_id": null
     }
    ],
-   "texts": [],
-   "speech": "ادامه همان نقل؛ پیکان سرخ دستی گوینده روی خط.",
+   "recorded_at": {
+    "value": "2026-11-06T14:42:10-05:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "همان اسکرین‌شات q2lrcK فریم 12:00؛ ساعت در این برش دیده نمی‌شود",
+    "seen": null
+   },
+   "coin": {
+    "value": null,
+    "confidence": null,
+    "from": "image",
+    "note": "ناخوانا"
+   },
+   "venue": {
+    "value": "Coinbase",
+    "confidence": "medium",
+    "from": "image",
+    "how": "رابط Coinbase Advanced با Native و TradingView؛ نماد زیر نشان کوین‌بیس پنهان، فقط «…D» دیده می‌شود"
+   },
+   "timeframe": {
+    "value": "1D",
+    "confidence": "medium",
+    "from": "image",
+    "how": "دکمه D در نوار بالا روشن"
+   },
+   "chart_type": {
+    "value": "candles",
+    "confidence": "high",
+    "from": "image"
+   },
+   "scale": {
+    "value": "linear",
+    "confidence": "medium",
+    "from": "image",
+    "how": "گام 100 همه حدود 61 تا 62 پیکسل در نمای بزرگ‌شده"
+   },
+   "price_axis": {
+    "top": {
+     "value": 2900,
+     "confidence": "high",
+     "from": "image"
+    },
+    "bottom": {
+     "value": 1700,
+     "confidence": "high",
+     "from": "image"
+    }
+   },
+   "levels": [],
+   "trendlines": [],
+   "zones": [],
+   "patterns": [],
+   "indicators": [],
+   "texts": [
+    {
+     "text": "نمای بزرگ‌شده همان اسکرین‌شات 12:00",
+     "confidence": "high"
+    },
+    {
+     "text": "پیکان سرخ دستی گوینده روی خط آبی بالا، رو به راست",
+     "confidence": "medium"
+    },
+    {
+     "text": "برچسب قیمت 2,228.98؛ نشانگر موس گرت 1,961.00 — د۲",
+     "confidence": "high"
+    }
+   ],
+   "speech": "ادامه همان نقل اتریوم؛ گوینده با پیکان سرخ خط حمایت ازدست‌رفته را نشان می‌دهد.",
    "method_notes": [
-    "درون بازه 09:29 تا 12:35، تصمیم کاربر ۷ نوامبر: فقط الگوی کلی؛ نماد، عدد و نام ثبت نشد — دفترچه تحلیلگر بخش ۰",
-    "is_chart نادرست فقط به‌خاطر بازه است؛ صفحه نمودار عمومی است"
+    "بیرون از بازه پولی 09:57 تا 12:00 — تصمیم کاربر ۸ نوامبر؛ صفحه ویدیوی عمومی گرت `F2ma_X-jtP0` است",
+    "عدد حمایت ازدست‌رفته از صفحه: خط آبی بالا حدود 2,365؛ تکرارگر «۲۳۵۰» گفت",
+    "برش بزرگ‌شده: خط بالا حدود 2,367 و خط پایین حدود 1,961؛ قیمت‌ها در levels فریم 12:00"
    ],
    "claims": [],
    "speech_vs_screen": {
-    "agree": null,
-    "note": "درون بازه اشتراک پولی؛ وارسی ثبت نشد"
+    "agree": true,
+    "note": "پیکان سرخ روی همان خط حدود 2,365 است که حرف «۲۳۵۰» می‌گوید"
    },
    "screen_source": {
     "kind": "other",
-    "who": "محتوای اشتراکی پولی",
-    "evidence": "صفحه این فریم نمای عمومی است؛ درون بازه تصمیم کاربر"
+    "who": "گرت سالووی",
+    "evidence": "اسکرین‌شات ویدیوی یوتیوب Gareth Soloway؛ نشانی screencaptureui_q2lrcK"
+   },
+   "chart_end": {
+    "value": "2026-11-06T19:42:10+00:00",
+    "confidence": "medium",
+    "from": "image",
+    "how": "زمان ضبط گرت — د۳۱ و د۳۹"
    }
   },
   {
@@ -4159,7 +4478,7 @@
   {
    "area": "سطح",
    "rule": "پس از شکست با بسته روزانه تأییدشده، ناحیه خرید بعدی سقف محوری پیشین یا حمایت بعدی است — نقل گرت",
-   "where": "00:17، 02:39، 14:01، 18:06 تا 19:51",
+   "where": "00:17، 02:39، 12:00 تا 12:31، 14:01، 18:06 تا 19:51",
    "library": "تازه — ر۷۲"
   },
   {
