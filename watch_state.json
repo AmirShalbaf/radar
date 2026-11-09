@@ -115,15 +115,15 @@
   "mkt_BTC_2026-11-02T00:00:00+00:00": true,
   "stale_2026-11-03": true,
   "SOL": {
-    "last_px": 88.05
+    "last_px": 86.47
   },
   "re_SOL_2026-11-02T00:00:00+00:00": true,
   "stale_2026-11-04": true,
   "stale_2026-11-05": true,
   "_alert": {
     "orange": {
-      "day": "2026-11-08",
-      "n": 1
+      "day": "2026-11-09",
+      "n": 3
     }
   },
   "event_day_nfp-2026-10": true,
@@ -155,5 +155,12 @@
   "re_ETH_2026-11-09T00:00:00+00:00": true,
   "weekly_digest_2026-11-09T00:00:00+00:00": {
     "sent": "2026-11-09T02:58:35.873262+00:00"
-  }
+  },
+  "mkt_BTC_2026-11-09T00:00:00+00:00": true,
+  "mkt_side_BTC": {
+    "side": "below",
+    "closed_at": "2026-11-09T00:00:00+00:00"
+  },
+  "shake_cross_LINK_2026-11-09": true,
+  "shake_cross_ONDO_2026-11-09": true
 }
