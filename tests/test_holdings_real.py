@@ -59,10 +59,10 @@ def _ledger_by_account(h, field) -> dict:
 
 
 def test_updated_not_before_screenshot(h) -> None:
-    """منبع تازه — رسید و اسکرین‌شات ۲ نوامبر ۲۰۲۶، متن ۳۴؛ frozen همان اسکرین‌شات ۲۵ سپتامبر می‌ماند."""
-    assert "LBank" in h["source"] and "۲ نوامبر ۲۰۲۶" in h["source"]
-    assert "14:57:20 UTC" in h["source"] and "1164.51684349" in h["source"]
-    assert h["updated"] == "2026-11-02T14:57:20+00:00"
+    """منبع تازه — اسکرین‌شات و تاریخچه تتر LBank ۹ نوامبر ۲۰۲۶، رویداد ۱۳۵؛ frozen همان اسکرین‌شات ۲۵ سپتامبر می‌ماند."""
+    assert "LBank" in h["source"] and "۹ نوامبر ۲۰۲۶" in h["source"]
+    assert "10:55 UTC" in h["source"] and "1135.61630829" in h["source"]
+    assert h["updated"] == "2026-11-09T10:55:00+00:00"
 
 
 def test_quantities_match_screenshots(h) -> None:
