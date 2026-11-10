@@ -1,15 +1,15 @@
 {
  "version": 1,
- "generated": "2026-11-09T07:10:36+00:00",
+ "generated": "2026-11-10T07:44:48+00:00",
  "capital": {
-  "total": 1521.7005146616,
-  "stable_usd": 1164.51684349,
+  "total": 1500.639103468,
+  "stable_usd": 1135.61630829,
   "incomplete": false,
   "missing": []
  },
  "regime": {
-  "score": -0.8169520840513886,
-  "source": "regime.json، تولید 2026-11-09 07:10 UTC",
+  "score": -0.7647536383071564,
+  "source": "regime.json، تولید 2026-11-10 07:44 UTC",
   "band": "انقباضی",
   "stable_target": 40,
   "trade_band": "انقباضی",
@@ -18,123 +18,123 @@
   "maxpos": 2
  },
  "trade": {
-  "target_usd": 608.68020586464,
-  "cash": 555.8366376253599,
-  "risk_cap": 38.04251286654,
+  "target_usd": 600.2556413872001,
+  "cash": 535.3606669028,
+  "risk_cap": 37.515977586700004,
   "risk_used": 0.0,
-  "risk_left": 38.04251286654,
-  "cash_after_orders": 555.8366376253599,
+  "risk_left": 37.515977586700004,
+  "cash_after_orders": 535.3606669028,
   "orders_usd": 0
  },
- "pos_risk_usd": 33.679794078000015,
+ "pos_risk_usd": 41.288479546000005,
  "positions": [
   {
    "symbol": "SOL",
    "qty": 5.369000000055024e-05,
-   "price": 85.74,
-   "value": 0.0046033806000471775,
+   "price": 86.3,
+   "value": 0.004633447000047486,
    "dust": true,
    "invalidation": null,
    "weekly_close": null,
    "weekly_closed_at": null,
-   "rsi": 26.7,
-   "rs30": -0.1142
+   "rsi": 27.3,
+   "rs30": -0.1187
   },
   {
    "symbol": "ETH",
    "qty": 5.700000000003619e-05,
-   "price": 2104.59,
-   "value": 0.11996163000007617,
+   "price": 2121.81,
+   "value": 0.12094317000007679,
    "dust": true,
    "invalidation": null,
    "weekly_close": null,
    "weekly_closed_at": null,
-   "rsi": 32.9,
-   "rs30": -0.0532
+   "rsi": 33.7,
+   "rs30": -0.0574
   },
   {
    "symbol": "BNB",
    "qty": 0.000757899999999978,
-   "price": 679.05,
-   "value": 0.514651994999985,
+   "price": 691.77,
+   "value": 0.5242924829999848,
    "dust": true,
    "invalidation": null,
    "weekly_close": null,
    "weekly_closed_at": null,
-   "rsi": 38.2,
-   "rs30": 0.0123
+   "rsi": 40.8,
+   "rs30": 0.0238
   },
   {
    "symbol": "AAVE",
    "qty": 1.04895,
-   "price": 128.43,
-   "value": 134.71664850000002,
+   "price": 127.04,
+   "value": 133.258608,
    "dust": false,
    "invalidation": 106.892,
    "weekly_close": 126.13,
    "weekly_closed_at": "2026-11-09T00:00:00+00:00",
-   "rsi": 38.8,
-   "rs30": -0.1305
+   "rsi": 44.6,
+   "rs30": -0.1545
   },
   {
    "symbol": "LINK",
    "qty": 11.09889,
-   "price": 10.317,
-   "value": 114.50724813000001,
+   "price": 10.671,
+   "value": 118.43625519,
    "dust": false,
    "invalidation": 10.3366,
    "weekly_close": 10.413,
    "weekly_closed_at": "2026-11-09T00:00:00+00:00",
-   "rsi": 36.6,
-   "rs30": -0.0998
+   "rsi": 40.0,
+   "rs30": -0.0944
   },
   {
    "symbol": "SUI",
    "qty": 81.6183,
-   "price": 0.8176,
-   "value": 66.73112208,
+   "price": 0.8504,
+   "value": 69.40820232,
    "dust": false,
    "invalidation": 0.6843,
    "weekly_close": 0.8212,
    "weekly_closed_at": "2026-11-09T00:00:00+00:00",
-   "rsi": 36.3,
-   "rs30": -0.1586
+   "rsi": 40.0,
+   "rs30": -0.1417
   },
   {
    "symbol": "ONDO",
    "qty": 115.43866,
-   "price": 0.3496,
-   "value": 40.357355536,
+   "price": 0.3728,
+   "value": 43.035532448000005,
    "dust": false,
    "invalidation": 0.3478,
    "weekly_close": 0.3516,
    "weekly_closed_at": "2026-11-09T00:00:00+00:00",
-   "rsi": 35.0,
-   "rs30": -0.1878
+   "rsi": 41.8,
+   "rs30": -0.1795
   },
   {
    "symbol": "TAO",
    "qty": 9.200000000000874e-05,
-   "price": 214.1,
-   "value": 0.01969720000000187,
+   "price": 222.87,
+   "value": 0.020504040000001948,
    "dust": true,
    "invalidation": null,
    "weekly_close": null,
    "weekly_closed_at": null,
-   "rsi": 34.6,
-   "rs30": -0.142
+   "rsi": 38.8,
+   "rs30": -0.1391
   },
   {
    "symbol": "TRX",
    "qty": 0.6704,
-   "price": 0.3168,
-   "value": 0.21238272000000002,
+   "price": 0.31895,
+   "value": 0.21382408,
    "dust": true,
    "invalidation": null,
    "weekly_close": null,
    "weekly_closed_at": null,
-   "rsi": 44.8,
-   "rs30": 0.0645
+   "rsi": 43.8,
+   "rs30": 0.0718
   }
  ],
  "reentry": [

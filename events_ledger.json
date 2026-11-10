@@ -2051,6 +2051,67 @@
      "d7": null
     }
    }
+  },
+  {
+   "id": "fomc:2026-12-09",
+   "kind": "fomc",
+   "title": "تصمیم فدرال‌رزرو (FOMC)",
+   "importance": "high",
+   "at": "2026-12-09T19:00:00Z",
+   "source": "federalreserve.gov/json/calendar.json",
+   "first_seen": "2026-11-10T07:46:09Z",
+   "prices": {
+    "BTC": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "SOL": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "ETH": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "BNB": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "AAVE": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "LINK": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "SUI": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "ONDO": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "TAO": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "TRX": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    }
+   }
   }
  ]
 }
