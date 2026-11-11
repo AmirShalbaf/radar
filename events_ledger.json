@@ -1676,52 +1676,92 @@
    "first_seen": "2026-10-12T15:59:57Z",
    "prices": {
     "BTC": {
-     "before": null,
+     "before": {
+      "close": 74391.1,
+      "candle_open": "2026-11-10T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "SOL": {
-     "before": null,
+     "before": {
+      "close": 84.97,
+      "candle_open": "2026-11-10T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "ETH": {
-     "before": null,
+     "before": {
+      "close": 2099.86,
+      "candle_open": "2026-11-10T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "BNB": {
-     "before": null,
+     "before": {
+      "close": 687.51,
+      "candle_open": "2026-11-10T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "AAVE": {
-     "before": null,
+     "before": {
+      "close": 125.81,
+      "candle_open": "2026-11-10T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "LINK": {
-     "before": null,
+     "before": {
+      "close": 10.5,
+      "candle_open": "2026-11-10T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "SUI": {
-     "before": null,
+     "before": {
+      "close": 0.8325,
+      "candle_open": "2026-11-10T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "ONDO": {
-     "before": null,
+     "before": {
+      "close": 0.3706,
+      "candle_open": "2026-11-10T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "TAO": {
-     "before": null,
+     "before": {
+      "close": 220.09,
+      "candle_open": "2026-11-10T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "TRX": {
-     "before": null,
+     "before": {
+      "close": 0.31898,
+      "candle_open": "2026-11-10T12:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     }
@@ -2060,6 +2100,67 @@
    "at": "2026-12-09T19:00:00Z",
    "source": "federalreserve.gov/json/calendar.json",
    "first_seen": "2026-11-10T07:46:09Z",
+   "prices": {
+    "BTC": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "SOL": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "ETH": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "BNB": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "AAVE": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "LINK": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "SUI": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "ONDO": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "TAO": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    },
+    "TRX": {
+     "before": null,
+     "h24": null,
+     "d7": null
+    }
+   }
+  },
+  {
+   "id": "cpi:2026-12-10",
+   "kind": "cpi",
+   "title": "تورم مصرف‌کننده (CPI)",
+   "importance": "high",
+   "at": "2026-12-10T13:30:00Z",
+   "source": "fred.stlouisfed.org rid=10 — برنامه BLS/BEA",
+   "first_seen": "2026-11-11T07:07:19Z",
    "prices": {
     "BTC": {
      "before": null,
