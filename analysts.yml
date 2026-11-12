@@ -352,6 +352,60 @@ sources:
     conflict: "اپلیکیشن و دوره پولی دارد"
     collinear_with: "tradecity_pro"
 
+  # سه پلی‌لیست آموزش رایگان ارشیا — پیشنهاد کاربر ۱۲ نوامبر ۲۰۲۶، ک۱۳۶، رویداد ۱۴۱.
+  # فقط متن: زیرنویس خودکار فارسی، متن کامل فقط محلی. هم‌خط با تریدسیتی پرو: یک رأی.
+  arshia_ta_0_30:
+    name_fa: "آموزش تحلیل تکنیکال ارشیا — ۰ تا ۳۰"
+    name_en: "Trade City Pro - TA 0-30"
+    role: "کتابخانه روش"
+    school: "پرایس اکشن و ساختار"
+    kind: "playlist"
+    playlist_id: "PLRZx7LpGZLGkOkVtf9MCYyygMYQ89v6Dk"
+    lang: ["fa"]
+    scores: false
+    enabled: true
+    watch: "text"
+    notes: >
+      ۱۹ ویدیو: نقشه راه، داو، حمایت و مقاومت، حد ضرر، مدیریت سرمایه، کندل‌شناسی،
+      دامیننس، اندیکاتورهای پایه، ژورنال، احتمال. قاعده‌نامه ارشیا — ک۱۳۶.
+      دروازه ورود هر قاعده به رادار: آزمون شبیه‌ساز خارج از نمونه، پس از کارمزد.
+    conflict: "اپلیکیشن و دوره پولی دارد"
+    collinear_with: "tradecity_pro"
+
+  arshia_ta_30_60:
+    name_fa: "آموزش تحلیل تکنیکال ارشیا — ۳۰ تا ۶۰"
+    name_en: "Trade City Pro - TA 30-60"
+    role: "کتابخانه روش"
+    school: "پرایس اکشن و ساختار"
+    kind: "playlist"
+    playlist_id: "PLRZx7LpGZLGndRgtOCTfVJlxn_4Wh589M"
+    lang: ["fa"]
+    scores: false
+    enabled: true
+    watch: "text"
+    notes: >
+      ۴۳ ویدیو، پارت ۱۹ تا ۶۱: ترند آنالیز، تغییر روند، حجم و بهره باز، کندل ستاپ ارشیا
+      پارت ۳۵ تا ۳۷، اوردر بوک، اسیلاتورها، خروج، ساخت استراتژی. قاعده‌نامه — ک۱۳۶.
+    conflict: "اپلیکیشن و دوره پولی دارد"
+    collinear_with: "tradecity_pro"
+
+  arshia_ta_60_100:
+    name_fa: "آموزش تحلیل تکنیکال ارشیا — ۶۰ تا ۱۰۰"
+    name_en: "Trade City Pro - TA 60-100"
+    role: "کتابخانه روش"
+    school: "پرایس اکشن و ساختار"
+    kind: "playlist"
+    playlist_id: "PLRZx7LpGZLGnXABmisKijEhwotw2uejyn"
+    lang: ["fa"]
+    scores: false
+    enabled: true
+    watch: "text"
+    notes: >
+      ۳۳ ویدیو، پارت ۶۲ تا ۹۳ و یکی بی‌شماره: ساختار مارکت، چرخه‌ها، لوریج، چک‌لیست
+      پیش از پوزیشن، مدیریت سرمایه پیشرفته، فیبوناچی، استاپ اوردرها، پامپ و دامپ.
+    conflict: "اپلیکیشن و دوره پولی دارد"
+    collinear_with: "tradecity_pro"
+
 
 # =====================================================================
 # جدول مکاتب — محافظ هم‌خطی

@@ -43,6 +43,7 @@ def test_real_config_watch_modes() -> None:
         "tradecity_pro": "text", "no_bs_crypto": "text", "cryptocity_pro": "full",
         "tekrargar": "full", "benjamin_cowen": "full", "gareth_soloway": "crypto_title",
         "raoul_pal": "text", "virtualbacon": "text", "arshia_course": "text",
+        "arshia_ta_0_30": "text", "arshia_ta_30_60": "text", "arshia_ta_60_100": "text",
     }
 
 

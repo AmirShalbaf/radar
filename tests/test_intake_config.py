@@ -115,5 +115,19 @@ def test_scores_field_untouched_until_session_8() -> None:
         "tradecity_pro": False, "no_bs_crypto": False, "cryptocity_pro": False,
         "tekrargar": False, "benjamin_cowen": True, "gareth_soloway": True,
         "raoul_pal": True, "virtualbacon": False, "arshia_course": False,
+        "arshia_ta_0_30": False, "arshia_ta_30_60": False, "arshia_ta_60_100": False,
     }
     assert {k: s.scores for k, s in _src().items()} == want
+
+
+def test_arshia_ta_playlists_are_text_only_course_sources() -> None:
+    """ک۱۳۶، رویداد ۱۴۱: سه پلی‌لیست آموزش رایگان، فقط متن، یک رأی با تریدسیتی پرو."""
+    want = {"arshia_ta_0_30": "PLRZx7LpGZLGkOkVtf9MCYyygMYQ89v6Dk",
+            "arshia_ta_30_60": "PLRZx7LpGZLGndRgtOCTfVJlxn_4Wh589M",
+            "arshia_ta_60_100": "PLRZx7LpGZLGnXABmisKijEhwotw2uejyn"}
+    src = _src()
+    for k, pid in want.items():
+        s = src[k]
+        assert s.kind == "playlist" and s.playlist_id == pid and s.enabled
+        assert s.watch == "text" and s.role == "کتابخانه روش"
+        assert s.collinear_with == "tradecity_pro" and s.scores is False
