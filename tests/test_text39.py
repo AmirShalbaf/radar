@@ -269,3 +269,33 @@ def test_main_writes_reaction_and_press(tmp_path, monkeypatch) -> None:
     led = json.loads((tmp_path / "events_ledger.json").read_text(encoding="utf-8"))
     cpi = [e for e in led["events"] if e["id"] == "cpi:2026-10-14"][0]
     assert cpi["reaction_30m"]["chg30_pct"] == -0.882
+
+
+def test_main_press_with_bom_parses_bytes_not_guessed_text(tmp_path, monkeypatch) -> None:
+    """نخستین اجرای واقعی ۱۲ نوامبر: خوراک با نشانه ترتیب بایت می‌آید و requests متن را لاتین-۱ حدس می‌زند.
+
+    خطای همان روز «invalid token: line 1, column 1» بود؛ پس خوراک باید از بایت خام خوانده شود.
+    """
+    import test_radar_events as T
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "reports").mkdir()
+    (tmp_path / "pump.json").write_text(json.dumps(
+        {"generated": E.iso(T.NOW - timedelta(hours=3)), "candidates": []}), encoding="utf-8")
+    monkeypatch.setattr(E, "portfolio_symbols", lambda path: ["SOL"])
+    monkeypatch.setattr(E, "watchlist", lambda: ["BTC"])
+    monkeypatch.setattr(E, "PAUSE_RETRY", 0.0)
+    base = T._get()
+    raw = ("﻿" + RSS).encode("utf-8")
+
+    def get(url, **k):
+        if "press_all.xml" in url:
+            return SimpleNamespace(status_code=200, content=raw, text=raw.decode("latin-1"),
+                                   json=lambda: None)
+        return base(url, **k)
+    rc = E.main(["--out", "reports/events.md", "--line", "line.txt", "--ledger", "events_ledger.json",
+                 "--pump", "pump.json", "--state", "none.json", "--calendar", "none.json"],
+                get=get, now=T.NOW, history=T._Hist())
+    assert rc == 0
+    rep = (tmp_path / "reports" / "events.md").read_text(encoding="utf-8")
+    assert "خوراک اطلاعیه فدرال‌رزرو نیامد" not in rep
+    assert "XML نیست" not in rep

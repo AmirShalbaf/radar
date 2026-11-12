@@ -838,7 +838,7 @@ def _important(title: str, cats: list[str]) -> bool:
     return any("monetary policy" in c.lower() for c in cats) or any(w in t for w in PRESS_KEYWORDS)
 
 
-def parse_fed_press(text: str, with_error: bool = False):
+def parse_fed_press(text: str | bytes, with_error: bool = False):
     """خوراک RSS اطلاعیه‌ها — عنوان، پیوند، زمان وقت جهانی، دسته و برچسب مهم."""
     items, err = [], None
     try:
@@ -1004,9 +1004,11 @@ def main(argv=None, get=None, now: datetime | None = None, history=None) -> int:
 
     # ── اطلاعیه فدرال‌رزرو — متن ۳۹؛ نیامدن آن تقویم را ناقص نمی‌کند، فقط هشدار
     press: list[dict] = []
-    ptxt, perr = _text(get, FED_PRESS, "federalreserve.gov — اطلاعیه‌ها")
+    # بایت خام، نه r.text: خوراک نشانه ترتیب بایت دارد و requests بی charset متن را لاتین-۱
+    # حدس می‌زند — نخستین اجرای واقعی ۱۲ نوامبر همین‌جا شکست. تجزیه‌گر XML خودش رمزگذاری را می‌خواند
+    pr, perr = _fetch(get, FED_PRESS, "federalreserve.gov — اطلاعیه‌ها")
     if not perr:
-        press, perr = parse_fed_press(ptxt, with_error=True)
+        press, perr = parse_fed_press(pr.content, with_error=True)
     if perr:
         notes.append(f"⚠️ خوراک اطلاعیه فدرال‌رزرو نیامد — {perr}")
         sources.append(("federalreserve.gov — اطلاعیه‌ها", f"⚠️ {perr}"))
