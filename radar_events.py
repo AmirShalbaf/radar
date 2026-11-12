@@ -53,14 +53,16 @@ import os
 import re
 import sys
 import time
+import xml.etree.ElementTree as ET_XML
 from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 # تنها منبع اصلی کمک‌تابع رقم فارسی — کپی محلی نگیر
 from radar_text import fa
 
-VERSION = "1.0"
+VERSION = "1.1"
 UTC = timezone.utc
 ET = ZoneInfo("America/New_York")
 CT = ZoneInfo("America/Chicago")
@@ -74,6 +76,16 @@ BEA_ICS = "https://www.bea.gov/news/schedule/ics/online-calendar-subscription.ic
 LLAMA_INDEX = "https://defillama-datasets.llama.fi/emissionsIndex"
 LLAMA_PROTOCOL = "https://defillama-datasets.llama.fi/emissions/{slug}"
 CG_MARKETS = "https://api.coingecko.com/api/v3/coins/markets"
+# متن ۳۹ — خوراک اطلاعیه‌های فدرال‌رزرو، ک۸۹ بخش اول؛ از لپ‌تاپ و رانر ۲۰۰ می‌دهد
+FED_PRESS = "https://www.federalreserve.gov/feeds/press_all.xml"
+PRESS_DAYS = 7                    # بخش گزارش: اطلاعیه‌های ۷ روز گذشته
+PRESS_LINE_HOURS = 24             # خط تلگرام: فقط اطلاعیه مهم ۲۴ ساعت گذشته
+# قاعده ساده واژه — تصمیم کاربر ۹ نوامبر: دسته «Monetary Policy» خوراک، یا یکی از این واژه‌ها
+# در عنوان. حساس به بزرگی حرف نیست. فرضیه آزمون‌نشده؛ کم یا زیاد بودنش پس از چند هفته سنجیده شود
+PRESS_KEYWORDS = ("fomc", "federal open market committee", "monetary policy", "discount rate",
+                  "interest on reserve", "beige book", "balance sheet")
+STATE_FILE = "watch_state.json"           # فقط خواندن — نشان «فرستاده شد» پایشگر
+CALENDAR_FILE = "events_calendar.json"    # فقط خواندن — انتظار، عدد واقعی و درس
 
 # ── تصمیم‌های کاربر، ایستگاه ۱ — رویداد ۸۷ ──
 HORIZON_DAYS = 30                 # افق وتو و تقویم کامل
@@ -682,7 +694,7 @@ def render_section(macro, verdicts, groups, now, report_path: str) -> str:
 
 
 def render_report(macro, verdicts, groups, now, sources, ledger, notes,
-                  cand_src: str | None = None) -> str:
+                  cand_src: str | None = None, press: list | None = None) -> str:
     start, end = iso(now), iso(now + timedelta(days=HORIZON_DAYS))
     o = [f"# تقویم رویداد و آزادسازی — {now:%Y-%m-%d}", "",
          f"`radar_events.py` {VERSION} — نشست ۱۰ رادار ۷.", "",
@@ -739,9 +751,136 @@ def render_report(macro, verdicts, groups, now, sources, ledger, notes,
                  f"{f'{base:.10g}' if base else cell('before')} | {cell('h24')} | {cell('d7')} |")
     if not past:
         o.append("| — | — | — | — | — | — |")
-    o += ["", "## ۵ — منبع‌ها", "", "| منبع | وضعیت |", "|---|---|"]
+    o += [""] + render_reactions(ledger, now)
+    o += render_press(press or [], now)
+    o += ["## ۷ — منبع‌ها", "", "| منبع | وضعیت |", "|---|---|"]
     o += [f"| {n} | {s} |" for n, s in sources]
     return "\n".join(o) + "\n"
+
+
+# ═══════════════ واکنش رویداد — متن ۳۹ ═══════════════
+
+def _load_ro(path: str) -> tuple[dict, str | None]:
+    """خواندن فقط‌خواندنی؛ غایب یعنی تهی بی‌هشدار، خراب یعنی تهی با هشدار."""
+    if not path or not os.path.exists(path):
+        return {}, None
+    try:
+        d = json.loads(Path(path).read_text(encoding="utf-8"))
+        return (d if isinstance(d, dict) else {}), None
+    except (OSError, ValueError) as exc:
+        return {}, f"{path} خوانده نشد — {type(exc).__name__}"
+
+
+REACTION_KEYS = ("p0", "p30", "chg30_pct", "lo", "hi", "venue", "seen")
+
+
+def fill_reactions(ledger: dict, state: dict, cal: dict) -> list[str]:
+    """
+    واکنش ۳۰ دقیقه‌ای هر رویداد کلان را از watch_state.json به دفتر رویداد می‌برد — متن ۳۹.
+    پایشگر هنوز در state می‌نویسد، چون نشان «فرستاده شد» همان‌جاست؛ تنها نویسنده دفتر رویداد
+    همین فایل است، پس دو گردش‌کار یک فایل را هم‌زمان نمی‌نویسند. جفت‌شدن با نوع و زمان دقیق.
+    انتظار، عدد واقعی و درس از تقویم دستی، هر اجرا دوباره — اصلاح تقویم به دفتر می‌رسد.
+    """
+    notes = []
+    cal_by_id = {e.get("id"): e for e in (cal.get("events") or []) if isinstance(e, dict)}
+    for key in sorted(state):
+        if not key.startswith("event_result_") or not isinstance(state[key], dict):
+            continue
+        rec, cid = state[key], key[len("event_result_"):]
+        try:
+            at = parse_iso(str(rec["at"]))
+        except (KeyError, ValueError):
+            notes.append(f"⚠️ واکنش رویداد {cid} زمان معتبر ندارد — در دفتر ثبت نشد")
+            continue
+        match = [e for e in ledger.get("events", [])
+                 if e.get("kind") == rec.get("kind") and parse_iso(e["at"]) == at]
+        if not match:
+            notes.append(f"⚠️ واکنش رویداد {cid} در دفتر رویداد جایی ندارد — {rec.get('kind')} "
+                         f"{iso(at)}؛ در watch_state.json ماند")
+            continue
+        ev = match[0]
+        r = {k: rec[k] for k in REACTION_KEYS if k in rec}
+        if "p0" not in r:
+            r["error"] = "واکنش ۳۰ دقیقه سنجیده نشد — داده ندارم"
+        r["calendar_id"] = cid
+        ev["reaction_30m"] = r
+        c = cal_by_id.get(cid) or {}
+        for k in ("expected", "actual", "lesson"):
+            v = c.get(k) or (rec.get(k) if k != "lesson" else None)
+            if v:
+                ev[k] = v
+    return notes
+
+
+def render_reactions(ledger: dict, now: datetime, k: int = 10) -> list[str]:
+    o = ["## ۵ — واکنش ۳۰ دقیقه‌ای بیت‌کوین به رویداد کلان", "",
+         "از هشدار نتیجه رویداد پایشگر؛ انتظار و عدد واقعی از تقویم دستی — متن ۳۹.", "",
+         "| رویداد | زمان (UTC) | انتظار | عدد واقعی | واکنش ۳۰ دقیقه |", "|---|---|---|---|---|"]
+    evs = [e for e in ledger.get("events", []) if e.get("reaction_30m") and e["at"] <= iso(now)]
+    for e in evs[-k:]:
+        r = e["reaction_30m"]
+        react = (f"{r['chg30_pct']:+.2f}٪ — {r['p0']:.10g} به {r['p30']:.10g}"
+                 if "chg30_pct" in r else r.get("error", "—"))
+        cell = lambda v: str(v).replace("|", "／") if v else "—"
+        o.append(f"| `{e['id']}` | {_hm(e['at'])} | {cell(e.get('expected'))} | "
+                 f"{cell(e.get('actual'))} | {react} |")
+        if e.get("lesson"):
+            o.append(f"| | | درس: {cell(e['lesson'])} | | |")
+    if not evs:
+        o.append("| — | — | — | — | هنوز ثبت نشده |")
+    return o + [""]
+
+
+# ═══════════════ اطلاعیه فدرال‌رزرو — متن ۳۹، ک۸۹ ═══════════════
+
+def _important(title: str, cats: list[str]) -> bool:
+    t = title.lower()
+    return any("monetary policy" in c.lower() for c in cats) or any(w in t for w in PRESS_KEYWORDS)
+
+
+def parse_fed_press(text: str, with_error: bool = False):
+    """خوراک RSS اطلاعیه‌ها — عنوان، پیوند، زمان وقت جهانی، دسته و برچسب مهم."""
+    items, err = [], None
+    try:
+        root = ET_XML.fromstring(text)
+        for it in root.iter("item"):
+            title = (it.findtext("title") or "").strip()
+            link = (it.findtext("link") or "").strip()
+            cats = [(c.text or "").strip() for c in it.findall("category")]
+            try:
+                at = iso(parsedate_to_datetime((it.findtext("pubDate") or "").strip()))
+            except (TypeError, ValueError, IndexError):
+                at = None
+            if title and at:
+                items.append({"title": title, "link": link, "at": at, "cats": cats,
+                              "important": _important(title, cats)})
+    except ET_XML.ParseError as exc:
+        items, err = [], f"خوراک اطلاعیه XML نیست — {str(exc)[:120]}"
+    return (items, err) if with_error else items
+
+
+def render_press(items: list[dict], now: datetime) -> list[str]:
+    lo = iso(now - timedelta(days=PRESS_DAYS))
+    o = [f"## ۶ — اطلاعیه‌های فدرال‌رزرو، {fa(PRESS_DAYS)} روز گذشته", "",
+         "قاعده ساده واژه: دسته سیاست پولی، یا واژه‌هایی مثل FOMC، نرخ تنزیل و صورت‌جلسه در عنوان — "
+         "فرضیه آزمون‌نشده، ک۸۹.", "", "| زمان (UTC) | عنوان | برچسب |", "|---|---|---|"]
+    rows = [i for i in items if lo <= i["at"] <= iso(now)]
+    for i in rows:
+        title = i["title"].replace("|", "／").replace("[", "(").replace("]", ")")
+        o.append(f"| {_hm(i['at'])} | [{title}]({i['link']}) | "
+                 f"{'⭐ مهم — سیاست پولی' if i['important'] else 'دیگر'} |")
+    if not rows:
+        o.append("| — | در این بازه اطلاعیه‌ای نیست | — |")
+    return o + [""]
+
+
+def press_line(items: list[dict], now: datetime) -> str:
+    """فقط اطلاعیه مهم ۲۴ ساعت گذشته؛ وگرنه تهی — پیام تلگرام شلوغ نشود."""
+    lo = iso(now - timedelta(hours=PRESS_LINE_HOURS))
+    imp = [i for i in items if i["important"] and lo <= i["at"] <= iso(now)]
+    if not imp:
+        return ""
+    return "اطلاعیه مهم فدرال‌رزرو در ۲۴ ساعت گذشته (" + "؛ ".join(i["title"] for i in imp[:2]) + ")"
 
 
 # ═══════════════ main ═══════════════
@@ -765,6 +904,10 @@ def main(argv=None, get=None, now: datetime | None = None, history=None) -> int:
     ap.add_argument("--line", help="یک خط ساده برای پیام تلگرام")
     ap.add_argument("--no-fill", action="store_true", dest="no_fill",
                     help="قیمت‌های دفتر رویداد پر نشوند")
+    ap.add_argument("--state", default=STATE_FILE,
+                    help="watch_state.json پایشگر — فقط خواندن، برای واکنش رویداد")
+    ap.add_argument("--calendar", default=CALENDAR_FILE,
+                    help="تقویم دستی — فقط خواندن، برای انتظار، عدد واقعی و درس")
     a = ap.parse_args(argv)
     now = (now or datetime.now(UTC)).astimezone(UTC)
     if get is None:
@@ -852,14 +995,33 @@ def main(argv=None, get=None, now: datetime | None = None, history=None) -> int:
     upsert(ledger, fresh + unlock_events, now, macro_symbols=port)
     if not a.no_fill:
         notes += fill_prices(ledger, now, history)
+    # واکنش ۳۰ دقیقه‌ای رویداد — متن ۳۹
+    state, serr = _load_ro(a.state)
+    cal, cerr = _load_ro(a.calendar)
+    notes += [f"⚠️ {e}" for e in (serr, cerr) if e]
+    notes += fill_reactions(ledger, state, cal)
     save_ledger(a.ledger, ledger)
+
+    # ── اطلاعیه فدرال‌رزرو — متن ۳۹؛ نیامدن آن تقویم را ناقص نمی‌کند، فقط هشدار
+    press: list[dict] = []
+    ptxt, perr = _text(get, FED_PRESS, "federalreserve.gov — اطلاعیه‌ها")
+    if not perr:
+        press, perr = parse_fed_press(ptxt, with_error=True)
+    if perr:
+        notes.append(f"⚠️ خوراک اطلاعیه فدرال‌رزرو نیامد — {perr}")
+        sources.append(("federalreserve.gov — اطلاعیه‌ها", f"⚠️ {perr}"))
+    else:
+        sources.append(("federalreserve.gov — اطلاعیه‌ها", "✅"))
 
     # ── خروجی
     rpath = a.out or "reports/events-<تاریخ>.md"
-    report = render_report(macro, verdicts, groups, now, sources, ledger, notes, cand_src)
+    report = render_report(macro, verdicts, groups, now, sources, ledger, notes, cand_src, press)
     section = render_section(macro, verdicts, groups, now, rpath)
     line = telegram_line(macro, verdicts, groups, now,
                          prefix="⚠️ تقویم رویداد ناقص، منبعی نیامد — " if failed else "")
+    pl = press_line(press, now)
+    if pl:
+        line += f"؛ {_plain(pl)}"
     for path, txt in ((a.out, report), (a.section, section), (a.line, line + "\n")):
         if path:
             Path(path).parent.mkdir(parents=True, exist_ok=True)

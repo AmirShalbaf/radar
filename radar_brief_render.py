@@ -152,7 +152,8 @@ def caption(doc: dict) -> str:
         lines.append(f"🟠 {E(t)}")
     for w in v.get("windows") or []:
         lines.append(f"⏰ {window_text(w)}")
-    lines.append("<i>تصویر ۱ امروز · ۲ سبد و ماشه‌ها · ۳ نمودار و درس</i>")
+    # متن ۳۹: «·» کنار رقم فارسی مثل صفر خوانده می‌شد — شماره تصویر با حرف
+    lines.append("<i>تصویر یک: امروز؛ تصویر دو: سبد و ماشه‌ها؛ تصویر سه: نمودار و درس</i>")
     # نشانه راست‌به‌چپ سر هر سطر — متن ۳۸؛ طول با نشانه سنجیده می‌شود
     out = TG.rtl("\n".join(lines))
     while len(out) > TG.CAPTION_MAX and len(lines) > 3:
@@ -207,15 +208,45 @@ def _infer_lines(doc: dict) -> list[str]:
     return out
 
 
+# شرط ماشه وقتی قیمت در این سمت سطح است برقرار است — invalidation بسته زیر، reentry بسته بالا
+MET_SIDE = {"invalidation": "below", "reentry": "above"}
+
+
+def trigger_gap(x: dict) -> tuple[str, float, bool]:
+    """
+    (سمت قیمت نسبت به سطح، فاصله درصد بی‌علامت، شرط همین حالا برقرار؟) — متن ۳۹.
+
+    فاصله همان تعریف radar_brief.drop_pct است، درصد از قیمت — قاعده ۹. از move_pct خود سند
+    ساخته می‌شود: drop_pct = −move_pct، چون (قیمت − سطح) / قیمت = ۱ − سطح / قیمت.
+    «مانده» با علامت حذف شد: «+۱٫۰٪ مانده» برای ارزی که همین حالا زیر ابطال بود غلط خوانده می‌شد.
+    """
+    d = -float(x["move_pct"])
+    side = "above" if d > 0 else "below" if d < 0 else "at"
+    met = MET_SIDE.get(x.get("kind")) == side
+    return side, abs(d), met
+
+
+def gap_text(x: dict, num_fn=None) -> str:
+    """«قیمت ۴٫۸٪ بالای سطح» یا «قیمت ۱٫۰٪ زیر سطح» — بی‌علامت، یک‌جهته."""
+    num_fn = num_fn or tnum
+    side, pct, _ = trigger_gap(x)
+    if side == "at":
+        return "قیمت روی سطح"
+    return f"قیمت {num_fn(pct, 1, pct=True)} {'بالای' if side == 'above' else 'زیر'} سطح"
+
+
 def _trigger_lines(doc: dict, k: int = 4) -> list[str]:
     t = S(doc, "triggers")
     if not t["ok"]:
         return []
     out = []
     for x in t["items"][:k]:
-        out.append(f"{KIND_ARROW.get(x['kind'], '•')} <b>{E(x['symbol'])}</b> {E(x['label'])} در "
-                   f"{price(x['level'])} — {tnum(x['move_pct'], 1, sign=True, pct=True)} مانده، "
-                   f"داوری {JUDGE.get(x['judge'], x['judge'])}")
+        judge = JUDGE.get(x["judge"], x["judge"])
+        line = (f"{KIND_ARROW.get(x['kind'], '•')} <b>{E(x['symbol'])}</b> {E(x['label'])} در "
+                f"{price(x['level'])} — {gap_text(x)}، داوری {judge}")
+        if trigger_gap(x)[2]:
+            line += f" — ⚠️ شرط همین حالا برقرار است؛ حکم فقط با {judge}"
+        out.append(line)
     return out
 
 
@@ -550,10 +581,12 @@ def card_book(doc: dict) -> str:
         lines = []
         span = max(10.0, max(abs(x["move_pct"]) for x in tr["items"]))
         for x in tr["items"]:
-            mv = x["move_pct"]
-            colr = "var(--g)" if mv > 0 else "var(--r)"
-            w = abs(mv) / span * 50
-            barpos = "left:50%" if mv > 0 else "right:50%"
+            # متن ۳۹: میله جای قیمت است — راست یعنی بالای سطح، چپ یعنی زیر آن؛ رنگ فقط وقتی
+            # شرط ماشه همین حالا برقرار است، وگرنه خاکستری
+            side, gp, met = trigger_gap(x)
+            colr = ("var(--r)" if x.get("kind") == "invalidation" else "var(--g)") if met else "var(--m)"
+            w = gp / span * 50
+            barpos = "left:50%" if side == "above" else "right:50%"
             lines.append(f'<div style="display:flex;align-items:center;gap:16px;padding:8px 0;font-size:23px">'
                          f'<span class="sym" style="width:80px">{E(x["symbol"])}</span>'
                          f'<span style="width:430px">{E(x["label"])} در {price(x["level"])}<br>'
@@ -561,8 +594,8 @@ def card_book(doc: dict) -> str:
                          f'<div style="flex:1;position:relative;height:26px;direction:ltr;border-left:2px solid transparent">'
                          f'<div style="position:absolute;left:50%;top:-6px;bottom:-6px;border-left:2px solid #44566a"></div>'
                          f'<div style="position:absolute;top:0;bottom:0;{barpos};width:{w:.1f}%;background:{colr};border-radius:8px;opacity:.85"></div></div>'
-                         f'<b style="width:100px;color:{colr}">{hnum(mv, 1, True, True)}</b></div>')
-        trbox = f'<div class="box"><div class="sec">🎯 نقشه ماشه‌ها <span>— چقدر مانده</span></div>{"".join(lines)}</div>'
+                         f'<b style="width:170px;color:{colr}">{"روی سطح" if side == "at" else hnum(gp, 1, False, True) + (" بالای سطح" if side == "above" else " زیر سطح")}</b></div>')
+        trbox = f'<div class="box"><div class="sec">🎯 نقشه ماشه‌ها <span>— قیمت کجای سطح است</span></div>{"".join(lines)}</div>'
     else:
         trbox = f'<div class="box"><div class="sec">🎯 ماشه‌ها</div>{_na(tr)}</div>'
     if t["ok"]:

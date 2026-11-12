@@ -91,7 +91,7 @@ def test_caption_and_message_lines_start_rtl():
     for html in (R.caption(doc), R.message(doc), R.message(doc, with_head=True)):
         assert not _lines_ok(html), _lines_ok(html)[:3]
         assert RLM + RLM not in html                  # سطر سر کپشن در پیام دوباره نگرفت
-    trig = [l for l in R.message(doc).split("\n") if "<b>" in l and "مانده" in l]
+    trig = [l for l in R.message(doc).split("\n") if "<b>" in l and "داوری" in l]   # متن ۳۹: «مانده» جای خود را به «داوری» داد
     assert trig and all(RLM in l[:30] for l in trig)
 
 

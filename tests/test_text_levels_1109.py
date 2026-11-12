@@ -109,7 +109,10 @@ def test_1109_calendar() -> None:
     assert ev["fomc-2026-12"]["press_at"] == "2026-12-09T19:30:00+00:00"
     assert ev["cpi-2026-11"]["at"] == "2026-12-10T13:30:00+00:00"
     assert all(ev[k]["importance"] == "high" for k in ("fomc-2026-12", "cpi-2026-11"))
-    assert "3.9٪" in ev["cpi-2026-10"]["expected"] and "2.8٪" in ev["cpi-2026-10"]["expected"]
+    # متن ۳۹، ۱۲ نوامبر: انتظار تورم به ماهانه بازنویسی شد — BLS نرخ سالانه اکتبر را منتشر نکرد
+    cpi = ev["cpi-2026-10"]
+    assert "0.3٪" in cpi["expected"] and "0.2٪" in cpi["expected"] and "3.9٪" in cpi["expected"]
+    assert "0.4٪" in cpi["actual"] and cpi["lesson"]
     assert "65 هزار" in ev["nfp-2026-10"]["expected"]
     assert "165 هزار" in ev["nfp-2026-10"]["actual"]
 

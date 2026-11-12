@@ -282,6 +282,28 @@ def stale_warning(path: str, now: datetime | None = None) -> str | None:
             f"سپس میدان updated را به‌روز کن.")
 
 
+def stale_alert(path: str, now: datetime | None = None):
+    """
+    هشدار کهنگی در قالب «چه کنم، چرا، بعدش» — متن ۳۹. متن ساده همان `stale_warning` است
+    و ثابت می‌ماند — قاعده ۹؛ فقط HTML تلگرام سه بخش می‌گیرد. تازه یا غایب: None.
+    """
+    # آزمون‌های قدیمی stale_warning را با تابع یک‌ورودی جایگزین می‌کنند؛ بی now همان شکل را صدا بزن
+    warn = stale_warning(path) if now is None else stale_warning(path, now)
+    if warn is None:
+        return None
+    age = watch_age_days(path, now)
+    name = os.path.basename(path)
+    age_txt = f"{fa(f'{age:.0f}')} روز از آخرین بازبینی گذشته" if age is not None else "سطوح از آستانه کهنه‌ترند"
+    return AL.Alert(
+        warn, "orange", title="سطوح پایش کهنه است",
+        do=(f"در بازبینی هفتگی، سطح ابطال و نردبان هر ارز را دوباره بسنج و میدان updated "
+            f"{name} را تازه کن."),
+        why=(f"{age_txt}؛ آستانه {fa(STALE_AFTER_DAYS)} روز است. "
+             "پایشگر دارد سطوح قدیمی را می‌سنجد، پس هشدارش ممکن است دیر یا بی‌جا باشد."),
+        nxt=("تا بازبینی، هر هشدار ابطال را با نمودار هم بسنج. سطحی که قیمت به آن نزدیک است "
+             "پایین برده نمی‌شود؛ پایین بردنش یعنی برداشتن ابطال."))
+
+
 def _file_age(path: str, now: datetime) -> tuple[str, float | None, str | None]:
     """
     (مهر خوانا، سن به روز، علت خطا) فقط از میدان updated داخلی. بازگشت به
@@ -2042,7 +2064,7 @@ def _run_once(watch, state, quiet, path, h, now, regime_path, shake, history_pat
 
     # هشدار کهنگی پیش از هر سنجشی — اگر سطوح کهنه‌اند، بقیه خروجی هم
     # باید با همین چشم خوانده شود.
-    warn = stale_warning(path)
+    warn = stale_alert(path)
     if warn:
         day = datetime.now(UTC).strftime("%Y-%m-%d")
         key = f"stale_{day}"
@@ -2053,7 +2075,7 @@ def _run_once(watch, state, quiet, path, h, now, regime_path, shake, history_pat
                 print(warn)
         else:
             state[key] = True
-            notify(AL.Alert(warn, "orange", title="سطوح پایش کهنه است"), quiet=quiet)
+            notify(warn, quiet=quiet)
 
     n = 0
     # تکرار صبح قرمزهای شب — متن ۳۸: از ۷:۳۰ تهران با صدا، مگر کار انجام شده باشد
