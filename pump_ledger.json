@@ -14250,7 +14250,11 @@
      "candle_open": "2026-11-05T10:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 1.134,
+     "candle_open": "2026-11-11T10:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -14338,7 +14342,11 @@
      "candle_open": "2026-11-05T10:00:00Z",
      "venue": "gate"
     },
-    "d7": null
+    "d7": {
+     "close": 0.71835,
+     "candle_open": "2026-11-11T10:00:00Z",
+     "venue": "gate"
+    }
    }
   },
   {
@@ -14424,7 +14432,11 @@
      "candle_open": "2026-11-05T10:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 0.044318,
+     "candle_open": "2026-11-11T10:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -14541,7 +14553,11 @@
      "candle_open": "2026-11-05T10:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 8.692,
+     "candle_open": "2026-11-11T10:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -14612,7 +14628,11 @@
      "candle_open": "2026-11-06T06:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 1.115,
+     "candle_open": "2026-11-12T06:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -14701,7 +14721,11 @@
      "candle_open": "2026-11-06T06:00:00Z",
      "venue": "gate"
     },
-    "d7": null
+    "d7": {
+     "close": 0.1048,
+     "candle_open": "2026-11-12T06:00:00Z",
+     "venue": "gate"
+    }
    }
   },
   {
@@ -14789,7 +14813,11 @@
      "candle_open": "2026-11-06T06:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 0.303,
+     "candle_open": "2026-11-12T06:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -14872,7 +14900,11 @@
      "candle_open": "2026-11-06T06:00:00Z",
      "venue": "gate"
     },
-    "d7": null
+    "d7": {
+     "close": 0.73103,
+     "candle_open": "2026-11-12T06:00:00Z",
+     "venue": "gate"
+    }
    }
   },
   {
@@ -14957,7 +14989,11 @@
      "candle_open": "2026-11-06T06:00:00Z",
      "venue": "gate"
     },
-    "d7": null
+    "d7": {
+     "close": 9.82,
+     "candle_open": "2026-11-12T06:00:00Z",
+     "venue": "gate"
+    }
    }
   },
   {
@@ -15075,7 +15111,11 @@
      "candle_open": "2026-11-06T06:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 7.466,
+     "candle_open": "2026-11-12T06:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -15162,7 +15202,11 @@
      "candle_open": "2026-11-06T06:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 0.1891,
+     "candle_open": "2026-11-12T06:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -17308,7 +17352,11 @@
    "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 19.56,
+     "candle_open": "2026-11-12T06:00:00Z",
+     "venue": "okx"
+    },
     "d7": null
    }
   },
@@ -17391,6 +17439,686 @@
     "ازدحام شورت"
    ],
    "lbank": "در LBank نیست",
+   "status": "آزمون‌نشده",
+   "prices": {
+    "h24": {
+     "close": 0.001497,
+     "candle_open": "2026-11-12T06:00:00Z",
+     "venue": "okx"
+    },
+    "d7": null
+   }
+  },
+  {
+   "id": "2026-11-12:XNVDA",
+   "at": "2026-11-12T07:44:23Z",
+   "symbol": "XNVDA",
+   "venue": "okx",
+   "price": 161.33,
+   "signs": [
+    "حجم چهارساعته"
+   ],
+   "placements": [
+    {
+     "side": "short",
+     "section": "late",
+     "group": 2,
+     "setup": {
+      "name": "ج‌۲",
+      "side": "short",
+      "state": "pre",
+      "level": 211.2,
+      "h1": 220.41,
+      "h2": 211.2,
+      "l2": 179.24,
+      "atr": 9.358277593157952
+     },
+     "dist_atr": 4.617765515141064,
+     "veto": null,
+     "card": null
+    }
+   ],
+   "metrics": {
+    "z1h": 1.4546326900449533,
+    "z1h_ago": 0,
+    "z1h_rel": 2.398865280931023,
+    "z1h_btc": -1.011479508999875,
+    "z1h_gate": 1.4546326900449533,
+    "z1h_why": null,
+    "z4h": 2.234166897627899,
+    "z4h_rel": 2.102816730775645,
+    "z4h_btc": 0.13135016685225406,
+    "z4h_gate": 2.102816730775645,
+    "z4h_why": null,
+    "chg24_closed": -0.0639322387886524,
+    "abn_ratio": 13.861000990058836,
+    "abn_flag": true,
+    "ratio24": null,
+    "ratio7": null,
+    "shift": null,
+    "shift_why": "قرارداد ندارد",
+    "oi": null,
+    "d4": null,
+    "d24": null,
+    "oi_why": "قرارداد ندارد",
+    "oi_usd": null,
+    "funding_8h": null,
+    "vol_btc": 382.1680303693547,
+    "rs7": -11.92850888514667,
+    "rs30": -18.754058663881644
+   },
+   "labels": [
+    "شمع غیرعادی"
+   ],
+   "lbank": "در LBank نیست",
+   "status": "آزمون‌نشده",
+   "prices": {
+    "h24": null,
+    "d7": null
+   }
+  },
+  {
+   "id": "2026-11-12:XAPP",
+   "at": "2026-11-12T07:44:23Z",
+   "symbol": "XAPP",
+   "venue": "okx",
+   "price": 400.0,
+   "signs": [
+    "حجم چهارساعته"
+   ],
+   "placements": [
+    {
+     "side": "long",
+     "section": "afterpump",
+     "group": 2,
+     "setup": {
+      "name": "الف‌۱",
+      "side": "long",
+      "state": "pre",
+      "level": 336.56499999999994,
+      "range_low": 225.89,
+      "retest_low": null,
+      "atr": 16.393674647385392
+     },
+     "dist_atr": 3.2078702554942145,
+     "veto": null,
+     "card": null
+    }
+   ],
+   "metrics": {
+    "z1h": 0.8143994036543427,
+    "z1h_ago": 4,
+    "z1h_rel": 1.079995232008856,
+    "z1h_btc": -0.2655958283545133,
+    "z1h_gate": 0.8143994036543427,
+    "z1h_why": null,
+    "z4h": 2.3246058607498803,
+    "z4h_rel": 2.193255693897626,
+    "z4h_btc": 0.13135016685225406,
+    "z4h_gate": 2.193255693897626,
+    "z4h_why": null,
+    "chg24_closed": 0.0076781713365052795,
+    "abn_ratio": 21.872173102884368,
+    "abn_flag": true,
+    "ratio24": null,
+    "ratio7": null,
+    "shift": null,
+    "shift_why": "قرارداد ندارد",
+    "oi": null,
+    "d4": null,
+    "d24": null,
+    "oi_why": "قرارداد ندارد",
+    "oi_usd": null,
+    "funding_8h": null,
+    "vol_btc": 92.89757409719438,
+    "rs7": 29.896680735900617,
+    "rs30": 57.79545884856648
+   },
+   "labels": [
+    "شورت ج‌۲ باطل شد",
+    "شمع غیرعادی"
+   ],
+   "lbank": "در LBank نیست",
+   "status": "آزمون‌نشده",
+   "prices": {
+    "h24": null,
+    "d7": null
+   }
+  },
+  {
+   "id": "2026-11-12:XCN",
+   "at": "2026-11-12T07:44:23Z",
+   "symbol": "XCN",
+   "venue": "gate",
+   "price": 0.003326,
+   "signs": [
+    "حجم چهارساعته"
+   ],
+   "placements": [
+    {
+     "side": "short",
+     "section": "short",
+     "group": 2,
+     "setup": {
+      "name": "ج‌۲",
+      "side": "short",
+      "state": "pre",
+      "level": 0.005639,
+      "h1": 0.004499,
+      "h2": 0.005639,
+      "l2": 0.003822,
+      "atr": 0.00035902140133196034
+     },
+     "dist_atr": 0.6607181629666794,
+     "veto": {
+      "status": "unknown",
+      "why": "در DefiLlama نیست"
+     },
+     "card": {
+      "ok": false,
+      "why": "کارت ندارد — ماشه عددی ندارد، چشمی",
+      "tag": "فیوچرز",
+      "entry": null,
+      "stop": null,
+      "target": null,
+      "target_25r": null,
+      "rr": null,
+      "rr_gross": null,
+      "grade": null,
+      "risk_pct": null
+     }
+    }
+   ],
+   "metrics": {
+    "z1h": 2.150047984083491,
+    "z1h_ago": 5,
+    "z1h_rel": 2.1246909629478967,
+    "z1h_btc": -0.7109155478776522,
+    "z1h_gate": 1.507424266085547,
+    "z1h_why": null,
+    "z4h": 2.505860523912488,
+    "z4h_rel": 2.3766187259646747,
+    "z4h_btc": 0.12924179794781326,
+    "z4h_gate": 2.3766187259646747,
+    "z4h_why": null,
+    "chg24_closed": 0.01635372501514243,
+    "abn_ratio": 14.905888760400423,
+    "abn_flag": true,
+    "ratio24": 0.22793524661938136,
+    "ratio7": 0.19823608905512546,
+    "shift": 0.13960289320922165,
+    "shift_why": null,
+    "oi": 86917680.0,
+    "d4": -0.024787353761883346,
+    "d24": 0.18025109656835414,
+    "oi_why": null,
+    "oi_usd": 289088.20368,
+    "funding_8h": -0.002658,
+    "vol_btc": 70.37597441815889,
+    "rs7": 9.461125633738355,
+    "rs30": -4.6669170160604345
+   },
+   "labels": [
+    "شمع غیرعادی",
+    "ازدحام شورت"
+   ],
+   "lbank": "هست",
+   "status": "آزمون‌نشده",
+   "prices": {
+    "h24": null,
+    "d7": null
+   }
+  },
+  {
+   "id": "2026-11-12:NIGHT",
+   "at": "2026-11-12T07:44:23Z",
+   "symbol": "NIGHT",
+   "venue": "okx",
+   "price": 0.046638,
+   "signs": [
+    "بهره باز"
+   ],
+   "placements": [
+    {
+     "side": "long",
+     "section": "long",
+     "group": 1,
+     "setup": {
+      "name": "الف‌۱",
+      "side": "long",
+      "state": "trigger",
+      "level": 0.04262240044617959,
+      "range_low": 0.035277,
+      "retest_low": 0.041775,
+      "atr": 0.003576749180593707
+     },
+     "dist_atr": 0.707159689274412,
+     "veto": {
+      "status": "unknown",
+      "why": "در DefiLlama نیست"
+     },
+     "card": {
+      "ok": false,
+      "why": "کارت ندارد — نسبت کافی نیست",
+      "tag": "نقدی",
+      "entry": 0.046638,
+      "stop": 0.040880812704851575,
+      "target": 0.04996780089235918,
+      "target_25r": 0.06103096823787106,
+      "rr": 0.5409245547441278,
+      "rr_gross": 0.578372861894766,
+      "grade": null,
+      "risk_pct": null
+     }
+    }
+   ],
+   "metrics": {
+    "z1h": 1.4304951617282338,
+    "z1h_ago": 3,
+    "z1h_rel": 2.4419746707281087,
+    "z1h_btc": -1.011479508999875,
+    "z1h_gate": 1.4304951617282338,
+    "z1h_why": null,
+    "z4h": 1.1532396298162546,
+    "z4h_rel": 1.0218894629640005,
+    "z4h_btc": 0.13135016685225406,
+    "z4h_gate": 1.0218894629640005,
+    "z4h_why": null,
+    "chg24_closed": 0.07941513091817898,
+    "abn_ratio": 2.675882873304375,
+    "abn_flag": false,
+    "ratio24": 3.0102350154450286,
+    "ratio7": 2.1310578411616294,
+    "shift": 0.3453996584537788,
+    "shift_why": null,
+    "oi": 79756800.0,
+    "d4": 0.027024869266695895,
+    "d24": 0.2772798101299272,
+    "oi_why": null,
+    "oi_usd": 3719697.6384,
+    "funding_8h": -2.3028094804e-06,
+    "vol_btc": 58.65416374315586,
+    "rs7": 17.45825574918265,
+    "rs30": 15.33893162407266
+   },
+   "labels": [
+    "شورت ج‌۲ باطل شد"
+   ],
+   "lbank": "هست",
+   "status": "آزمون‌نشده",
+   "prices": {
+    "h24": null,
+    "d7": null
+   }
+  },
+  {
+   "id": "2026-11-12:TRX",
+   "at": "2026-11-12T07:44:23Z",
+   "symbol": "TRX",
+   "venue": "okx",
+   "price": 0.31701,
+   "signs": [
+    "حجم ساعتی"
+   ],
+   "placements": [
+    {
+     "side": "long",
+     "section": "long",
+     "group": 2,
+     "setup": {
+      "name": "الف‌۳",
+      "side": "long",
+      "state": "pre",
+      "level": 0.32432,
+      "hi": 0.32432,
+      "lo": 0.31281,
+      "atr": 0.007087674496961017,
+      "exp_vol": false
+     },
+     "dist_atr": 1.0313679053876266,
+     "veto": {
+      "status": "pass",
+      "why": "بی پله؛ جمع بی‌پاداش 0.00٪"
+     },
+     "card": {
+      "ok": false,
+      "why": "کارت ندارد — نسبت کافی نیست",
+      "tag": "نقدی",
+      "entry": 0.32432,
+      "stop": 0.31281,
+      "target": 0.34734000000000004,
+      "target_25r": 0.35309500000000005,
+      "rr": 1.7661708440946704,
+      "rr_gross": 2.0,
+      "grade": null,
+      "risk_pct": null
+     }
+    },
+    {
+     "side": "short",
+     "section": "short",
+     "group": 1,
+     "setup": {
+      "name": "ج‌۱",
+      "side": "short",
+      "state": "trigger",
+      "level": 0.3187487162970461,
+      "fail_high": 0.32432,
+      "range_low": 0.30006,
+      "atr": 0.007087674496961017
+     },
+     "dist_atr": 0.7278804135241692,
+     "veto": {
+      "status": "pass",
+      "why": "بی پله؛ جمع بی‌پاداش 0.00٪"
+     },
+     "card": {
+      "ok": false,
+      "why": "کارت ندارد — نسبت کافی نیست",
+      "tag": "فیوچرز",
+      "entry": 0.31701,
+      "stop": 0.32609191862424025,
+      "target": 0.30006,
+      "target_25r": 0.2943052034393994,
+      "rr": 1.5946428711241978,
+      "rr_gross": 1.8663457250937436,
+      "grade": null,
+      "risk_pct": null
+     }
+    }
+   ],
+   "metrics": {
+    "z1h": 2.0789552724313283,
+    "z1h_ago": 2,
+    "z1h_rel": 3.1447941367984984,
+    "z1h_btc": -1.0658388643671701,
+    "z1h_gate": 2.0789552724313283,
+    "z1h_why": null,
+    "z4h": -1.199238663152731,
+    "z4h_rel": -1.330588830004985,
+    "z4h_btc": 0.13135016685225406,
+    "z4h_gate": -1.330588830004985,
+    "z4h_why": null,
+    "chg24_closed": -0.0024559967253376946,
+    "abn_ratio": 2.1487828314031607,
+    "abn_flag": false,
+    "ratio24": 1.4642215148354185,
+    "ratio7": 1.6190977463823395,
+    "shift": -0.10054533537339612,
+    "shift_why": null,
+    "oi": 73284520.0,
+    "d4": -0.004362709161960909,
+    "d24": 0.008763227672544893,
+    "oi_why": null,
+    "oi_usd": 23231925.685200002,
+    "funding_8h": 6.8774442159e-05,
+    "vol_btc": 56.423018511867156,
+    "rs7": 7.088781514388909,
+    "rs30": 5.870412397988378
+   },
+   "labels": [],
+   "lbank": "هست",
+   "status": "آزمون‌نشده",
+   "prices": {
+    "h24": null,
+    "d7": null
+   }
+  },
+  {
+   "id": "2026-11-12:INJ",
+   "at": "2026-11-12T07:44:23Z",
+   "symbol": "INJ",
+   "venue": "gate",
+   "price": 7.437,
+   "signs": [
+    "بهره باز"
+   ],
+   "placements": [
+    {
+     "side": "short",
+     "section": "short",
+     "group": 2,
+     "setup": {
+      "name": "ج‌۲",
+      "side": "short",
+      "state": "pre",
+      "level": 8.592,
+      "h1": 8.298,
+      "h2": 8.592,
+      "l2": 6.813,
+      "atr": 0.6615806553348316
+     },
+     "dist_atr": 1.6309057479087237,
+     "veto": {
+      "status": "pass",
+      "why": "بی پله؛ جمع بی‌پاداش 0.00٪؛ پوشش تا 2024-07-02، باقی‌مانده قفل 0.00٪ — زیر آستانه"
+     },
+     "card": {
+      "ok": false,
+      "why": "کارت ندارد — ماشه عددی ندارد، چشمی",
+      "tag": "فیوچرز",
+      "entry": null,
+      "stop": null,
+      "target": null,
+      "target_25r": null,
+      "rr": null,
+      "rr_gross": null,
+      "grade": null,
+      "risk_pct": null
+     }
+    }
+   ],
+   "metrics": {
+    "z1h": 1.0415195641738744,
+    "z1h_ago": 5,
+    "z1h_rel": 0.9705851815053754,
+    "z1h_btc": -0.33895576637550634,
+    "z1h_gate": 0.6969611446937144,
+    "z1h_why": null,
+    "z4h": 0.6768919786259499,
+    "z4h_rel": 0.5476501806781366,
+    "z4h_btc": 0.12924179794781326,
+    "z4h_gate": 0.5476501806781366,
+    "z4h_why": null,
+    "chg24_closed": -0.09261059795819149,
+    "abn_ratio": 2.4311471793949457,
+    "abn_flag": false,
+    "ratio24": 1.5372046989142258,
+    "ratio7": 1.7349219173234915,
+    "shift": -0.1209967714568892,
+    "shift_why": null,
+    "oi": 3898836.8000000003,
+    "d4": 0.027050140057675254,
+    "d24": 0.2953965282052755,
+    "oi_why": null,
+    "oi_usd": 28995649.281600002,
+    "funding_8h": -0.000183,
+    "vol_btc": 52.07000202914785,
+    "rs7": 2.9730449462310187,
+    "rs30": 12.803849045882043
+   },
+   "labels": [],
+   "lbank": "هست",
+   "status": "آزمون‌نشده",
+   "prices": {
+    "h24": null,
+    "d7": null
+   }
+  },
+  {
+   "id": "2026-11-12:IDOL",
+   "at": "2026-11-12T07:44:23Z",
+   "symbol": "IDOL",
+   "venue": "gate",
+   "price": 0.025135,
+   "signs": [
+    "حجم ساعتی"
+   ],
+   "placements": [
+    {
+     "side": "short",
+     "section": "short",
+     "group": 1,
+     "setup": {
+      "name": "ج‌۱",
+      "side": "short",
+      "state": "trigger",
+      "level": 0.027818948792601477,
+      "fail_high": 0.04516,
+      "range_low": 0.007574,
+      "atr": 0.0064297298493633725
+     },
+     "dist_atr": 0.08640396648070427,
+     "veto": {
+      "status": "unknown",
+      "why": "در DefiLlama نیست"
+     },
+     "card": {
+      "ok": false,
+      "why": "کارت ندارد — نسبت کافی نیست",
+      "tag": "فیوچرز",
+      "entry": 0.025135,
+      "stop": 0.046767432462340844,
+      "target": 0.007574,
+      "target_25r": -0.028946081155852104,
+      "rr": 0.8054968639936766,
+      "rr_gross": 0.8117903537002296,
+      "grade": null,
+      "risk_pct": null
+     }
+    },
+    {
+     "side": "long",
+     "section": "afterpump",
+     "group": 2,
+     "setup": {
+      "name": "الف‌۲",
+      "side": "long",
+      "state": "pre",
+      "level": 0.012404
+     },
+     "dist_atr": 0.3588037061014294,
+     "veto": null,
+     "card": null
+    }
+   ],
+   "metrics": {
+    "z1h": 2.3617912671843455,
+    "z1h_ago": 2,
+    "z1h_rel": 3.0727068150619976,
+    "z1h_btc": -0.7109155478776522,
+    "z1h_gate": 2.3617912671843455,
+    "z1h_why": null,
+    "z4h": 1.6859681264919824,
+    "z4h_rel": 1.556726328544169,
+    "z4h_btc": 0.12924179794781326,
+    "z4h_gate": 1.556726328544169,
+    "z4h_why": null,
+    "chg24_closed": -0.19829070731551757,
+    "abn_ratio": 6.368498933181287,
+    "abn_flag": true,
+    "ratio24": 2.7558772463965284,
+    "ratio7": 2.3998900713744713,
+    "shift": 0.1383128789538135,
+    "shift_why": null,
+    "oi": 88504200.0,
+    "d4": -0.03784722826181486,
+    "d24": 0.041007883055077965,
+    "oi_why": null,
+    "oi_usd": 2224553.0670000003,
+    "funding_8h": 0.0001,
+    "vol_btc": 44.30186052338883,
+    "rs7": 35.942214470132974,
+    "rs30": 210.4181272505994
+   },
+   "labels": [
+    "شمع غیرعادی"
+   ],
+   "lbank": "هست",
+   "status": "آزمون‌نشده",
+   "prices": {
+    "h24": null,
+    "d7": null
+   }
+  },
+  {
+   "id": "2026-11-12:KGEN",
+   "at": "2026-11-12T07:44:23Z",
+   "symbol": "KGEN",
+   "venue": "gate",
+   "price": 0.09183,
+   "signs": [
+    "حجم ساعتی",
+    "حجم چهارساعته"
+   ],
+   "placements": [
+    {
+     "side": "long",
+     "section": "long",
+     "group": 1,
+     "setup": {
+      "name": "الف‌۳",
+      "side": "long",
+      "state": "trigger",
+      "level": 0.07762,
+      "hi": 0.07762,
+      "lo": 0.06001,
+      "atr": 0.00867762489758877,
+      "exp_vol": true
+     },
+     "dist_atr": 1.63754485446225,
+     "veto": {
+      "status": "unknown",
+      "why": "در DefiLlama نیست"
+     },
+     "card": {
+      "ok": true,
+      "why": null,
+      "tag": "نقدی",
+      "entry": 0.07762,
+      "stop": 0.06001,
+      "target": 0.13103963893249607,
+      "target_25r": 0.12164499999999998,
+      "rr": 2.9808438183394412,
+      "rr_gross": 3.033483187535269,
+      "grade": "ج",
+      "risk_pct": 0.6
+     }
+    }
+   ],
+   "metrics": {
+    "z1h": 2.8341899776175756,
+    "z1h_ago": 0,
+    "z1h_rel": 3.364112251892787,
+    "z1h_btc": -0.5299222742752115,
+    "z1h_gate": 2.8341899776175756,
+    "z1h_why": null,
+    "z4h": 3.397680288753778,
+    "z4h_rel": 3.268438490805965,
+    "z4h_btc": 0.12924179794781326,
+    "z4h_gate": 3.268438490805965,
+    "z4h_why": null,
+    "chg24_closed": 0.5564371257485032,
+    "abn_ratio": 4.916711827293279,
+    "abn_flag": false,
+    "ratio24": 1.954441143417455,
+    "ratio7": 1.4279458281127488,
+    "shift": 0.31386736472445587,
+    "shift_why": null,
+    "oi": 7557540.0,
+    "d4": 0.07125300856430883,
+    "d24": 0.1681654759659823,
+    "oi_why": null,
+    "oi_usd": 694008.8981999999,
+    "funding_8h": -7.6e-05,
+    "vol_btc": 43.24000158437202,
+    "rs7": 28.498325581530025,
+    "rs30": -22.445563568106706
+   },
+   "labels": [
+    "شورت ج‌۲ باطل شد"
+   ],
+   "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
     "h24": null,
@@ -24568,7 +25296,224 @@
      "venue": "okx"
     }
    }
+  },
+  {
+   "at": "2026-11-12T07:44:23Z",
+   "prices": {
+    "AAVE": {
+     "price": 117.04,
+     "venue": "okx"
+    },
+    "ADA": {
+     "price": 0.1728,
+     "venue": "okx"
+    },
+    "AKE": {
+     "price": 0.002458,
+     "venue": "gate"
+    },
+    "ARB": {
+     "price": 0.14882,
+     "venue": "okx"
+    },
+    "ARIA": {
+     "price": 0.19127,
+     "venue": "gate"
+    },
+    "AVAX": {
+     "price": 8.629,
+     "venue": "okx"
+    },
+    "BNB": {
+     "price": 673.67,
+     "venue": "okx"
+    },
+    "DGAI": {
+     "price": 0.73395,
+     "venue": "gate"
+    },
+    "DOGE": {
+     "price": 0.06694,
+     "venue": "okx"
+    },
+    "ENA": {
+     "price": 0.14241,
+     "venue": "okx"
+    },
+    "ETH": {
+     "price": 2048.08,
+     "venue": "okx"
+    },
+    "FIL": {
+     "price": 0.7464,
+     "venue": "okx"
+    },
+    "GRAM": {
+     "price": 1.202,
+     "venue": "okx"
+    },
+    "GT": {
+     "price": 9.88,
+     "venue": "gate"
+    },
+    "HYPE": {
+     "price": 71.29,
+     "venue": "okx"
+    },
+    "IDOL": {
+     "price": 0.025135,
+     "venue": "gate"
+    },
+    "INJ": {
+     "price": 7.437,
+     "venue": "gate"
+    },
+    "KGEN": {
+     "price": 0.09183,
+     "venue": "gate"
+    },
+    "LINK": {
+     "price": 10.089,
+     "venue": "okx"
+    },
+    "LIT": {
+     "price": 3.2381,
+     "venue": "okx"
+    },
+    "LTC": {
+     "price": 49.78,
+     "venue": "okx"
+    },
+    "NEAR": {
+     "price": 3.512,
+     "venue": "okx"
+    },
+    "NFT": {
+     "price": 2.094e-07,
+     "venue": "okx"
+    },
+    "NIGHT": {
+     "price": 0.046638,
+     "venue": "okx"
+    },
+    "NVDAG": {
+     "price": 161.38,
+     "venue": "gate"
+    },
+    "OKB": {
+     "price": 98.45,
+     "venue": "okx"
+    },
+    "ONDO": {
+     "price": 0.3537,
+     "venue": "okx"
+    },
+    "PEPE": {
+     "price": 4.4458e-06,
+     "venue": "okx"
+    },
+    "PONS": {
+     "price": 0.1477,
+     "venue": "okx"
+    },
+    "PUMP": {
+     "price": 0.003441,
+     "venue": "okx"
+    },
+    "RITUAL": {
+     "price": 0.04316,
+     "venue": "gate"
+    },
+    "SOL": {
+     "price": 82.81,
+     "venue": "okx"
+    },
+    "STRK": {
+     "price": 0.03672,
+     "venue": "okx"
+    },
+    "SUI": {
+     "price": 0.8137,
+     "venue": "okx"
+    },
+    "TAO": {
+     "price": 215.2,
+     "venue": "okx"
+    },
+    "TRUMP": {
+     "price": 1.12,
+     "venue": "okx"
+    },
+    "TRX": {
+     "price": 0.31701,
+     "venue": "okx"
+    },
+    "UNI": {
+     "price": 6.155,
+     "venue": "okx"
+    },
+    "WLD": {
+     "price": 0.3053,
+     "venue": "okx"
+    },
+    "XAPP": {
+     "price": 400.0,
+     "venue": "okx"
+    },
+    "XCN": {
+     "price": 0.003326,
+     "venue": "gate"
+    },
+    "XCRCL": {
+     "price": 65.45,
+     "venue": "okx"
+    },
+    "XGOOGL": {
+     "price": 294.58,
+     "venue": "okx"
+    },
+    "XINTC": {
+     "price": 60.63,
+     "venue": "okx"
+    },
+    "XLM": {
+     "price": 0.1459,
+     "venue": "okx"
+    },
+    "XMSTR": {
+     "price": 116.78,
+     "venue": "okx"
+    },
+    "XNVDA": {
+     "price": 161.33,
+     "venue": "okx"
+    },
+    "XQQQ": {
+     "price": 684.02,
+     "venue": "okx"
+    },
+    "XRP": {
+     "price": 1.0434,
+     "venue": "okx"
+    },
+    "XSNDK": {
+     "price": 938.3,
+     "venue": "okx"
+    },
+    "XSOXL": {
+     "price": 61.37,
+     "venue": "okx"
+    },
+    "XSPCX": {
+     "price": 138.64,
+     "venue": "okx"
+    },
+    "ZEC": {
+     "price": 984.96,
+     "venue": "okx"
+    }
+   }
   }
  ],
- "updated": "2026-11-11T07:06:23Z"
+ "updated": "2026-11-12T07:44:23Z"
 }

@@ -1,6 +1,6 @@
 {
  "version": 1,
- "generated": "2026-11-11T07:07:26+00:00",
+ "generated": "2026-11-12T07:45:23+00:00",
  "rows": [
   {
    "sid": "DCOILBRENTEU",
@@ -13,7 +13,7 @@
    "prev": 123.1,
    "prev_date": "2026-10-27",
    "chg": -13.05442729488221,
-   "lag_days": 8,
+   "lag_days": 9,
    "why": null
   },
   {
@@ -27,7 +27,7 @@
    "prev": 4.91,
    "prev_date": "2026-11-02",
    "chg": -0.03000000000000025,
-   "lag_days": 2,
+   "lag_days": 3,
    "why": null
   },
   {
@@ -41,7 +41,7 @@
    "prev": 121.6656,
    "prev_date": "2026-10-30",
    "chg": 0.1764673005352435,
-   "lag_days": 5,
+   "lag_days": 6,
    "why": null
   }
  ]
