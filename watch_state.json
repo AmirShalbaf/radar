@@ -115,7 +115,7 @@
   "mkt_BTC_2026-11-02T00:00:00+00:00": true,
   "stale_2026-11-03": true,
   "SOL": {
-    "last_px": 81.15
+    "last_px": 81.12
   },
   "re_SOL_2026-11-02T00:00:00+00:00": true,
   "stale_2026-11-04": true,
@@ -183,5 +183,6 @@
   "shake_cross_LINK_2026-11-11": true,
   "shake_cross_LINK_2026-11-12": true,
   "shake_near_ONDO_2026-11-12": true,
-  "shake_cross_ONDO_2026-11-12": true
+  "shake_cross_ONDO_2026-11-12": true,
+  "shake_cross_LINK_2026-11-13": true
 }
