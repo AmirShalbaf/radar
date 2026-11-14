@@ -16061,7 +16061,11 @@
      "candle_open": "2026-11-08T05:00:00Z",
      "venue": "gate"
     },
-    "d7": null
+    "d7": {
+     "close": 0.011982,
+     "candle_open": "2026-11-14T05:00:00Z",
+     "venue": "gate"
+    }
    }
   },
   {
@@ -16144,7 +16148,11 @@
      "candle_open": "2026-11-08T05:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 136.5,
+     "candle_open": "2026-11-14T05:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -16218,7 +16226,11 @@
      "candle_open": "2026-11-08T05:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 0.001423,
+     "candle_open": "2026-11-14T05:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -18362,6 +18374,98 @@
     "شکست بی‌حجم"
    ],
    "lbank": "در LBank نیست",
+   "status": "آزمون‌نشده",
+   "prices": {
+    "h24": null,
+    "d7": null
+   }
+  },
+  {
+   "id": "2026-11-14:BERA",
+   "at": "2026-11-14T07:01:22Z",
+   "symbol": "BERA",
+   "venue": "okx",
+   "price": 0.1154,
+   "signs": [
+    "حجم ساعتی",
+    "حجم چهارساعته",
+    "بهره باز"
+   ],
+   "placements": [
+    {
+     "side": "long",
+     "section": "afterpump",
+     "group": 2,
+     "setup": {
+      "name": "الف‌۳",
+      "side": "long",
+      "state": "pre",
+      "level": 0.1338,
+      "hi": 0.1338,
+      "lo": 0.0965,
+      "atr": 0.012659771907659444,
+      "exp_vol": false
+     },
+     "dist_atr": 1.4534227104729738,
+     "veto": null,
+     "card": null
+    },
+    {
+     "side": "short",
+     "section": "veto",
+     "group": 2,
+     "setup": {
+      "name": "ج‌۲",
+      "side": "short",
+      "state": "pre",
+      "level": 0.1901,
+      "h1": 0.2504,
+      "h2": 0.1901,
+      "l2": 0.1997,
+      "atr": 0.012659771907659444
+     },
+     "dist_atr": 2.325677684745209,
+     "veto": {
+      "status": "veto",
+      "why": "بی پله؛ جمع بی‌پاداش 2.96٪"
+     },
+     "card": null
+    }
+   ],
+   "metrics": {
+    "z1h": 3.449036575655991,
+    "z1h_ago": 5,
+    "z1h_rel": 4.120878613145423,
+    "z1h_btc": -0.6718420374894318,
+    "z1h_gate": 3.449036575655991,
+    "z1h_why": null,
+    "z4h": 4.33090270192985,
+    "z4h_rel": 3.1460039243310782,
+    "z4h_btc": 1.184898777598772,
+    "z4h_gate": 3.1460039243310782,
+    "z4h_why": null,
+    "chg24_closed": 0.1473477406679764,
+    "abn_ratio": 7.688040173712312,
+    "abn_flag": true,
+    "ratio24": 9.484861651174656,
+    "ratio7": 6.348349092878631,
+    "shift": 0.401502223486624,
+    "shift_why": null,
+    "oi": 20579668.5,
+    "d4": 0.3371197236522747,
+    "d24": 2.020973911620469,
+    "oi_why": null,
+    "oi_usd": 2374893.7449000003,
+    "funding_8h": -0.0163102841715628,
+    "vol_btc": 54.36945499089637,
+    "rs7": 6.081140470820557,
+    "rs30": -35.738488027186165
+   },
+   "labels": [
+    "شمع غیرعادی",
+    "ازدحام شورت"
+   ],
+   "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
     "h24": null,
@@ -25989,7 +26093,204 @@
      "venue": "okx"
     }
    }
+  },
+  {
+   "at": "2026-11-14T07:01:22Z",
+   "prices": {
+    "AAVE": {
+     "price": 108.64,
+     "venue": "okx"
+    },
+    "ADA": {
+     "price": 0.1639,
+     "venue": "okx"
+    },
+    "AKE": {
+     "price": 0.012768,
+     "venue": "gate"
+    },
+    "ARIA": {
+     "price": 0.19891,
+     "venue": "gate"
+    },
+    "AVAX": {
+     "price": 8.094,
+     "venue": "okx"
+    },
+    "BARD": {
+     "price": 0.1252,
+     "venue": "okx"
+    },
+    "BERA": {
+     "price": 0.1154,
+     "venue": "okx"
+    },
+    "BNB": {
+     "price": 618.78,
+     "venue": "okx"
+    },
+    "DGAI": {
+     "price": 0.72191,
+     "venue": "gate"
+    },
+    "DOGE": {
+     "price": 0.06298,
+     "venue": "okx"
+    },
+    "ELIZAOS": {
+     "price": 0.00028232,
+     "venue": "gate"
+    },
+    "ENA": {
+     "price": 0.12949,
+     "venue": "okx"
+    },
+    "ETH": {
+     "price": 1905.11,
+     "venue": "okx"
+    },
+    "FIL": {
+     "price": 0.6864,
+     "venue": "okx"
+    },
+    "GRAM": {
+     "price": 1.077,
+     "venue": "okx"
+    },
+    "H": {
+     "price": 0.02039,
+     "venue": "gate"
+    },
+    "HYPE": {
+     "price": 69.769,
+     "venue": "okx"
+    },
+    "IDOL": {
+     "price": 0.021195,
+     "venue": "gate"
+    },
+    "INJ": {
+     "price": 8.056,
+     "venue": "okx"
+    },
+    "LINK": {
+     "price": 9.63,
+     "venue": "okx"
+    },
+    "LIT": {
+     "price": 3.0776,
+     "venue": "okx"
+    },
+    "LTC": {
+     "price": 48.52,
+     "venue": "okx"
+    },
+    "NEAR": {
+     "price": 3.364,
+     "venue": "okx"
+    },
+    "NIGHT": {
+     "price": 0.046318,
+     "venue": "okx"
+    },
+    "OKB": {
+     "price": 91.75,
+     "venue": "okx"
+    },
+    "PEARL": {
+     "price": 1.5704,
+     "venue": "gate"
+    },
+    "PEPE": {
+     "price": 4.2396e-06,
+     "venue": "okx"
+    },
+    "PONS": {
+     "price": 0.1337,
+     "venue": "okx"
+    },
+    "PUMP": {
+     "price": 0.003407,
+     "venue": "okx"
+    },
+    "SOL": {
+     "price": 75.73,
+     "venue": "okx"
+    },
+    "STRK": {
+     "price": 0.03644,
+     "venue": "okx"
+    },
+    "SUI": {
+     "price": 0.7767,
+     "venue": "okx"
+    },
+    "TAO": {
+     "price": 208.7,
+     "venue": "okx"
+    },
+    "TRUMP": {
+     "price": 1.064,
+     "venue": "okx"
+    },
+    "TRX": {
+     "price": 0.31309,
+     "venue": "okx"
+    },
+    "UNI": {
+     "price": 5.57,
+     "venue": "okx"
+    },
+    "WLD": {
+     "price": 0.2834,
+     "venue": "okx"
+    },
+    "XCRCL": {
+     "price": 60.68,
+     "venue": "okx"
+    },
+    "XLM": {
+     "price": 0.14367,
+     "venue": "okx"
+    },
+    "XMSTR": {
+     "price": 107.45,
+     "venue": "okx"
+    },
+    "XNVDA": {
+     "price": 162.33,
+     "venue": "okx"
+    },
+    "XQQQ": {
+     "price": 675.95,
+     "venue": "okx"
+    },
+    "XRP": {
+     "price": 0.9942,
+     "venue": "okx"
+    },
+    "XSNDK": {
+     "price": 865.2,
+     "venue": "okx"
+    },
+    "XSOXL": {
+     "price": 55.94,
+     "venue": "okx"
+    },
+    "XSPCX": {
+     "price": 136.45,
+     "venue": "okx"
+    },
+    "ZEC": {
+     "price": 913.43,
+     "venue": "okx"
+    },
+    "ZEUS": {
+     "price": 0.006264,
+     "venue": "gate"
+    }
+   }
   }
  ],
- "updated": "2026-11-13T07:16:43Z"
+ "updated": "2026-11-14T07:01:22Z"
 }

@@ -1,6 +1,6 @@
 {
  "version": 1,
- "generated": "2026-11-13T07:17:50+00:00",
+ "generated": "2026-11-14T07:02:18+00:00",
  "rows": [
   {
    "sid": "DCOILBRENTEU",
@@ -13,7 +13,7 @@
    "prev": 91.84,
    "prev_date": "2026-11-04",
    "chg": 0.3266550522648126,
-   "lag_days": 2,
+   "lag_days": 3,
    "why": null
   },
   {
@@ -22,12 +22,12 @@
    "short": "بازده ۱۰ ساله",
    "unit": "٪",
    "chg_unit": "pp",
-   "value": 4.98,
-   "date": "2026-11-10",
-   "prev": 4.95,
-   "prev_date": "2026-11-03",
-   "chg": 0.03000000000000025,
-   "lag_days": 3,
+   "value": 5.1,
+   "date": "2026-11-12",
+   "prev": 4.84,
+   "prev_date": "2026-11-05",
+   "chg": 0.2599999999999998,
+   "lag_days": 2,
    "why": null
   },
   {
@@ -41,7 +41,7 @@
    "prev": 121.6656,
    "prev_date": "2026-10-30",
    "chg": 0.1764673005352435,
-   "lag_days": 7,
+   "lag_days": 8,
    "why": null
   }
  ]
