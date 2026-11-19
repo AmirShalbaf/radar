@@ -2063,52 +2063,92 @@
    "first_seen": "2026-10-20T12:01:21Z",
    "prices": {
     "BTC": {
-     "before": null,
+     "before": {
+      "close": 63166.9,
+      "candle_open": "2026-11-18T18:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "SOL": {
-     "before": null,
+     "before": {
+      "close": 73.9,
+      "candle_open": "2026-11-18T18:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "ETH": {
-     "before": null,
+     "before": {
+      "close": 1770.47,
+      "candle_open": "2026-11-18T18:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "BNB": {
-     "before": null,
+     "before": {
+      "close": 584.48,
+      "candle_open": "2026-11-18T18:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "AAVE": {
-     "before": null,
+     "before": {
+      "close": 107.67,
+      "candle_open": "2026-11-18T18:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "LINK": {
-     "before": null,
+     "before": {
+      "close": 9.117,
+      "candle_open": "2026-11-18T18:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "SUI": {
-     "before": null,
+     "before": {
+      "close": 0.723,
+      "candle_open": "2026-11-18T18:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "ONDO": {
-     "before": null,
+     "before": {
+      "close": 0.3009,
+      "candle_open": "2026-11-18T18:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "TAO": {
-     "before": null,
+     "before": {
+      "close": 193.26,
+      "candle_open": "2026-11-18T18:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     },
     "TRX": {
-     "before": null,
+     "before": {
+      "close": 0.30889,
+      "candle_open": "2026-11-18T18:00:00Z",
+      "venue": "okx"
+     },
      "h24": null,
      "d7": null
     }
