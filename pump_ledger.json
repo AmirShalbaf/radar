@@ -18585,7 +18585,11 @@
      "candle_open": "2026-11-15T06:00:00Z",
      "venue": "okx"
     },
-    "d7": null
+    "d7": {
+     "close": 0.07664,
+     "candle_open": "2026-11-21T06:00:00Z",
+     "venue": "okx"
+    }
    }
   },
   {
@@ -20754,7 +20758,11 @@
    "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.9008,
+     "candle_open": "2026-11-21T06:00:00Z",
+     "venue": "okx"
+    },
     "d7": null
    }
   },
@@ -20835,7 +20843,11 @@
    "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 58.615,
+     "candle_open": "2026-11-21T06:00:00Z",
+     "venue": "okx"
+    },
     "d7": null
    }
   },
@@ -20915,7 +20927,11 @@
    "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.6258,
+     "candle_open": "2026-11-21T06:00:00Z",
+     "venue": "okx"
+    },
     "d7": null
    }
   },
@@ -20985,7 +21001,11 @@
    "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.02019,
+     "candle_open": "2026-11-21T06:00:00Z",
+     "venue": "okx"
+    },
     "d7": null
    }
   },
@@ -21095,7 +21115,11 @@
    "lbank": "هست",
    "status": "آزمون‌نشده",
    "prices": {
-    "h24": null,
+    "h24": {
+     "close": 0.3024,
+     "candle_open": "2026-11-21T06:00:00Z",
+     "venue": "okx"
+    },
     "d7": null
    }
   }
@@ -30223,7 +30247,280 @@
      "venue": "okx"
     }
    }
+  },
+  {
+   "at": "2026-11-21T07:42:54Z",
+   "prices": {
+    "AAVE": {
+     "price": 95.76,
+     "venue": "gate"
+    },
+    "ADA": {
+     "price": 0.1395,
+     "venue": "okx"
+    },
+    "AKE": {
+     "price": 0.005192,
+     "venue": "gate"
+    },
+    "APT": {
+     "price": 0.3537,
+     "venue": "okx"
+    },
+    "ARB": {
+     "price": 0.10741,
+     "venue": "okx"
+    },
+    "ARG": {
+     "price": 0.08142,
+     "venue": "gate"
+    },
+    "ASTER": {
+     "price": 0.4798,
+     "venue": "gate"
+    },
+    "AVAX": {
+     "price": 6.306,
+     "venue": "okx"
+    },
+    "BCH": {
+     "price": 188.04,
+     "venue": "okx"
+    },
+    "BNB": {
+     "price": 526.91,
+     "venue": "okx"
+    },
+    "CT": {
+     "price": 0.12292,
+     "venue": "okx"
+    },
+    "DGAI": {
+     "price": 0.6998,
+     "venue": "gate"
+    },
+    "DOGE": {
+     "price": 0.05338,
+     "venue": "okx"
+    },
+    "DOS": {
+     "price": 0.1513,
+     "venue": "okx"
+    },
+    "DOT": {
+     "price": 0.6442,
+     "venue": "okx"
+    },
+    "ENA": {
+     "price": 0.09411,
+     "venue": "okx"
+    },
+    "ETH": {
+     "price": 1636.31,
+     "venue": "okx"
+    },
+    "EVAA": {
+     "price": 6.3333,
+     "venue": "gate"
+    },
+    "FIL": {
+     "price": 0.5096,
+     "venue": "okx"
+    },
+    "GRAM": {
+     "price": 0.921,
+     "venue": "okx"
+    },
+    "GT": {
+     "price": 6.21,
+     "venue": "gate"
+    },
+    "H": {
+     "price": 0.01126,
+     "venue": "gate"
+    },
+    "HBAR": {
+     "price": 0.0502,
+     "venue": "gate"
+    },
+    "HYPE": {
+     "price": 58.627,
+     "venue": "okx"
+    },
+    "ICP": {
+     "price": 1.915,
+     "venue": "okx"
+    },
+    "INJ": {
+     "price": 6.093,
+     "venue": "okx"
+    },
+    "IRYS": {
+     "price": 0.01968,
+     "venue": "okx"
+    },
+    "JUP": {
+     "price": 0.2113,
+     "venue": "okx"
+    },
+    "LINK": {
+     "price": 8.376,
+     "venue": "okx"
+    },
+    "LIT": {
+     "price": 2.2887,
+     "venue": "okx"
+    },
+    "LTC": {
+     "price": 39.06,
+     "venue": "okx"
+    },
+    "MMT": {
+     "price": 0.2443,
+     "venue": "okx"
+    },
+    "MON": {
+     "price": 0.01263,
+     "venue": "okx"
+    },
+    "NEAR": {
+     "price": 2.688,
+     "venue": "okx"
+    },
+    "NIGHT": {
+     "price": 0.039814,
+     "venue": "okx"
+    },
+    "OKB": {
+     "price": 76.72,
+     "venue": "okx"
+    },
+    "ONDO": {
+     "price": 0.2665,
+     "venue": "okx"
+    },
+    "PEARL": {
+     "price": 1.7793,
+     "venue": "gate"
+    },
+    "PEPE": {
+     "price": 3.3327e-06,
+     "venue": "okx"
+    },
+    "PI": {
+     "price": 0.05024,
+     "venue": "okx"
+    },
+    "PIEVERSE": {
+     "price": 3.0153,
+     "venue": "gate"
+    },
+    "PONS": {
+     "price": 0.0894,
+     "venue": "okx"
+    },
+    "PUMP": {
+     "price": 0.002275,
+     "venue": "okx"
+    },
+    "SHIB": {
+     "price": 3.528e-06,
+     "venue": "okx"
+    },
+    "SOL": {
+     "price": 67.94,
+     "venue": "okx"
+    },
+    "STRK": {
+     "price": 0.02864,
+     "venue": "okx"
+    },
+    "SUI": {
+     "price": 0.6224,
+     "venue": "okx"
+    },
+    "TAO": {
+     "price": 175.0,
+     "venue": "okx"
+    },
+    "TRUMP": {
+     "price": 0.8335,
+     "venue": "okx"
+    },
+    "TRX": {
+     "price": 0.30306,
+     "venue": "okx"
+    },
+    "UNI": {
+     "price": 4.438,
+     "venue": "okx"
+    },
+    "VVV": {
+     "price": 21.55,
+     "venue": "okx"
+    },
+    "WLD": {
+     "price": 0.2186,
+     "venue": "okx"
+    },
+    "XANT": {
+     "price": 87.42,
+     "venue": "okx"
+    },
+    "XCRCL": {
+     "price": 47.62,
+     "venue": "okx"
+    },
+    "XGOOGL": {
+     "price": 269.41,
+     "venue": "okx"
+    },
+    "XLM": {
+     "price": 0.12415,
+     "venue": "okx"
+    },
+    "XMSTR": {
+     "price": 77.35,
+     "venue": "okx"
+    },
+    "XMU": {
+     "price": 603.46,
+     "venue": "okx"
+    },
+    "XNVDA": {
+     "price": 128.95,
+     "venue": "okx"
+    },
+    "XQQQ": {
+     "price": 617.49,
+     "venue": "okx"
+    },
+    "XRP": {
+     "price": 0.8977,
+     "venue": "okx"
+    },
+    "XSNDK": {
+     "price": 80.22,
+     "venue": "okx"
+    },
+    "XSOXL": {
+     "price": 32.37,
+     "venue": "okx"
+    },
+    "XSPCX": {
+     "price": 129.89,
+     "venue": "okx"
+    },
+    "ZEC": {
+     "price": 731.99,
+     "venue": "okx"
+    },
+    "ZRO": {
+     "price": 1.1161,
+     "venue": "okx"
+    }
+   }
   }
  ],
- "updated": "2026-11-20T07:45:11Z"
+ "updated": "2026-11-21T07:42:54Z"
 }

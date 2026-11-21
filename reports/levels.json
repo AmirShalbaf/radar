@@ -1,107 +1,107 @@
 {
  "version": 1,
- "generated": "2026-11-20T07:45:11+00:00",
+ "generated": "2026-11-21T07:42:54+00:00",
  "min_rr": 2.0,
  "candidates": [],
  "rows": [
   {
    "symbol": "SOL",
-   "price": 72.5,
+   "price": 67.96,
    "trend": "نزولی",
    "verdict": "نزدیک سطح",
-   "rr": 0.506102690228857,
-   "rr_tactical": 6.3244268768017475,
-   "support": 68.34462333532102,
-   "resistance": 75.18433974358976,
-   "dist_sup_atr": 0.9044704452675829
+   "rr": 0.054591445490694224,
+   "rr_tactical": null,
+   "support": 62.095111021396846,
+   "resistance": 68.34463497115576,
+   "dist_sup_atr": 1.2417073349415586
   },
   {
    "symbol": "ETH",
-   "price": 1746.23,
+   "price": 1636.42,
    "trend": "نزولی",
-   "verdict": "روی سطح",
-   "rr": 3.5869057328263003,
-   "rr_tactical": 5.690431592785514,
-   "support": 1745.2473469387755,
-   "resistance": 1842.0893034825874,
-   "dist_sup_atr": 0.009543235014583644
+   "verdict": "نزدیک سطح",
+   "rr": 0.6180224501504181,
+   "rr_tactical": null,
+   "support": 1519.752245742092,
+   "resistance": 1725.393771706132,
+   "dist_sup_atr": 1.0684830807315207
   },
   {
    "symbol": "BNB",
-   "price": 570.87,
-   "trend": "بی‌ساختار",
+   "price": 526.95,
+   "trend": "نزولی",
    "verdict": "نزدیک سطح",
-   "rr": 0.034563114852211946,
+   "rr": 1.1371078247764421,
    "rr_tactical": null,
-   "support": 551.471878440872,
-   "resistance": 571.7561148707271,
-   "dist_sup_atr": 0.7772348905193931
+   "support": 510.01989664082697,
+   "resistance": 553.8449961276998,
+   "dist_sup_atr": 0.6296524017543779
   },
   {
    "symbol": "AAVE",
-   "price": 103.53,
+   "price": 95.72,
    "trend": "بی‌ساختار",
    "verdict": "روی سطح",
-   "rr": 0.21143298285551063,
+   "rr": 0.08268896078221243,
    "rr_tactical": null,
-   "support": 101.57325945063913,
-   "resistance": 104.41703572483023,
-   "dist_sup_atr": 0.21852170994654654
+   "support": 92.7676605803717,
+   "resistance": 96.1524467086741,
+   "dist_sup_atr": 0.3240824159505218
   },
   {
    "symbol": "LINK",
-   "price": 8.855,
+   "price": 8.376,
    "trend": "بی‌ساختار",
    "verdict": "روی سطح",
-   "rr": 0.8475294993331052,
+   "rr": 0.08990657056295137,
    "rr_tactical": null,
-   "support": 8.810664244940321,
-   "resistance": 9.025979376257546,
-   "dist_sup_atr": 0.07041767230659732
+   "support": 8.129276471225753,
+   "resistance": 8.41266817516305,
+   "dist_sup_atr": 0.3828161626157112
   },
   {
    "symbol": "SUI",
-   "price": 0.6977,
+   "price": 0.6225,
    "trend": "نزولی",
-   "verdict": "نزدیک سطح",
-   "rr": 0.20811923016276776,
+   "verdict": "بدون حمایت شناسایی‌شده",
+   "rr": null,
    "rr_tactical": null,
-   "support": 0.6620981281358549,
-   "resistance": 0.7080144623571764,
-   "dist_sup_atr": 0.637638748563461
+   "support": null,
+   "resistance": 0.6620982618771728,
+   "dist_sup_atr": null
   },
   {
    "symbol": "ONDO",
-   "price": 0.2928,
+   "price": 0.2664,
    "trend": "نزولی",
-   "verdict": "روی سطح",
-   "rr": 0.378308024934187,
-   "rr_tactical": 6.324763427763177,
-   "support": 0.2830822366148532,
-   "resistance": 0.29902862702366123,
-   "dist_sup_atr": 0.3600948447295886
+   "verdict": "نزدیک سطح",
+   "rr": 0.6166339703643071,
+   "rr_tactical": null,
+   "support": 0.24610589032739105,
+   "resistance": 0.283082117545376,
+   "dist_sup_atr": 0.7505876238760646
   },
   {
    "symbol": "TAO",
-   "price": 186.92,
+   "price": 175.0,
    "trend": "بی‌ساختار*",
-   "verdict": "روی سطح",
-   "rr": 1.5512927128141096,
-   "rr_tactical": 6.701500262086723,
-   "support": 184.41728483606556,
-   "resistance": 196.78219584569734,
-   "dist_sup_atr": 0.1623162534095723
+   "verdict": "بدون حمایت شناسایی‌شده",
+   "rr": null,
+   "rr_tactical": null,
+   "support": null,
+   "resistance": 184.42130479102954,
+   "dist_sup_atr": null
   },
   {
    "symbol": "TRX",
-   "price": 0.30971,
+   "price": 0.30306,
    "trend": "نزولی",
-   "verdict": "نزدیک سطح",
-   "rr": 0.3579346945958618,
-   "rr_tactical": 1.5908095197716403,
-   "support": 0.3028348403311649,
-   "resistance": 0.31271166666666667,
-   "dist_sup_atr": 1.1375829986401973
+   "verdict": "روی سطح",
+   "rr": 5.344546278322829,
+   "rr_tactical": 7.072889710849948,
+   "support": 0.3028347795205682,
+   "resistance": 0.3127116652994258,
+   "dist_sup_atr": 0.03562104643468776
   }
  ]
 }
