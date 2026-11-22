@@ -2255,7 +2255,11 @@
       "candle_open": "2026-11-20T10:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 1.5516,
+      "candle_open": "2026-11-21T10:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     },
     "BTC": {
@@ -2264,7 +2268,11 @@
       "candle_open": "2026-11-20T10:00:00Z",
       "venue": "okx"
      },
-     "h24": null,
+     "h24": {
+      "close": 57934.0,
+      "candle_open": "2026-11-21T10:00:00Z",
+      "venue": "okx"
+     },
      "d7": null
     }
    }

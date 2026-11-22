@@ -1,107 +1,107 @@
 {
  "version": 1,
- "generated": "2026-11-21T07:42:54+00:00",
+ "generated": "2026-11-22T07:26:57+00:00",
  "min_rr": 2.0,
  "candidates": [],
  "rows": [
   {
    "symbol": "SOL",
-   "price": 67.96,
+   "price": 69.31,
    "trend": "نزولی",
-   "verdict": "نزدیک سطح",
-   "rr": 0.054591445490694224,
-   "rr_tactical": null,
-   "support": 62.095111021396846,
-   "resistance": 68.34463497115576,
-   "dist_sup_atr": 1.2417073349415586
+   "verdict": "روی سطح",
+   "rr": 2.7020822190046765,
+   "rr_tactical": 1.2770952542730085,
+   "support": 68.3446466255226,
+   "resistance": 75.18422949917446,
+   "dist_sup_atr": 0.1996824587709302
   },
   {
    "symbol": "ETH",
-   "price": 1636.42,
+   "price": 1665.14,
    "trend": "نزولی",
    "verdict": "نزدیک سطح",
-   "rr": 0.6180224501504181,
-   "rr_tactical": null,
-   "support": 1519.752245742092,
-   "resistance": 1725.393771706132,
-   "dist_sup_atr": 1.0684830807315207
+   "rr": 0.3463472913649292,
+   "rr_tactical": 0.45773813232540705,
+   "support": 1519.7493570384802,
+   "resistance": 1725.388948583931,
+   "dist_sup_atr": 1.2724694987589364
   },
   {
    "symbol": "BNB",
-   "price": 526.95,
+   "price": 540.41,
    "trend": "نزولی",
    "verdict": "نزدیک سطح",
-   "rr": 1.1371078247764421,
-   "rr_tactical": null,
-   "support": 510.01989664082697,
-   "resistance": 553.8449961276998,
-   "dist_sup_atr": 0.6296524017543779
+   "rr": 0.3584568811073932,
+   "rr_tactical": 0.3550760503908648,
+   "support": 510.0201379905132,
+   "resistance": 553.8450693308072,
+   "dist_sup_atr": 1.0715095203277782
   },
   {
    "symbol": "AAVE",
-   "price": 95.72,
+   "price": 95.58,
    "trend": "بی‌ساختار",
    "verdict": "روی سطح",
-   "rr": 0.08268896078221243,
-   "rr_tactical": null,
-   "support": 92.7676605803717,
-   "resistance": 96.1524467086741,
-   "dist_sup_atr": 0.3240824159505218
+   "rr": 0.11185526478622285,
+   "rr_tactical": 0.12304820852043802,
+   "support": 92.76774840920216,
+   "resistance": 96.15244733664295,
+   "dist_sup_atr": 0.3049504368230273
   },
   {
    "symbol": "LINK",
-   "price": 8.376,
-   "trend": "بی‌ساختار",
+   "price": 8.553,
+   "trend": "نزولی",
    "verdict": "روی سطح",
-   "rr": 0.08990657056295137,
-   "rr_tactical": null,
-   "support": 8.129276471225753,
-   "resistance": 8.41266817516305,
-   "dist_sup_atr": 0.3828161626157112
+   "rr": 0.8496523664527266,
+   "rr_tactical": 0.429471380823221,
+   "support": 8.41266977487678,
+   "resistance": 8.810656201268323,
+   "dist_sup_atr": 0.21533775778388436
   },
   {
    "symbol": "SUI",
-   "price": 0.6225,
+   "price": 0.6388,
    "trend": "نزولی",
    "verdict": "بدون حمایت شناسایی‌شده",
    "rr": null,
    "rr_tactical": null,
    "support": null,
-   "resistance": 0.6620982618771728,
+   "resistance": 0.6620983958252803,
    "dist_sup_atr": null
   },
   {
    "symbol": "ONDO",
-   "price": 0.2664,
+   "price": 0.2767,
    "trend": "نزولی",
    "verdict": "نزدیک سطح",
-   "rr": 0.6166339703643071,
-   "rr_tactical": null,
-   "support": 0.24610589032739105,
-   "resistance": 0.283082117545376,
-   "dist_sup_atr": 0.7505876238760646
+   "rr": 0.17070215017649215,
+   "rr_tactical": 0.2738138421428114,
+   "support": 0.24610591587516964,
+   "resistance": 0.2830819982698962,
+   "dist_sup_atr": 1.125997279374994
   },
   {
    "symbol": "TAO",
-   "price": 175.0,
+   "price": 185.93,
    "trend": "بی‌ساختار*",
    "verdict": "بدون حمایت شناسایی‌شده",
    "rr": null,
    "rr_tactical": null,
    "support": null,
-   "resistance": 184.42130479102954,
+   "resistance": 185.93321702127662,
    "dist_sup_atr": null
   },
   {
    "symbol": "TRX",
-   "price": 0.30306,
+   "price": 0.30369,
    "trend": "نزولی",
    "verdict": "روی سطح",
-   "rr": 5.344546278322829,
-   "rr_tactical": 7.072889710849948,
-   "support": 0.3028347795205682,
-   "resistance": 0.3127116652994258,
-   "dist_sup_atr": 0.03562104643468776
+   "rr": 3.6495773638589797,
+   "rr_tactical": 1.5918972780294776,
+   "support": 0.3028347186018957,
+   "resistance": 0.3127116639299398,
+   "dist_sup_atr": 0.13225780813393412
   }
  ]
 }
