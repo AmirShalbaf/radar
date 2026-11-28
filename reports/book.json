@@ -1,140 +1,140 @@
 {
  "version": 1,
- "generated": "2026-11-27T09:03:52+00:00",
+ "generated": "2026-11-28T08:25:57+00:00",
  "capital": {
-  "total": 1435.9782344238001,
+  "total": 1423.5527029806,
   "stable_usd": 1135.61630829,
   "incomplete": false,
   "missing": []
  },
  "regime": {
-  "score": -1.135062991084349,
-  "source": "regime.json، تولید 2026-11-27 09:03 UTC",
+  "score": -1.0255439378163245,
+  "source": "regime.json، تولید 2026-11-28 08:25 UTC",
   "band": "انقباضی",
   "stable_target": 40,
-  "trade_band": "بحرانی",
-  "cap_pct": 1.5,
-  "mult": 0.2,
-  "maxpos": 1
+  "trade_band": "انقباضی",
+  "cap_pct": 2.5,
+  "mult": 0.3,
+  "maxpos": 2
  },
  "trade": {
-  "target_usd": 574.3912937695201,
-  "cash": 561.2250145204799,
-  "risk_cap": 21.539673516357002,
+  "target_usd": 569.4210811922401,
+  "cash": 566.1952270977599,
+  "risk_cap": 35.588817574515005,
   "risk_used": 0.0,
-  "risk_left": 21.539673516357002,
-  "cash_after_orders": 561.2250145204799,
+  "risk_left": 35.588817574515005,
+  "cash_after_orders": 566.1952270977599,
   "orders_usd": 0
  },
- "pos_risk_usd": 0.3754441799999949,
+ "pos_risk_usd": 0.0,
  "positions": [
   {
    "symbol": "SOL",
    "qty": 5.369000000055024e-05,
-   "price": 73.52,
-   "value": 0.003947288800040453,
+   "price": 71.24,
+   "value": 0.003824875600039199,
    "dust": true,
    "invalidation": null,
    "weekly_close": null,
    "weekly_closed_at": null,
-   "rsi": 32.3,
-   "rs30": -0.0411
+   "rsi": 34.0,
+   "rs30": -0.0199
   },
   {
    "symbol": "ETH",
    "qty": 5.700000000003619e-05,
-   "price": 1731.5,
-   "value": 0.09869550000006266,
+   "price": 1655.14,
+   "value": 0.0943429800000599,
    "dust": true,
    "invalidation": null,
    "weekly_close": null,
    "weekly_closed_at": null,
-   "rsi": 29.2,
-   "rs30": -0.0252
+   "rsi": 27.8,
+   "rs30": -0.0305
   },
   {
    "symbol": "BNB",
    "qty": 0.000757899999999978,
-   "price": 564.49,
-   "value": 0.4278269709999876,
+   "price": 551.47,
+   "value": 0.4179591129999879,
    "dust": true,
    "invalidation": null,
    "weekly_close": null,
    "weekly_closed_at": null,
-   "rsi": 28.7,
-   "rs30": -0.0159
+   "rsi": 29.1,
+   "rs30": 0.0254
   },
   {
    "symbol": "AAVE",
    "qty": 1.04895,
-   "price": 97.4,
-   "value": 102.16773,
+   "price": 93.46,
+   "value": 98.03486699999999,
    "dust": false,
    "invalidation": 106.892,
    "weekly_close": 98.08,
    "weekly_closed_at": "2026-11-23T00:00:00+00:00",
-   "rsi": 30.5,
-   "rs30": -0.0323
+   "rsi": 32.2,
+   "rs30": 0.0188
   },
   {
    "symbol": "LINK",
    "qty": 11.09889,
-   "price": 9.628,
-   "value": 106.86011292,
+   "price": 9.175,
+   "value": 101.83231575000002,
    "dust": false,
    "invalidation": 10.3366,
    "weekly_close": 8.824,
    "weekly_closed_at": "2026-11-23T00:00:00+00:00",
-   "rsi": 42.3,
-   "rs30": 0.0558
+   "rsi": 43.8,
+   "rs30": 0.0994
   },
   {
    "symbol": "SUI",
    "qty": 81.6183,
-   "price": 0.6889,
-   "value": 56.22684687,
+   "price": 0.6692,
+   "value": 54.61896636,
    "dust": false,
    "invalidation": 0.6843,
    "weekly_close": 0.6563,
    "weekly_closed_at": "2026-11-23T00:00:00+00:00",
-   "rsi": 34.4,
-   "rs30": -0.0286
+   "rsi": 35.5,
+   "rs30": 0.0044
   },
   {
    "symbol": "ONDO",
    "qty": 115.43866,
-   "price": 0.2976,
-   "value": 34.354545216,
+   "price": 0.2834,
+   "value": 32.715316244,
    "dust": false,
    "invalidation": 0.3478,
    "weekly_close": 0.2836,
    "weekly_closed_at": "2026-11-23T00:00:00+00:00",
-   "rsi": 34.0,
-   "rs30": -0.0538
+   "rsi": 34.1,
+   "rs30": -0.0196
   },
   {
    "symbol": "TAO",
    "qty": 9.200000000000874e-05,
-   "price": 188.41,
-   "value": 0.01733372000000165,
+   "price": 185.86,
+   "value": 0.017099120000001626,
    "dust": true,
    "invalidation": null,
    "weekly_close": null,
    "weekly_closed_at": null,
-   "rsi": 35.6,
-   "rs30": -0.027
+   "rsi": 38.0,
+   "rs30": 0.0284
   },
   {
    "symbol": "TRX",
    "qty": 0.6704,
-   "price": 0.30562,
-   "value": 0.204887648,
+   "price": 0.30087,
+   "value": 0.20170324800000003,
    "dust": true,
    "invalidation": null,
    "weekly_close": null,
    "weekly_closed_at": null,
-   "rsi": 39.2,
-   "rs30": 0.1677
+   "rsi": 36.3,
+   "rs30": 0.0697
   }
  ],
  "reentry": [
@@ -158,6 +158,7 @@
   }
  ],
  "actions": [
+  "بودجه آزادشده — باند با هیسترزیس از بحرانی به انقباضی؛ هدف ذخیره ۵۵٪ به ۴۰٪. بودجه: 566 دلار؛ فهرست رتبه‌دار در زیربخش «بازخرید با انتخاب کیفی». رادار فقط پیشنهاد می‌دهد — تصمیم با تو",
   "AAVE — خروج کامل. خروج ۱۰۰٪ — بسته هفتگی زیر ابطال",
   "LINK — خروج کامل. خروج ۱۰۰٪ — بسته هفتگی زیر ابطال",
   "SUI — خروج کامل. خروج ۱۰۰٪ — بسته هفتگی زیر ابطال",
